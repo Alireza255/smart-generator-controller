@@ -24,9 +24,10 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h Core/Inc/tim.h \
- Core/Inc/main.h Core/Inc/gpio.h controller/controller_time.h \
- controller/types.h controller/engine_cycle/trigger.h controller/types.h \
- controller/controller.h controller/settings.h controller/enums.h
+ Core/Inc/main.h Core/Inc/gpio.h controller/controller.h \
+ controller/enums.h controller/types.h controller/engine_cycle/trigger.h \
+ controller/controller_time.h controller/types.h \
+ controller/actuators/dc_motors.h controller/utils.h
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -58,10 +59,11 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 Core/Inc/tim.h:
 Core/Inc/main.h:
 Core/Inc/gpio.h:
-controller/controller_time.h:
+controller/controller.h:
+controller/enums.h:
 controller/types.h:
 controller/engine_cycle/trigger.h:
+controller/controller_time.h:
 controller/types.h:
-controller/controller.h:
-controller/settings.h:
-controller/enums.h:
+controller/actuators/dc_motors.h:
+controller/utils.h:

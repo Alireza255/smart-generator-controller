@@ -1,8 +1,11 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-//#include "enums.h"
+
+#include "enums.h"
 #include "types.h"
+#include "trigger.h"
+#include "dc_motors.h"
 
 typedef struct
 {
@@ -12,9 +15,13 @@ typedef struct
     uint32_t total_revolutions;
     angle_t crankshaft_angle;
     angle_t camshaft_angle;
-    
-} engine_parameters_s;
+    rpm_t rpm;
+   
+    spinning_state_e spinning_state;
 
-extern engine_parameters_s engine_parameters;
+    trigger_s trigger;
+} engine_s;
+
+extern engine_s engine;
 
 #endif // CONTROLLER_H

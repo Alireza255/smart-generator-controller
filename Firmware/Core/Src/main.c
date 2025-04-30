@@ -23,9 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "controller_time.h"
-#include "trigger.h"
-#include "settings.h"
+
+#include "controller.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,9 +45,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t global_time = 0;
-engine_parameters_s engine_parameters = {0};
-settings_s settings;
+engine_s engine = {0};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,10 +59,10 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    if (GPIO_Pin == GPIO_PIN_12)
-    {
-      trigger_tooth_handle();
-    }
+  if (GPIO_Pin == GPIO_PIN_12)
+  {
+    trigger_tooth_handle(&engine.trigger);
+  }
 }
 
 /* USER CODE END 0 */
@@ -77,9 +75,9 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-settings.trigger_filtering = TF_FILTERING_NONE;
-settings.trigger_full_teeth = 60;
-settings.trigger_missing_teeth = 2;
+  /**
+   * @todo we will move to a proper init system in the future, but for now we are going to a simple methode for providing the settings
+   */
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -101,20 +99,45 @@ settings.trigger_missing_teeth = 2;
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM5_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   controller_time_start(&htim5);
-  trigger_set_filtering(TF_FILTERING_NONE);
-  trigger_init();
 
+  trigger_init(&engine.trigger);
   
+  dc_motor_s mymotor = {0};
+
+  dc_motor_init(&mymotor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 10000);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_Delay(100);
-    global_time = get_time_ms();
+    
+    
+    for (uint8_t i = 0; i < 0xff; i++)
+    {
+      dc_motor_set(&mymotor, MD_FORWARD, i);
+      HAL_Delay(2);
+    }
+    for (uint8_t i = 0; i < 0xff; i++)
+    {
+      dc_motor_set(&mymotor, MD_FORWARD, 0xff - i);
+      HAL_Delay(2);
+    }
+    for (uint8_t i = 0; i < 0xff; i++)
+    {
+      dc_motor_set(&mymotor, MD_REVERSE, i);
+      HAL_Delay(2);
+    }
+    for (uint8_t i = 0; i < 0xff; i++)
+    {
+      dc_motor_set(&mymotor, MD_REVERSE, 0xff - i);
+      HAL_Delay(2);
+    }
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

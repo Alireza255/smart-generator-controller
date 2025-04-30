@@ -98,9 +98,10 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
+controller/actuators/dc_motors.c \
 controller/controller_time.c \
-controller/engine_cycle/rpm_calculator.c \
-controller/engine_cycle/trigger.c
+controller/engine_cycle/trigger.c \
+controller/utils.c
 
 
 CXX_SOURCES = \
@@ -199,6 +200,7 @@ C_INCLUDES =  \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 -Icontroller \
+-Icontroller/actuators \
 -Icontroller/engine_cycle
 
 

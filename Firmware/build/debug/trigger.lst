@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -27,758 +27,914 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 1
   24              		.thumb
   25              		.thumb_func
   27              	set_filtering:
-  28              	.LFB135:
+  28              	.LVL0:
+  29              	.LFB134:
    1:controller/engine_cycle/trigger.c **** #include "trigger.h"
-   2:controller/engine_cycle/trigger.c **** 
+   2:controller/engine_cycle/trigger.c **** #include "controller.h"
    3:controller/engine_cycle/trigger.c **** 
-   4:controller/engine_cycle/trigger.c **** trigger_status_s trigger_status = {0};
+   4:controller/engine_cycle/trigger.c **** trigger_s *trigger = NULL;
    5:controller/engine_cycle/trigger.c **** 
-   6:controller/engine_cycle/trigger.c **** void set_filtering(void);
-   7:controller/engine_cycle/trigger.c **** 
-   8:controller/engine_cycle/trigger.c **** volatile controller_time_us_t trigger_filter_time_us = 0;
-   9:controller/engine_cycle/trigger.c **** 
-  10:controller/engine_cycle/trigger.c **** volatile controller_time_us_t tooth_time_us[3] = {0}; // the higher the index, the older the sample
-  11:controller/engine_cycle/trigger.c **** volatile controller_time_us_t current_tooth_gap_us;
-  12:controller/engine_cycle/trigger.c **** volatile controller_time_us_t target_tooth_gap_us;
-  13:controller/engine_cycle/trigger.c **** volatile uint16_t counted_tooth = 0;
-  14:controller/engine_cycle/trigger.c **** 
-  15:controller/engine_cycle/trigger.c **** uint8_t trigger_actual_teeth = 0;
-  16:controller/engine_cycle/trigger.c **** 
-  17:controller/engine_cycle/trigger.c **** void trigger_set_filtering(trigger_filtering_e filtering_level)
-  18:controller/engine_cycle/trigger.c **** {
-  19:controller/engine_cycle/trigger.c ****   settings.trigger_filtering = filtering_level;
-  20:controller/engine_cycle/trigger.c **** 
-  21:controller/engine_cycle/trigger.c ****   set_filtering();
-  22:controller/engine_cycle/trigger.c **** }
-  23:controller/engine_cycle/trigger.c **** 
-  24:controller/engine_cycle/trigger.c **** void set_filtering(void)
-  25:controller/engine_cycle/trigger.c **** {
-  29              		.loc 1 25 1 view -0
-  30              		.cfi_startproc
-  31              		@ args = 0, pretend = 0, frame = 0
-  32              		@ frame_needed = 0, uses_anonymous_args = 0
-  33              		@ link register save eliminated.
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 2
-
-
-  26:controller/engine_cycle/trigger.c ****   switch (settings.trigger_filtering)
-  34              		.loc 1 26 3 view .LVU1
-  35              		.loc 1 26 19 is_stmt 0 view .LVU2
-  36 0000 114B     		ldr	r3, .L9
-  37 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
-  38              		.loc 1 26 3 view .LVU3
-  39 0004 032B     		cmp	r3, #3
-  40 0006 1AD8     		bhi	.L2
-  41 0008 DFE803F0 		tbb	[pc, r3]
+   6:controller/engine_cycle/trigger.c **** void set_filtering(trigger_s *trigger)
+   7:controller/engine_cycle/trigger.c **** {
+  30              		.loc 1 7 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+   8:controller/engine_cycle/trigger.c ****   switch (trigger->settings.filtering)
+  35              		.loc 1 8 3 view .LVU1
+  36              		.loc 1 8 28 is_stmt 0 view .LVU2
+  37 0000 0379     		ldrb	r3, [r0, #4]	@ zero_extendqisi2
+  38              		.loc 1 8 3 view .LVU3
+  39 0002 032B     		cmp	r3, #3
+  40 0004 13D8     		bhi	.L2
+  41 0006 DFE803F0 		tbb	[pc, r3]
   42              	.L4:
-  43 000c 02       		.byte	(.L7-.L4)/2
-  44 000d 06       		.byte	(.L6-.L4)/2
-  45 000e 0C       		.byte	(.L5-.L4)/2
-  46 000f 11       		.byte	(.L3-.L4)/2
+  43 000a 02       		.byte	(.L7-.L4)/2
+  44 000b 05       		.byte	(.L6-.L4)/2
+  45 000c 09       		.byte	(.L5-.L4)/2
+  46 000d 0C       		.byte	(.L3-.L4)/2
   47              		.p2align 1
   48              	.L7:
-  27:controller/engine_cycle/trigger.c ****   {
-  28:controller/engine_cycle/trigger.c ****     case TF_FILTERING_NONE:
-  29:controller/engine_cycle/trigger.c ****         trigger_filter_time_us = 0;
-  49              		.loc 1 29 9 is_stmt 1 view .LVU4
-  50              		.loc 1 29 32 is_stmt 0 view .LVU5
-  51 0010 0E4B     		ldr	r3, .L9+4
-  52 0012 0022     		movs	r2, #0
-  53 0014 1A60     		str	r2, [r3]
-  30:controller/engine_cycle/trigger.c ****         break;
-  54              		.loc 1 30 9 is_stmt 1 view .LVU6
-  55 0016 7047     		bx	lr
-  56              	.L6:
-  31:controller/engine_cycle/trigger.c ****     case TF_FILTERING_LITE:
-  32:controller/engine_cycle/trigger.c ****         trigger_filter_time_us = current_tooth_gap_us / 4U; 
-  57              		.loc 1 32 9 view .LVU7
-  58              		.loc 1 32 55 is_stmt 0 view .LVU8
-  59 0018 0D4B     		ldr	r3, .L9+8
-  60 001a 1B68     		ldr	r3, [r3]
-  61 001c 9B08     		lsrs	r3, r3, #2
-  62              		.loc 1 32 32 view .LVU9
-  63 001e 0B4A     		ldr	r2, .L9+4
-  64 0020 1360     		str	r3, [r2]
-  33:controller/engine_cycle/trigger.c ****         break;
-  65              		.loc 1 33 9 is_stmt 1 view .LVU10
-  66 0022 7047     		bx	lr
-  67              	.L5:
-  34:controller/engine_cycle/trigger.c ****     case TF_FILTERING_MEDIUM:
-  35:controller/engine_cycle/trigger.c ****         trigger_filter_time_us = current_tooth_gap_us / 1U;
-  68              		.loc 1 35 9 view .LVU11
-  69              		.loc 1 35 32 is_stmt 0 view .LVU12
-  70 0024 0A4B     		ldr	r3, .L9+8
-  71 0026 1A68     		ldr	r2, [r3]
-  72 0028 084B     		ldr	r3, .L9+4
-  73 002a 1A60     		str	r2, [r3]
-  36:controller/engine_cycle/trigger.c ****         break;
-  74              		.loc 1 36 9 is_stmt 1 view .LVU13
-  75 002c 7047     		bx	lr
-  76              	.L3:
-  37:controller/engine_cycle/trigger.c ****     case TF_FILTERING_AGGRESSIVE:
-  38:controller/engine_cycle/trigger.c ****         trigger_filter_time_us = current_tooth_gap_us * 3 / 4;
-  77              		.loc 1 38 9 view .LVU14
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 3
+   9:controller/engine_cycle/trigger.c ****   {
+  10:controller/engine_cycle/trigger.c ****     case TF_FILTERING_NONE:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 2
 
 
-  78              		.loc 1 38 55 is_stmt 0 view .LVU15
-  79 002e 084B     		ldr	r3, .L9+8
-  80 0030 1B68     		ldr	r3, [r3]
-  81 0032 03EB4303 		add	r3, r3, r3, lsl #1
-  82              		.loc 1 38 59 view .LVU16
-  83 0036 9B08     		lsrs	r3, r3, #2
-  84              		.loc 1 38 32 view .LVU17
-  85 0038 044A     		ldr	r2, .L9+4
-  86 003a 1360     		str	r3, [r2]
-  39:controller/engine_cycle/trigger.c ****         break;
-  87              		.loc 1 39 9 is_stmt 1 view .LVU18
-  88 003c 7047     		bx	lr
-  89              	.L2:
-  40:controller/engine_cycle/trigger.c ****     default:
-  41:controller/engine_cycle/trigger.c ****         // Handle invalid filtering level
-  42:controller/engine_cycle/trigger.c ****         trigger_filter_time_us = 0;
-  90              		.loc 1 42 9 view .LVU19
-  91              		.loc 1 42 32 is_stmt 0 view .LVU20
-  92 003e 034B     		ldr	r3, .L9+4
-  93 0040 0022     		movs	r2, #0
-  94 0042 1A60     		str	r2, [r3]
-  43:controller/engine_cycle/trigger.c ****         break;
-  95              		.loc 1 43 9 is_stmt 1 view .LVU21
-  44:controller/engine_cycle/trigger.c ****   }
-  45:controller/engine_cycle/trigger.c **** }
-  96              		.loc 1 45 1 is_stmt 0 view .LVU22
-  97 0044 7047     		bx	lr
-  98              	.L10:
-  99 0046 00BF     		.align	2
- 100              	.L9:
- 101 0048 00000000 		.word	settings
- 102 004c 00000000 		.word	trigger_filter_time_us
- 103 0050 00000000 		.word	current_tooth_gap_us
- 104              		.cfi_endproc
- 105              	.LFE135:
- 107              		.section	.text.trigger_set_filtering,"ax",%progbits
- 108              		.align	1
- 109              		.global	trigger_set_filtering
- 110              		.syntax unified
- 111              		.thumb
- 112              		.thumb_func
- 114              	trigger_set_filtering:
- 115              	.LVL0:
- 116              	.LFB134:
-  18:controller/engine_cycle/trigger.c ****   settings.trigger_filtering = filtering_level;
- 117              		.loc 1 18 1 is_stmt 1 view -0
- 118              		.cfi_startproc
- 119              		@ args = 0, pretend = 0, frame = 0
- 120              		@ frame_needed = 0, uses_anonymous_args = 0
-  18:controller/engine_cycle/trigger.c ****   settings.trigger_filtering = filtering_level;
- 121              		.loc 1 18 1 is_stmt 0 view .LVU24
- 122 0000 08B5     		push	{r3, lr}
- 123              		.cfi_def_cfa_offset 8
- 124              		.cfi_offset 3, -8
- 125              		.cfi_offset 14, -4
-  19:controller/engine_cycle/trigger.c **** 
- 126              		.loc 1 19 3 is_stmt 1 view .LVU25
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 4
+  11:controller/engine_cycle/trigger.c ****       trigger->_trigger_filter_time_us = 0;
+  49              		.loc 1 11 7 is_stmt 1 view .LVU4
+  50              		.loc 1 11 40 is_stmt 0 view .LVU5
+  51 000e 0023     		movs	r3, #0
+  52 0010 C360     		str	r3, [r0, #12]
+  12:controller/engine_cycle/trigger.c ****         break;
+  53              		.loc 1 12 9 is_stmt 1 view .LVU6
+  54 0012 7047     		bx	lr
+  55              	.L6:
+  13:controller/engine_cycle/trigger.c ****     case TF_FILTERING_LITE:
+  14:controller/engine_cycle/trigger.c ****       trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us / 4U; 
+  56              		.loc 1 14 7 view .LVU7
+  57              		.loc 1 14 49 is_stmt 0 view .LVU8
+  58 0014 C369     		ldr	r3, [r0, #28]
+  59              		.loc 1 14 73 view .LVU9
+  60 0016 9B08     		lsrs	r3, r3, #2
+  61              		.loc 1 14 40 view .LVU10
+  62 0018 C360     		str	r3, [r0, #12]
+  15:controller/engine_cycle/trigger.c ****         break;
+  63              		.loc 1 15 9 is_stmt 1 view .LVU11
+  64 001a 7047     		bx	lr
+  65              	.L5:
+  16:controller/engine_cycle/trigger.c ****     case TF_FILTERING_MEDIUM:
+  17:controller/engine_cycle/trigger.c ****       trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us / 1U;
+  66              		.loc 1 17 7 view .LVU12
+  67              		.loc 1 17 49 is_stmt 0 view .LVU13
+  68 001c C369     		ldr	r3, [r0, #28]
+  69              		.loc 1 17 40 view .LVU14
+  70 001e C360     		str	r3, [r0, #12]
+  18:controller/engine_cycle/trigger.c ****         break;
+  71              		.loc 1 18 9 is_stmt 1 view .LVU15
+  72 0020 7047     		bx	lr
+  73              	.L3:
+  19:controller/engine_cycle/trigger.c ****     case TF_FILTERING_AGGRESSIVE:
+  20:controller/engine_cycle/trigger.c ****       trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us * 3 / 4;
+  74              		.loc 1 20 7 view .LVU16
+  75              		.loc 1 20 49 is_stmt 0 view .LVU17
+  76 0022 C369     		ldr	r3, [r0, #28]
+  77              		.loc 1 20 73 view .LVU18
+  78 0024 03EB4303 		add	r3, r3, r3, lsl #1
+  79              		.loc 1 20 77 view .LVU19
+  80 0028 9B08     		lsrs	r3, r3, #2
+  81              		.loc 1 20 40 view .LVU20
+  82 002a C360     		str	r3, [r0, #12]
+  21:controller/engine_cycle/trigger.c ****         break;
+  83              		.loc 1 21 9 is_stmt 1 view .LVU21
+  84 002c 7047     		bx	lr
+  85              	.L2:
+  22:controller/engine_cycle/trigger.c ****     default:
+  23:controller/engine_cycle/trigger.c ****         // Handle invalid filtering level
+  24:controller/engine_cycle/trigger.c ****         trigger->_trigger_filter_time_us = 0;
+  86              		.loc 1 24 9 view .LVU22
+  87              		.loc 1 24 42 is_stmt 0 view .LVU23
+  88 002e 0023     		movs	r3, #0
+  89 0030 C360     		str	r3, [r0, #12]
+  25:controller/engine_cycle/trigger.c ****         break;
+  90              		.loc 1 25 9 is_stmt 1 view .LVU24
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 3
 
 
-  19:controller/engine_cycle/trigger.c **** 
- 127              		.loc 1 19 30 is_stmt 0 view .LVU26
- 128 0002 024B     		ldr	r3, .L13
- 129 0004 1870     		strb	r0, [r3]
-  21:controller/engine_cycle/trigger.c **** }
- 130              		.loc 1 21 3 is_stmt 1 view .LVU27
- 131 0006 FFF7FEFF 		bl	set_filtering
- 132              	.LVL1:
-  22:controller/engine_cycle/trigger.c **** 
- 133              		.loc 1 22 1 is_stmt 0 view .LVU28
- 134 000a 08BD     		pop	{r3, pc}
- 135              	.L14:
- 136              		.align	2
- 137              	.L13:
- 138 000c 00000000 		.word	settings
- 139              		.cfi_endproc
- 140              	.LFE134:
- 142              		.section	.text.trigger_init,"ax",%progbits
- 143              		.align	1
- 144              		.global	trigger_init
- 145              		.syntax unified
- 146              		.thumb
- 147              		.thumb_func
- 149              	trigger_init:
- 150              	.LFB136:
-  46:controller/engine_cycle/trigger.c **** 
-  47:controller/engine_cycle/trigger.c **** void trigger_init(void)
-  48:controller/engine_cycle/trigger.c **** {   
- 151              		.loc 1 48 1 is_stmt 1 view -0
- 152              		.cfi_startproc
- 153              		@ args = 0, pretend = 0, frame = 0
- 154              		@ frame_needed = 0, uses_anonymous_args = 0
- 155 0000 38B5     		push	{r3, r4, r5, lr}
- 156              		.cfi_def_cfa_offset 16
- 157              		.cfi_offset 3, -16
- 158              		.cfi_offset 4, -12
- 159              		.cfi_offset 5, -8
- 160              		.cfi_offset 14, -4
-  49:controller/engine_cycle/trigger.c ****     trigger_status.sync_status = TS_NOT_SYNCED;
- 161              		.loc 1 49 5 view .LVU30
- 162              		.loc 1 49 32 is_stmt 0 view .LVU31
- 163 0002 074D     		ldr	r5, .L17
- 164 0004 0023     		movs	r3, #0
- 165 0006 6B70     		strb	r3, [r5, #1]
-  50:controller/engine_cycle/trigger.c ****     trigger_set_filtering(settings.trigger_filtering);
- 166              		.loc 1 50 5 is_stmt 1 view .LVU32
- 167              		.loc 1 50 35 is_stmt 0 view .LVU33
- 168 0008 064C     		ldr	r4, .L17+4
- 169              		.loc 1 50 5 view .LVU34
- 170 000a 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
- 171 000c FFF7FEFF 		bl	trigger_set_filtering
- 172              	.LVL2:
-  51:controller/engine_cycle/trigger.c ****     trigger_actual_teeth = settings.trigger_full_teeth - settings.trigger_missing_teeth;
- 173              		.loc 1 51 5 is_stmt 1 view .LVU35
- 174              		.loc 1 51 36 is_stmt 0 view .LVU36
- 175 0010 A378     		ldrb	r3, [r4, #2]	@ zero_extendqisi2
- 176              		.loc 1 51 66 view .LVU37
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 5
+  26:controller/engine_cycle/trigger.c ****   }
+  27:controller/engine_cycle/trigger.c **** }
+  91              		.loc 1 27 1 is_stmt 0 view .LVU25
+  92 0032 7047     		bx	lr
+  93              		.cfi_endproc
+  94              	.LFE134:
+  96              		.section	.text.trigger_init,"ax",%progbits
+  97              		.align	1
+  98              		.global	trigger_init
+  99              		.syntax unified
+ 100              		.thumb
+ 101              		.thumb_func
+ 103              	trigger_init:
+ 104              	.LVL1:
+ 105              	.LFB135:
+  28:controller/engine_cycle/trigger.c **** 
+  29:controller/engine_cycle/trigger.c **** void trigger_init(trigger_s *instance)
+  30:controller/engine_cycle/trigger.c **** {   
+ 106              		.loc 1 30 1 is_stmt 1 view -0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+  31:controller/engine_cycle/trigger.c ****   bool temp_status = true;
+ 110              		.loc 1 31 3 view .LVU27
+  32:controller/engine_cycle/trigger.c ****   if (instance == NULL)
+ 111              		.loc 1 32 3 view .LVU28
+ 112              		.loc 1 32 6 is_stmt 0 view .LVU29
+ 113 0000 B0B1     		cbz	r0, .L15
+  30:controller/engine_cycle/trigger.c ****   bool temp_status = true;
+ 114              		.loc 1 30 1 view .LVU30
+ 115 0002 10B5     		push	{r4, lr}
+ 116              		.cfi_def_cfa_offset 8
+ 117              		.cfi_offset 4, -8
+ 118              		.cfi_offset 14, -4
+  33:controller/engine_cycle/trigger.c ****   {
+  34:controller/engine_cycle/trigger.c ****     /**
+  35:controller/engine_cycle/trigger.c ****      * @todo and maybe throw an error!
+  36:controller/engine_cycle/trigger.c ****      */
+  37:controller/engine_cycle/trigger.c ****     return;
+  38:controller/engine_cycle/trigger.c ****   }
+  39:controller/engine_cycle/trigger.c ****   trigger = instance;
+ 119              		.loc 1 39 3 is_stmt 1 view .LVU31
+ 120              		.loc 1 39 11 is_stmt 0 view .LVU32
+ 121 0004 0B4C     		ldr	r4, .L18
+ 122 0006 2060     		str	r0, [r4]
+  40:controller/engine_cycle/trigger.c ****   
+  41:controller/engine_cycle/trigger.c ****   trigger->sync_status = TS_NOT_SYNCED;
+ 123              		.loc 1 41 3 is_stmt 1 view .LVU33
+ 124              		.loc 1 41 24 is_stmt 0 view .LVU34
+ 125 0008 0022     		movs	r2, #0
+ 126 000a 4270     		strb	r2, [r0, #1]
+  42:controller/engine_cycle/trigger.c ****   set_filtering(trigger);
+ 127              		.loc 1 42 3 is_stmt 1 view .LVU35
+ 128 000c 2068     		ldr	r0, [r4]
+ 129              	.LVL2:
+ 130              		.loc 1 42 3 is_stmt 0 view .LVU36
+ 131 000e FFF7FEFF 		bl	set_filtering
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 4
 
 
- 177 0012 6278     		ldrb	r2, [r4, #1]	@ zero_extendqisi2
- 178              		.loc 1 51 56 view .LVU38
- 179 0014 9B1A     		subs	r3, r3, r2
- 180              		.loc 1 51 26 view .LVU39
- 181 0016 044A     		ldr	r2, .L17+8
- 182 0018 1370     		strb	r3, [r2]
-  52:controller/engine_cycle/trigger.c ****     
-  53:controller/engine_cycle/trigger.c ****     
-  54:controller/engine_cycle/trigger.c ****     trigger_status.initialized = true;
- 183              		.loc 1 54 5 is_stmt 1 view .LVU40
- 184              		.loc 1 54 32 is_stmt 0 view .LVU41
- 185 001a 0123     		movs	r3, #1
- 186 001c 2B70     		strb	r3, [r5]
-  55:controller/engine_cycle/trigger.c ****     
-  56:controller/engine_cycle/trigger.c **** }
- 187              		.loc 1 56 1 view .LVU42
- 188 001e 38BD     		pop	{r3, r4, r5, pc}
- 189              	.L18:
- 190              		.align	2
- 191              	.L17:
- 192 0020 00000000 		.word	trigger_status
- 193 0024 00000000 		.word	settings
- 194 0028 00000000 		.word	trigger_actual_teeth
- 195              		.cfi_endproc
- 196              	.LFE136:
- 198              		.section	.text.trigger_tooth_handle,"ax",%progbits
- 199              		.align	1
- 200              		.global	trigger_tooth_handle
- 201              		.syntax unified
- 202              		.thumb
- 203              		.thumb_func
- 205              	trigger_tooth_handle:
- 206              	.LFB137:
-  57:controller/engine_cycle/trigger.c **** void trigger_tooth_handle(void)
-  58:controller/engine_cycle/trigger.c **** {
- 207              		.loc 1 58 1 is_stmt 1 view -0
- 208              		.cfi_startproc
- 209              		@ args = 0, pretend = 0, frame = 0
- 210              		@ frame_needed = 0, uses_anonymous_args = 0
- 211 0000 08B5     		push	{r3, lr}
- 212              		.cfi_def_cfa_offset 8
- 213              		.cfi_offset 3, -8
- 214              		.cfi_offset 14, -4
-  59:controller/engine_cycle/trigger.c **** 
-  60:controller/engine_cycle/trigger.c ****   if (!trigger_status.initialized)
- 215              		.loc 1 60 3 view .LVU44
- 216              		.loc 1 60 22 is_stmt 0 view .LVU45
- 217 0002 334B     		ldr	r3, .L32
- 218 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 219              		.loc 1 60 6 view .LVU46
- 220 0006 03B9     		cbnz	r3, .L29
- 221              	.L19:
-  61:controller/engine_cycle/trigger.c ****   {
-  62:controller/engine_cycle/trigger.c ****       /**
-  63:controller/engine_cycle/trigger.c ****        * @todo add an error message
-  64:controller/engine_cycle/trigger.c ****        */
-  65:controller/engine_cycle/trigger.c ****       return;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 6
+ 132              	.LVL3:
+  43:controller/engine_cycle/trigger.c ****   trigger->_trigger_actual_teeth = trigger->settings.full_teeth - trigger->settings.missing_teeth;
+ 133              		.loc 1 43 3 is_stmt 1 view .LVU37
+ 134              		.loc 1 43 43 is_stmt 0 view .LVU38
+ 135 0012 2368     		ldr	r3, [r4]
+ 136              		.loc 1 43 53 view .LVU39
+ 137 0014 5A79     		ldrb	r2, [r3, #5]	@ zero_extendqisi2
+ 138              		.loc 1 43 84 view .LVU40
+ 139 0016 9979     		ldrb	r1, [r3, #6]	@ zero_extendqisi2
+ 140              		.loc 1 43 65 view .LVU41
+ 141 0018 501A     		subs	r0, r2, r1
+ 142              		.loc 1 43 34 view .LVU42
+ 143 001a 83F82A00 		strb	r0, [r3, #42]
+  44:controller/engine_cycle/trigger.c ****     
+  45:controller/engine_cycle/trigger.c ****   if (trigger->settings.full_teeth == 0 || trigger->settings.missing_teeth == 0)
+ 144              		.loc 1 45 3 is_stmt 1 view .LVU43
+ 145              		.loc 1 45 6 is_stmt 0 view .LVU44
+ 146 001e 12B1     		cbz	r2, .L12
+ 147              		.loc 1 45 41 discriminator 1 view .LVU45
+ 148 0020 21B1     		cbz	r1, .L13
+  31:controller/engine_cycle/trigger.c ****   if (instance == NULL)
+ 149              		.loc 1 31 8 view .LVU46
+ 150 0022 0122     		movs	r2, #1
+ 151 0024 00E0     		b	.L11
+ 152              	.L12:
+  46:controller/engine_cycle/trigger.c ****   {
+  47:controller/engine_cycle/trigger.c ****     temp_status = false;
+ 153              		.loc 1 47 17 view .LVU47
+ 154 0026 0022     		movs	r2, #0
+ 155              	.L11:
+ 156              	.LVL4:
+  48:controller/engine_cycle/trigger.c ****   }
+  49:controller/engine_cycle/trigger.c ****   trigger->initialized = temp_status;
+ 157              		.loc 1 49 3 is_stmt 1 view .LVU48
+ 158              		.loc 1 49 24 is_stmt 0 view .LVU49
+ 159 0028 1A70     		strb	r2, [r3]
+  50:controller/engine_cycle/trigger.c ****     
+  51:controller/engine_cycle/trigger.c **** }
+ 160              		.loc 1 51 1 view .LVU50
+ 161 002a 10BD     		pop	{r4, pc}
+ 162              	.LVL5:
+ 163              	.L13:
+  47:controller/engine_cycle/trigger.c ****   }
+ 164              		.loc 1 47 17 view .LVU51
+ 165 002c 0022     		movs	r2, #0
+ 166 002e FBE7     		b	.L11
+ 167              	.LVL6:
+ 168              	.L15:
+ 169              		.cfi_def_cfa_offset 0
+ 170              		.cfi_restore 4
+ 171              		.cfi_restore 14
+  47:controller/engine_cycle/trigger.c ****   }
+ 172              		.loc 1 47 17 view .LVU52
+ 173 0030 7047     		bx	lr
+ 174              	.L19:
+ 175 0032 00BF     		.align	2
+ 176              	.L18:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 5
 
 
-  66:controller/engine_cycle/trigger.c ****   }
-  67:controller/engine_cycle/trigger.c **** 
-  68:controller/engine_cycle/trigger.c ****   tooth_time_us[0] = get_time_us();
-  69:controller/engine_cycle/trigger.c ****   current_tooth_gap_us = tooth_time_us[0] - tooth_time_us[1];
-  70:controller/engine_cycle/trigger.c ****   
-  71:controller/engine_cycle/trigger.c ****   if (current_tooth_gap_us < trigger_filter_time_us) // Pulses should never be less than trigger_fi
-  72:controller/engine_cycle/trigger.c ****   {
-  73:controller/engine_cycle/trigger.c ****     return;
-  74:controller/engine_cycle/trigger.c ****   }
+ 177 0034 00000000 		.word	trigger
+ 178              		.cfi_endproc
+ 179              	.LFE135:
+ 181              		.section	.text.trigger_tooth_handle,"ax",%progbits
+ 182              		.align	1
+ 183              		.global	trigger_tooth_handle
+ 184              		.syntax unified
+ 185              		.thumb
+ 186              		.thumb_func
+ 188              	trigger_tooth_handle:
+ 189              	.LFB136:
+  52:controller/engine_cycle/trigger.c **** 
+  53:controller/engine_cycle/trigger.c **** void trigger_tooth_handle()
+  54:controller/engine_cycle/trigger.c **** {
+ 190              		.loc 1 54 1 is_stmt 1 view -0
+ 191              		.cfi_startproc
+ 192              		@ args = 0, pretend = 0, frame = 0
+ 193              		@ frame_needed = 0, uses_anonymous_args = 0
+ 194 0000 38B5     		push	{r3, r4, r5, lr}
+ 195              		.cfi_def_cfa_offset 16
+ 196              		.cfi_offset 3, -16
+ 197              		.cfi_offset 4, -12
+ 198              		.cfi_offset 5, -8
+ 199              		.cfi_offset 14, -4
+  55:controller/engine_cycle/trigger.c **** 
+  56:controller/engine_cycle/trigger.c ****   if (!trigger->initialized)
+ 200              		.loc 1 56 3 view .LVU54
+ 201              		.loc 1 56 15 is_stmt 0 view .LVU55
+ 202 0002 514B     		ldr	r3, .L45
+ 203 0004 1C68     		ldr	r4, [r3]
+ 204 0006 2578     		ldrb	r5, [r4]	@ zero_extendqisi2
+ 205              		.loc 1 56 6 view .LVU56
+ 206 0008 05B9     		cbnz	r5, .L40
+ 207              	.L20:
+  57:controller/engine_cycle/trigger.c ****   {
+  58:controller/engine_cycle/trigger.c ****       /**
+  59:controller/engine_cycle/trigger.c ****        * @todo add an error message
+  60:controller/engine_cycle/trigger.c ****        */
+  61:controller/engine_cycle/trigger.c ****       return;
+  62:controller/engine_cycle/trigger.c ****   }
+  63:controller/engine_cycle/trigger.c **** 
+  64:controller/engine_cycle/trigger.c ****   trigger->_tooth_time_us[0] = get_time_us();
+  65:controller/engine_cycle/trigger.c ****   trigger->_current_tooth_gap_us = trigger->_tooth_time_us[0] - trigger->_tooth_time_us[1];
+  66:controller/engine_cycle/trigger.c ****   
+  67:controller/engine_cycle/trigger.c ****   if (trigger->_current_tooth_gap_us < trigger->_trigger_filter_time_us) // Pulses should never be 
+  68:controller/engine_cycle/trigger.c ****   {
+  69:controller/engine_cycle/trigger.c ****     // Reset the filter to avoid getting stuck
+  70:controller/engine_cycle/trigger.c ****     //trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us / 2U;
+  71:controller/engine_cycle/trigger.c ****     return;
+  72:controller/engine_cycle/trigger.c ****   }
+  73:controller/engine_cycle/trigger.c ****   
+  74:controller/engine_cycle/trigger.c ****   trigger->_counted_tooth++; //Increment the tooth counter
   75:controller/engine_cycle/trigger.c ****   
-  76:controller/engine_cycle/trigger.c ****   counted_tooth++; //Increment the tooth counter
+  76:controller/engine_cycle/trigger.c ****   bool is_missing_teeth = false;
   77:controller/engine_cycle/trigger.c ****   
-  78:controller/engine_cycle/trigger.c ****   bool is_missing_teeth = false;
-  79:controller/engine_cycle/trigger.c ****   
-  80:controller/engine_cycle/trigger.c ****   // if we had previous data calculate the tooth gap
-  81:controller/engine_cycle/trigger.c ****   if (tooth_time_us[1] == 0 || tooth_time_us[2] == 0)
-  82:controller/engine_cycle/trigger.c ****   {
-  83:controller/engine_cycle/trigger.c ****     //return;
-  84:controller/engine_cycle/trigger.c ****   }
-  85:controller/engine_cycle/trigger.c ****   
-  86:controller/engine_cycle/trigger.c ****   
-  87:controller/engine_cycle/trigger.c ****   controller_time_us_t previous_tooth_gap = 0;
-  88:controller/engine_cycle/trigger.c ****   controller_time_us_t shorter_tooth_gap = 0;
-  89:controller/engine_cycle/trigger.c ****   previous_tooth_gap = tooth_time_us[1] - tooth_time_us[2];
-  90:controller/engine_cycle/trigger.c **** 
-  91:controller/engine_cycle/trigger.c ****   // this selects the shorter tooth gap since that is more approprate 
-  92:controller/engine_cycle/trigger.c ****   if (previous_tooth_gap < current_tooth_gap_us) 
-  93:controller/engine_cycle/trigger.c ****   {
-  94:controller/engine_cycle/trigger.c ****     /**
-  95:controller/engine_cycle/trigger.c ****      * We use the previous tooth gap since the current tooth gap might be long and indicate missing
-  96:controller/engine_cycle/trigger.c ****      */
-  97:controller/engine_cycle/trigger.c ****     shorter_tooth_gap = previous_tooth_gap;
-  98:controller/engine_cycle/trigger.c ****   }
-  99:controller/engine_cycle/trigger.c ****   else
- 100:controller/engine_cycle/trigger.c ****   {
- 101:controller/engine_cycle/trigger.c ****     shorter_tooth_gap = current_tooth_gap_us;
- 102:controller/engine_cycle/trigger.c ****   }
- 103:controller/engine_cycle/trigger.c ****     
- 104:controller/engine_cycle/trigger.c ****     
- 105:controller/engine_cycle/trigger.c ****     
- 106:controller/engine_cycle/trigger.c ****   //If the time between the current tooth and the last is greater than 1.5x the time between the la
- 107:controller/engine_cycle/trigger.c ****   if(settings.trigger_missing_teeth == 1)
+  78:controller/engine_cycle/trigger.c ****   // if we had previous data calculate the tooth gap
+  79:controller/engine_cycle/trigger.c ****   if (trigger->_tooth_time_us[1] == 0 || trigger->_tooth_time_us[2] == 0)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 6
+
+
+  80:controller/engine_cycle/trigger.c ****   {
+  81:controller/engine_cycle/trigger.c ****     //return;
+  82:controller/engine_cycle/trigger.c ****   }
+  83:controller/engine_cycle/trigger.c ****     
+  84:controller/engine_cycle/trigger.c ****   controller_time_us_t previous_tooth_gap = 0;
+  85:controller/engine_cycle/trigger.c **** 
+  86:controller/engine_cycle/trigger.c ****   previous_tooth_gap = trigger->_tooth_time_us[1] - trigger->_tooth_time_us[2];
+  87:controller/engine_cycle/trigger.c **** 
+  88:controller/engine_cycle/trigger.c ****   // this selects the shorter tooth gap since that is more appropriate 
+  89:controller/engine_cycle/trigger.c ****   if (previous_tooth_gap < trigger->_current_tooth_gap_us) 
+  90:controller/engine_cycle/trigger.c ****   {
+  91:controller/engine_cycle/trigger.c ****     /**
+  92:controller/engine_cycle/trigger.c ****      * We use the previous tooth gap since the current tooth gap might be long and indicate missing
+  93:controller/engine_cycle/trigger.c ****      */
+  94:controller/engine_cycle/trigger.c ****     trigger->_shorter_tooth_gap = previous_tooth_gap;
+  95:controller/engine_cycle/trigger.c ****   }
+  96:controller/engine_cycle/trigger.c ****   else
+  97:controller/engine_cycle/trigger.c ****   {
+  98:controller/engine_cycle/trigger.c ****     trigger->_shorter_tooth_gap = trigger->_current_tooth_gap_us;
+  99:controller/engine_cycle/trigger.c ****   }
+ 100:controller/engine_cycle/trigger.c ****     
+ 101:controller/engine_cycle/trigger.c **** 
+ 102:controller/engine_cycle/trigger.c ****   //If the time between the current tooth and the last is greater than 1.5x the time between the la
+ 103:controller/engine_cycle/trigger.c ****   if(trigger->settings.missing_teeth == 1)
+ 104:controller/engine_cycle/trigger.c ****   {
+ 105:controller/engine_cycle/trigger.c ****     trigger->_target_tooth_gap_us = (3 * trigger->_shorter_tooth_gap) >> 1; 
+ 106:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
+ 107:controller/engine_cycle/trigger.c ****   else
  108:controller/engine_cycle/trigger.c ****   {
- 109:controller/engine_cycle/trigger.c ****     target_tooth_gap_us = (3 * shorter_tooth_gap) >> 1; 
- 110:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
- 111:controller/engine_cycle/trigger.c ****   else
- 112:controller/engine_cycle/trigger.c ****   {
- 113:controller/engine_cycle/trigger.c ****       target_tooth_gap_us = shorter_tooth_gap * settings.trigger_missing_teeth;
- 114:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
- 115:controller/engine_cycle/trigger.c ****   
- 116:controller/engine_cycle/trigger.c ****   //if( (tooth_time_us[1] == 0) || (tooth_time_us[2] == 0) ) { current_tooth_gap_us = 0; } 
- 117:controller/engine_cycle/trigger.c **** 
- 118:controller/engine_cycle/trigger.c ****     
- 119:controller/engine_cycle/trigger.c ****   if ((current_tooth_gap_us > target_tooth_gap_us) || (counted_tooth > trigger_actual_teeth))
- 120:controller/engine_cycle/trigger.c ****   {
- 121:controller/engine_cycle/trigger.c ****     //Missing tooth detected
- 122:controller/engine_cycle/trigger.c ****     is_missing_teeth = true;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 7
+ 109:controller/engine_cycle/trigger.c ****     trigger->_target_tooth_gap_us = trigger->_shorter_tooth_gap * trigger->settings.missing_teeth;
+ 110:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
+ 111:controller/engine_cycle/trigger.c ****   
+ 112:controller/engine_cycle/trigger.c ****   //if( (_tooth_time_us[1] == 0) || (_tooth_time_us[2] == 0) ) { _current_tooth_gap_us = 0; } 
+ 113:controller/engine_cycle/trigger.c **** 
+ 114:controller/engine_cycle/trigger.c ****     
+ 115:controller/engine_cycle/trigger.c ****   if ((trigger->_current_tooth_gap_us > trigger->_target_tooth_gap_us) || (trigger->_counted_tooth 
+ 116:controller/engine_cycle/trigger.c ****   {
+ 117:controller/engine_cycle/trigger.c ****     //Missing tooth detected
+ 118:controller/engine_cycle/trigger.c ****     is_missing_teeth = true;
+ 119:controller/engine_cycle/trigger.c ****     /**
+ 120:controller/engine_cycle/trigger.c ****      * this means that we  have missed a few teeth for some reason
+ 121:controller/engine_cycle/trigger.c ****      */
+ 122:controller/engine_cycle/trigger.c ****     if (trigger->_counted_tooth < trigger->_trigger_actual_teeth)
+ 123:controller/engine_cycle/trigger.c ****     {
+ 124:controller/engine_cycle/trigger.c ****       trigger->sync_status = TS_NOT_SYNCED;
+ 125:controller/engine_cycle/trigger.c ****       trigger->sync_loss_counter++;
+ 126:controller/engine_cycle/trigger.c ****       engine.total_revolutions = 0;
+ 127:controller/engine_cycle/trigger.c ****       engine.rpm = 0;
+ 128:controller/engine_cycle/trigger.c ****       trigger->_counted_tooth = 0;
+ 129:controller/engine_cycle/trigger.c ****     }
+ 130:controller/engine_cycle/trigger.c ****     else
+ 131:controller/engine_cycle/trigger.c ****     {
+ 132:controller/engine_cycle/trigger.c ****       trigger->sync_status = TS_FULLY_SYNCED;
+ 133:controller/engine_cycle/trigger.c ****       engine.total_revolutions++;
+ 134:controller/engine_cycle/trigger.c ****       trigger->_counted_tooth = 0;
+ 135:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
+ 136:controller/engine_cycle/trigger.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 7
 
 
- 123:controller/engine_cycle/trigger.c ****     /**
- 124:controller/engine_cycle/trigger.c ****      * this means that we  have missed a few teeth for some reason
- 125:controller/engine_cycle/trigger.c ****      */
- 126:controller/engine_cycle/trigger.c ****     if (counted_tooth < trigger_actual_teeth)
- 127:controller/engine_cycle/trigger.c ****     {
- 128:controller/engine_cycle/trigger.c ****       trigger_status.sync_status = TS_NOT_SYNCED;
- 129:controller/engine_cycle/trigger.c ****       trigger_status.cync_loss_counter++;
- 130:controller/engine_cycle/trigger.c ****       engine_parameters.total_revolutions = 0;
- 131:controller/engine_cycle/trigger.c ****       counted_tooth = 0;
- 132:controller/engine_cycle/trigger.c ****     }
- 133:controller/engine_cycle/trigger.c ****     else
- 134:controller/engine_cycle/trigger.c ****     {
- 135:controller/engine_cycle/trigger.c ****       trigger_status.sync_status = TS_FULLY_SYNCED;
- 136:controller/engine_cycle/trigger.c ****       engine_parameters.total_revolutions++;
- 137:controller/engine_cycle/trigger.c ****       counted_tooth = 0;
- 138:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
- 139:controller/engine_cycle/trigger.c ****     }
- 140:controller/engine_cycle/trigger.c ****     
- 141:controller/engine_cycle/trigger.c ****   }
- 142:controller/engine_cycle/trigger.c ****     
- 143:controller/engine_cycle/trigger.c ****   /**
- 144:controller/engine_cycle/trigger.c ****    * @todo make sure the filter cannot get stuck in any condition
- 145:controller/engine_cycle/trigger.c ****    */
- 146:controller/engine_cycle/trigger.c ****   if(is_missing_teeth == false)
- 147:controller/engine_cycle/trigger.c ****   {
- 148:controller/engine_cycle/trigger.c ****     //Regular (non-missing) tooth
- 149:controller/engine_cycle/trigger.c ****     set_filtering(); 
+ 137:controller/engine_cycle/trigger.c ****   }
+ 138:controller/engine_cycle/trigger.c ****   
+ 139:controller/engine_cycle/trigger.c ****   engine.crankshaft_angle = 360.0f / (angle_t)trigger->settings.full_teeth * (angle_t)trigger->_cou
+ 140:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 141:controller/engine_cycle/trigger.c **** 
+ 142:controller/engine_cycle/trigger.c **** 
+ 143:controller/engine_cycle/trigger.c ****   if (trigger->sync_status == TS_FULLY_SYNCED && engine.rpm >= trigger->cranking_rpm_threshold)
+ 144:controller/engine_cycle/trigger.c ****   {
+ 145:controller/engine_cycle/trigger.c ****     engine.spinning_state = SS_RUNNING;
+ 146:controller/engine_cycle/trigger.c ****   }
+ 147:controller/engine_cycle/trigger.c ****   if (trigger->sync_status == TS_FULLY_SYNCED && engine.rpm < trigger->cranking_rpm_threshold)
+ 148:controller/engine_cycle/trigger.c ****   {
+ 149:controller/engine_cycle/trigger.c ****     engine.spinning_state = SS_CRANKING;
  150:controller/engine_cycle/trigger.c ****   }
- 151:controller/engine_cycle/trigger.c ****   
- 152:controller/engine_cycle/trigger.c ****   tooth_time_us[2] = tooth_time_us[1];
- 153:controller/engine_cycle/trigger.c ****   tooth_time_us[1] = tooth_time_us[0];
- 154:controller/engine_cycle/trigger.c **** 
- 155:controller/engine_cycle/trigger.c **** }
- 222              		.loc 1 155 1 view .LVU47
- 223 0008 08BD     		pop	{r3, pc}
- 224              	.L29:
-  68:controller/engine_cycle/trigger.c ****   current_tooth_gap_us = tooth_time_us[0] - tooth_time_us[1];
- 225              		.loc 1 68 3 is_stmt 1 view .LVU48
-  68:controller/engine_cycle/trigger.c ****   current_tooth_gap_us = tooth_time_us[0] - tooth_time_us[1];
- 226              		.loc 1 68 22 is_stmt 0 view .LVU49
- 227 000a FFF7FEFF 		bl	get_time_us
- 228              	.LVL3:
-  68:controller/engine_cycle/trigger.c ****   current_tooth_gap_us = tooth_time_us[0] - tooth_time_us[1];
- 229              		.loc 1 68 20 discriminator 1 view .LVU50
- 230 000e 314A     		ldr	r2, .L32+4
- 231 0010 1060     		str	r0, [r2]
-  69:controller/engine_cycle/trigger.c ****   
- 232              		.loc 1 69 3 is_stmt 1 view .LVU51
-  69:controller/engine_cycle/trigger.c ****   
- 233              		.loc 1 69 39 is_stmt 0 view .LVU52
- 234 0012 1368     		ldr	r3, [r2]
-  69:controller/engine_cycle/trigger.c ****   
- 235              		.loc 1 69 58 view .LVU53
- 236 0014 5268     		ldr	r2, [r2, #4]
-  69:controller/engine_cycle/trigger.c ****   
- 237              		.loc 1 69 43 view .LVU54
- 238 0016 9B1A     		subs	r3, r3, r2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 8
+ 151:controller/engine_cycle/trigger.c ****   if (trigger->sync_status == TS_NOT_SYNCED)
+ 152:controller/engine_cycle/trigger.c ****   {
+ 153:controller/engine_cycle/trigger.c ****     engine.spinning_state = SS_SPINNING_UP;
+ 154:controller/engine_cycle/trigger.c ****   }
+ 155:controller/engine_cycle/trigger.c ****   else
+ 156:controller/engine_cycle/trigger.c ****   {
+ 157:controller/engine_cycle/trigger.c ****     engine.spinning_state = SS_STOPPED;
+ 158:controller/engine_cycle/trigger.c ****   }
+ 159:controller/engine_cycle/trigger.c ****   
+ 160:controller/engine_cycle/trigger.c **** 
+ 161:controller/engine_cycle/trigger.c ****   /**
+ 162:controller/engine_cycle/trigger.c ****    * @todo make sure the filter cannot get stuck in any condition
+ 163:controller/engine_cycle/trigger.c ****    */
+ 164:controller/engine_cycle/trigger.c ****   if(is_missing_teeth == false)
+ 165:controller/engine_cycle/trigger.c ****   {
+ 166:controller/engine_cycle/trigger.c ****     //Regular (non-missing) tooth
+ 167:controller/engine_cycle/trigger.c ****     set_filtering(trigger); 
+ 168:controller/engine_cycle/trigger.c ****   }
+ 169:controller/engine_cycle/trigger.c ****   
+ 170:controller/engine_cycle/trigger.c ****   trigger->_tooth_time_us[2] = trigger->_tooth_time_us[1];
+ 171:controller/engine_cycle/trigger.c ****   trigger->_tooth_time_us[1] = trigger->_tooth_time_us[0];
+ 172:controller/engine_cycle/trigger.c **** }
+ 208              		.loc 1 172 1 view .LVU57
+ 209 000a 38BD     		pop	{r3, r4, r5, pc}
+ 210              	.L40:
+  64:controller/engine_cycle/trigger.c ****   trigger->_current_tooth_gap_us = trigger->_tooth_time_us[0] - trigger->_tooth_time_us[1];
+ 211              		.loc 1 64 3 is_stmt 1 view .LVU58
+  64:controller/engine_cycle/trigger.c ****   trigger->_current_tooth_gap_us = trigger->_tooth_time_us[0] - trigger->_tooth_time_us[1];
+ 212              		.loc 1 64 32 is_stmt 0 view .LVU59
+ 213 000c FFF7FEFF 		bl	get_time_us
+ 214              	.LVL7:
+  64:controller/engine_cycle/trigger.c ****   trigger->_current_tooth_gap_us = trigger->_tooth_time_us[0] - trigger->_tooth_time_us[1];
+ 215              		.loc 1 64 30 discriminator 1 view .LVU60
+ 216 0010 2061     		str	r0, [r4, #16]
+  65:controller/engine_cycle/trigger.c ****   
+ 217              		.loc 1 65 3 is_stmt 1 view .LVU61
+  65:controller/engine_cycle/trigger.c ****   
+ 218              		.loc 1 65 43 is_stmt 0 view .LVU62
+ 219 0012 4D4B     		ldr	r3, .L45
+ 220 0014 1B68     		ldr	r3, [r3]
+  65:controller/engine_cycle/trigger.c ****   
+ 221              		.loc 1 65 59 view .LVU63
+ 222 0016 1A69     		ldr	r2, [r3, #16]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 8
 
 
-  69:controller/engine_cycle/trigger.c ****   
- 239              		.loc 1 69 24 view .LVU55
- 240 0018 2F4A     		ldr	r2, .L32+8
- 241 001a 1360     		str	r3, [r2]
-  71:controller/engine_cycle/trigger.c ****   {
- 242              		.loc 1 71 3 is_stmt 1 view .LVU56
-  71:controller/engine_cycle/trigger.c ****   {
- 243              		.loc 1 71 28 is_stmt 0 view .LVU57
- 244 001c 1268     		ldr	r2, [r2]
- 245 001e 2F4B     		ldr	r3, .L32+12
- 246 0020 1B68     		ldr	r3, [r3]
-  71:controller/engine_cycle/trigger.c ****   {
- 247              		.loc 1 71 6 view .LVU58
- 248 0022 9A42     		cmp	r2, r3
- 249 0024 F0D3     		bcc	.L19
+  65:controller/engine_cycle/trigger.c ****   
+ 223              		.loc 1 65 88 view .LVU64
+ 224 0018 5869     		ldr	r0, [r3, #20]
+  65:controller/engine_cycle/trigger.c ****   
+ 225              		.loc 1 65 63 view .LVU65
+ 226 001a 121A     		subs	r2, r2, r0
+  65:controller/engine_cycle/trigger.c ****   
+ 227              		.loc 1 65 34 view .LVU66
+ 228 001c DA61     		str	r2, [r3, #28]
+  67:controller/engine_cycle/trigger.c ****   {
+ 229              		.loc 1 67 3 is_stmt 1 view .LVU67
+  67:controller/engine_cycle/trigger.c ****   {
+ 230              		.loc 1 67 47 is_stmt 0 view .LVU68
+ 231 001e D968     		ldr	r1, [r3, #12]
+  67:controller/engine_cycle/trigger.c ****   {
+ 232              		.loc 1 67 6 view .LVU69
+ 233 0020 8A42     		cmp	r2, r1
+ 234 0022 F2D3     		bcc	.L20
+  74:controller/engine_cycle/trigger.c ****   
+ 235              		.loc 1 74 3 is_stmt 1 view .LVU70
+  74:controller/engine_cycle/trigger.c ****   
+ 236              		.loc 1 74 10 is_stmt 0 view .LVU71
+ 237 0024 198D     		ldrh	r1, [r3, #40]
+  74:controller/engine_cycle/trigger.c ****   
+ 238              		.loc 1 74 26 view .LVU72
+ 239 0026 0131     		adds	r1, r1, #1
+ 240 0028 89B2     		uxth	r1, r1
+ 241 002a 1985     		strh	r1, [r3, #40]	@ movhi
   76:controller/engine_cycle/trigger.c ****   
- 250              		.loc 1 76 3 is_stmt 1 view .LVU59
+ 242              		.loc 1 76 3 is_stmt 1 view .LVU73
+ 243              	.LVL8:
+  79:controller/engine_cycle/trigger.c ****   {
+ 244              		.loc 1 79 3 view .LVU74
+  82:controller/engine_cycle/trigger.c ****     
+ 245              		.loc 1 82 3 view .LVU75
+  84:controller/engine_cycle/trigger.c **** 
+ 246              		.loc 1 84 3 view .LVU76
+  86:controller/engine_cycle/trigger.c **** 
+ 247              		.loc 1 86 3 view .LVU77
+  86:controller/engine_cycle/trigger.c **** 
+ 248              		.loc 1 86 76 is_stmt 0 view .LVU78
+ 249 002c 9C69     		ldr	r4, [r3, #24]
+  86:controller/engine_cycle/trigger.c **** 
+ 250              		.loc 1 86 22 view .LVU79
+ 251 002e 001B     		subs	r0, r0, r4
+ 252              	.LVL9:
+  89:controller/engine_cycle/trigger.c ****   {
+ 253              		.loc 1 89 3 is_stmt 1 view .LVU80
+  89:controller/engine_cycle/trigger.c ****   {
+ 254              		.loc 1 89 6 is_stmt 0 view .LVU81
+ 255 0030 8242     		cmp	r2, r0
+ 256 0032 56D9     		bls	.L22
+  94:controller/engine_cycle/trigger.c ****   }
+ 257              		.loc 1 94 5 is_stmt 1 view .LVU82
+  94:controller/engine_cycle/trigger.c ****   }
+ 258              		.loc 1 94 33 is_stmt 0 view .LVU83
+ 259 0034 1862     		str	r0, [r3, #32]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 9
+
+
+ 260              	.L23:
+ 103:controller/engine_cycle/trigger.c ****   {
+ 261              		.loc 1 103 3 is_stmt 1 view .LVU84
+ 103:controller/engine_cycle/trigger.c ****   {
+ 262              		.loc 1 103 23 is_stmt 0 view .LVU85
+ 263 0036 9879     		ldrb	r0, [r3, #6]	@ zero_extendqisi2
+ 264              	.LVL10:
+ 103:controller/engine_cycle/trigger.c ****   {
+ 265              		.loc 1 103 5 view .LVU86
+ 266 0038 0128     		cmp	r0, #1
+ 267 003a 54D0     		beq	.L41
+ 109:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
+ 268              		.loc 1 109 5 is_stmt 1 view .LVU87
+ 109:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
+ 269              		.loc 1 109 44 is_stmt 0 view .LVU88
+ 270 003c 1C6A     		ldr	r4, [r3, #32]
+ 271              	.LVL11:
+ 109:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
+ 272              		.loc 1 109 65 view .LVU89
+ 273 003e 00FB04F4 		mul	r4, r0, r4
+ 109:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
+ 274              		.loc 1 109 35 view .LVU90
+ 275 0042 5C62     		str	r4, [r3, #36]
+ 276              	.L25:
+ 115:controller/engine_cycle/trigger.c ****   {
+ 277              		.loc 1 115 3 is_stmt 1 view .LVU91
+ 115:controller/engine_cycle/trigger.c ****   {
+ 278              		.loc 1 115 48 is_stmt 0 view .LVU92
+ 279 0044 586A     		ldr	r0, [r3, #36]
+ 115:controller/engine_cycle/trigger.c ****   {
+ 280              		.loc 1 115 6 view .LVU93
+ 281 0046 8242     		cmp	r2, r0
+ 282 0048 03D8     		bhi	.L26
+ 115:controller/engine_cycle/trigger.c ****   {
+ 283              		.loc 1 115 109 discriminator 1 view .LVU94
+ 284 004a 93F82A20 		ldrb	r2, [r3, #42]	@ zero_extendqisi2
+ 115:controller/engine_cycle/trigger.c ****   {
+ 285              		.loc 1 115 72 discriminator 1 view .LVU95
+ 286 004e 9142     		cmp	r1, r2
+ 287 0050 5AD9     		bls	.L36
+ 288              	.L26:
+ 118:controller/engine_cycle/trigger.c ****     /**
+ 289              		.loc 1 118 5 is_stmt 1 view .LVU96
+ 290              	.LVL12:
+ 122:controller/engine_cycle/trigger.c ****     {
+ 291              		.loc 1 122 5 view .LVU97
+ 122:controller/engine_cycle/trigger.c ****     {
+ 292              		.loc 1 122 42 is_stmt 0 view .LVU98
+ 293 0052 93F82A20 		ldrb	r2, [r3, #42]	@ zero_extendqisi2
+ 122:controller/engine_cycle/trigger.c ****     {
+ 294              		.loc 1 122 8 view .LVU99
+ 295 0056 9142     		cmp	r1, r2
+ 296 0058 4BD2     		bcs	.L28
+ 124:controller/engine_cycle/trigger.c ****       trigger->sync_loss_counter++;
+ 297              		.loc 1 124 7 is_stmt 1 view .LVU100
+ 124:controller/engine_cycle/trigger.c ****       trigger->sync_loss_counter++;
+ 298              		.loc 1 124 28 is_stmt 0 view .LVU101
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 10
+
+
+ 299 005a 0022     		movs	r2, #0
+ 300 005c 5A70     		strb	r2, [r3, #1]
+ 125:controller/engine_cycle/trigger.c ****       engine.total_revolutions = 0;
+ 301              		.loc 1 125 7 is_stmt 1 view .LVU102
+ 125:controller/engine_cycle/trigger.c ****       engine.total_revolutions = 0;
+ 302              		.loc 1 125 14 is_stmt 0 view .LVU103
+ 303 005e 3A49     		ldr	r1, .L45
+ 304 0060 0868     		ldr	r0, [r1]
+ 305 0062 4388     		ldrh	r3, [r0, #2]
+ 306              	.LVL13:
+ 125:controller/engine_cycle/trigger.c ****       engine.total_revolutions = 0;
+ 307              		.loc 1 125 33 view .LVU104
+ 308 0064 0133     		adds	r3, r3, #1
+ 309 0066 4380     		strh	r3, [r0, #2]	@ movhi
+ 126:controller/engine_cycle/trigger.c ****       engine.rpm = 0;
+ 310              		.loc 1 126 7 is_stmt 1 view .LVU105
+ 126:controller/engine_cycle/trigger.c ****       engine.rpm = 0;
+ 311              		.loc 1 126 32 is_stmt 0 view .LVU106
+ 312 0068 384B     		ldr	r3, .L45+4
+ 313 006a 1A60     		str	r2, [r3]
+ 127:controller/engine_cycle/trigger.c ****       trigger->_counted_tooth = 0;
+ 314              		.loc 1 127 7 is_stmt 1 view .LVU107
+ 127:controller/engine_cycle/trigger.c ****       trigger->_counted_tooth = 0;
+ 315              		.loc 1 127 18 is_stmt 0 view .LVU108
+ 316 006c 0020     		movs	r0, #0
+ 317 006e D860     		str	r0, [r3, #12]	@ float
+ 128:controller/engine_cycle/trigger.c ****     }
+ 318              		.loc 1 128 7 is_stmt 1 view .LVU109
+ 128:controller/engine_cycle/trigger.c ****     }
+ 319              		.loc 1 128 14 is_stmt 0 view .LVU110
+ 320 0070 0B68     		ldr	r3, [r1]
+ 128:controller/engine_cycle/trigger.c ****     }
+ 321              		.loc 1 128 31 view .LVU111
+ 322 0072 1A85     		strh	r2, [r3, #40]	@ movhi
+ 323              	.LVL14:
+ 324              	.L27:
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 325              		.loc 1 139 3 is_stmt 1 view .LVU112
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 326              		.loc 1 139 54 is_stmt 0 view .LVU113
+ 327 0074 344B     		ldr	r3, .L45
+ 328 0076 1868     		ldr	r0, [r3]
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 329              		.loc 1 139 64 view .LVU114
+ 330 0078 4379     		ldrb	r3, [r0, #5]	@ zero_extendqisi2
+ 331 007a 07EE103A 		vmov	s14, r3	@ int
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 332              		.loc 1 139 38 view .LVU115
+ 333 007e B8EE477A 		vcvt.f32.u32	s14, s14
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 334              		.loc 1 139 36 view .LVU116
+ 335 0082 DFED336A 		vldr.32	s13, .L45+8
+ 336 0086 C6EE877A 		vdiv.f32	s15, s13, s14
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 337              		.loc 1 139 94 view .LVU117
+ 338 008a 038D     		ldrh	r3, [r0, #40]
+ 339 008c 07EE103A 		vmov	s14, r3	@ int
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 11
+
+
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 340              		.loc 1 139 78 view .LVU118
+ 341 0090 B8EE477A 		vcvt.f32.u32	s14, s14
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 342              		.loc 1 139 76 view .LVU119
+ 343 0094 67EE877A 		vmul.f32	s15, s15, s14
+ 139:controller/engine_cycle/trigger.c ****   engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SEC
+ 344              		.loc 1 139 27 view .LVU120
+ 345 0098 2C4A     		ldr	r2, .L45+4
+ 346 009a C2ED017A 		vstr.32	s15, [r2, #4]
+ 140:controller/engine_cycle/trigger.c **** 
+ 347              		.loc 1 140 3 is_stmt 1 view .LVU121
+ 140:controller/engine_cycle/trigger.c **** 
+ 348              		.loc 1 140 114 is_stmt 0 view .LVU122
+ 349 009e 016A     		ldr	r1, [r0, #32]
+ 140:controller/engine_cycle/trigger.c **** 
+ 350              		.loc 1 140 105 view .LVU123
+ 351 00a0 2C4B     		ldr	r3, .L45+12
+ 352 00a2 B3FBF1F3 		udiv	r3, r3, r1
+ 140:controller/engine_cycle/trigger.c **** 
+ 353              		.loc 1 140 154 view .LVU124
+ 354 00a6 4179     		ldrb	r1, [r0, #5]	@ zero_extendqisi2
+ 140:controller/engine_cycle/trigger.c **** 
+ 355              		.loc 1 140 135 view .LVU125
+ 356 00a8 B3FBF1F3 		udiv	r3, r3, r1
+ 140:controller/engine_cycle/trigger.c **** 
+ 357              		.loc 1 140 16 view .LVU126
+ 358 00ac 07EE903A 		vmov	s15, r3	@ int
+ 359 00b0 F8EE677A 		vcvt.f32.u32	s15, s15
+ 140:controller/engine_cycle/trigger.c **** 
+ 360              		.loc 1 140 14 view .LVU127
+ 361 00b4 C2ED037A 		vstr.32	s15, [r2, #12]
+ 143:controller/engine_cycle/trigger.c ****   {
+ 362              		.loc 1 143 3 is_stmt 1 view .LVU128
+ 143:controller/engine_cycle/trigger.c ****   {
+ 363              		.loc 1 143 14 is_stmt 0 view .LVU129
+ 364 00b8 4378     		ldrb	r3, [r0, #1]	@ zero_extendqisi2
+ 143:controller/engine_cycle/trigger.c ****   {
+ 365              		.loc 1 143 6 view .LVU130
+ 366 00ba 012B     		cmp	r3, #1
+ 367 00bc 26D0     		beq	.L42
+ 368              	.L29:
+ 147:controller/engine_cycle/trigger.c ****   {
+ 369              		.loc 1 147 3 is_stmt 1 view .LVU131
+ 147:controller/engine_cycle/trigger.c ****   {
+ 370              		.loc 1 147 14 is_stmt 0 view .LVU132
+ 371 00be 4378     		ldrb	r3, [r0, #1]	@ zero_extendqisi2
+ 147:controller/engine_cycle/trigger.c ****   {
+ 372              		.loc 1 147 6 view .LVU133
+ 373 00c0 012B     		cmp	r3, #1
+ 374 00c2 2ED0     		beq	.L43
+ 375              	.L31:
+ 151:controller/engine_cycle/trigger.c ****   {
+ 376              		.loc 1 151 3 is_stmt 1 view .LVU134
+ 151:controller/engine_cycle/trigger.c ****   {
+ 377              		.loc 1 151 14 is_stmt 0 view .LVU135
+ 378 00c4 4378     		ldrb	r3, [r0, #1]	@ zero_extendqisi2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 12
+
+
+ 151:controller/engine_cycle/trigger.c ****   {
+ 379              		.loc 1 151 6 view .LVU136
+ 380 00c6 002B     		cmp	r3, #0
+ 381 00c8 36D1     		bne	.L33
+ 153:controller/engine_cycle/trigger.c ****   }
+ 382              		.loc 1 153 5 is_stmt 1 view .LVU137
+ 153:controller/engine_cycle/trigger.c ****   }
+ 383              		.loc 1 153 27 is_stmt 0 view .LVU138
+ 384 00ca 204B     		ldr	r3, .L45+4
+ 385 00cc 0122     		movs	r2, #1
+ 386 00ce 1A74     		strb	r2, [r3, #16]
+ 387              	.L34:
+ 164:controller/engine_cycle/trigger.c ****   {
+ 388              		.loc 1 164 3 is_stmt 1 view .LVU139
+ 164:controller/engine_cycle/trigger.c ****   {
+ 389              		.loc 1 164 5 is_stmt 0 view .LVU140
+ 390 00d0 002D     		cmp	r5, #0
+ 391 00d2 35D0     		beq	.L44
+ 392              	.L35:
+ 170:controller/engine_cycle/trigger.c ****   trigger->_tooth_time_us[1] = trigger->_tooth_time_us[0];
+ 393              		.loc 1 170 3 is_stmt 1 view .LVU141
+ 170:controller/engine_cycle/trigger.c ****   trigger->_tooth_time_us[1] = trigger->_tooth_time_us[0];
+ 394              		.loc 1 170 39 is_stmt 0 view .LVU142
+ 395 00d4 1C4B     		ldr	r3, .L45
+ 396 00d6 1B68     		ldr	r3, [r3]
+ 170:controller/engine_cycle/trigger.c ****   trigger->_tooth_time_us[1] = trigger->_tooth_time_us[0];
+ 397              		.loc 1 170 55 view .LVU143
+ 398 00d8 5A69     		ldr	r2, [r3, #20]
+ 170:controller/engine_cycle/trigger.c ****   trigger->_tooth_time_us[1] = trigger->_tooth_time_us[0];
+ 399              		.loc 1 170 30 view .LVU144
+ 400 00da 9A61     		str	r2, [r3, #24]
+ 171:controller/engine_cycle/trigger.c **** }
+ 401              		.loc 1 171 3 is_stmt 1 view .LVU145
+ 171:controller/engine_cycle/trigger.c **** }
+ 402              		.loc 1 171 55 is_stmt 0 view .LVU146
+ 403 00dc 1A69     		ldr	r2, [r3, #16]
+ 171:controller/engine_cycle/trigger.c **** }
+ 404              		.loc 1 171 30 view .LVU147
+ 405 00de 5A61     		str	r2, [r3, #20]
+ 406 00e0 93E7     		b	.L20
+ 407              	.LVL15:
+ 408              	.L22:
+  98:controller/engine_cycle/trigger.c ****   }
+ 409              		.loc 1 98 5 is_stmt 1 view .LVU148
+  98:controller/engine_cycle/trigger.c ****   }
+ 410              		.loc 1 98 33 is_stmt 0 view .LVU149
+ 411 00e2 1A62     		str	r2, [r3, #32]
+ 412 00e4 A7E7     		b	.L23
+ 413              	.LVL16:
+ 414              	.L41:
+ 105:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
+ 415              		.loc 1 105 5 is_stmt 1 view .LVU150
+ 105:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
+ 416              		.loc 1 105 49 is_stmt 0 view .LVU151
+ 417 00e6 186A     		ldr	r0, [r3, #32]
+ 105:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
+ 418              		.loc 1 105 40 view .LVU152
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 13
+
+
+ 419 00e8 00EB4000 		add	r0, r0, r0, lsl #1
+ 105:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
+ 420              		.loc 1 105 71 view .LVU153
+ 421 00ec 4008     		lsrs	r0, r0, #1
+ 105:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
+ 422              		.loc 1 105 35 view .LVU154
+ 423 00ee 5862     		str	r0, [r3, #36]
+ 424 00f0 A8E7     		b	.L25
+ 425              	.LVL17:
+ 426              	.L28:
+ 132:controller/engine_cycle/trigger.c ****       engine.total_revolutions++;
+ 427              		.loc 1 132 7 is_stmt 1 view .LVU155
+ 132:controller/engine_cycle/trigger.c ****       engine.total_revolutions++;
+ 428              		.loc 1 132 28 is_stmt 0 view .LVU156
+ 429 00f2 0122     		movs	r2, #1
+ 430 00f4 5A70     		strb	r2, [r3, #1]
+ 133:controller/engine_cycle/trigger.c ****       trigger->_counted_tooth = 0;
+ 431              		.loc 1 133 7 is_stmt 1 view .LVU157
+ 133:controller/engine_cycle/trigger.c ****       trigger->_counted_tooth = 0;
+ 432              		.loc 1 133 13 is_stmt 0 view .LVU158
+ 433 00f6 154A     		ldr	r2, .L45+4
+ 434 00f8 1368     		ldr	r3, [r2]
+ 435              	.LVL18:
+ 133:controller/engine_cycle/trigger.c ****       trigger->_counted_tooth = 0;
+ 436              		.loc 1 133 31 view .LVU159
+ 437 00fa 0133     		adds	r3, r3, #1
+ 438 00fc 1360     		str	r3, [r2]
+ 134:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
+ 439              		.loc 1 134 7 is_stmt 1 view .LVU160
+ 134:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
+ 440              		.loc 1 134 14 is_stmt 0 view .LVU161
+ 441 00fe 124B     		ldr	r3, .L45
+ 442 0100 1B68     		ldr	r3, [r3]
+ 134:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
+ 443              		.loc 1 134 31 view .LVU162
+ 444 0102 0022     		movs	r2, #0
+ 445 0104 1A85     		strh	r2, [r3, #40]	@ movhi
+ 134:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
+ 446              		.loc 1 134 31 view .LVU163
+ 447 0106 B5E7     		b	.L27
+ 448              	.LVL19:
+ 449              	.L36:
   76:controller/engine_cycle/trigger.c ****   
- 251              		.loc 1 76 16 is_stmt 0 view .LVU60
- 252 0026 2E4A     		ldr	r2, .L32+16
- 253 0028 1388     		ldrh	r3, [r2]
- 254 002a 9BB2     		uxth	r3, r3
- 255 002c 0133     		adds	r3, r3, #1
- 256 002e 9BB2     		uxth	r3, r3
- 257 0030 1380     		strh	r3, [r2]	@ movhi
-  78:controller/engine_cycle/trigger.c ****   
- 258              		.loc 1 78 3 is_stmt 1 view .LVU61
- 259              	.LVL4:
-  81:controller/engine_cycle/trigger.c ****   {
- 260              		.loc 1 81 3 view .LVU62
-  81:controller/engine_cycle/trigger.c ****   {
- 261              		.loc 1 81 20 is_stmt 0 view .LVU63
- 262 0032 284B     		ldr	r3, .L32+4
- 263 0034 5B68     		ldr	r3, [r3, #4]
-  81:controller/engine_cycle/trigger.c ****   {
- 264              		.loc 1 81 6 view .LVU64
- 265 0036 0BB1     		cbz	r3, .L21
-  81:controller/engine_cycle/trigger.c ****   {
- 266              		.loc 1 81 45 discriminator 1 view .LVU65
- 267 0038 264B     		ldr	r3, .L32+4
- 268 003a 9B68     		ldr	r3, [r3, #8]
- 269              	.L21:
-  84:controller/engine_cycle/trigger.c ****   
- 270              		.loc 1 84 3 is_stmt 1 view .LVU66
-  87:controller/engine_cycle/trigger.c ****   controller_time_us_t shorter_tooth_gap = 0;
- 271              		.loc 1 87 3 view .LVU67
- 272              	.LVL5:
-  88:controller/engine_cycle/trigger.c ****   previous_tooth_gap = tooth_time_us[1] - tooth_time_us[2];
- 273              		.loc 1 88 3 view .LVU68
-  89:controller/engine_cycle/trigger.c **** 
- 274              		.loc 1 89 3 view .LVU69
-  89:controller/engine_cycle/trigger.c **** 
- 275              		.loc 1 89 37 is_stmt 0 view .LVU70
- 276 003c 254A     		ldr	r2, .L32+4
- 277 003e 5368     		ldr	r3, [r2, #4]
-  89:controller/engine_cycle/trigger.c **** 
- 278              		.loc 1 89 56 view .LVU71
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 9
+ 450              		.loc 1 76 8 view .LVU164
+ 451 0108 0025     		movs	r5, #0
+ 452 010a B3E7     		b	.L27
+ 453              	.LVL20:
+ 454              	.L42:
+ 143:controller/engine_cycle/trigger.c ****   {
+ 455              		.loc 1 143 71 discriminator 1 view .LVU165
+ 456 010c 90ED027A 		vldr.32	s14, [r0, #8]
+ 143:controller/engine_cycle/trigger.c ****   {
+ 457              		.loc 1 143 47 discriminator 1 view .LVU166
+ 458 0110 F4EEC77A 		vcmpe.f32	s15, s14
+ 459 0114 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 460 0118 D1DB     		blt	.L29
+ 145:controller/engine_cycle/trigger.c ****   }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 14
 
 
- 279 0040 9268     		ldr	r2, [r2, #8]
-  89:controller/engine_cycle/trigger.c **** 
- 280              		.loc 1 89 22 view .LVU72
- 281 0042 9B1A     		subs	r3, r3, r2
- 282              	.LVL6:
-  92:controller/engine_cycle/trigger.c ****   {
- 283              		.loc 1 92 3 is_stmt 1 view .LVU73
-  92:controller/engine_cycle/trigger.c ****   {
- 284              		.loc 1 92 26 is_stmt 0 view .LVU74
- 285 0044 244A     		ldr	r2, .L32+8
- 286 0046 1268     		ldr	r2, [r2]
-  92:controller/engine_cycle/trigger.c ****   {
- 287              		.loc 1 92 6 view .LVU75
- 288 0048 9A42     		cmp	r2, r3
- 289 004a 01D8     		bhi	.L22
- 101:controller/engine_cycle/trigger.c ****   }
- 290              		.loc 1 101 5 is_stmt 1 view .LVU76
- 101:controller/engine_cycle/trigger.c ****   }
- 291              		.loc 1 101 23 is_stmt 0 view .LVU77
- 292 004c 224B     		ldr	r3, .L32+8
- 293              	.LVL7:
- 101:controller/engine_cycle/trigger.c ****   }
- 294              		.loc 1 101 23 view .LVU78
- 295 004e 1B68     		ldr	r3, [r3]
- 296              	.LVL8:
- 297              	.L22:
- 107:controller/engine_cycle/trigger.c ****   {
- 298              		.loc 1 107 3 is_stmt 1 view .LVU79
- 107:controller/engine_cycle/trigger.c ****   {
- 299              		.loc 1 107 14 is_stmt 0 view .LVU80
- 300 0050 244A     		ldr	r2, .L32+20
- 301 0052 5278     		ldrb	r2, [r2, #1]	@ zero_extendqisi2
- 107:controller/engine_cycle/trigger.c ****   {
- 302              		.loc 1 107 5 view .LVU81
- 303 0054 012A     		cmp	r2, #1
- 304 0056 27D0     		beq	.L30
- 113:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
- 305              		.loc 1 113 7 is_stmt 1 view .LVU82
- 113:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
- 306              		.loc 1 113 47 is_stmt 0 view .LVU83
- 307 0058 03FB02F2 		mul	r2, r3, r2
- 113:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
- 308              		.loc 1 113 27 view .LVU84
- 309 005c 224B     		ldr	r3, .L32+24
- 310              	.LVL9:
- 113:controller/engine_cycle/trigger.c ****   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
- 311              		.loc 1 113 27 view .LVU85
- 312 005e 1A60     		str	r2, [r3]
- 313              	.L24:
- 119:controller/engine_cycle/trigger.c ****   {
- 314              		.loc 1 119 3 is_stmt 1 view .LVU86
- 119:controller/engine_cycle/trigger.c ****   {
- 315              		.loc 1 119 29 is_stmt 0 view .LVU87
- 316 0060 1D4B     		ldr	r3, .L32+8
- 317 0062 1A68     		ldr	r2, [r3]
- 318 0064 204B     		ldr	r3, .L32+24
- 319 0066 1B68     		ldr	r3, [r3]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 10
-
-
- 119:controller/engine_cycle/trigger.c ****   {
- 320              		.loc 1 119 6 view .LVU88
- 321 0068 9A42     		cmp	r2, r3
- 322 006a 06D8     		bhi	.L25
- 119:controller/engine_cycle/trigger.c ****   {
- 323              		.loc 1 119 70 discriminator 1 view .LVU89
- 324 006c 1F4B     		ldr	r3, .L32+28
- 325 006e 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
- 326 0070 1B4B     		ldr	r3, .L32+16
- 327 0072 1B88     		ldrh	r3, [r3]
- 328 0074 9BB2     		uxth	r3, r3
- 119:controller/engine_cycle/trigger.c ****   {
- 329              		.loc 1 119 52 discriminator 1 view .LVU90
- 330 0076 9A42     		cmp	r2, r3
- 331 0078 1CD2     		bcs	.L31
- 332              	.L25:
- 122:controller/engine_cycle/trigger.c ****     /**
- 333              		.loc 1 122 5 is_stmt 1 view .LVU91
- 334              	.LVL10:
- 126:controller/engine_cycle/trigger.c ****     {
- 335              		.loc 1 126 5 view .LVU92
- 126:controller/engine_cycle/trigger.c ****     {
- 336              		.loc 1 126 23 is_stmt 0 view .LVU93
- 337 007a 1C4B     		ldr	r3, .L32+28
- 338 007c 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
- 339 007e 184B     		ldr	r3, .L32+16
- 340 0080 1B88     		ldrh	r3, [r3]
- 341 0082 9BB2     		uxth	r3, r3
- 126:controller/engine_cycle/trigger.c ****     {
- 342              		.loc 1 126 8 view .LVU94
- 343 0084 9A42     		cmp	r2, r3
- 344 0086 18D9     		bls	.L27
- 128:controller/engine_cycle/trigger.c ****       trigger_status.cync_loss_counter++;
- 345              		.loc 1 128 7 is_stmt 1 view .LVU95
- 128:controller/engine_cycle/trigger.c ****       trigger_status.cync_loss_counter++;
- 346              		.loc 1 128 34 is_stmt 0 view .LVU96
- 347 0088 114A     		ldr	r2, .L32
- 348 008a 0023     		movs	r3, #0
- 349 008c 5370     		strb	r3, [r2, #1]
- 129:controller/engine_cycle/trigger.c ****       engine_parameters.total_revolutions = 0;
- 350              		.loc 1 129 7 is_stmt 1 view .LVU97
- 129:controller/engine_cycle/trigger.c ****       engine_parameters.total_revolutions = 0;
- 351              		.loc 1 129 21 is_stmt 0 view .LVU98
- 352 008e 5188     		ldrh	r1, [r2, #2]
- 129:controller/engine_cycle/trigger.c ****       engine_parameters.total_revolutions = 0;
- 353              		.loc 1 129 39 view .LVU99
- 354 0090 0131     		adds	r1, r1, #1
- 355 0092 5180     		strh	r1, [r2, #2]	@ movhi
- 130:controller/engine_cycle/trigger.c ****       counted_tooth = 0;
- 356              		.loc 1 130 7 is_stmt 1 view .LVU100
- 130:controller/engine_cycle/trigger.c ****       counted_tooth = 0;
- 357              		.loc 1 130 43 is_stmt 0 view .LVU101
- 358 0094 164A     		ldr	r2, .L32+32
- 359 0096 1360     		str	r3, [r2]
- 131:controller/engine_cycle/trigger.c ****     }
- 360              		.loc 1 131 7 is_stmt 1 view .LVU102
- 131:controller/engine_cycle/trigger.c ****     }
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 11
-
-
- 361              		.loc 1 131 21 is_stmt 0 view .LVU103
- 362 0098 114A     		ldr	r2, .L32+16
- 363 009a 1380     		strh	r3, [r2]	@ movhi
- 146:controller/engine_cycle/trigger.c ****   {
- 364              		.loc 1 146 3 is_stmt 1 view .LVU104
- 365              	.LVL11:
- 366              	.L26:
- 152:controller/engine_cycle/trigger.c ****   tooth_time_us[1] = tooth_time_us[0];
- 367              		.loc 1 152 3 view .LVU105
- 152:controller/engine_cycle/trigger.c ****   tooth_time_us[1] = tooth_time_us[0];
- 368              		.loc 1 152 35 is_stmt 0 view .LVU106
- 369 009c 0D4B     		ldr	r3, .L32+4
- 370 009e 5A68     		ldr	r2, [r3, #4]
- 152:controller/engine_cycle/trigger.c ****   tooth_time_us[1] = tooth_time_us[0];
- 371              		.loc 1 152 20 view .LVU107
- 372 00a0 9A60     		str	r2, [r3, #8]
- 153:controller/engine_cycle/trigger.c **** 
- 373              		.loc 1 153 3 is_stmt 1 view .LVU108
- 153:controller/engine_cycle/trigger.c **** 
- 374              		.loc 1 153 35 is_stmt 0 view .LVU109
- 375 00a2 1A68     		ldr	r2, [r3]
- 153:controller/engine_cycle/trigger.c **** 
- 376              		.loc 1 153 20 view .LVU110
- 377 00a4 5A60     		str	r2, [r3, #4]
- 378 00a6 AFE7     		b	.L19
- 379              	.LVL12:
- 380              	.L30:
- 109:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
- 381              		.loc 1 109 5 is_stmt 1 view .LVU111
- 109:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
- 382              		.loc 1 109 30 is_stmt 0 view .LVU112
- 383 00a8 03EB4303 		add	r3, r3, r3, lsl #1
- 384              	.LVL13:
- 109:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
- 385              		.loc 1 109 51 view .LVU113
- 386 00ac 5B08     		lsrs	r3, r3, #1
- 109:controller/engine_cycle/trigger.c ****   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply 
- 387              		.loc 1 109 25 view .LVU114
- 388 00ae 0E4A     		ldr	r2, .L32+24
- 389 00b0 1360     		str	r3, [r2]
- 390 00b2 D5E7     		b	.L24
- 391              	.L31:
- 146:controller/engine_cycle/trigger.c ****   {
- 392              		.loc 1 146 3 is_stmt 1 view .LVU115
+ 461              		.loc 1 145 5 is_stmt 1 view .LVU167
+ 145:controller/engine_cycle/trigger.c ****   }
+ 462              		.loc 1 145 27 is_stmt 0 view .LVU168
+ 463 011a 1346     		mov	r3, r2
+ 464 011c 0322     		movs	r2, #3
+ 465 011e 1A74     		strb	r2, [r3, #16]
+ 466 0120 CDE7     		b	.L29
+ 467              	.L43:
+ 147:controller/engine_cycle/trigger.c ****   {
+ 468              		.loc 1 147 70 discriminator 1 view .LVU169
+ 469 0122 90ED027A 		vldr.32	s14, [r0, #8]
+ 147:controller/engine_cycle/trigger.c ****   {
+ 470              		.loc 1 147 47 discriminator 1 view .LVU170
+ 471 0126 F4EEC77A 		vcmpe.f32	s15, s14
+ 472 012a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 473 012e C9D5     		bpl	.L31
  149:controller/engine_cycle/trigger.c ****   }
- 393              		.loc 1 149 5 view .LVU116
- 394 00b4 FFF7FEFF 		bl	set_filtering
- 395              	.LVL14:
- 396 00b8 F0E7     		b	.L26
- 397              	.LVL15:
- 398              	.L27:
- 135:controller/engine_cycle/trigger.c ****       engine_parameters.total_revolutions++;
- 399              		.loc 1 135 7 view .LVU117
- 135:controller/engine_cycle/trigger.c ****       engine_parameters.total_revolutions++;
- 400              		.loc 1 135 34 is_stmt 0 view .LVU118
- 401 00ba 054B     		ldr	r3, .L32
- 402 00bc 0122     		movs	r2, #1
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 12
+ 474              		.loc 1 149 5 is_stmt 1 view .LVU171
+ 149:controller/engine_cycle/trigger.c ****   }
+ 475              		.loc 1 149 27 is_stmt 0 view .LVU172
+ 476 0130 064B     		ldr	r3, .L45+4
+ 477 0132 0222     		movs	r2, #2
+ 478 0134 1A74     		strb	r2, [r3, #16]
+ 479 0136 C5E7     		b	.L31
+ 480              	.L33:
+ 157:controller/engine_cycle/trigger.c ****   }
+ 481              		.loc 1 157 5 is_stmt 1 view .LVU173
+ 157:controller/engine_cycle/trigger.c ****   }
+ 482              		.loc 1 157 27 is_stmt 0 view .LVU174
+ 483 0138 044B     		ldr	r3, .L45+4
+ 484 013a 0022     		movs	r2, #0
+ 485 013c 1A74     		strb	r2, [r3, #16]
+ 486 013e C7E7     		b	.L34
+ 487              	.L44:
+ 167:controller/engine_cycle/trigger.c ****   }
+ 488              		.loc 1 167 5 is_stmt 1 view .LVU175
+ 489 0140 FFF7FEFF 		bl	set_filtering
+ 490              	.LVL21:
+ 491 0144 C6E7     		b	.L35
+ 492              	.L46:
+ 493 0146 00BF     		.align	2
+ 494              	.L45:
+ 495 0148 00000000 		.word	trigger
+ 496 014c 00000000 		.word	engine
+ 497 0150 0000B443 		.word	1135869952
+ 498 0154 00879303 		.word	60000000
+ 499              		.cfi_endproc
+ 500              	.LFE136:
+ 502              		.section	.text.crankshaft_get_rpm,"ax",%progbits
+ 503              		.align	1
+ 504              		.global	crankshaft_get_rpm
+ 505              		.syntax unified
+ 506              		.thumb
+ 507              		.thumb_func
+ 509              	crankshaft_get_rpm:
+ 510              	.LFB137:
+ 173:controller/engine_cycle/trigger.c **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 15
 
 
- 403 00be 5A70     		strb	r2, [r3, #1]
- 136:controller/engine_cycle/trigger.c ****       counted_tooth = 0;
- 404              		.loc 1 136 7 is_stmt 1 view .LVU119
- 136:controller/engine_cycle/trigger.c ****       counted_tooth = 0;
- 405              		.loc 1 136 24 is_stmt 0 view .LVU120
- 406 00c0 0B4A     		ldr	r2, .L32+32
- 407 00c2 1368     		ldr	r3, [r2]
- 136:controller/engine_cycle/trigger.c ****       counted_tooth = 0;
- 408              		.loc 1 136 42 view .LVU121
- 409 00c4 0133     		adds	r3, r3, #1
- 410 00c6 1360     		str	r3, [r2]
- 137:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
- 411              		.loc 1 137 7 is_stmt 1 view .LVU122
- 137:controller/engine_cycle/trigger.c ****      //here we can say we are at TDC!
- 412              		.loc 1 137 21 is_stmt 0 view .LVU123
- 413 00c8 054B     		ldr	r3, .L32+16
- 414 00ca 0022     		movs	r2, #0
- 415 00cc 1A80     		strh	r2, [r3]	@ movhi
- 146:controller/engine_cycle/trigger.c ****   {
- 416              		.loc 1 146 3 is_stmt 1 view .LVU124
- 417 00ce E5E7     		b	.L26
- 418              	.L33:
- 419              		.align	2
- 420              	.L32:
- 421 00d0 00000000 		.word	trigger_status
- 422 00d4 00000000 		.word	tooth_time_us
- 423 00d8 00000000 		.word	current_tooth_gap_us
- 424 00dc 00000000 		.word	trigger_filter_time_us
- 425 00e0 00000000 		.word	counted_tooth
- 426 00e4 00000000 		.word	settings
- 427 00e8 00000000 		.word	target_tooth_gap_us
- 428 00ec 00000000 		.word	trigger_actual_teeth
- 429 00f0 00000000 		.word	engine_parameters
- 430              		.cfi_endproc
- 431              	.LFE137:
- 433              		.global	trigger_actual_teeth
- 434              		.section	.bss.trigger_actual_teeth,"aw",%nobits
- 437              	trigger_actual_teeth:
- 438 0000 00       		.space	1
- 439              		.global	counted_tooth
- 440              		.section	.bss.counted_tooth,"aw",%nobits
- 441              		.align	1
- 444              	counted_tooth:
- 445 0000 0000     		.space	2
- 446              		.global	target_tooth_gap_us
- 447              		.section	.bss.target_tooth_gap_us,"aw",%nobits
- 448              		.align	2
- 451              	target_tooth_gap_us:
- 452 0000 00000000 		.space	4
- 453              		.global	current_tooth_gap_us
- 454              		.section	.bss.current_tooth_gap_us,"aw",%nobits
- 455              		.align	2
- 458              	current_tooth_gap_us:
- 459 0000 00000000 		.space	4
- 460              		.global	tooth_time_us
- 461              		.section	.bss.tooth_time_us,"aw",%nobits
- 462              		.align	2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 13
+ 174:controller/engine_cycle/trigger.c **** 
+ 175:controller/engine_cycle/trigger.c **** rpm_t crankshaft_get_rpm()
+ 176:controller/engine_cycle/trigger.c **** {
+ 511              		.loc 1 176 1 view -0
+ 512              		.cfi_startproc
+ 513              		@ args = 0, pretend = 0, frame = 0
+ 514              		@ frame_needed = 0, uses_anonymous_args = 0
+ 515              		@ link register save eliminated.
+ 177:controller/engine_cycle/trigger.c ****   return engine.rpm;
+ 516              		.loc 1 177 3 view .LVU177
+ 178:controller/engine_cycle/trigger.c **** }
+ 517              		.loc 1 178 1 is_stmt 0 view .LVU178
+ 518 0000 014B     		ldr	r3, .L48
+ 519 0002 93ED030A 		vldr.32	s0, [r3, #12]
+ 520 0006 7047     		bx	lr
+ 521              	.L49:
+ 522              		.align	2
+ 523              	.L48:
+ 524 0008 00000000 		.word	engine
+ 525              		.cfi_endproc
+ 526              	.LFE137:
+ 528              		.section	.text.crankshaft_get_angle,"ax",%progbits
+ 529              		.align	1
+ 530              		.global	crankshaft_get_angle
+ 531              		.syntax unified
+ 532              		.thumb
+ 533              		.thumb_func
+ 535              	crankshaft_get_angle:
+ 536              	.LFB138:
+ 179:controller/engine_cycle/trigger.c **** 
+ 180:controller/engine_cycle/trigger.c **** /**
+ 181:controller/engine_cycle/trigger.c ****  * @brief returns the instant angle of the crankshaft
+ 182:controller/engine_cycle/trigger.c ****  * @note angle is updated on every trigger event!
+ 183:controller/engine_cycle/trigger.c ****  */
+ 184:controller/engine_cycle/trigger.c **** angle_t crankshaft_get_angle()
+ 185:controller/engine_cycle/trigger.c **** {
+ 537              		.loc 1 185 1 is_stmt 1 view -0
+ 538              		.cfi_startproc
+ 539              		@ args = 0, pretend = 0, frame = 0
+ 540              		@ frame_needed = 0, uses_anonymous_args = 0
+ 541              		@ link register save eliminated.
+ 186:controller/engine_cycle/trigger.c ****   return engine.crankshaft_angle;
+ 542              		.loc 1 186 3 view .LVU180
+ 187:controller/engine_cycle/trigger.c **** }
+ 543              		.loc 1 187 1 is_stmt 0 view .LVU181
+ 544 0000 014B     		ldr	r3, .L51
+ 545 0002 93ED010A 		vldr.32	s0, [r3, #4]
+ 546 0006 7047     		bx	lr
+ 547              	.L52:
+ 548              		.align	2
+ 549              	.L51:
+ 550 0008 00000000 		.word	engine
+ 551              		.cfi_endproc
+ 552              	.LFE138:
+ 554              		.global	trigger
+ 555              		.section	.bss.trigger,"aw",%nobits
+ 556              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 16
 
 
- 465              	tooth_time_us:
- 466 0000 00000000 		.space	12
- 466      00000000 
- 466      00000000 
- 467              		.global	trigger_filter_time_us
- 468              		.section	.bss.trigger_filter_time_us,"aw",%nobits
- 469              		.align	2
- 472              	trigger_filter_time_us:
- 473 0000 00000000 		.space	4
- 474              		.global	trigger_status
- 475              		.section	.bss.trigger_status,"aw",%nobits
- 476              		.align	2
- 479              	trigger_status:
- 480 0000 00000000 		.space	4
- 481              		.text
- 482              	.Letext0:
- 483              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 484              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 485              		.file 4 "controller/types.h"
- 486              		.file 5 "controller/controller.h"
- 487              		.file 6 "controller/settings.h"
- 488              		.file 7 "controller/engine_cycle/trigger.h"
- 489              		.file 8 "controller/controller_time.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s 			page 14
+ 559              	trigger:
+ 560 0000 00000000 		.space	4
+ 561              		.text
+ 562              	.Letext0:
+ 563              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 564              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 565              		.file 4 "controller/types.h"
+ 566              		.file 5 "controller/engine_cycle/trigger.h"
+ 567              		.file 6 "controller/controller.h"
+ 568              		.file 7 "controller/controller_time.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s 			page 17
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 trigger.c
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:21     .text.set_filtering:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:27     .text.set_filtering:00000000 set_filtering
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:43     .text.set_filtering:0000000c $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:47     .text.set_filtering:00000010 $t
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:101    .text.set_filtering:00000048 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:472    .bss.trigger_filter_time_us:00000000 trigger_filter_time_us
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:458    .bss.current_tooth_gap_us:00000000 current_tooth_gap_us
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:108    .text.trigger_set_filtering:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:114    .text.trigger_set_filtering:00000000 trigger_set_filtering
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:138    .text.trigger_set_filtering:0000000c $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:143    .text.trigger_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:149    .text.trigger_init:00000000 trigger_init
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:192    .text.trigger_init:00000020 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:479    .bss.trigger_status:00000000 trigger_status
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:437    .bss.trigger_actual_teeth:00000000 trigger_actual_teeth
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:199    .text.trigger_tooth_handle:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:205    .text.trigger_tooth_handle:00000000 trigger_tooth_handle
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:421    .text.trigger_tooth_handle:000000d0 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:465    .bss.tooth_time_us:00000000 tooth_time_us
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:444    .bss.counted_tooth:00000000 counted_tooth
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:451    .bss.target_tooth_gap_us:00000000 target_tooth_gap_us
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:438    .bss.trigger_actual_teeth:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:441    .bss.counted_tooth:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:448    .bss.target_tooth_gap_us:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:455    .bss.current_tooth_gap_us:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:462    .bss.tooth_time_us:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:469    .bss.trigger_filter_time_us:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccriKnR3.s:476    .bss.trigger_status:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:21     .text.set_filtering:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:27     .text.set_filtering:00000000 set_filtering
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:43     .text.set_filtering:0000000a $d
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:47     .text.set_filtering:0000000e $t
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:97     .text.trigger_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:103    .text.trigger_init:00000000 trigger_init
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:177    .text.trigger_init:00000034 $d
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:559    .bss.trigger:00000000 trigger
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:182    .text.trigger_tooth_handle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:188    .text.trigger_tooth_handle:00000000 trigger_tooth_handle
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:495    .text.trigger_tooth_handle:00000148 $d
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:503    .text.crankshaft_get_rpm:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:509    .text.crankshaft_get_rpm:00000000 crankshaft_get_rpm
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:524    .text.crankshaft_get_rpm:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:529    .text.crankshaft_get_angle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:535    .text.crankshaft_get_angle:00000000 crankshaft_get_angle
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:550    .text.crankshaft_get_angle:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\cc5dlW8j.s:556    .bss.trigger:00000000 $d
 
 UNDEFINED SYMBOLS
-settings
 get_time_us
-engine_parameters
+engine

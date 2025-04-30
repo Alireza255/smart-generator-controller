@@ -1,7 +1,6 @@
 build/debug/trigger.o: controller/engine_cycle/trigger.c \
- controller/engine_cycle/trigger.h controller/types.h \
- controller/controller_time.h controller/types.h Core/Inc/tim.h \
- Core/Inc/main.h Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ controller/engine_cycle/trigger.h controller/controller_time.h \
+ controller/types.h Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  Core/Inc/stm32f4xx_hal_conf.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -25,14 +24,14 @@ build/debug/trigger.o: controller/engine_cycle/trigger.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
- Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h Core/Inc/main.h \
- controller/controller.h controller/settings.h controller/enums.h
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h Core/Inc/tim.h \
+ Core/Inc/main.h Core/Inc/main.h controller/types.h \
+ controller/controller.h controller/enums.h \
+ controller/engine_cycle/trigger.h controller/actuators/dc_motors.h \
+ controller/utils.h
 controller/engine_cycle/trigger.h:
-controller/types.h:
 controller/controller_time.h:
 controller/types.h:
-Core/Inc/tim.h:
-Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
@@ -60,7 +59,12 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
+Core/Inc/tim.h:
 Core/Inc/main.h:
+Core/Inc/main.h:
+controller/types.h:
 controller/controller.h:
-controller/settings.h:
 controller/enums.h:
+controller/engine_cycle/trigger.h:
+controller/actuators/dc_motors.h:
+controller/utils.h:
