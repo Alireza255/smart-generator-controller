@@ -15,17 +15,16 @@ void controller_time_start(TIM_HandleTypeDef *htim)
     /**
      * This assumes that sys clock is the same as timer clock
      */
-    timer->Instance->PSC = HAL_RCC_GetSysClockFreq() / 1000000UL;
+    timer->Instance->PSC = (HAL_RCC_GetSysClockFreq() / 1000000UL) - 1;
     HAL_TIM_Base_Start(timer);
 }
 
-
-controller_time_us_t get_time_us(void)
+time_us_t get_time_us(void)
 {
     return timer->Instance->CNT;
 }
 
-controller_time_ms_t get_time_ms(void)
+time_ms_t get_time_ms(void)
 {
     return timer->Instance->CNT / 1000U;
 }

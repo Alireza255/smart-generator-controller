@@ -81,7 +81,7 @@ void trigger_tooth_handle()
     //return;
   }
     
-  controller_time_us_t previous_tooth_gap = 0;
+  time_us_t previous_tooth_gap = 0;
 
   previous_tooth_gap = trigger->_tooth_time_us[1] - trigger->_tooth_time_us[2];
 

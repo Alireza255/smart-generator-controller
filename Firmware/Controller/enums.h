@@ -21,17 +21,21 @@ typedef enum __attribute__ ((__packed__)) {
  */
 typedef enum __attribute__ ((__packed__)) {
     /**
+     * in this mode the ecu won't produce any sparks
+     */
+    IM_NO_IGNITION = 0,
+    /**
      * in this mode only one spark output is used
      */
-    IM_ONE_COIL = 0,
+    IM_ONE_COIL = 1,
     /**
      * in this mode we use as many coils as we have cylinders
      */
-    IM_INDIVIDUAL_COILS = 1,
+    IM_INDIVIDUAL_COILS = 2,
     /**
      * in this mode we use one coil for every two cylinders
      */
-    IM_WASTED_SPARK = 2,
+    IM_WASTED_SPARK = 3,
  
 } ignition_mode_e;
 
@@ -158,6 +162,14 @@ typedef enum __attribute__ ((__packed__)) {
      */
     TM_FIXED = 1,
  
-} timing_mode_e;
+} ignition_timing_mode_e;
+
+typedef enum __attribute__ ((__packed__))
+{
+    /**
+     * Normal 4 cylinder firing order
+     */
+    FO_1342,
+} firing_order_e;
 
 #endif // ENUMS_H

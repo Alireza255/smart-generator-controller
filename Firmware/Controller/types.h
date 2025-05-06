@@ -23,15 +23,24 @@
  * integer time in milliseconds (1/1_000 of a second)
  * @note must use "delta = (current - start)" to handle overflows properly.
  */
-typedef uint32_t controller_time_ms_t;
+typedef uint32_t time_ms_t;
 
 
 /**
  * integer time is microseconds since MCU reset, used for precise timing
  * @note must use "delta = (current - start)" to handle overflows properly.
 */
-typedef uint32_t controller_time_us_t;
+typedef uint32_t time_us_t;
 
+/**
+ * float time ms type
+ */
+typedef float float_time_ms_t;
+
+/**
+ * float time us type
+ */
+typedef float float_time_us_t;
 
 typedef struct {
     uint32_t year;
@@ -41,7 +50,7 @@ typedef struct {
     uint8_t minute;
     uint8_t second;
     // uint16_t millisecond;
-} controller_datetime_t;
+} datetime_t;
 
 typedef float angle_t;
 typedef float rpm_t;

@@ -34,11 +34,11 @@ typedef struct
     trigger_settings_s settings;
     rpm_t cranking_rpm_threshold;
     
-    controller_time_us_t _trigger_filter_time_us;
-    controller_time_us_t _tooth_time_us[3]; // the higher the index, the older the sample. 0 is the current tooth time
-    controller_time_us_t _current_tooth_gap_us;
-    controller_time_us_t _shorter_tooth_gap;
-    controller_time_us_t _target_tooth_gap_us;
+    time_us_t _trigger_filter_time_us;
+    time_us_t _tooth_time_us[3]; // the higher the index, the older the sample. 0 is the current tooth time
+    time_us_t _current_tooth_gap_us;
+    time_us_t _shorter_tooth_gap;
+    time_us_t _target_tooth_gap_us;
     uint16_t _counted_tooth;
     uint8_t _trigger_actual_teeth;
 

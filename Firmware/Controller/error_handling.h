@@ -1,0 +1,52 @@
+#ifndef ERROR_HANDLING_H
+#define ERROR_HANDLING_H
+
+#include <stdio.h>
+#include <string.h>
+#include "usbd_cdc_if.h"
+
+#define ERROR_HANDLING_BUFFER_SIZE 100
+
+/**
+ * @bug multiple logs back to back 
+ */
+
+/**
+ * @brief Logs a warning message for debugging or diagnostic purposes.
+ * 
+ * @param message The error message to be logged.
+ */
+
+void log_error(const char* message)
+{
+    if (message == NULL) return;
+    
+    uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
+
+    snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Error: %s\n", message);
+
+    CDC_Transmit_FS(buffer, ERROR_HANDLING_BUFFER_SIZE);
+}
+
+/**
+ * @brief Logs a warning message to the system log or console.
+ *
+ * This function is used to record warning messages that indicate
+ * potential issues or non-critical errors in the system. The message
+ * should provide enough detail to help diagnose the issue.
+ *
+ * @param message A string containing the warning message.
+ */
+void log_warning(const char* message)
+{
+    if (message == NULL) return;
+
+    uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
+
+    snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Warning: %s\n", message);
+
+    CDC_Transmit_FS(buffer, ERROR_HANDLING_BUFFER_SIZE);
+}
+
+
+#endif // ERROR_HANDLING_H

@@ -146,7 +146,6 @@ void dc_motor_disable(dc_motor_s *motor)
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
 	motor->current_duty_cycle = 0;
-
 	motor->status = MS_DISABLED;
 }
 

@@ -2,7 +2,6 @@
 #define DC_MOTORS_H
 
 #include "types.h"
-#include "utils.h"
 #include "main.h"
 
 #define DC_MOTOR_MAX_FREQUENCY 10000U
