@@ -1,0 +1,392 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"analog_inputs.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/IO/analog_inputs.c"
+  20              		.section	.text.HAL_ADC_ConvCpltCallback,"ax",%progbits
+  21              		.align	1
+  22              		.global	HAL_ADC_ConvCpltCallback
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	HAL_ADC_ConvCpltCallback:
+  28              	.LVL0:
+  29              	.LFB224:
+   1:controller/IO/analog_inputs.c **** #include "analog_inputs.h"
+   2:controller/IO/analog_inputs.c **** #include "error_handling.h"
+   3:controller/IO/analog_inputs.c **** 
+   4:controller/IO/analog_inputs.c **** ADC_HandleTypeDef *hadc = NULL;
+   5:controller/IO/analog_inputs.c **** volatile analog_inputs_s analog_data[ANALOG_INPUTS_MAX] ={0};
+   6:controller/IO/analog_inputs.c **** 
+   7:controller/IO/analog_inputs.c **** volatile bool conversion_is_happening = false;
+   8:controller/IO/analog_inputs.c **** 
+   9:controller/IO/analog_inputs.c **** void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+  10:controller/IO/analog_inputs.c **** {
+  30              		.loc 1 10 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  11:controller/IO/analog_inputs.c ****     conversion_is_happening = false;
+  35              		.loc 1 11 5 view .LVU1
+  36              		.loc 1 11 29 is_stmt 0 view .LVU2
+  37 0000 014B     		ldr	r3, .L2
+  38 0002 0022     		movs	r2, #0
+  39 0004 1A70     		strb	r2, [r3]
+  12:controller/IO/analog_inputs.c **** }
+  40              		.loc 1 12 1 view .LVU3
+  41 0006 7047     		bx	lr
+  42              	.L3:
+  43              		.align	2
+  44              	.L2:
+  45 0008 00000000 		.word	conversion_is_happening
+  46              		.cfi_endproc
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 2
+
+
+  47              	.LFE224:
+  49              		.section	.rodata.analog_inputs_init.str1.4,"aMS",%progbits,1
+  50              		.align	2
+  51              	.LC0:
+  52 0000 416E616C 		.ascii	"Analog input init failed! adc handle is null.\000"
+  52      6F672069 
+  52      6E707574 
+  52      20696E69 
+  52      74206661 
+  53              		.section	.text.analog_inputs_init,"ax",%progbits
+  54              		.align	1
+  55              		.global	analog_inputs_init
+  56              		.syntax unified
+  57              		.thumb
+  58              		.thumb_func
+  60              	analog_inputs_init:
+  61              	.LVL1:
+  62              	.LFB225:
+  13:controller/IO/analog_inputs.c **** 
+  14:controller/IO/analog_inputs.c **** /**
+  15:controller/IO/analog_inputs.c ****  * @brief Initializes the analog inputs module.
+  16:controller/IO/analog_inputs.c ****  * 
+  17:controller/IO/analog_inputs.c ****  * This function sets up the ADC peripheral and prepares the analog inputs
+  18:controller/IO/analog_inputs.c ****  * module for operation.
+  19:controller/IO/analog_inputs.c ****  * 
+  20:controller/IO/analog_inputs.c ****  * @param hadc Pointer to the ADC_HandleTypeDef structure that contains
+  21:controller/IO/analog_inputs.c ****  *             the configuration information for the specified ADC.
+  22:controller/IO/analog_inputs.c ****  * @param instance Pointer to the analog_inputs_s structure instance
+  23:controller/IO/analog_inputs.c ****  *                 that holds the state and configuration of the analog inputs.
+  24:controller/IO/analog_inputs.c ****  */
+  25:controller/IO/analog_inputs.c **** void analog_inputs_init(ADC_HandleTypeDef *adc_handle)
+  26:controller/IO/analog_inputs.c **** {
+  63              		.loc 1 26 1 is_stmt 1 view -0
+  64              		.cfi_startproc
+  65              		@ args = 0, pretend = 0, frame = 0
+  66              		@ frame_needed = 0, uses_anonymous_args = 0
+  67              		.loc 1 26 1 is_stmt 0 view .LVU5
+  68 0000 08B5     		push	{r3, lr}
+  69              		.cfi_def_cfa_offset 8
+  70              		.cfi_offset 3, -8
+  71              		.cfi_offset 14, -4
+  27:controller/IO/analog_inputs.c ****     if (adc_handle == NULL)
+  72              		.loc 1 27 5 is_stmt 1 view .LVU6
+  73              		.loc 1 27 8 is_stmt 0 view .LVU7
+  74 0002 48B1     		cbz	r0, .L8
+  28:controller/IO/analog_inputs.c ****     {
+  29:controller/IO/analog_inputs.c ****         log_error("Analog input init failed! adc handle is null.");
+  30:controller/IO/analog_inputs.c ****         return;
+  31:controller/IO/analog_inputs.c ****     }
+  32:controller/IO/analog_inputs.c ****     
+  33:controller/IO/analog_inputs.c ****     hadc = adc_handle;
+  75              		.loc 1 33 5 is_stmt 1 view .LVU8
+  76              		.loc 1 33 10 is_stmt 0 view .LVU9
+  77 0004 064A     		ldr	r2, .L9
+  78 0006 1060     		str	r0, [r2]
+  34:controller/IO/analog_inputs.c **** 
+  35:controller/IO/analog_inputs.c ****     conversion_is_happening = true;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 3
+
+
+  79              		.loc 1 35 5 is_stmt 1 view .LVU10
+  80              		.loc 1 35 29 is_stmt 0 view .LVU11
+  81 0008 064A     		ldr	r2, .L9+4
+  82 000a 0121     		movs	r1, #1
+  83 000c 1170     		strb	r1, [r2]
+  36:controller/IO/analog_inputs.c ****     HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data->raw_values, ANALOG_INPUTS_MAX);
+  84              		.loc 1 36 5 is_stmt 1 view .LVU12
+  85 000e 0D22     		movs	r2, #13
+  86 0010 0549     		ldr	r1, .L9+8
+  87 0012 FFF7FEFF 		bl	HAL_ADC_Start_DMA
+  88              	.LVL2:
+  89              	.L4:
+  37:controller/IO/analog_inputs.c **** }
+  90              		.loc 1 37 1 is_stmt 0 view .LVU13
+  91 0016 08BD     		pop	{r3, pc}
+  92              	.LVL3:
+  93              	.L8:
+  29:controller/IO/analog_inputs.c ****         return;
+  94              		.loc 1 29 9 is_stmt 1 view .LVU14
+  95 0018 0448     		ldr	r0, .L9+12
+  96              	.LVL4:
+  29:controller/IO/analog_inputs.c ****         return;
+  97              		.loc 1 29 9 is_stmt 0 view .LVU15
+  98 001a FFF7FEFF 		bl	log_error
+  99              	.LVL5:
+  30:controller/IO/analog_inputs.c ****     }
+ 100              		.loc 1 30 9 is_stmt 1 view .LVU16
+ 101 001e FAE7     		b	.L4
+ 102              	.L10:
+ 103              		.align	2
+ 104              	.L9:
+ 105 0020 00000000 		.word	hadc
+ 106 0024 00000000 		.word	conversion_is_happening
+ 107 0028 00000000 		.word	analog_data
+ 108 002c 00000000 		.word	.LC0
+ 109              		.cfi_endproc
+ 110              	.LFE225:
+ 112              		.section	.text.analog_inputs_start_conversion,"ax",%progbits
+ 113              		.align	1
+ 114              		.global	analog_inputs_start_conversion
+ 115              		.syntax unified
+ 116              		.thumb
+ 117              		.thumb_func
+ 119              	analog_inputs_start_conversion:
+ 120              	.LFB226:
+  38:controller/IO/analog_inputs.c **** 
+  39:controller/IO/analog_inputs.c **** /**
+  40:controller/IO/analog_inputs.c ****  * @brief Starts the ADC conversion for analog inputs.
+  41:controller/IO/analog_inputs.c ****  * 
+  42:controller/IO/analog_inputs.c ****  * This function triggers the ADC to begin converting the analog signals
+  43:controller/IO/analog_inputs.c ****  * to digital values.
+  44:controller/IO/analog_inputs.c ****  */
+  45:controller/IO/analog_inputs.c **** void analog_inputs_start_conversion()
+  46:controller/IO/analog_inputs.c **** {
+ 121              		.loc 1 46 1 view -0
+ 122              		.cfi_startproc
+ 123              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 4
+
+
+ 124              		@ frame_needed = 0, uses_anonymous_args = 0
+ 125 0000 08B5     		push	{r3, lr}
+ 126              		.cfi_def_cfa_offset 8
+ 127              		.cfi_offset 3, -8
+ 128              		.cfi_offset 14, -4
+  47:controller/IO/analog_inputs.c ****     if (hadc == NULL)
+ 129              		.loc 1 47 5 view .LVU18
+ 130              		.loc 1 47 14 is_stmt 0 view .LVU19
+ 131 0002 074B     		ldr	r3, .L15
+ 132 0004 1868     		ldr	r0, [r3]
+ 133              		.loc 1 47 8 view .LVU20
+ 134 0006 10B1     		cbz	r0, .L11
+  48:controller/IO/analog_inputs.c ****     {
+  49:controller/IO/analog_inputs.c ****         return;
+  50:controller/IO/analog_inputs.c ****     }
+  51:controller/IO/analog_inputs.c ****     if (conversion_is_happening)
+ 135              		.loc 1 51 5 is_stmt 1 view .LVU21
+ 136              		.loc 1 51 9 is_stmt 0 view .LVU22
+ 137 0008 064B     		ldr	r3, .L15+4
+ 138 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 139              		.loc 1 51 8 view .LVU23
+ 140 000c 03B1     		cbz	r3, .L14
+ 141              	.L11:
+  52:controller/IO/analog_inputs.c ****     {
+  53:controller/IO/analog_inputs.c ****         return;
+  54:controller/IO/analog_inputs.c ****     }
+  55:controller/IO/analog_inputs.c ****     
+  56:controller/IO/analog_inputs.c ****     conversion_is_happening = true;
+  57:controller/IO/analog_inputs.c ****     HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data->raw_values, ANALOG_INPUTS_MAX);
+  58:controller/IO/analog_inputs.c **** }
+ 142              		.loc 1 58 1 view .LVU24
+ 143 000e 08BD     		pop	{r3, pc}
+ 144              	.L14:
+  56:controller/IO/analog_inputs.c ****     HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data->raw_values, ANALOG_INPUTS_MAX);
+ 145              		.loc 1 56 5 is_stmt 1 view .LVU25
+  56:controller/IO/analog_inputs.c ****     HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data->raw_values, ANALOG_INPUTS_MAX);
+ 146              		.loc 1 56 29 is_stmt 0 view .LVU26
+ 147 0010 044B     		ldr	r3, .L15+4
+ 148 0012 0122     		movs	r2, #1
+ 149 0014 1A70     		strb	r2, [r3]
+  57:controller/IO/analog_inputs.c **** }
+ 150              		.loc 1 57 5 is_stmt 1 view .LVU27
+ 151 0016 0D22     		movs	r2, #13
+ 152 0018 0349     		ldr	r1, .L15+8
+ 153 001a FFF7FEFF 		bl	HAL_ADC_Start_DMA
+ 154              	.LVL6:
+ 155 001e F6E7     		b	.L11
+ 156              	.L16:
+ 157              		.align	2
+ 158              	.L15:
+ 159 0020 00000000 		.word	hadc
+ 160 0024 00000000 		.word	conversion_is_happening
+ 161 0028 00000000 		.word	analog_data
+ 162              		.cfi_endproc
+ 163              	.LFE226:
+ 165              		.section	.rodata.analog_inputs_get_data.str1.4,"aMS",%progbits,1
+ 166              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 5
+
+
+ 167              	.LC1:
+ 168 0000 496E7661 		.ascii	"Invalid index in analog input.\000"
+ 168      6C696420 
+ 168      696E6465 
+ 168      7820696E 
+ 168      20616E61 
+ 169              		.section	.text.analog_inputs_get_data,"ax",%progbits
+ 170              		.align	1
+ 171              		.global	analog_inputs_get_data
+ 172              		.syntax unified
+ 173              		.thumb
+ 174              		.thumb_func
+ 176              	analog_inputs_get_data:
+ 177              	.LVL7:
+ 178              	.LFB227:
+  59:controller/IO/analog_inputs.c **** 
+  60:controller/IO/analog_inputs.c **** /**
+  61:controller/IO/analog_inputs.c ****  * @brief Retrieves the converted data for a specific analog input.
+  62:controller/IO/analog_inputs.c ****  * 
+  63:controller/IO/analog_inputs.c ****  * This function returns the digital value corresponding to the specified
+  64:controller/IO/analog_inputs.c ****  * analog input index.
+  65:controller/IO/analog_inputs.c ****  * 
+  66:controller/IO/analog_inputs.c ****  * @param input_index The index of the analog input to retrieve data from.
+  67:controller/IO/analog_inputs.c ****  *                    This index corresponds to the specific channel of the ADC.
+  68:controller/IO/analog_inputs.c ****  * @return The digital value of the specified analog input.
+  69:controller/IO/analog_inputs.c ****  */
+  70:controller/IO/analog_inputs.c **** #if ANALOG_INPUTS_ADC_BITS == 12
+  71:controller/IO/analog_inputs.c **** uint16_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index)
+  72:controller/IO/analog_inputs.c **** #elif ANALOG_INPUTS_ADC_BITS == 24
+  73:controller/IO/analog_inputs.c **** uint32_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index)
+  74:controller/IO/analog_inputs.c **** #endif
+  75:controller/IO/analog_inputs.c **** {
+ 179              		.loc 1 75 1 view -0
+ 180              		.cfi_startproc
+ 181              		@ args = 0, pretend = 0, frame = 0
+ 182              		@ frame_needed = 0, uses_anonymous_args = 0
+ 183              		.loc 1 75 1 is_stmt 0 view .LVU29
+ 184 0000 08B5     		push	{r3, lr}
+ 185              		.cfi_def_cfa_offset 8
+ 186              		.cfi_offset 3, -8
+ 187              		.cfi_offset 14, -4
+  76:controller/IO/analog_inputs.c ****     if (input_index > (ANALOG_INPUTS_MAX - 1))
+ 188              		.loc 1 76 5 is_stmt 1 view .LVU30
+ 189              		.loc 1 76 8 is_stmt 0 view .LVU31
+ 190 0002 0C28     		cmp	r0, #12
+ 191 0004 04D8     		bhi	.L21
+  77:controller/IO/analog_inputs.c ****     {
+  78:controller/IO/analog_inputs.c ****         log_error("Invalid index in analog input.");
+  79:controller/IO/analog_inputs.c ****         return 0;
+  80:controller/IO/analog_inputs.c ****     }
+  81:controller/IO/analog_inputs.c ****     return analog_data->raw_values[input_index];
+ 192              		.loc 1 81 5 is_stmt 1 view .LVU32
+ 193              		.loc 1 81 35 is_stmt 0 view .LVU33
+ 194 0006 054B     		ldr	r3, .L22
+ 195 0008 33F81000 		ldrh	r0, [r3, r0, lsl #1]
+ 196              	.LVL8:
+ 197              		.loc 1 81 35 view .LVU34
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 6
+
+
+ 198 000c 80B2     		uxth	r0, r0
+ 199              	.L19:
+  82:controller/IO/analog_inputs.c **** }
+ 200              		.loc 1 82 1 view .LVU35
+ 201 000e 08BD     		pop	{r3, pc}
+ 202              	.LVL9:
+ 203              	.L21:
+  78:controller/IO/analog_inputs.c ****         return 0;
+ 204              		.loc 1 78 9 is_stmt 1 view .LVU36
+ 205 0010 0348     		ldr	r0, .L22+4
+ 206              	.LVL10:
+  78:controller/IO/analog_inputs.c ****         return 0;
+ 207              		.loc 1 78 9 is_stmt 0 view .LVU37
+ 208 0012 FFF7FEFF 		bl	log_error
+ 209              	.LVL11:
+  79:controller/IO/analog_inputs.c ****     }
+ 210              		.loc 1 79 9 is_stmt 1 view .LVU38
+  79:controller/IO/analog_inputs.c ****     }
+ 211              		.loc 1 79 16 is_stmt 0 view .LVU39
+ 212 0016 0020     		movs	r0, #0
+ 213 0018 F9E7     		b	.L19
+ 214              	.L23:
+ 215 001a 00BF     		.align	2
+ 216              	.L22:
+ 217 001c 00000000 		.word	analog_data
+ 218 0020 00000000 		.word	.LC1
+ 219              		.cfi_endproc
+ 220              	.LFE227:
+ 222              		.global	conversion_is_happening
+ 223              		.section	.bss.conversion_is_happening,"aw",%nobits
+ 226              	conversion_is_happening:
+ 227 0000 00       		.space	1
+ 228              		.global	analog_data
+ 229              		.section	.bss.analog_data,"aw",%nobits
+ 230              		.align	2
+ 233              	analog_data:
+ 234 0000 00000000 		.space	338
+ 234      00000000 
+ 234      00000000 
+ 234      00000000 
+ 234      00000000 
+ 235              		.global	hadc
+ 236              		.section	.bss.hadc,"aw",%nobits
+ 237              		.align	2
+ 240              	hadc:
+ 241 0000 00000000 		.space	4
+ 242              		.text
+ 243              	.Letext0:
+ 244              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 245              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 246              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 247              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 248              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 249              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 250              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 251              		.file 9 "controller/IO/analog_inputs.h"
+ 252              		.file 10 "controller/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 7
+
+
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 analog_inputs.c
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:21     .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:27     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:45     .text.HAL_ADC_ConvCpltCallback:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:226    .bss.conversion_is_happening:00000000 conversion_is_happening
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:50     .rodata.analog_inputs_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:54     .text.analog_inputs_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:60     .text.analog_inputs_init:00000000 analog_inputs_init
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:105    .text.analog_inputs_init:00000020 $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:240    .bss.hadc:00000000 hadc
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:233    .bss.analog_data:00000000 analog_data
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:113    .text.analog_inputs_start_conversion:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:119    .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:159    .text.analog_inputs_start_conversion:00000020 $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:166    .rodata.analog_inputs_get_data.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:170    .text.analog_inputs_get_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:176    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:217    .text.analog_inputs_get_data:0000001c $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:227    .bss.conversion_is_happening:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:230    .bss.analog_data:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccZd9MSi.s:237    .bss.hadc:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_ADC_Start_DMA
+log_error

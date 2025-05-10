@@ -18,6 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
+#include "adc.h"
+#include "dma.h"
 #include "tim.h"
 #include "usb_device.h"
 #include "gpio.h"
@@ -28,7 +31,7 @@
 
 #include "controller.h"
 #include "configuration.h"
-
+#include "analog_inputs.h"
 #include "error_handling.h"
 
 /* USER CODE END Includes */
@@ -53,10 +56,12 @@
 /* USER CODE BEGIN PV */
 engine_s engine = {0};
 configuration_s configuration = {0};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -70,6 +75,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     trigger_tooth_handle(&engine.trigger);
   }
 }
+
 
 /* USER CODE END 0 */
 
@@ -104,26 +110,33 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM5_Init();
   MX_TIM3_Init();
-  MX_TIM2_Init();
-  MX_USB_DEVICE_Init();
+  MX_ADC1_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   controller_time_start(&htim5);
-
+  analog_inputs_init(&hadc1);
 
   /* USER CODE END 2 */
+
+  /* Init scheduler */
+  osKernelInitialize();
+
+  /* Call init function for freertos objects (in cmsis_os2.c) */
+  MX_FREERTOS_Init();
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    log_warning("This is an example warning!");
-    log_error("This is an example error!");
 
-
-    
-    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

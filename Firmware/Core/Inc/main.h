@@ -57,6 +57,46 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define AD_INPUT1_PIN_Pin GPIO_PIN_0
+#define AD_INPUT1_PIN_GPIO_Port GPIOC
+#define AD_INPUT2_PIN_Pin GPIO_PIN_1
+#define AD_INPUT2_PIN_GPIO_Port GPIOC
+#define AD_INPUT3_PIN_Pin GPIO_PIN_2
+#define AD_INPUT3_PIN_GPIO_Port GPIOC
+#define AD_INPUT4_PIN_Pin GPIO_PIN_3
+#define AD_INPUT4_PIN_GPIO_Port GPIOC
+#define ETB1_SENSE1_Pin GPIO_PIN_0
+#define ETB1_SENSE1_GPIO_Port GPIOA
+#define ETB1_SENSE2_Pin GPIO_PIN_1
+#define ETB1_SENSE2_GPIO_Port GPIOA
+#define ETB2_SENSE1_Pin GPIO_PIN_2
+#define ETB2_SENSE1_GPIO_Port GPIOA
+#define ETB2_SENSE2_Pin GPIO_PIN_3
+#define ETB2_SENSE2_GPIO_Port GPIOA
+#define SENSOR_MAP_PIN_Pin GPIO_PIN_4
+#define SENSOR_MAP_PIN_GPIO_Port GPIOA
+#define SENSOR_MAT_PIN_Pin GPIO_PIN_5
+#define SENSOR_MAT_PIN_GPIO_Port GPIOA
+#define SENSOR_CLT_PIN_Pin GPIO_PIN_6
+#define SENSOR_CLT_PIN_GPIO_Port GPIOA
+#define SENSOR_OIL_PIN_Pin GPIO_PIN_7
+#define SENSOR_OIL_PIN_GPIO_Port GPIOA
+#define VBAT_SENSE_PIN_Pin GPIO_PIN_4
+#define VBAT_SENSE_PIN_GPIO_Port GPIOC
+#define ETB1_MOTOR1_Pin GPIO_PIN_6
+#define ETB1_MOTOR1_GPIO_Port GPIOC
+#define ETB1_MOTOR2_Pin GPIO_PIN_7
+#define ETB1_MOTOR2_GPIO_Port GPIOC
+#define ETB2_MOTOR1_Pin GPIO_PIN_8
+#define ETB2_MOTOR1_GPIO_Port GPIOC
+#define ETB2_MOTOR2_Pin GPIO_PIN_9
+#define ETB2_MOTOR2_GPIO_Port GPIOC
+#define PWM_OUT1_PIN_Pin GPIO_PIN_8
+#define PWM_OUT1_PIN_GPIO_Port GPIOA
+#define PWM_OUT2_PIN_Pin GPIO_PIN_9
+#define PWM_OUT2_PIN_GPIO_Port GPIOA
+#define PWM_OUT3_PIN_Pin GPIO_PIN_10
+#define PWM_OUT3_PIN_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

@@ -19,6 +19,9 @@ build/debug/ignition.o: controller/engine_cycle/ignition.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
@@ -31,8 +34,9 @@ build/debug/ignition.o: controller/engine_cycle/ignition.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
  controller/engine_cycle/trigger.h controller/controller_time.h \
  Core/Inc/tim.h Core/Inc/main.h Core/Inc/main.h controller/types.h \
- controller/actuators/dc_motors.h controller/utils.h \
- controller/configuration.h controller/controller.h
+ controller/actuators/dc_motors.h controller/tables.h \
+ controller/constants.h controller/utils.h controller/configuration.h \
+ controller/controller.h
 controller/engine_cycle/ignition.h:
 controller/controller.h:
 controller/enums.h:
@@ -57,6 +61,9 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
@@ -74,6 +81,8 @@ Core/Inc/main.h:
 Core/Inc/main.h:
 controller/types.h:
 controller/actuators/dc_motors.h:
+controller/tables.h:
+controller/constants.h:
 controller/utils.h:
 controller/configuration.h:
 controller/controller.h:

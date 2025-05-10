@@ -6,6 +6,11 @@
 #include "types.h"
 #include "trigger.h"
 #include "dc_motors.h"
+#include "tables.h"
+
+
+
+
 
 typedef struct
 {

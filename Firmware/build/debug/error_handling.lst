@@ -1,0 +1,246 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"error_handling.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/error_handling.c"
+  20              		.section	.rodata.log_error.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 4572726F 		.ascii	"Error: %s\012\000"
+  23      723A2025 
+  23      730A00
+  24              		.section	.text.log_error,"ax",%progbits
+  25              		.align	1
+  26              		.global	log_error
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  31              	log_error:
+  32              	.LVL0:
+  33              	.LFB224:
+   1:controller/error_handling.c **** #include "error_handling.h"
+   2:controller/error_handling.c **** 
+   3:controller/error_handling.c **** 
+   4:controller/error_handling.c **** void log_error(const char* message)
+   5:controller/error_handling.c **** {
+  34              		.loc 1 5 1 view -0
+  35              		.cfi_startproc
+  36              		@ args = 0, pretend = 0, frame = 104
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+   6:controller/error_handling.c ****     if (message == NULL) return;
+  38              		.loc 1 6 5 view .LVU1
+  39              		.loc 1 6 8 is_stmt 0 view .LVU2
+  40 0000 C0B1     		cbz	r0, .L5
+   5:controller/error_handling.c ****     if (message == NULL) return;
+  41              		.loc 1 5 1 view .LVU3
+  42 0002 70B5     		push	{r4, r5, r6, lr}
+  43              		.cfi_def_cfa_offset 16
+  44              		.cfi_offset 4, -16
+  45              		.cfi_offset 5, -12
+  46              		.cfi_offset 6, -8
+  47              		.cfi_offset 14, -4
+  48 0004 9AB0     		sub	sp, sp, #104
+  49              		.cfi_def_cfa_offset 120
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s 			page 2
+
+
+  50 0006 0646     		mov	r6, r0
+   7:controller/error_handling.c **** 
+   8:controller/error_handling.c ****     uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
+  51              		.loc 1 8 5 is_stmt 1 view .LVU4
+  52              		.loc 1 8 13 is_stmt 0 view .LVU5
+  53 0008 01AC     		add	r4, sp, #4
+  54 000a 6425     		movs	r5, #100
+  55 000c 2A46     		mov	r2, r5
+  56 000e 0021     		movs	r1, #0
+  57 0010 2046     		mov	r0, r4
+  58              	.LVL1:
+  59              		.loc 1 8 13 view .LVU6
+  60 0012 FFF7FEFF 		bl	memset
+  61              	.LVL2:
+   9:controller/error_handling.c **** 
+  10:controller/error_handling.c ****     snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Error: %s\n", message);
+  62              		.loc 1 10 5 is_stmt 1 view .LVU7
+  63 0016 3346     		mov	r3, r6
+  64 0018 074A     		ldr	r2, .L8
+  65 001a 2946     		mov	r1, r5
+  66 001c 2046     		mov	r0, r4
+  67 001e FFF7FEFF 		bl	snprintf
+  68              	.LVL3:
+  11:controller/error_handling.c **** 
+  12:controller/error_handling.c ****     CDC_Transmit_FS(buffer, strlen((char*)buffer));
+  69              		.loc 1 12 5 view .LVU8
+  70              		.loc 1 12 29 is_stmt 0 view .LVU9
+  71 0022 2046     		mov	r0, r4
+  72 0024 FFF7FEFF 		bl	strlen
+  73              	.LVL4:
+  74              		.loc 1 12 5 discriminator 1 view .LVU10
+  75 0028 81B2     		uxth	r1, r0
+  76 002a 2046     		mov	r0, r4
+  77 002c FFF7FEFF 		bl	CDC_Transmit_FS
+  78              	.LVL5:
+  13:controller/error_handling.c **** }
+  79              		.loc 1 13 1 view .LVU11
+  80 0030 1AB0     		add	sp, sp, #104
+  81              		.cfi_def_cfa_offset 16
+  82              		@ sp needed
+  83 0032 70BD     		pop	{r4, r5, r6, pc}
+  84              	.LVL6:
+  85              	.L5:
+  86              		.cfi_def_cfa_offset 0
+  87              		.cfi_restore 4
+  88              		.cfi_restore 5
+  89              		.cfi_restore 6
+  90              		.cfi_restore 14
+  91              		.loc 1 13 1 view .LVU12
+  92 0034 7047     		bx	lr
+  93              	.L9:
+  94 0036 00BF     		.align	2
+  95              	.L8:
+  96 0038 00000000 		.word	.LC0
+  97              		.cfi_endproc
+  98              	.LFE224:
+ 100              		.section	.rodata.log_warning.str1.4,"aMS",%progbits,1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s 			page 3
+
+
+ 101              		.align	2
+ 102              	.LC1:
+ 103 0000 5761726E 		.ascii	"Warning: %s\012\000"
+ 103      696E673A 
+ 103      2025730A 
+ 103      00
+ 104              		.section	.text.log_warning,"ax",%progbits
+ 105              		.align	1
+ 106              		.global	log_warning
+ 107              		.syntax unified
+ 108              		.thumb
+ 109              		.thumb_func
+ 111              	log_warning:
+ 112              	.LVL7:
+ 113              	.LFB225:
+  14:controller/error_handling.c **** 
+  15:controller/error_handling.c **** void log_warning(const char* message)
+  16:controller/error_handling.c **** {
+ 114              		.loc 1 16 1 is_stmt 1 view -0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 104
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+  17:controller/error_handling.c ****     if (message == NULL) return;
+ 118              		.loc 1 17 5 view .LVU14
+ 119              		.loc 1 17 8 is_stmt 0 view .LVU15
+ 120 0000 C0B1     		cbz	r0, .L14
+  16:controller/error_handling.c ****     if (message == NULL) return;
+ 121              		.loc 1 16 1 view .LVU16
+ 122 0002 70B5     		push	{r4, r5, r6, lr}
+ 123              		.cfi_def_cfa_offset 16
+ 124              		.cfi_offset 4, -16
+ 125              		.cfi_offset 5, -12
+ 126              		.cfi_offset 6, -8
+ 127              		.cfi_offset 14, -4
+ 128 0004 9AB0     		sub	sp, sp, #104
+ 129              		.cfi_def_cfa_offset 120
+ 130 0006 0646     		mov	r6, r0
+  18:controller/error_handling.c **** 
+  19:controller/error_handling.c ****     uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
+ 131              		.loc 1 19 5 is_stmt 1 view .LVU17
+ 132              		.loc 1 19 13 is_stmt 0 view .LVU18
+ 133 0008 01AC     		add	r4, sp, #4
+ 134 000a 6425     		movs	r5, #100
+ 135 000c 2A46     		mov	r2, r5
+ 136 000e 0021     		movs	r1, #0
+ 137 0010 2046     		mov	r0, r4
+ 138              	.LVL8:
+ 139              		.loc 1 19 13 view .LVU19
+ 140 0012 FFF7FEFF 		bl	memset
+ 141              	.LVL9:
+  20:controller/error_handling.c **** 
+  21:controller/error_handling.c ****     snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Warning: %s\n", message);
+ 142              		.loc 1 21 5 is_stmt 1 view .LVU20
+ 143 0016 3346     		mov	r3, r6
+ 144 0018 074A     		ldr	r2, .L17
+ 145 001a 2946     		mov	r1, r5
+ 146 001c 2046     		mov	r0, r4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s 			page 4
+
+
+ 147 001e FFF7FEFF 		bl	snprintf
+ 148              	.LVL10:
+  22:controller/error_handling.c **** 
+  23:controller/error_handling.c ****     CDC_Transmit_FS(buffer, strlen((char*)buffer));
+ 149              		.loc 1 23 5 view .LVU21
+ 150              		.loc 1 23 29 is_stmt 0 view .LVU22
+ 151 0022 2046     		mov	r0, r4
+ 152 0024 FFF7FEFF 		bl	strlen
+ 153              	.LVL11:
+ 154              		.loc 1 23 5 discriminator 1 view .LVU23
+ 155 0028 81B2     		uxth	r1, r0
+ 156 002a 2046     		mov	r0, r4
+ 157 002c FFF7FEFF 		bl	CDC_Transmit_FS
+ 158              	.LVL12:
+  24:controller/error_handling.c **** }...
+ 159              		.loc 1 24 1 view .LVU24
+ 160 0030 1AB0     		add	sp, sp, #104
+ 161              		.cfi_def_cfa_offset 16
+ 162              		@ sp needed
+ 163 0032 70BD     		pop	{r4, r5, r6, pc}
+ 164              	.LVL13:
+ 165              	.L14:
+ 166              		.cfi_def_cfa_offset 0
+ 167              		.cfi_restore 4
+ 168              		.cfi_restore 5
+ 169              		.cfi_restore 6
+ 170              		.cfi_restore 14
+ 171              		.loc 1 24 1 view .LVU25
+ 172 0034 7047     		bx	lr
+ 173              	.L18:
+ 174 0036 00BF     		.align	2
+ 175              	.L17:
+ 176 0038 00000000 		.word	.LC1
+ 177              		.cfi_endproc
+ 178              	.LFE225:
+ 180              		.text
+ 181              	.Letext0:
+ 182              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 183              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 184              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 185              		.file 5 "USB_DEVICE/App/usbd_cdc_if.h"
+ 186              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 187              		.file 7 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 188              		.file 8 "<built-in>"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 error_handling.c
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:21     .rodata.log_error.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:25     .text.log_error:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:31     .text.log_error:00000000 log_error
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:96     .text.log_error:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:101    .rodata.log_warning.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:105    .text.log_warning:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:111    .text.log_warning:00000000 log_warning
+C:\Users\alireza\AppData\Local\Temp\ccLIHSOF.s:176    .text.log_warning:00000038 $d
+
+UNDEFINED SYMBOLS
+memset
+snprintf
+strlen
+CDC_Transmit_FS

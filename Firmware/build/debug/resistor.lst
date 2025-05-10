@@ -1,0 +1,273 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc24feIe.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"resistor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/IO/resistor.c"
+  20              		.section	.rodata.resistor_init.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 52657369 		.ascii	"Resistor init failed!\000"
+  23      73746F72 
+  23      20696E69 
+  23      74206661 
+  23      696C6564 
+  24              		.section	.text.resistor_init,"ax",%progbits
+  25              		.align	1
+  26              		.global	resistor_init
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  31              	resistor_init:
+  32              	.LVL0:
+  33              	.LFB225:
+   1:controller/IO/resistor.c **** #include "resistor.h"
+   2:controller/IO/resistor.c **** 
+   3:controller/IO/resistor.c **** void resistor_init(resistor_s* resistor, float pull_resistor, resistor_pull_type_e pull_type, analo
+   4:controller/IO/resistor.c **** {
+  34              		.loc 1 4 1 view -0
+  35              		.cfi_startproc
+  36              		@ args = 0, pretend = 0, frame = 0
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+  38              		.loc 1 4 1 is_stmt 0 view .LVU1
+  39 0000 08B5     		push	{r3, lr}
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 3, -8
+  42              		.cfi_offset 14, -4
+   5:controller/IO/resistor.c ****     if (resistor == NULL)
+  43              		.loc 1 5 5 is_stmt 1 view .LVU2
+  44              		.loc 1 5 8 is_stmt 0 view .LVU3
+  45 0002 20B1     		cbz	r0, .L5
+   6:controller/IO/resistor.c ****     {
+   7:controller/IO/resistor.c ****         log_error("Resistor init failed!");
+   8:controller/IO/resistor.c ****         return;
+   9:controller/IO/resistor.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc24feIe.s 			page 2
+
+
+  10:controller/IO/resistor.c ****     resistor->pull_resistor = pull_resistor;
+  46              		.loc 1 10 5 is_stmt 1 view .LVU4
+  47              		.loc 1 10 29 is_stmt 0 view .LVU5
+  48 0004 80ED010A 		vstr.32	s0, [r0, #4]
+  11:controller/IO/resistor.c ****     resistor->pull_type = pull_type;
+  49              		.loc 1 11 5 is_stmt 1 view .LVU6
+  50              		.loc 1 11 25 is_stmt 0 view .LVU7
+  51 0008 0170     		strb	r1, [r0]
+  12:controller/IO/resistor.c ****     resistor->analog_input = analog_input;
+  52              		.loc 1 12 5 is_stmt 1 view .LVU8
+  53              		.loc 1 12 28 is_stmt 0 view .LVU9
+  54 000a 0272     		strb	r2, [r0, #8]
+  55              	.LVL1:
+  56              	.L1:
+  13:controller/IO/resistor.c **** }
+  57              		.loc 1 13 1 view .LVU10
+  58 000c 08BD     		pop	{r3, pc}
+  59              	.LVL2:
+  60              	.L5:
+   7:controller/IO/resistor.c ****         return;
+  61              		.loc 1 7 9 is_stmt 1 view .LVU11
+  62 000e 0248     		ldr	r0, .L6
+  63              	.LVL3:
+   7:controller/IO/resistor.c ****         return;
+  64              		.loc 1 7 9 is_stmt 0 view .LVU12
+  65 0010 FFF7FEFF 		bl	log_error
+  66              	.LVL4:
+   8:controller/IO/resistor.c ****     }
+  67              		.loc 1 8 9 is_stmt 1 view .LVU13
+  68 0014 FAE7     		b	.L1
+  69              	.L7:
+  70 0016 00BF     		.align	2
+  71              	.L6:
+  72 0018 00000000 		.word	.LC0
+  73              		.cfi_endproc
+  74              	.LFE225:
+  76              		.section	.rodata.resistor_get_resistance.str1.4,"aMS",%progbits,1
+  77              		.align	2
+  78              	.LC1:
+  79 0000 52657369 		.ascii	"Resistor open circuit.\000"
+  79      73746F72 
+  79      206F7065 
+  79      6E206369 
+  79      72637569 
+  80              		.section	.text.resistor_get_resistance,"ax",%progbits
+  81              		.align	1
+  82              		.global	resistor_get_resistance
+  83              		.syntax unified
+  84              		.thumb
+  85              		.thumb_func
+  87              	resistor_get_resistance:
+  88              	.LVL5:
+  89              	.LFB226:
+  14:controller/IO/resistor.c **** 
+  15:controller/IO/resistor.c **** 
+  16:controller/IO/resistor.c **** float resistor_get_resistance(const resistor_s *resistor)
+  17:controller/IO/resistor.c **** {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc24feIe.s 			page 3
+
+
+  90              		.loc 1 17 1 view -0
+  91              		.cfi_startproc
+  92              		@ args = 0, pretend = 0, frame = 0
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94              		.loc 1 17 1 is_stmt 0 view .LVU15
+  95 0000 10B5     		push	{r4, lr}
+  96              		.cfi_def_cfa_offset 8
+  97              		.cfi_offset 4, -8
+  98              		.cfi_offset 14, -4
+  99 0002 0446     		mov	r4, r0
+  18:controller/IO/resistor.c ****     uint16_t adc_value = analog_inputs_get_data(resistor->analog_input);
+ 100              		.loc 1 18 5 is_stmt 1 view .LVU16
+ 101              		.loc 1 18 26 is_stmt 0 view .LVU17
+ 102 0004 007A     		ldrb	r0, [r0, #8]	@ zero_extendqisi2
+ 103              	.LVL6:
+ 104              		.loc 1 18 26 view .LVU18
+ 105 0006 FFF7FEFF 		bl	analog_inputs_get_data
+ 106              	.LVL7:
+  19:controller/IO/resistor.c ****     float voltage = (adc_value / ADC_MAX_VALUE) * ADC_REF_VOLTAGE;
+ 107              		.loc 1 19 5 is_stmt 1 view .LVU19
+ 108              		.loc 1 19 32 is_stmt 0 view .LVU20
+ 109 000a 1E4B     		ldr	r3, .L16
+ 110 000c A3FB0023 		umull	r2, r3, r3, r0
+ 111 0010 C21A     		subs	r2, r0, r3
+ 112 0012 03EB5203 		add	r3, r3, r2, lsr #1
+ 113 0016 C3F3CF23 		ubfx	r3, r3, #11, #16
+ 114              		.loc 1 19 49 view .LVU21
+ 115 001a 07EE903A 		vmov	s15, r3	@ int
+ 116 001e F8EEE77A 		vcvt.f32.s32	s15, s15
+ 117              		.loc 1 19 11 view .LVU22
+ 118 0022 9FED197A 		vldr.32	s14, .L16+4
+ 119 0026 67EE877A 		vmul.f32	s15, s15, s14
+ 120              	.LVL8:
+  20:controller/IO/resistor.c ****     // simple check to see if the sensor is open circuit or not
+  21:controller/IO/resistor.c ****     if (!IS_IN_RANGE(voltage, 0.05f * ADC_REF_VOLTAGE, 0.95f * ADC_REF_VOLTAGE))
+ 121              		.loc 1 21 5 is_stmt 1 view .LVU23
+ 122              		.loc 1 21 8 is_stmt 0 view .LVU24
+ 123 002a 9FED187A 		vldr.32	s14, .L16+8
+ 124 002e F4EEC77A 		vcmpe.f32	s15, s14
+ 125 0032 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 126 0036 13DB     		blt	.L9
+ 127              		.loc 1 21 9 discriminator 1 view .LVU25
+ 128 0038 9FED157A 		vldr.32	s14, .L16+12
+ 129 003c F4EEC77A 		vcmpe.f32	s15, s14
+ 130 0040 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 131 0044 0CD8     		bhi	.L9
+  22:controller/IO/resistor.c ****     {
+  23:controller/IO/resistor.c ****         log_error("Resistor open circuit.");
+  24:controller/IO/resistor.c ****         return NAN;
+  25:controller/IO/resistor.c ****     }
+  26:controller/IO/resistor.c ****     if (resistor->pull_type == RESISTOR_PULL_UP) {
+ 132              		.loc 1 26 5 is_stmt 1 view .LVU26
+ 133              		.loc 1 26 17 is_stmt 0 view .LVU27
+ 134 0046 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+ 135              		.loc 1 26 8 view .LVU28
+ 136 0048 83B9     		cbnz	r3, .L13
+  27:controller/IO/resistor.c ****         return (voltage * resistor->pull_resistor) / (ADC_REF_VOLTAGE - voltage);
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc24feIe.s 			page 4
+
+
+ 137              		.loc 1 27 9 is_stmt 1 view .LVU29
+ 138              		.loc 1 27 35 is_stmt 0 view .LVU30
+ 139 004a D4ED016A 		vldr.32	s13, [r4, #4]
+ 140              		.loc 1 27 25 view .LVU31
+ 141 004e 66EEA76A 		vmul.f32	s13, s13, s15
+ 142              		.loc 1 27 71 view .LVU32
+ 143 0052 9FED0D7A 		vldr.32	s14, .L16+4
+ 144 0056 77EE677A 		vsub.f32	s15, s14, s15
+ 145              	.LVL9:
+ 146              		.loc 1 27 52 view .LVU33
+ 147 005a 86EEA70A 		vdiv.f32	s0, s13, s15
+ 148 005e 04E0     		b	.L8
+ 149              	.LVL10:
+ 150              	.L9:
+  23:controller/IO/resistor.c ****         return NAN;
+ 151              		.loc 1 23 9 is_stmt 1 view .LVU34
+ 152 0060 0C48     		ldr	r0, .L16+16
+ 153              	.LVL11:
+  23:controller/IO/resistor.c ****         return NAN;
+ 154              		.loc 1 23 9 is_stmt 0 view .LVU35
+ 155 0062 FFF7FEFF 		bl	log_error
+ 156              	.LVL12:
+  24:controller/IO/resistor.c ****     }
+ 157              		.loc 1 24 9 is_stmt 1 view .LVU36
+  24:controller/IO/resistor.c ****     }
+ 158              		.loc 1 24 16 is_stmt 0 view .LVU37
+ 159 0066 9FED0C0A 		vldr.32	s0, .L16+20
+ 160              	.L8:
+  28:controller/IO/resistor.c ****     } else { // PULL_DOWN
+  29:controller/IO/resistor.c ****         return ((ADC_REF_VOLTAGE - voltage) * resistor->pull_resistor) / voltage;
+  30:controller/IO/resistor.c ****     }
+  31:controller/IO/resistor.c **** }
+ 161              		.loc 1 31 1 view .LVU38
+ 162 006a 10BD     		pop	{r4, pc}
+ 163              	.LVL13:
+ 164              	.L13:
+  29:controller/IO/resistor.c ****     }
+ 165              		.loc 1 29 9 is_stmt 1 view .LVU39
+  29:controller/IO/resistor.c ****     }
+ 166              		.loc 1 29 34 is_stmt 0 view .LVU40
+ 167 006c 9FED067A 		vldr.32	s14, .L16+4
+ 168 0070 37EE677A 		vsub.f32	s14, s14, s15
+  29:controller/IO/resistor.c ****     }
+ 169              		.loc 1 29 55 view .LVU41
+ 170 0074 D4ED016A 		vldr.32	s13, [r4, #4]
+  29:controller/IO/resistor.c ****     }
+ 171              		.loc 1 29 45 view .LVU42
+ 172 0078 27EE267A 		vmul.f32	s14, s14, s13
+  29:controller/IO/resistor.c ****     }
+ 173              		.loc 1 29 72 view .LVU43
+ 174 007c 87EE270A 		vdiv.f32	s0, s14, s15
+ 175 0080 F3E7     		b	.L8
+ 176              	.L17:
+ 177 0082 00BF     		.align	2
+ 178              	.L16:
+ 179 0084 01011000 		.word	1048833
+ 180 0088 33335340 		.word	1079194419
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc24feIe.s 			page 5
+
+
+ 181 008c C3F5283E 		.word	1042871747
+ 182 0090 D7A34840 		.word	1078502359
+ 183 0094 00000000 		.word	.LC1
+ 184 0098 0000C07F 		.word	2143289344
+ 185              		.cfi_endproc
+ 186              	.LFE226:
+ 188              		.text
+ 189              	.Letext0:
+ 190              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 191              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 192              		.file 4 "controller/IO/analog_inputs.h"
+ 193              		.file 5 "controller/IO/resistor.h"
+ 194              		.file 6 "controller/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc24feIe.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 resistor.c
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:21     .rodata.resistor_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:25     .text.resistor_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:31     .text.resistor_init:00000000 resistor_init
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:72     .text.resistor_init:00000018 $d
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:77     .rodata.resistor_get_resistance.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:81     .text.resistor_get_resistance:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:87     .text.resistor_get_resistance:00000000 resistor_get_resistance
+C:\Users\alireza\AppData\Local\Temp\cc24feIe.s:179    .text.resistor_get_resistance:00000084 $d
+
+UNDEFINED SYMBOLS
+log_error
+analog_inputs_get_data

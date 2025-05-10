@@ -18,7 +18,10 @@ typedef struct
     uint8_t ignition_multi_spark_number_of_sparks;
     rpm_t ignition_multi_spark_rpm_threshold;
 
-
+    volume_liter_t engine_displacment;
+    afr_t stoich_afr_gas;
+    afr_t stoich_afr_petrol;
+    
 } configuration_s;
 
 extern configuration_s configuration;

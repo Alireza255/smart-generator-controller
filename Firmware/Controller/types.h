@@ -57,8 +57,19 @@ typedef float rpm_t;
 
 // temperature, in Celsius
 typedef float temperature_t;
+// mass in grams
+typedef float mass_t;
+
+// ratio of air mass to fuel mass
+typedef float afr_t;
+
+// pressure in kpa
+typedef float pressure_t;
+
+typedef float volume_liter_t;
 
 typedef float percent_t;
+typedef float voltage_t;
 
 typedef uint16_t pwm_freq_t;
  

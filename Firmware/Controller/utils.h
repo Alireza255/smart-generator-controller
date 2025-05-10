@@ -16,6 +16,9 @@
 #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
+#define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
+#define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
+
 /**
  * @brief function to calculate the microseconds it takes for the engine to turn one degree
  * @note returns 0 if rpm is 0

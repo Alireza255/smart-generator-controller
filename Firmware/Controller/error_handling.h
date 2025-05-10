@@ -10,23 +10,13 @@
 /**
  * @bug multiple logs back to back 
  */
-
 /**
  * @brief Logs a warning message for debugging or diagnostic purposes.
  * 
  * @param message The error message to be logged.
  */
 
-void log_error(const char* message)
-{
-    if (message == NULL) return;
-    
-    uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
-
-    snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Error: %s\n", message);
-
-    CDC_Transmit_FS(buffer, ERROR_HANDLING_BUFFER_SIZE);
-}
+void log_error(const char* message);
 
 /**
  * @brief Logs a warning message to the system log or console.
@@ -37,16 +27,7 @@ void log_error(const char* message)
  *
  * @param message A string containing the warning message.
  */
-void log_warning(const char* message)
-{
-    if (message == NULL) return;
-
-    uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
-
-    snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Warning: %s\n", message);
-
-    CDC_Transmit_FS(buffer, ERROR_HANDLING_BUFFER_SIZE);
-}
+void log_warning(const char* message);
 
 
 #endif // ERROR_HANDLING_H

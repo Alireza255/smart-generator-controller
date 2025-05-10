@@ -18,6 +18,9 @@ build/debug/trigger.o: controller/engine_cycle/trigger.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
@@ -30,7 +33,8 @@ build/debug/trigger.o: controller/engine_cycle/trigger.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h Core/Inc/tim.h \
  Core/Inc/main.h Core/Inc/main.h controller/types.h \
  controller/controller.h controller/enums.h \
- controller/engine_cycle/trigger.h controller/actuators/dc_motors.h
+ controller/engine_cycle/trigger.h controller/actuators/dc_motors.h \
+ controller/tables.h controller/constants.h
 controller/engine_cycle/trigger.h:
 controller/controller_time.h:
 controller/types.h:
@@ -54,6 +58,9 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
@@ -72,3 +79,5 @@ controller/controller.h:
 controller/enums.h:
 controller/engine_cycle/trigger.h:
 controller/actuators/dc_motors.h:
+controller/tables.h:
+controller/constants.h:

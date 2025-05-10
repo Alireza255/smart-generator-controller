@@ -1,0 +1,336 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"tables.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/tables.c"
+  20              		.section	.rodata.table_ve_get_value.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 5461626C 		.ascii	"Table error! Out of bound access request\000"
+  23      65206572 
+  23      726F7221 
+  23      204F7574 
+  23      206F6620 
+  24              		.section	.text.table_ve_get_value,"ax",%progbits
+  25              		.align	1
+  26              		.global	table_ve_get_value
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  31              	table_ve_get_value:
+  32              	.LVL0:
+  33              	.LFB225:
+   1:controller/tables.c **** #include "tables.h"
+   2:controller/tables.c **** #include "error_handling.h"
+   3:controller/tables.c **** #include "utils.h"
+   4:controller/tables.c **** 
+   5:controller/tables.c **** percent_t table_ve_get_value(table_ve_t *table, rpm_t rpm, pressure_t load)
+   6:controller/tables.c **** {
+  34              		.loc 1 6 1 view -0
+  35              		.cfi_startproc
+  36              		@ args = 0, pretend = 0, frame = 8
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+  38              		.loc 1 6 1 is_stmt 0 view .LVU1
+  39 0000 00B5     		push	{lr}
+  40              		.cfi_def_cfa_offset 4
+  41              		.cfi_offset 14, -4
+  42 0002 83B0     		sub	sp, sp, #12
+  43              		.cfi_def_cfa_offset 16
+   7:controller/tables.c ****     if (!IS_IN_RANGE(rpm, 0, FIRMWARE_LIMIT_MAX_RPM) || !IS_IN_RANGE(load, 0, FIRMWARE_LIMIT_MAX_MA
+  44              		.loc 1 7 5 is_stmt 1 view .LVU2
+  45              		.loc 1 7 8 is_stmt 0 view .LVU3
+  46 0004 B5EEC00A 		vcmpe.f32	s0, #0
+  47 0008 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s 			page 2
+
+
+  48 000c 2CDB     		blt	.L2
+  49              		.loc 1 7 9 discriminator 1 view .LVU4
+  50 000e DFED1A7A 		vldr.32	s15, .L12
+  51 0012 B4EEE70A 		vcmpe.f32	s0, s15
+  52 0016 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  53 001a 25D8     		bhi	.L2
+  54              		.loc 1 7 54 discriminator 2 view .LVU5
+  55 001c F5EEC00A 		vcmpe.f32	s1, #0
+  56 0020 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  57 0024 20DB     		blt	.L2
+  58              		.loc 1 7 57 discriminator 3 view .LVU6
+  59 0026 DFED157A 		vldr.32	s15, .L12+4
+  60 002a F4EEE70A 		vcmpe.f32	s1, s15
+  61 002e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  62 0032 19D8     		bhi	.L2
+   8:controller/tables.c ****     {
+   9:controller/tables.c ****         log_error("Table error! Out of bound access request");
+  10:controller/tables.c ****         return 0;
+  11:controller/tables.c ****     }
+  12:controller/tables.c ****     
+  13:controller/tables.c ****     uint8_t x_size = sizeof(table->data) / sizeof(table->data[0]); // Number of rows
+  63              		.loc 1 13 5 is_stmt 1 view .LVU7
+  64              	.LVL1:
+  14:controller/tables.c ****     uint8_t y_size = sizeof(table->data[0]) / sizeof(table->data[0][0]); // Number of columns
+  65              		.loc 1 14 5 view .LVU8
+  15:controller/tables.c **** 
+  16:controller/tables.c ****     if (x_size == 0 || y_size == 0)
+  66              		.loc 1 16 5 view .LVU9
+  17:controller/tables.c ****     {
+  18:controller/tables.c ****         log_error("Table access error! Dim is 0");
+  19:controller/tables.c ****         return 0;
+  20:controller/tables.c ****     }
+  21:controller/tables.c ****     rpm_t rpm_bin_size = FIRMWARE_LIMIT_MAX_RPM / x_size;
+  67              		.loc 1 21 5 view .LVU10
+  22:controller/tables.c ****     pressure_t load_bin_size = FIRMWARE_LIMIT_MAX_MAP / y_size;
+  68              		.loc 1 22 5 view .LVU11
+  23:controller/tables.c **** 
+  24:controller/tables.c ****     uint8_t rpm_index = (uint8_t)(rpm / rpm_bin_size);
+  69              		.loc 1 24 5 view .LVU12
+  70              		.loc 1 24 39 is_stmt 0 view .LVU13
+  71 0034 9FED127A 		vldr.32	s14, .L12+8
+  72 0038 C0EE077A 		vdiv.f32	s15, s0, s14
+  73              		.loc 1 24 13 view .LVU14
+  74 003c FCEEE77A 		vcvt.u32.f32	s15, s15
+  75 0040 CDED017A 		vstr.32	s15, [sp, #4]	@ int
+  76 0044 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+  77              	.LVL2:
+  25:controller/tables.c ****     uint8_t load_index = (uint8_t)(load / load_bin_size);
+  78              		.loc 1 25 5 is_stmt 1 view .LVU15
+  79              		.loc 1 25 41 is_stmt 0 view .LVU16
+  80 0048 B1EE0E7A 		vmov.f32	s14, #7.5e+0
+  81 004c C0EE877A 		vdiv.f32	s15, s1, s14
+  82              		.loc 1 25 13 view .LVU17
+  83 0050 FCEEE77A 		vcvt.u32.f32	s15, s15
+  84 0054 17EE903A 		vmov	r3, s15	@ int
+  85              	.LVL3:
+  26:controller/tables.c **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s 			page 3
+
+
+  27:controller/tables.c ****     return table->data[rpm_index][load_index];
+  86              		.loc 1 27 5 is_stmt 1 view .LVU18
+  87              		.loc 1 27 34 is_stmt 0 view .LVU19
+  88 0058 1201     		lsls	r2, r2, #4
+  89              	.LVL4:
+  90              		.loc 1 27 34 view .LVU20
+  91 005a 52FA83F3 		uxtab	r3, r2, r3
+  92              	.LVL5:
+  93              		.loc 1 27 34 view .LVU21
+  94 005e 00EB8300 		add	r0, r0, r3, lsl #2
+  95              	.LVL6:
+  96              		.loc 1 27 34 view .LVU22
+  97 0062 90ED000A 		vldr.32	s0, [r0]
+  98              	.LVL7:
+  99              		.loc 1 27 34 view .LVU23
+ 100 0066 04E0     		b	.L1
+ 101              	.LVL8:
+ 102              	.L2:
+   9:controller/tables.c ****         return 0;
+ 103              		.loc 1 9 9 is_stmt 1 view .LVU24
+ 104 0068 0648     		ldr	r0, .L12+12
+ 105              	.LVL9:
+   9:controller/tables.c ****         return 0;
+ 106              		.loc 1 9 9 is_stmt 0 view .LVU25
+ 107 006a FFF7FEFF 		bl	log_error
+ 108              	.LVL10:
+  10:controller/tables.c ****     }
+ 109              		.loc 1 10 9 is_stmt 1 view .LVU26
+  10:controller/tables.c ****     }
+ 110              		.loc 1 10 16 is_stmt 0 view .LVU27
+ 111 006e 9FED060A 		vldr.32	s0, .L12+16
+ 112              	.L1:
+  28:controller/tables.c **** 
+  29:controller/tables.c **** }
+ 113              		.loc 1 29 1 view .LVU28
+ 114 0072 03B0     		add	sp, sp, #12
+ 115              		.cfi_def_cfa_offset 4
+ 116              		@ sp needed
+ 117 0074 5DF804FB 		ldr	pc, [sp], #4
+ 118              	.L13:
+ 119              		.align	2
+ 120              	.L12:
+ 121 0078 0080BB45 		.word	1169915904
+ 122 007c 0000F042 		.word	1123024896
+ 123 0080 0080BB43 		.word	1136361472
+ 124 0084 00000000 		.word	.LC0
+ 125 0088 00000000 		.word	0
+ 126              		.cfi_endproc
+ 127              	.LFE225:
+ 129              		.section	.text.table_ignition_get_value,"ax",%progbits
+ 130              		.align	1
+ 131              		.global	table_ignition_get_value
+ 132              		.syntax unified
+ 133              		.thumb
+ 134              		.thumb_func
+ 136              	table_ignition_get_value:
+ 137              	.LVL11:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s 			page 4
+
+
+ 138              	.LFB226:
+  30:controller/tables.c **** 
+  31:controller/tables.c **** angle_t table_ignition_get_value(table_ignition_t *table, rpm_t rpm, pressure_t load)
+  32:controller/tables.c **** {
+ 139              		.loc 1 32 1 is_stmt 1 view -0
+ 140              		.cfi_startproc
+ 141              		@ args = 0, pretend = 0, frame = 8
+ 142              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143              		.loc 1 32 1 is_stmt 0 view .LVU30
+ 144 0000 00B5     		push	{lr}
+ 145              		.cfi_def_cfa_offset 4
+ 146              		.cfi_offset 14, -4
+ 147 0002 83B0     		sub	sp, sp, #12
+ 148              		.cfi_def_cfa_offset 16
+  33:controller/tables.c ****     if (!IS_IN_RANGE(rpm, 0, FIRMWARE_LIMIT_MAX_RPM) || !IS_IN_RANGE(load, 0, FIRMWARE_LIMIT_MAX_MA
+ 149              		.loc 1 33 5 is_stmt 1 view .LVU31
+ 150              		.loc 1 33 8 is_stmt 0 view .LVU32
+ 151 0004 B5EEC00A 		vcmpe.f32	s0, #0
+ 152 0008 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 153 000c 2CDB     		blt	.L15
+ 154              		.loc 1 33 9 discriminator 1 view .LVU33
+ 155 000e DFED1A7A 		vldr.32	s15, .L25
+ 156 0012 B4EEE70A 		vcmpe.f32	s0, s15
+ 157 0016 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 158 001a 25D8     		bhi	.L15
+ 159              		.loc 1 33 54 discriminator 2 view .LVU34
+ 160 001c F5EEC00A 		vcmpe.f32	s1, #0
+ 161 0020 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 162 0024 20DB     		blt	.L15
+ 163              		.loc 1 33 57 discriminator 3 view .LVU35
+ 164 0026 DFED157A 		vldr.32	s15, .L25+4
+ 165 002a F4EEE70A 		vcmpe.f32	s1, s15
+ 166 002e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 167 0032 19D8     		bhi	.L15
+  34:controller/tables.c ****     {
+  35:controller/tables.c ****         log_error("Table error! Out of bound access request");
+  36:controller/tables.c ****         return 0;
+  37:controller/tables.c ****     }
+  38:controller/tables.c ****     
+  39:controller/tables.c ****     uint8_t x_size = sizeof(table->data) / sizeof(table->data[0]); // Number of rows
+ 168              		.loc 1 39 5 is_stmt 1 view .LVU36
+ 169              	.LVL12:
+  40:controller/tables.c ****     uint8_t y_size = sizeof(table->data[0]) / sizeof(table->data[0][0]); // Number of columns
+ 170              		.loc 1 40 5 view .LVU37
+  41:controller/tables.c **** 
+  42:controller/tables.c ****     if (x_size == 0 || y_size == 0)
+ 171              		.loc 1 42 5 view .LVU38
+  43:controller/tables.c ****     {
+  44:controller/tables.c ****         log_error("Table access error! Dim is 0");
+  45:controller/tables.c ****         return 0;
+  46:controller/tables.c ****     }
+  47:controller/tables.c ****     rpm_t rpm_bin_size = FIRMWARE_LIMIT_MAX_RPM / x_size;
+ 172              		.loc 1 47 5 view .LVU39
+  48:controller/tables.c ****     pressure_t load_bin_size = FIRMWARE_LIMIT_MAX_MAP / y_size;
+ 173              		.loc 1 48 5 view .LVU40
+  49:controller/tables.c **** 
+  50:controller/tables.c ****     uint8_t rpm_index = (uint8_t)(rpm / rpm_bin_size);
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s 			page 5
+
+
+ 174              		.loc 1 50 5 view .LVU41
+ 175              		.loc 1 50 39 is_stmt 0 view .LVU42
+ 176 0034 9FED127A 		vldr.32	s14, .L25+8
+ 177 0038 C0EE077A 		vdiv.f32	s15, s0, s14
+ 178              		.loc 1 50 13 view .LVU43
+ 179 003c FCEEE77A 		vcvt.u32.f32	s15, s15
+ 180 0040 CDED017A 		vstr.32	s15, [sp, #4]	@ int
+ 181 0044 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+ 182              	.LVL13:
+  51:controller/tables.c ****     uint8_t load_index = (uint8_t)(load / load_bin_size);
+ 183              		.loc 1 51 5 is_stmt 1 view .LVU44
+ 184              		.loc 1 51 41 is_stmt 0 view .LVU45
+ 185 0048 B1EE0E7A 		vmov.f32	s14, #7.5e+0
+ 186 004c C0EE877A 		vdiv.f32	s15, s1, s14
+ 187              		.loc 1 51 13 view .LVU46
+ 188 0050 FCEEE77A 		vcvt.u32.f32	s15, s15
+ 189 0054 17EE903A 		vmov	r3, s15	@ int
+ 190              	.LVL14:
+  52:controller/tables.c **** 
+  53:controller/tables.c ****     return table->data[rpm_index][load_index];
+ 191              		.loc 1 53 5 is_stmt 1 view .LVU47
+ 192              		.loc 1 53 34 is_stmt 0 view .LVU48
+ 193 0058 1201     		lsls	r2, r2, #4
+ 194              	.LVL15:
+ 195              		.loc 1 53 34 view .LVU49
+ 196 005a 52FA83F3 		uxtab	r3, r2, r3
+ 197              	.LVL16:
+ 198              		.loc 1 53 34 view .LVU50
+ 199 005e 00EB8300 		add	r0, r0, r3, lsl #2
+ 200              	.LVL17:
+ 201              		.loc 1 53 34 view .LVU51
+ 202 0062 90ED000A 		vldr.32	s0, [r0]
+ 203              	.LVL18:
+ 204              		.loc 1 53 34 view .LVU52
+ 205 0066 04E0     		b	.L14
+ 206              	.LVL19:
+ 207              	.L15:
+  35:controller/tables.c ****         return 0;
+ 208              		.loc 1 35 9 is_stmt 1 view .LVU53
+ 209 0068 0648     		ldr	r0, .L25+12
+ 210              	.LVL20:
+  35:controller/tables.c ****         return 0;
+ 211              		.loc 1 35 9 is_stmt 0 view .LVU54
+ 212 006a FFF7FEFF 		bl	log_error
+ 213              	.LVL21:
+  36:controller/tables.c ****     }
+ 214              		.loc 1 36 9 is_stmt 1 view .LVU55
+  36:controller/tables.c ****     }
+ 215              		.loc 1 36 16 is_stmt 0 view .LVU56
+ 216 006e 9FED060A 		vldr.32	s0, .L25+16
+ 217              	.L14:
+  54:controller/tables.c ****     
+  55:controller/tables.c **** }
+ 218              		.loc 1 55 1 view .LVU57
+ 219 0072 03B0     		add	sp, sp, #12
+ 220              		.cfi_def_cfa_offset 4
+ 221              		@ sp needed
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s 			page 6
+
+
+ 222 0074 5DF804FB 		ldr	pc, [sp], #4
+ 223              	.L26:
+ 224              		.align	2
+ 225              	.L25:
+ 226 0078 0080BB45 		.word	1169915904
+ 227 007c 0000F042 		.word	1123024896
+ 228 0080 0080BB43 		.word	1136361472
+ 229 0084 00000000 		.word	.LC0
+ 230 0088 00000000 		.word	0
+ 231              		.cfi_endproc
+ 232              	.LFE226:
+ 234              		.text
+ 235              	.Letext0:
+ 236              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 237              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 238              		.file 4 "controller/types.h"
+ 239              		.file 5 "controller/tables.h"
+ 240              		.file 6 "controller/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 tables.c
+C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s:21     .rodata.table_ve_get_value.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s:25     .text.table_ve_get_value:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s:31     .text.table_ve_get_value:00000000 table_ve_get_value
+C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s:121    .text.table_ve_get_value:00000078 $d
+C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s:130    .text.table_ignition_get_value:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s:136    .text.table_ignition_get_value:00000000 table_ignition_get_value
+C:\Users\alireza\AppData\Local\Temp\ccgrNHXw.s:226    .text.table_ignition_get_value:00000078 $d
+
+UNDEFINED SYMBOLS
+log_error

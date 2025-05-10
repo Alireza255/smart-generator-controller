@@ -1,0 +1,468 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"thermistor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/IO/thermistor.c"
+  20              		.section	.rodata.thermistor_init.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 54686572 		.ascii	"Thermistor init failed!\000"
+  23      6D697374 
+  23      6F722069 
+  23      6E697420 
+  23      6661696C 
+  24              		.section	.text.thermistor_init,"ax",%progbits
+  25              		.align	1
+  26              		.global	thermistor_init
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  31              	thermistor_init:
+  32              	.LVL0:
+  33              	.LFB225:
+   1:controller/IO/thermistor.c **** #include "thermistor.h"
+   2:controller/IO/thermistor.c **** #include "utils.h"
+   3:controller/IO/thermistor.c **** 
+   4:controller/IO/thermistor.c **** 
+   5:controller/IO/thermistor.c **** void thermistor_init(thermistor_s *thermistor, thermistor_conf_s cfg)
+   6:controller/IO/thermistor.c **** {
+  34              		.loc 1 6 1 view -0
+  35              		.cfi_startproc
+  36              		@ args = 28, pretend = 16, frame = 0
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+  38              		.loc 1 6 1 is_stmt 0 view .LVU1
+  39 0000 84B0     		sub	sp, sp, #16
+  40              		.cfi_def_cfa_offset 16
+  41 0002 10B5     		push	{r4, lr}
+  42              		.cfi_def_cfa_offset 24
+  43              		.cfi_offset 4, -24
+  44              		.cfi_offset 14, -20
+  45 0004 2DED028B 		vpush.64	{d8}
+  46              		.cfi_def_cfa_offset 32
+  47              		.cfi_offset 80, -32
+  48              		.cfi_offset 81, -28
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 2
+
+
+  49 0008 0DF1140C 		add	ip, sp, #20
+  50 000c 8CE80E00 		stm	ip, {r1, r2, r3}
+   7:controller/IO/thermistor.c ****     if (thermistor == NULL)
+  51              		.loc 1 7 5 is_stmt 1 view .LVU2
+  52              		.loc 1 7 8 is_stmt 0 view .LVU3
+  53 0010 0028     		cmp	r0, #0
+  54 0012 60D0     		beq	.L5
+  55 0014 0446     		mov	r4, r0
+   8:controller/IO/thermistor.c ****     {
+   9:controller/IO/thermistor.c ****         log_error("Thermistor init failed!");
+  10:controller/IO/thermistor.c ****         return;
+  11:controller/IO/thermistor.c ****     }
+  12:controller/IO/thermistor.c **** 
+  13:controller/IO/thermistor.c ****     // https://en.wikipedia.org/wiki/Steinhart%E2%80%93Hart_equation
+  14:controller/IO/thermistor.c **** 	float l1 = logf(cfg.resistance_1);
+  56              		.loc 1 14 2 is_stmt 1 view .LVU4
+  57              		.loc 1 14 13 is_stmt 0 view .LVU5
+  58 0016 9DED080A 		vldr.32	s0, [sp, #32]
+  59 001a FFF7FEFF 		bl	logf
+  60              	.LVL1:
+  61              		.loc 1 14 13 view .LVU6
+  62 001e F0EE408A 		vmov.f32	s17, s0
+  63              	.LVL2:
+  15:controller/IO/thermistor.c **** 	float l2 = logf(cfg.resistance_2);
+  64              		.loc 1 15 2 is_stmt 1 view .LVU7
+  65              		.loc 1 15 13 is_stmt 0 view .LVU8
+  66 0022 9DED090A 		vldr.32	s0, [sp, #36]
+  67              	.LVL3:
+  68              		.loc 1 15 13 view .LVU9
+  69 0026 FFF7FEFF 		bl	logf
+  70              	.LVL4:
+  71 002a B0EE408A 		vmov.f32	s16, s0
+  72              	.LVL5:
+  16:controller/IO/thermistor.c **** 	float l3 = logf(cfg.resistance_3);
+  73              		.loc 1 16 2 is_stmt 1 view .LVU10
+  74              		.loc 1 16 13 is_stmt 0 view .LVU11
+  75 002e 9DED0A0A 		vldr.32	s0, [sp, #40]
+  76              	.LVL6:
+  77              		.loc 1 16 13 view .LVU12
+  78 0032 FFF7FEFF 		bl	logf
+  79              	.LVL7:
+  17:controller/IO/thermistor.c **** 
+  18:controller/IO/thermistor.c **** 	float y1 = 1 / CELSIUS_TO_KELVIN(cfg.tempC_1);
+  80              		.loc 1 18 2 is_stmt 1 view .LVU13
+  81              		.loc 1 18 17 is_stmt 0 view .LVU14
+  82 0036 9FED2A6A 		vldr.32	s12, .L6
+  83 003a DDED057A 		vldr.32	s15, [sp, #20]
+  84 003e 77EE867A 		vadd.f32	s15, s15, s12
+  85              		.loc 1 18 8 view .LVU15
+  86 0042 F7EE005A 		vmov.f32	s11, #1.0e+0
+  87 0046 C5EEA76A 		vdiv.f32	s13, s11, s15
+  88              	.LVL8:
+  19:controller/IO/thermistor.c **** 	float y2 = 1 / CELSIUS_TO_KELVIN(cfg.tempC_2);
+  89              		.loc 1 19 2 is_stmt 1 view .LVU16
+  90              		.loc 1 19 17 is_stmt 0 view .LVU17
+  91 004a DDED067A 		vldr.32	s15, [sp, #24]
+  92 004e 77EE867A 		vadd.f32	s15, s15, s12
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 3
+
+
+  93              		.loc 1 19 8 view .LVU18
+  94 0052 85EEA77A 		vdiv.f32	s14, s11, s15
+  95              	.LVL9:
+  20:controller/IO/thermistor.c **** 	float y3 = 1 / CELSIUS_TO_KELVIN(cfg.tempC_3);
+  96              		.loc 1 20 2 is_stmt 1 view .LVU19
+  97              		.loc 1 20 17 is_stmt 0 view .LVU20
+  98 0056 DDED077A 		vldr.32	s15, [sp, #28]
+  99 005a 77EE867A 		vadd.f32	s15, s15, s12
+ 100              		.loc 1 20 8 view .LVU21
+ 101 005e 85EEA76A 		vdiv.f32	s12, s11, s15
+ 102              	.LVL10:
+  21:controller/IO/thermistor.c **** 
+  22:controller/IO/thermistor.c **** 	float u2 = (y2 - y1) / (l2 - l1);
+ 103              		.loc 1 22 2 is_stmt 1 view .LVU22
+ 104              		.loc 1 22 17 is_stmt 0 view .LVU23
+ 105 0062 37EE667A 		vsub.f32	s14, s14, s13
+ 106              	.LVL11:
+ 107              		.loc 1 22 29 view .LVU24
+ 108 0066 78EE685A 		vsub.f32	s11, s16, s17
+ 109              	.LVL12:
+ 110              		.loc 1 22 8 view .LVU25
+ 111 006a C7EE257A 		vdiv.f32	s15, s14, s11
+ 112              	.LVL13:
+  23:controller/IO/thermistor.c **** 	float u3 = (y3 - y1) / (l3 - l1);
+ 113              		.loc 1 23 2 is_stmt 1 view .LVU26
+ 114              		.loc 1 23 17 is_stmt 0 view .LVU27
+ 115 006e 36EE666A 		vsub.f32	s12, s12, s13
+ 116              	.LVL14:
+ 117              		.loc 1 23 29 view .LVU28
+ 118 0072 70EE685A 		vsub.f32	s11, s0, s17
+ 119              		.loc 1 23 8 view .LVU29
+ 120 0076 86EE257A 		vdiv.f32	s14, s12, s11
+ 121              	.LVL15:
+  24:controller/IO/thermistor.c **** 
+  25:controller/IO/thermistor.c **** 	thermistor->m_c = ((u3 - u2) / (l3 - l2)) / (l1 + l2 + l3);
+ 122              		.loc 1 25 2 is_stmt 1 view .LVU30
+ 123              		.loc 1 25 25 is_stmt 0 view .LVU31
+ 124 007a 37EE677A 		vsub.f32	s14, s14, s15
+ 125              	.LVL16:
+ 126              		.loc 1 25 37 view .LVU32
+ 127 007e 30EE486A 		vsub.f32	s12, s0, s16
+ 128              	.LVL17:
+ 129              		.loc 1 25 31 view .LVU33
+ 130 0082 C7EE065A 		vdiv.f32	s11, s14, s12
+ 131              	.LVL18:
+ 132              		.loc 1 25 50 view .LVU34
+ 133 0086 38EE887A 		vadd.f32	s14, s17, s16
+ 134              		.loc 1 25 55 view .LVU35
+ 135 008a 37EE007A 		vadd.f32	s14, s14, s0
+ 136              		.loc 1 25 44 view .LVU36
+ 137 008e 85EE876A 		vdiv.f32	s12, s11, s14
+ 138              		.loc 1 25 18 view .LVU37
+ 139 0092 84ED036A 		vstr.32	s12, [r4, #12]
+  26:controller/IO/thermistor.c **** 	thermistor->m_b = u2 - thermistor->m_c * (l1 * l1 + l1 * l2 + l2 * l2);
+ 140              		.loc 1 26 2 is_stmt 1 view .LVU38
+ 141              		.loc 1 26 47 is_stmt 0 view .LVU39
+ 142 0096 68EEA85A 		vmul.f32	s11, s17, s17
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 4
+
+
+ 143              		.loc 1 26 57 view .LVU40
+ 144 009a 28EE887A 		vmul.f32	s14, s17, s16
+ 145              		.loc 1 26 52 view .LVU41
+ 146 009e 35EE877A 		vadd.f32	s14, s11, s14
+ 147              		.loc 1 26 67 view .LVU42
+ 148 00a2 28EE088A 		vmul.f32	s16, s16, s16
+ 149              	.LVL19:
+ 150              		.loc 1 26 62 view .LVU43
+ 151 00a6 37EE087A 		vadd.f32	s14, s14, s16
+ 152              		.loc 1 26 41 view .LVU44
+ 153 00aa 26EE077A 		vmul.f32	s14, s12, s14
+ 154              		.loc 1 26 23 view .LVU45
+ 155 00ae 77EEC77A 		vsub.f32	s15, s15, s14
+ 156              	.LVL20:
+ 157              		.loc 1 26 18 view .LVU46
+ 158 00b2 C4ED027A 		vstr.32	s15, [r4, #8]
+  27:controller/IO/thermistor.c **** 	thermistor->m_a = y1 - (thermistor->m_b + l1 * l1 * thermistor->m_c) * l1;
+ 159              		.loc 1 27 2 is_stmt 1 view .LVU47
+ 160              		.loc 1 27 52 is_stmt 0 view .LVU48
+ 161 00b6 26EE256A 		vmul.f32	s12, s12, s11
+ 162              		.loc 1 27 42 view .LVU49
+ 163 00ba 77EE867A 		vadd.f32	s15, s15, s12
+ 164              		.loc 1 27 71 view .LVU50
+ 165 00be 27EEA80A 		vmul.f32	s0, s15, s17
+ 166              	.LVL21:
+ 167              		.loc 1 27 23 view .LVU51
+ 168 00c2 76EEC06A 		vsub.f32	s13, s13, s0
+ 169              	.LVL22:
+ 170              		.loc 1 27 18 view .LVU52
+ 171 00c6 C4ED016A 		vstr.32	s13, [r4, #4]
+ 172              	.LVL23:
+ 173              	.L1:
+  28:controller/IO/thermistor.c **** 
+  29:controller/IO/thermistor.c ****     /**
+  30:controller/IO/thermistor.c ****      * check disabled for now
+  31:controller/IO/thermistor.c ****      */
+  32:controller/IO/thermistor.c ****     /*
+  33:controller/IO/thermistor.c **** 	float resistance10percent = cfg.resistance_1 + 0.1 * (cfg.resistance_2 - cfg.resistance_1);
+  34:controller/IO/thermistor.c **** 	float tempAt10percentPoint = thermistor_get_temp(resistance10percent);
+  35:controller/IO/thermistor.c **** 
+  36:controller/IO/thermistor.c **** 	if (tempAt10percentPoint < cfg.tempC_1)
+  37:controller/IO/thermistor.c ****     {
+  38:controller/IO/thermistor.c ****         log_error("Thermistor configuration has failed 10% test");
+  39:controller/IO/thermistor.c **** 	}
+  40:controller/IO/thermistor.c **** 
+  41:controller/IO/thermistor.c **** 	float resistance90percent = cfg.resistance_2 + 0.9 * (cfg.resistance_3 - cfg.resistance_2);
+  42:controller/IO/thermistor.c **** 	float tempAt90percentPoint = thermistor_get_temp(resistance90percent);
+  43:controller/IO/thermistor.c **** 	if (tempAt90percentPoint > cfg.tempC_3)
+  44:controller/IO/thermistor.c ****     {
+  45:controller/IO/thermistor.c ****         log_error("Thermistor configuration has failed 90% test");
+  46:controller/IO/thermistor.c **** 	}
+  47:controller/IO/thermistor.c ****     */
+  48:controller/IO/thermistor.c **** }
+ 174              		.loc 1 48 1 view .LVU53
+ 175 00ca BDEC028B 		vldm	sp!, {d8}
+ 176              		.cfi_remember_state
+ 177              		.cfi_restore 80
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 5
+
+
+ 178              		.cfi_restore 81
+ 179              		.cfi_def_cfa_offset 24
+ 180 00ce BDE81040 		pop	{r4, lr}
+ 181              		.cfi_restore 14
+ 182              		.cfi_restore 4
+ 183              		.cfi_def_cfa_offset 16
+ 184 00d2 04B0     		add	sp, sp, #16
+ 185              		.cfi_def_cfa_offset 0
+ 186 00d4 7047     		bx	lr
+ 187              	.LVL24:
+ 188              	.L5:
+ 189              		.cfi_restore_state
+   9:controller/IO/thermistor.c ****         return;
+ 190              		.loc 1 9 9 is_stmt 1 view .LVU54
+ 191 00d6 0348     		ldr	r0, .L6+4
+ 192              	.LVL25:
+   9:controller/IO/thermistor.c ****         return;
+ 193              		.loc 1 9 9 is_stmt 0 view .LVU55
+ 194 00d8 FFF7FEFF 		bl	log_error
+ 195              	.LVL26:
+  10:controller/IO/thermistor.c ****     }
+ 196              		.loc 1 10 9 is_stmt 1 view .LVU56
+ 197 00dc F5E7     		b	.L1
+ 198              	.L7:
+ 199 00de 00BF     		.align	2
+ 200              	.L6:
+ 201 00e0 33938843 		.word	1133024051
+ 202 00e4 00000000 		.word	.LC0
+ 203              		.cfi_endproc
+ 204              	.LFE225:
+ 206              		.section	.rodata.thermistor_get_temp.str1.4,"aMS",%progbits,1
+ 207              		.align	2
+ 208              	.LC1:
+ 209 0000 54686572 		.ascii	"Thermistor temp bound check failed!\000"
+ 209      6D697374 
+ 209      6F722074 
+ 209      656D7020 
+ 209      626F756E 
+ 210              		.section	.text.thermistor_get_temp,"ax",%progbits
+ 211              		.align	1
+ 212              		.global	thermistor_get_temp
+ 213              		.syntax unified
+ 214              		.thumb
+ 215              		.thumb_func
+ 217              	thermistor_get_temp:
+ 218              	.LVL27:
+ 219              	.LFB226:
+  49:controller/IO/thermistor.c **** 
+  50:controller/IO/thermistor.c **** temperature_t thermistor_get_temp(thermistor_s *thermistor)
+  51:controller/IO/thermistor.c **** {
+ 220              		.loc 1 51 1 view -0
+ 221              		.cfi_startproc
+ 222              		@ args = 0, pretend = 0, frame = 0
+ 223              		@ frame_needed = 0, uses_anonymous_args = 0
+ 224              		.loc 1 51 1 is_stmt 0 view .LVU58
+ 225 0000 10B5     		push	{r4, lr}
+ 226              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 6
+
+
+ 227              		.cfi_offset 4, -8
+ 228              		.cfi_offset 14, -4
+ 229 0002 0446     		mov	r4, r0
+  52:controller/IO/thermistor.c ****     // This resistance should have already been validated - only
+  53:controller/IO/thermistor.c **** 	// thing we can check is that it's non-negative
+  54:controller/IO/thermistor.c ****     float ohms = resistor_get_resistance(thermistor->resistor);
+ 230              		.loc 1 54 5 is_stmt 1 view .LVU59
+ 231              		.loc 1 54 18 is_stmt 0 view .LVU60
+ 232 0004 0068     		ldr	r0, [r0]
+ 233              	.LVL28:
+ 234              		.loc 1 54 18 view .LVU61
+ 235 0006 FFF7FEFF 		bl	resistor_get_resistance
+ 236              	.LVL29:
+  55:controller/IO/thermistor.c ****     if (ohms == NAN)
+ 237              		.loc 1 55 5 is_stmt 1 view .LVU62
+  56:controller/IO/thermistor.c ****     {
+  57:controller/IO/thermistor.c ****         log_error("Thermistor invalid resistance!");
+  58:controller/IO/thermistor.c ****         return NAN;
+  59:controller/IO/thermistor.c ****     }
+  60:controller/IO/thermistor.c **** 
+  61:controller/IO/thermistor.c **** 	float lnR = logf(ohms);
+ 238              		.loc 1 61 2 view .LVU63
+ 239              		.loc 1 61 14 is_stmt 0 view .LVU64
+ 240 000a FFF7FEFF 		bl	logf
+ 241              	.LVL30:
+  62:controller/IO/thermistor.c **** 
+  63:controller/IO/thermistor.c **** 	float lnR3 = lnR * lnR * lnR;
+ 242              		.loc 1 63 2 is_stmt 1 view .LVU65
+ 243              		.loc 1 63 19 is_stmt 0 view .LVU66
+ 244 000e 60EE006A 		vmul.f32	s13, s0, s0
+ 245              		.loc 1 63 8 view .LVU67
+ 246 0012 66EE806A 		vmul.f32	s13, s13, s0
+ 247              	.LVL31:
+  64:controller/IO/thermistor.c **** 
+  65:controller/IO/thermistor.c **** 	float recip = thermistor->m_a + thermistor->m_b * lnR + thermistor->m_c * lnR3;
+ 248              		.loc 1 65 2 is_stmt 1 view .LVU68
+ 249              		.loc 1 65 26 is_stmt 0 view .LVU69
+ 250 0016 D4ED017A 		vldr.32	s15, [r4, #4]
+ 251              		.loc 1 65 44 view .LVU70
+ 252 001a 94ED027A 		vldr.32	s14, [r4, #8]
+ 253              		.loc 1 65 50 view .LVU71
+ 254 001e 27EE007A 		vmul.f32	s14, s14, s0
+ 255              		.loc 1 65 32 view .LVU72
+ 256 0022 77EE877A 		vadd.f32	s15, s15, s14
+ 257              		.loc 1 65 68 view .LVU73
+ 258 0026 94ED037A 		vldr.32	s14, [r4, #12]
+ 259              		.loc 1 65 74 view .LVU74
+ 260 002a 27EE267A 		vmul.f32	s14, s14, s13
+ 261              		.loc 1 65 8 view .LVU75
+ 262 002e 77EE877A 		vadd.f32	s15, s15, s14
+ 263              	.LVL32:
+  66:controller/IO/thermistor.c **** 
+  67:controller/IO/thermistor.c **** 	float kelvin = 1 / recip;
+ 264              		.loc 1 67 2 is_stmt 1 view .LVU76
+ 265              		.loc 1 67 8 is_stmt 0 view .LVU77
+ 266 0032 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 267 0036 87EE270A 		vdiv.f32	s0, s14, s15
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 7
+
+
+ 268              	.LVL33:
+  68:controller/IO/thermistor.c **** 
+  69:controller/IO/thermistor.c **** 	float celsius = KELVIN_TO_CELSIUS(kelvin);
+ 269              		.loc 1 69 2 is_stmt 1 view .LVU78
+ 270              		.loc 1 69 8 is_stmt 0 view .LVU79
+ 271 003a DFED0F7A 		vldr.32	s15, .L19
+ 272              	.LVL34:
+ 273              		.loc 1 69 8 view .LVU80
+ 274 003e 30EE670A 		vsub.f32	s0, s0, s15
+ 275              	.LVL35:
+  70:controller/IO/thermistor.c **** 
+  71:controller/IO/thermistor.c **** 	// bounds check result - please don't try to run this SGC when it is colder than -50C :)
+  72:controller/IO/thermistor.c **** 	if (celsius < -50) {
+ 276              		.loc 1 72 2 is_stmt 1 view .LVU81
+ 277              		.loc 1 72 5 is_stmt 0 view .LVU82
+ 278 0042 DFED0E7A 		vldr.32	s15, .L19+4
+ 279 0046 B4EEE70A 		vcmpe.f32	s0, s15
+ 280 004a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 281 004e 07D4     		bmi	.L17
+  73:controller/IO/thermistor.c **** 		log_error("Thermistor temp bound check failed!");
+  74:controller/IO/thermistor.c ****         return NAN;
+  75:controller/IO/thermistor.c **** 	}
+  76:controller/IO/thermistor.c **** 
+  77:controller/IO/thermistor.c **** 	if (celsius > 250) {
+ 282              		.loc 1 77 2 is_stmt 1 view .LVU83
+ 283              		.loc 1 77 5 is_stmt 0 view .LVU84
+ 284 0050 DFED0B7A 		vldr.32	s15, .L19+8
+ 285 0054 B4EEE70A 		vcmpe.f32	s0, s15
+ 286 0058 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 287 005c 06DC     		bgt	.L18
+ 288              	.LVL36:
+ 289              	.L8:
+  78:controller/IO/thermistor.c **** 		log_error("Thermistor temp bound check failed!");
+  79:controller/IO/thermistor.c ****         return NAN;
+  80:controller/IO/thermistor.c **** 	}
+  81:controller/IO/thermistor.c **** 
+  82:controller/IO/thermistor.c **** 	return celsius;
+  83:controller/IO/thermistor.c **** }...
+ 290              		.loc 1 83 1 view .LVU85
+ 291 005e 10BD     		pop	{r4, pc}
+ 292              	.LVL37:
+ 293              	.L17:
+  73:controller/IO/thermistor.c **** 		log_error("Thermistor temp bound check failed!");
+ 294              		.loc 1 73 3 is_stmt 1 view .LVU86
+ 295 0060 0848     		ldr	r0, .L19+12
+ 296 0062 FFF7FEFF 		bl	log_error
+ 297              	.LVL38:
+  74:controller/IO/thermistor.c ****         return NAN;
+ 298              		.loc 1 74 9 view .LVU87
+  74:controller/IO/thermistor.c ****         return NAN;
+ 299              		.loc 1 74 16 is_stmt 0 view .LVU88
+ 300 0066 9FED080A 		vldr.32	s0, .L19+16
+ 301 006a F8E7     		b	.L8
+ 302              	.LVL39:
+ 303              	.L18:
+  78:controller/IO/thermistor.c **** 		log_error("Thermistor temp bound check failed!");
+ 304              		.loc 1 78 3 is_stmt 1 view .LVU89
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 8
+
+
+ 305 006c 0548     		ldr	r0, .L19+12
+ 306 006e FFF7FEFF 		bl	log_error
+ 307              	.LVL40:
+  79:controller/IO/thermistor.c ****         return NAN;
+ 308              		.loc 1 79 9 view .LVU90
+  79:controller/IO/thermistor.c ****         return NAN;
+ 309              		.loc 1 79 16 is_stmt 0 view .LVU91
+ 310 0072 9FED050A 		vldr.32	s0, .L19+16
+ 311 0076 F2E7     		b	.L8
+ 312              	.L20:
+ 313              		.align	2
+ 314              	.L19:
+ 315 0078 33938843 		.word	1133024051
+ 316 007c 000048C2 		.word	-1035468800
+ 317 0080 00007A43 		.word	1132068864
+ 318 0084 00000000 		.word	.LC1
+ 319 0088 0000C07F 		.word	2143289344
+ 320              		.cfi_endproc
+ 321              	.LFE226:
+ 323              		.text
+ 324              	.Letext0:
+ 325              		.file 2 "controller/types.h"
+ 326              		.file 3 "controller/IO/analog_inputs.h"
+ 327              		.file 4 "controller/IO/resistor.h"
+ 328              		.file 5 "controller/IO/thermistor.h"
+ 329              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 330              		.file 7 "controller/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cccfruCC.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 thermistor.c
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:21     .rodata.thermistor_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:25     .text.thermistor_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:31     .text.thermistor_init:00000000 thermistor_init
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:201    .text.thermistor_init:000000e0 $d
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:207    .rodata.thermistor_get_temp.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:211    .text.thermistor_get_temp:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:217    .text.thermistor_get_temp:00000000 thermistor_get_temp
+C:\Users\alireza\AppData\Local\Temp\cccfruCC.s:315    .text.thermistor_get_temp:00000078 $d
+
+UNDEFINED SYMBOLS
+logf
+log_error
+resistor_get_resistance
