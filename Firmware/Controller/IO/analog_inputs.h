@@ -3,6 +3,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "types.h"
+#include "utils.h"
 
 /**
  * @note it is very important that this matches the stm32cubemx configuration
@@ -42,7 +43,7 @@ typedef enum
     ANALOG_INPUT_ETB2_SENSE1 = 2,
     ANALOG_INPUT_ETB2_SENSE2 = 3,
     ANALOG_INPUT_SENSOR_MAP_PIN = 4,
-    ANALOG_INPUT_SENSOR_MAT_PIN = 5,
+    ANALOG_INPUT_SENSOR_IAT_PIN = 5,
     ANALOG_INPUT_SENSOR_CLT_PIN = 6,
     ANALOG_INPUT_SENSOR_OIL_PIN = 7,
     ANALOG_INPUT_VBAT_SENSE_PIN = 8,
@@ -110,6 +111,6 @@ uint16_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index);
 uint32_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index);
 #endif
 
-
+voltage_t analog_inputs_get_voltage(analog_input_adc_channel_mapping_e input_index);
 
 #endif // ANALOG_INPUTS_H

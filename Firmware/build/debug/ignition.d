@@ -32,11 +32,24 @@ build/debug/ignition.o: controller/engine_cycle/ignition.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
- controller/engine_cycle/trigger.h controller/controller_time.h \
- Core/Inc/tim.h Core/Inc/main.h Core/Inc/main.h controller/types.h \
- controller/actuators/dc_motors.h controller/tables.h \
- controller/constants.h controller/utils.h controller/configuration.h \
- controller/controller.h
+ controller/eeprom/eeprom.h controller/engine_cycle/trigger.h \
+ controller/controller_time.h Core/Inc/tim.h Core/Inc/main.h \
+ Core/Inc/main.h controller/types.h controller/actuators/dc_motors.h \
+ controller/tables.h controller/constants.h controller/IO/sensors/tps.h \
+ controller/IO/analog_inputs.h controller/utils/utils.h \
+ controller/engine_cycle/ignition.h controller/IO/thermistor.h \
+ controller/IO/resistor.h controller/IO/analog_inputs.h \
+ controller/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
+ Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
+ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
+ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
+ USB_DEVICE/Target/usbd_conf.h \
+ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
+ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
+ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
+ controller/algorithm/spark/spark_logic.h controller/tables.h \
+ controller/algorithm/air_mass/airmass.h controller/IO/sensors/map.h \
+ controller/IO/sensors/iat.h
 controller/engine_cycle/ignition.h:
 controller/controller.h:
 controller/enums.h:
@@ -74,6 +87,7 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
+controller/eeprom/eeprom.h:
 controller/engine_cycle/trigger.h:
 controller/controller_time.h:
 Core/Inc/tim.h:
@@ -83,6 +97,24 @@ controller/types.h:
 controller/actuators/dc_motors.h:
 controller/tables.h:
 controller/constants.h:
-controller/utils.h:
-controller/configuration.h:
-controller/controller.h:
+controller/IO/sensors/tps.h:
+controller/IO/analog_inputs.h:
+controller/utils/utils.h:
+controller/engine_cycle/ignition.h:
+controller/IO/thermistor.h:
+controller/IO/resistor.h:
+controller/IO/analog_inputs.h:
+controller/error_handling.h:
+USB_DEVICE/App/usbd_cdc_if.h:
+Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
+Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
+Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
+USB_DEVICE/Target/usbd_conf.h:
+Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
+Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
+Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
+controller/algorithm/spark/spark_logic.h:
+controller/tables.h:
+controller/algorithm/air_mass/airmass.h:
+controller/IO/sensors/map.h:
+controller/IO/sensors/iat.h:

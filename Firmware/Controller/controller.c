@@ -1,14 +1,65 @@
 #include "controller.h"
 
+configuration_s configuration = {0};
+engine_s engine = {0};
 
-angle_t ignition_table[TABLE_PRIMARY_SIZE_X][TABLE_PRIMARY_SIZE_Y];
-percent_t ve_table[TABLE_PRIMARY_SIZE_X][TABLE_PRIMARY_SIZE_Y];
 
-
-void aleads()
+void controller_init()
 {
-    // Calculate the sizes
-    uint8_t x_size = sizeof(ignition_table) / sizeof(ignition_table[0]); // Number of rows
-    uint8_t y_size = sizeof(ignition_table[0]) / sizeof(ignition_table[0][0]); // Number of columns
+    engine.total_revolutions = 0;
+    engine.crankshaft_angle = 0;
+    engine.camshaft_angle = 0;
+    engine.rpm = 0;
+    engine.cylinder_count = 4;
+    engine.spinning_state = SS_STOPPED;
+    engine.firing_interval = 180.0f;
+    // engine.trigger = .....;
 
+    configuration.ignition_dwell = (float_time_ms_t)1;
+    configuration.ignition_mode = IM_WASTED_SPARK;
+
+    ignition_output_conf_s ignition_output_conf =
+    {
+        .output[0] = {.gpio = IGNITION_OUTPUT1_GPIO_Port, .pin = IGNITION_OUTPUT1_Pin},
+        .output[1] = {.gpio = IGNITION_OUTPUT2_GPIO_Port, .pin = IGNITION_OUTPUT2_Pin},
+        .output[2] = {.gpio = IGNITION_OUTPUT3_GPIO_Port, .pin = IGNITION_OUTPUT3_Pin},
+        .output[3] = {.gpio = IGNITION_OUTPUT4_GPIO_Port, .pin = IGNITION_OUTPUT4_Pin}
+    };
+    controller_time_start(&htim5);
+    ignition_init(&htim2, &ignition_output_conf);
+
+
+    //HAL_FLASH_Unlock();
+    //EE_Init();
+}
+
+void controller_load_configuration()
+{
+    uint16_t status = HAL_OK;
+    uint32_t read_size = sizeof(configuration) / sizeof(uint16_t);
+    uint16_t *starting_point = (uint16_t *) &configuration;
+    for (size_t i = 0; i < read_size; i++)
+    {
+        status = EE_ReadVariable(i, starting_point + i);
+        if (status != HAL_OK)
+        {
+            log_error("Configuration load failed!");
+            break;
+        }
+    }
+}
+
+void controller_save_configuration()
+{
+    uint16_t status = HAL_OK;
+    uint32_t write_size = sizeof(configuration) / sizeof(uint16_t);
+    uint16_t *starting_point = (uint16_t *) &configuration;
+    for (size_t i = 0; i < write_size; i++)
+    {
+        status = EE_WriteVariable(i, *(starting_point + i));
+        if (status != HAL_OK)
+        {
+            log_error("Configuration save failed!");
+        }
+    }
 }

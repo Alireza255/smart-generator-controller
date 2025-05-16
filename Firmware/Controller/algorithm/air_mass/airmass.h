@@ -14,8 +14,7 @@
 #ifndef AIRMASS_H
 #define AIRMASS_H
 
-#include "types.h"
-#include "configuration.h"
+#include "controller.h"
 
 /**
  * Ideal gas law is PV = nRT
@@ -28,10 +27,7 @@
  */
 #define AIR_R 0.28705f
 
-mass_t ideal_gas_law(float volume, pressure_t pressure, temperature_t temperature)
-{
-	return volume * pressure / (AIR_R * temperature);
-}
+mass_t ideal_gas_law(float volume, pressure_t pressure, temperature_t temperature);
 
 /**
  * @brief Calculates air mass in grams using RPM, volumetric efficiency (VE),

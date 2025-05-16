@@ -172,4 +172,17 @@ typedef enum __attribute__ ((__packed__))
     FO_1342,
 } firing_order_e;
 
+typedef enum __attribute__ ((__packed__))
+{
+    SENSOR_IAT_TYPE_BOSCH_816,
+} sensor_iat_type_e;
+
+
+typedef enum __attribute__ ((__packed__))
+{
+    SENSOR_MAP_TYPE_BOSCH_816,
+} sensor_map_type_e;
+
+
+
 #endif // ENUMS_H

@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "tables.h"
+#include "controller.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,10 +118,22 @@ void StartDefaultTask(void *argument)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
 
+  controller_init();
+  static angle_t simulated_crankshaft_angle = 0;
+  osDelay(100);
   /* Infinite loop */
   for(;;)
   {
-    
+    if (simulated_crankshaft_angle < (360 - 6))
+    {
+      simulated_crankshaft_angle += (angle_t)6;
+    }
+    else
+    {
+      simulated_crankshaft_angle = 0;
+    }
+    osDelay(1);
+    ignition_trigger_event_handle(simulated_crankshaft_angle, 1, get_time_us());
   }
   /* USER CODE END StartDefaultTask */
 }

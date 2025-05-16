@@ -1,0 +1,364 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccajahYo.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"map.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/IO/sensors/map.c"
+  20              		.section	.text.sensor_map_init,"ax",%progbits
+  21              		.align	1
+  22              		.global	sensor_map_init
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	sensor_map_init:
+  28              	.LFB228:
+   1:controller/IO/sensors/map.c **** #include "map.h"
+   2:controller/IO/sensors/map.c **** 
+   3:controller/IO/sensors/map.c **** sensor_map_calib_s map_calib = {0};
+   4:controller/IO/sensors/map.c **** 
+   5:controller/IO/sensors/map.c **** void sensor_map_init()
+   6:controller/IO/sensors/map.c **** {
+  29              		.loc 1 6 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+   7:controller/IO/sensors/map.c ****     switch (configuration.map_sensor_type)
+  34              		.loc 1 7 5 view .LVU1
+  35              		.loc 1 7 26 is_stmt 0 view .LVU2
+  36 0000 054B     		ldr	r3, .L3
+  37 0002 93F84130 		ldrb	r3, [r3, #65]	@ zero_extendqisi2
+  38              		.loc 1 7 5 view .LVU3
+  39 0006 2BB9     		cbnz	r3, .L1
+   8:controller/IO/sensors/map.c ****     {
+   9:controller/IO/sensors/map.c ****     case SENSOR_MAP_TYPE_BOSCH_816:
+  10:controller/IO/sensors/map.c ****         /**
+  11:controller/IO/sensors/map.c ****          * a simple linear sensor
+  12:controller/IO/sensors/map.c ****          */
+  13:controller/IO/sensors/map.c ****         /**
+  14:controller/IO/sensors/map.c ****          * @todo actually calculate these values!
+  15:controller/IO/sensors/map.c ****          */
+  16:controller/IO/sensors/map.c ****         map_calib.adc_value_0_bar = 100;
+  40              		.loc 1 16 9 is_stmt 1 view .LVU4
+  41              		.loc 1 16 35 is_stmt 0 view .LVU5
+  42 0008 044B     		ldr	r3, .L3+4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccajahYo.s 			page 2
+
+
+  43 000a 6422     		movs	r2, #100
+  44 000c 1A80     		strh	r2, [r3]	@ movhi
+  17:controller/IO/sensors/map.c ****         map_calib.adc_value_1_bar = 3000;
+  45              		.loc 1 17 9 is_stmt 1 view .LVU6
+  46              		.loc 1 17 35 is_stmt 0 view .LVU7
+  47 000e 40F6B832 		movw	r2, #3000
+  48 0012 5A80     		strh	r2, [r3, #2]	@ movhi
+  18:controller/IO/sensors/map.c ****         break;
+  49              		.loc 1 18 9 is_stmt 1 view .LVU8
+  50              	.L1:
+  19:controller/IO/sensors/map.c ****     
+  20:controller/IO/sensors/map.c ****     default:
+  21:controller/IO/sensors/map.c ****         break;
+  22:controller/IO/sensors/map.c ****     }
+  23:controller/IO/sensors/map.c **** }
+  51              		.loc 1 23 1 is_stmt 0 view .LVU9
+  52 0014 7047     		bx	lr
+  53              	.L4:
+  54 0016 00BF     		.align	2
+  55              	.L3:
+  56 0018 00000000 		.word	configuration
+  57 001c 00000000 		.word	map_calib
+  58              		.cfi_endproc
+  59              	.LFE228:
+  61              		.section	.rodata.sensor_map_get.str1.4,"aMS",%progbits,1
+  62              		.align	2
+  63              	.LC0:
+  64 0000 6D617020 		.ascii	"map sensor no init!\000"
+  64      73656E73 
+  64      6F72206E 
+  64      6F20696E 
+  64      69742100 
+  65              		.section	.text.sensor_map_get,"ax",%progbits
+  66              		.align	1
+  67              		.global	sensor_map_get
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  72              	sensor_map_get:
+  73              	.LFB229:
+  24:controller/IO/sensors/map.c **** 
+  25:controller/IO/sensors/map.c **** pressure_t sensor_map_get()
+  26:controller/IO/sensors/map.c **** {
+  74              		.loc 1 26 1 is_stmt 1 view -0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 8
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78 0000 00B5     		push	{lr}
+  79              		.cfi_def_cfa_offset 4
+  80              		.cfi_offset 14, -4
+  81 0002 83B0     		sub	sp, sp, #12
+  82              		.cfi_def_cfa_offset 16
+  27:controller/IO/sensors/map.c ****     if (map_calib.adc_value_0_bar == 0 && map_calib.adc_value_1_bar == 0)
+  83              		.loc 1 27 5 view .LVU11
+  84              		.loc 1 27 18 is_stmt 0 view .LVU12
+  85 0004 1D4B     		ldr	r3, .L12
+  86 0006 1B88     		ldrh	r3, [r3]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccajahYo.s 			page 3
+
+
+  87              		.loc 1 27 8 view .LVU13
+  88 0008 13B9     		cbnz	r3, .L6
+  89              		.loc 1 27 52 discriminator 1 view .LVU14
+  90 000a 1C4B     		ldr	r3, .L12
+  91 000c 5B88     		ldrh	r3, [r3, #2]
+  92              		.loc 1 27 40 discriminator 1 view .LVU15
+  93 000e 3BB3     		cbz	r3, .L11
+  94              	.L6:
+  28:controller/IO/sensors/map.c ****     {
+  29:controller/IO/sensors/map.c ****         log_error("map sensor no init!");
+  30:controller/IO/sensors/map.c ****         return SENSOR_MAP_FAIL_SAFE;
+  31:controller/IO/sensors/map.c ****     }
+  32:controller/IO/sensors/map.c ****     
+  33:controller/IO/sensors/map.c ****     uint16_t raw_adc_value = 0;
+  95              		.loc 1 33 5 is_stmt 1 view .LVU16
+  96              	.LVL0:
+  34:controller/IO/sensors/map.c ****     raw_adc_value = analog_inputs_get_data(ANALOG_INPUT_SENSOR_MAP_PIN);
+  97              		.loc 1 34 5 view .LVU17
+  98              		.loc 1 34 21 is_stmt 0 view .LVU18
+  99 0010 0420     		movs	r0, #4
+ 100 0012 FFF7FEFF 		bl	analog_inputs_get_data
+ 101              	.LVL1:
+ 102 0016 0190     		str	r0, [sp, #4]
+ 103              	.LVL2:
+  35:controller/IO/sensors/map.c ****     
+  36:controller/IO/sensors/map.c ****     pressure_t result = SENSOR_MAP_FAIL_SAFE;
+ 104              		.loc 1 36 5 is_stmt 1 view .LVU19
+  37:controller/IO/sensors/map.c ****     switch (configuration.map_sensor_type)
+ 105              		.loc 1 37 5 view .LVU20
+ 106              		.loc 1 37 26 is_stmt 0 view .LVU21
+ 107 0018 194B     		ldr	r3, .L12+4
+ 108 001a 93F84130 		ldrb	r3, [r3, #65]	@ zero_extendqisi2
+ 109              		.loc 1 37 5 view .LVU22
+ 110 001e 2BBB     		cbnz	r3, .L8
+  38:controller/IO/sensors/map.c ****     {
+  39:controller/IO/sensors/map.c ****     case SENSOR_MAP_TYPE_BOSCH_816:
+  40:controller/IO/sensors/map.c ****         result = mapf((float)raw_adc_value, map_calib.adc_value_0_bar, map_calib.adc_value_1_bar, (
+ 111              		.loc 1 40 9 is_stmt 1 view .LVU23
+ 112              		.loc 1 40 18 is_stmt 0 view .LVU24
+ 113 0020 07EE900A 		vmov	s15, r0	@ int
+ 114 0024 F8EE677A 		vcvt.f32.u32	s15, s15
+ 115              		.loc 1 40 54 view .LVU25
+ 116 0028 144B     		ldr	r3, .L12
+ 117 002a 1A88     		ldrh	r2, [r3]
+ 118              		.loc 1 40 18 view .LVU26
+ 119 002c 07EE102A 		vmov	s14, r2	@ int
+ 120 0030 F8EE476A 		vcvt.f32.u32	s13, s14
+ 121              		.loc 1 40 81 view .LVU27
+ 122 0034 5B88     		ldrh	r3, [r3, #2]
+ 123              		.loc 1 40 18 view .LVU28
+ 124 0036 07EE103A 		vmov	s14, r3	@ int
+ 125 003a B8EE477A 		vcvt.f32.u32	s14, s14
+ 126              	.LVL3:
+ 127              	.LBB4:
+ 128              	.LBI4:
+ 129              		.file 2 "controller/utils/utils.h"
+   1:controller/utils/utils.h **** /**
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccajahYo.s 			page 4
+
+
+   2:controller/utils/utils.h ****  * @file utils.h
+   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
+   4:controller/utils/utils.h ****  * 
+   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
+   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
+   7:controller/utils/utils.h ****  * 
+   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
+   9:controller/utils/utils.h ****  */
+  10:controller/utils/utils.h **** #ifndef UTILS_H
+  11:controller/utils/utils.h **** #define UTILS_H
+  12:controller/utils/utils.h **** 
+  13:controller/utils/utils.h **** #include "types.h"
+  14:controller/utils/utils.h **** #include "math.h"
+  15:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  18:controller/utils/utils.h **** 
+  19:controller/utils/utils.h **** /**
+  20:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
+  21:controller/utils/utils.h ****  * 
+  22:controller/utils/utils.h ****  * @param x The value to map.
+  23:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  24:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  25:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  26:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  27:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  28:controller/utils/utils.h ****  */
+  29:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
+  30:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
+  31:controller/utils/utils.h **** 
+  32:controller/utils/utils.h **** 
+  33:controller/utils/utils.h **** /**
+  34:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
+  35:controller/utils/utils.h ****  * 
+  36:controller/utils/utils.h ****  * @param x The value to map.
+  37:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  38:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  39:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  40:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  41:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  42:controller/utils/utils.h ****  */
+  43:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
+  44:controller/utils/utils.h **** {
+  45:controller/utils/utils.h ****     if (in_max == in_min)
+  46:controller/utils/utils.h ****     {
+  47:controller/utils/utils.h ****         return 0; // Avoid division by zero
+  48:controller/utils/utils.h ****     }
+  49:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+  50:controller/utils/utils.h **** }
+  51:controller/utils/utils.h **** 
+  52:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+ 130              		.loc 2 52 21 is_stmt 1 view .LVU29
+ 131              	.LBB5:
+  53:controller/utils/utils.h **** {
+  54:controller/utils/utils.h ****     if (in_max == in_min)
+ 132              		.loc 2 54 5 view .LVU30
+ 133              		.loc 2 54 8 is_stmt 0 view .LVU31
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccajahYo.s 			page 5
+
+
+ 134 003e 9A42     		cmp	r2, r3
+ 135 0040 19D0     		beq	.L9
+  55:controller/utils/utils.h ****     {
+  56:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
+  57:controller/utils/utils.h ****     }
+  58:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+ 136              		.loc 2 58 5 is_stmt 1 view .LVU32
+ 137              		.loc 2 58 15 is_stmt 0 view .LVU33
+ 138 0042 77EEE67A 		vsub.f32	s15, s15, s13
+ 139              	.LVL4:
+ 140              		.loc 2 58 25 view .LVU34
+ 141 0046 9FED0F6A 		vldr.32	s12, .L12+8
+ 142 004a 67EE867A 		vmul.f32	s15, s15, s12
+ 143              		.loc 2 58 57 view .LVU35
+ 144 004e 37EE667A 		vsub.f32	s14, s14, s13
+ 145              	.LVL5:
+ 146              		.loc 2 58 47 view .LVU36
+ 147 0052 87EE870A 		vdiv.f32	s0, s15, s14
+ 148              		.loc 2 58 67 view .LVU37
+ 149 0056 DFED0C7A 		vldr.32	s15, .L12+12
+ 150 005a 30EE270A 		vadd.f32	s0, s0, s15
+ 151 005e 07E0     		b	.L5
+ 152              	.LVL6:
+ 153              	.L11:
+ 154              		.loc 2 58 67 view .LVU38
+ 155              	.LBE5:
+ 156              	.LBE4:
+  29:controller/IO/sensors/map.c ****         return SENSOR_MAP_FAIL_SAFE;
+ 157              		.loc 1 29 9 is_stmt 1 view .LVU39
+ 158 0060 0A48     		ldr	r0, .L12+16
+ 159 0062 FFF7FEFF 		bl	log_error
+ 160              	.LVL7:
+  30:controller/IO/sensors/map.c ****     }
+ 161              		.loc 1 30 9 view .LVU40
+  30:controller/IO/sensors/map.c ****     }
+ 162              		.loc 1 30 16 is_stmt 0 view .LVU41
+ 163 0066 9FED080A 		vldr.32	s0, .L12+12
+ 164 006a 01E0     		b	.L5
+ 165              	.LVL8:
+ 166              	.L8:
+  41:controller/IO/sensors/map.c ****         break;
+  42:controller/IO/sensors/map.c ****     
+  43:controller/IO/sensors/map.c ****     default:
+  44:controller/IO/sensors/map.c ****         result = SENSOR_MAP_FAIL_SAFE;
+ 167              		.loc 1 44 16 view .LVU42
+ 168 006c 9FED060A 		vldr.32	s0, .L12+12
+ 169              	.LVL9:
+ 170              	.L5:
+  45:controller/IO/sensors/map.c ****         break;
+  46:controller/IO/sensors/map.c ****     }
+  47:controller/IO/sensors/map.c ****     return result;
+  48:controller/IO/sensors/map.c **** }
+ 171              		.loc 1 48 1 view .LVU43
+ 172 0070 03B0     		add	sp, sp, #12
+ 173              		.cfi_remember_state
+ 174              		.cfi_def_cfa_offset 4
+ 175              		@ sp needed
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccajahYo.s 			page 6
+
+
+ 176 0072 5DF804FB 		ldr	pc, [sp], #4
+ 177              	.LVL10:
+ 178              	.L9:
+ 179              		.cfi_restore_state
+ 180              	.LBB7:
+ 181              	.LBB6:
+  56:controller/utils/utils.h ****     }
+ 182              		.loc 2 56 16 view .LVU44
+ 183 0076 9FED040A 		vldr.32	s0, .L12+12
+ 184              	.LVL11:
+  56:controller/utils/utils.h ****     }
+ 185              		.loc 2 56 16 view .LVU45
+ 186 007a F9E7     		b	.L5
+ 187              	.L13:
+ 188              		.align	2
+ 189              	.L12:
+ 190 007c 00000000 		.word	map_calib
+ 191 0080 00000000 		.word	configuration
+ 192 0084 0000C842 		.word	1120403456
+ 193 0088 00000000 		.word	0
+ 194 008c 00000000 		.word	.LC0
+ 195              	.LBE6:
+ 196              	.LBE7:
+ 197              		.cfi_endproc
+ 198              	.LFE229:
+ 200              		.global	map_calib
+ 201              		.section	.bss.map_calib,"aw",%nobits
+ 202              		.align	2
+ 205              	map_calib:
+ 206 0000 00000000 		.space	4
+ 207              		.text
+ 208              	.Letext0:
+ 209              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 210              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 211              		.file 5 "controller/types.h"
+ 212              		.file 6 "controller/enums.h"
+ 213              		.file 7 "controller/IO/analog_inputs.h"
+ 214              		.file 8 "controller/IO/sensors/tps.h"
+ 215              		.file 9 "controller/IO/thermistor.h"
+ 216              		.file 10 "controller/controller.h"
+ 217              		.file 11 "controller/IO/sensors/map.h"
+ 218              		.file 12 "controller/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccajahYo.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 map.c
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:21     .text.sensor_map_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:27     .text.sensor_map_init:00000000 sensor_map_init
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:56     .text.sensor_map_init:00000018 $d
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:205    .bss.map_calib:00000000 map_calib
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:62     .rodata.sensor_map_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:66     .text.sensor_map_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:72     .text.sensor_map_get:00000000 sensor_map_get
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:190    .text.sensor_map_get:0000007c $d
+C:\Users\alireza\AppData\Local\Temp\ccajahYo.s:202    .bss.map_calib:00000000 $d
+
+UNDEFINED SYMBOLS
+configuration
+analog_inputs_get_data
+log_error

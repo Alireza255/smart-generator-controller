@@ -41,6 +41,9 @@ percent_t table_ve_get_value(table_ve_t *table, rpm_t rpm, pressure_t load);
  */
 angle_t table_ignition_get_value(table_ignition_t *table, rpm_t rpm, pressure_t load);
 
+table_ignition_t* table_ignition_get_table();
+
+table_ve_t* table_ve_get_table();
 
 
 #endif // TABLE2D_H

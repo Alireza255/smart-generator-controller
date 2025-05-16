@@ -80,3 +80,12 @@ uint32_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index)
     }
     return analog_data->raw_values[input_index];
 }
+
+voltage_t analog_inputs_get_voltage(analog_input_adc_channel_mapping_e input_index)
+{
+    voltage_t v = 0;
+    uint16_t raw_data = 0;
+    raw_data = analog_inputs_get_data(input_index);
+    v = mapf((float)raw_data, (float)0, (float)4095, 0, ADC_REF_VOLTAGE);
+    return v;
+}

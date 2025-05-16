@@ -1,0 +1,137 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"gvps.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/IO/sensors/gvps.c"
+  20              		.section	.text.sensor_gvps_init,"ax",%progbits
+  21              		.align	1
+  22              		.global	sensor_gvps_init
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	sensor_gvps_init:
+  28              	.LFB228:
+   1:controller/IO/sensors/gvps.c **** #include "gvps.h"
+   2:controller/IO/sensors/gvps.c **** 
+   3:controller/IO/sensors/gvps.c **** tps_sensor_s sensor_gvps = {0};
+   4:controller/IO/sensors/gvps.c **** 
+   5:controller/IO/sensors/gvps.c **** void sensor_gvps_init()
+   6:controller/IO/sensors/gvps.c **** {
+  29              		.loc 1 6 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+   7:controller/IO/sensors/gvps.c ****     sensor_tps_init(&sensor_gvps, &configuration.gvps_calib);
+  37              		.loc 1 7 5 view .LVU1
+  38 0002 0249     		ldr	r1, .L3
+  39 0004 0248     		ldr	r0, .L3+4
+  40 0006 FFF7FEFF 		bl	sensor_tps_init
+  41              	.LVL0:
+   8:controller/IO/sensors/gvps.c **** }
+  42              		.loc 1 8 1 is_stmt 0 view .LVU2
+  43 000a 08BD     		pop	{r3, pc}
+  44              	.L4:
+  45              		.align	2
+  46              	.L3:
+  47 000c 22000000 		.word	configuration+34
+  48 0010 00000000 		.word	sensor_gvps
+  49              		.cfi_endproc
+  50              	.LFE228:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s 			page 2
+
+
+  52              		.section	.text.sensor_gvps_get,"ax",%progbits
+  53              		.align	1
+  54              		.global	sensor_gvps_get
+  55              		.syntax unified
+  56              		.thumb
+  57              		.thumb_func
+  59              	sensor_gvps_get:
+  60              	.LFB229:
+   9:controller/IO/sensors/gvps.c **** 
+  10:controller/IO/sensors/gvps.c **** percent_t sensor_gvps_get()
+  11:controller/IO/sensors/gvps.c **** {
+  61              		.loc 1 11 1 is_stmt 1 view -0
+  62              		.cfi_startproc
+  63              		@ args = 0, pretend = 0, frame = 0
+  64              		@ frame_needed = 0, uses_anonymous_args = 0
+  65 0000 08B5     		push	{r3, lr}
+  66              		.cfi_def_cfa_offset 8
+  67              		.cfi_offset 3, -8
+  68              		.cfi_offset 14, -4
+  12:controller/IO/sensors/gvps.c ****     percent_t result = SENSOR_GVPS_FAIL_SAFE;
+  69              		.loc 1 12 5 view .LVU4
+  70              	.LVL1:
+  13:controller/IO/sensors/gvps.c **** 
+  14:controller/IO/sensors/gvps.c ****     result = sensor_tps_get(&sensor_gvps);
+  71              		.loc 1 14 5 view .LVU5
+  72              		.loc 1 14 14 is_stmt 0 view .LVU6
+  73 0002 0248     		ldr	r0, .L7
+  74 0004 FFF7FEFF 		bl	sensor_tps_get
+  75              	.LVL2:
+  15:controller/IO/sensors/gvps.c ****     return result;
+  76              		.loc 1 15 5 is_stmt 1 view .LVU7
+  16:controller/IO/sensors/gvps.c **** }...
+  77              		.loc 1 16 1 is_stmt 0 view .LVU8
+  78 0008 08BD     		pop	{r3, pc}
+  79              	.L8:
+  80 000a 00BF     		.align	2
+  81              	.L7:
+  82 000c 00000000 		.word	sensor_gvps
+  83              		.cfi_endproc
+  84              	.LFE229:
+  86              		.global	sensor_gvps
+  87              		.section	.bss.sensor_gvps,"aw",%nobits
+  88              		.align	2
+  91              	sensor_gvps:
+  92 0000 00000000 		.space	8
+  92      00000000 
+  93              		.text
+  94              	.Letext0:
+  95              		.file 2 "controller/enums.h"
+  96              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+  97              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+  98              		.file 5 "controller/types.h"
+  99              		.file 6 "controller/IO/analog_inputs.h"
+ 100              		.file 7 "controller/IO/sensors/tps.h"
+ 101              		.file 8 "controller/IO/thermistor.h"
+ 102              		.file 9 "controller/controller.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 gvps.c
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:21     .text.sensor_gvps_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:27     .text.sensor_gvps_init:00000000 sensor_gvps_init
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:47     .text.sensor_gvps_init:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:91     .bss.sensor_gvps:00000000 sensor_gvps
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:53     .text.sensor_gvps_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:59     .text.sensor_gvps_get:00000000 sensor_gvps_get
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:82     .text.sensor_gvps_get:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\ccTqoDGa.s:88     .bss.sensor_gvps:00000000 $d
+
+UNDEFINED SYMBOLS
+sensor_tps_init
+configuration
+sensor_tps_get

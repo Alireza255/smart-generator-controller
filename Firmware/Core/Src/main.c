@@ -30,9 +30,6 @@
 #include "usbd_cdc_if.h"
 
 #include "controller.h"
-#include "configuration.h"
-#include "analog_inputs.h"
-#include "error_handling.h"
 
 /* USER CODE END Includes */
 
@@ -54,8 +51,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-engine_s engine = {0};
-configuration_s configuration = {0};
 
 /* USER CODE END PV */
 
@@ -115,9 +110,8 @@ int main(void)
   MX_TIM3_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  controller_time_start(&htim5);
-  analog_inputs_init(&hadc1);
 
   /* USER CODE END 2 */
 

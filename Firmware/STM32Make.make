@@ -128,14 +128,25 @@ USB_DEVICE/App/usbd_desc.c \
 USB_DEVICE/Target/usbd_conf.c \
 controller/IO/analog_inputs.c \
 controller/IO/resistor.c \
+controller/IO/sensors/clt.c \
+controller/IO/sensors/gvps.c \
+controller/IO/sensors/iat.c \
+controller/IO/sensors/map.c \
+controller/IO/sensors/ops.c \
+controller/IO/sensors/tps.c \
 controller/IO/thermistor.c \
 controller/actuators/dc_motors.c \
+controller/algorithm/air_mass/airmass.c \
+controller/algorithm/fuel/fuel_math.c \
+controller/algorithm/spark/spark_logic.c \
 controller/controller.c \
 controller/controller_time.c \
+controller/eeprom/eeprom.c \
 controller/engine_cycle/ignition.c \
 controller/engine_cycle/trigger.c \
 controller/error_handling.c \
-controller/tables.c
+controller/tables.c \
+controller/utils/pid.c
 
 
 CXX_SOURCES = \
@@ -242,10 +253,15 @@ C_INCLUDES =  \
 -IUSB_DEVICE/Target \
 -Icontroller \
 -Icontroller/IO \
+-Icontroller/IO/sensors \
 -Icontroller/actuators \
+-Icontroller/algorithm \
 -Icontroller/algorithm/air_mass \
 -Icontroller/algorithm/fuel \
--Icontroller/engine_cycle
+-Icontroller/algorithm/spark \
+-Icontroller/eeprom \
+-Icontroller/engine_cycle \
+-Icontroller/utils
 
 
 

@@ -1,0 +1,350 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"tps.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/IO/sensors/tps.c"
+  20              		.section	.rodata.sensor_tps_init.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 74707320 		.ascii	"tps init failed!\000"
+  23      696E6974 
+  23      20666169 
+  23      6C656421 
+  23      00
+  24 0011 000000   		.align	2
+  25              	.LC1:
+  26 0014 74707320 		.ascii	"tps init fail no senosr calib\000"
+  26      696E6974 
+  26      20666169 
+  26      6C206E6F 
+  26      2073656E 
+  27              		.section	.text.sensor_tps_init,"ax",%progbits
+  28              		.align	1
+  29              		.global	sensor_tps_init
+  30              		.syntax unified
+  31              		.thumb
+  32              		.thumb_func
+  34              	sensor_tps_init:
+  35              	.LVL0:
+  36              	.LFB228:
+   1:controller/IO/sensors/tps.c **** #include "tps.h"
+   2:controller/IO/sensors/tps.c **** #include "error_handling.h"
+   3:controller/IO/sensors/tps.c **** #include <math.h>
+   4:controller/IO/sensors/tps.c **** #include "utils.h"
+   5:controller/IO/sensors/tps.c **** 
+   6:controller/IO/sensors/tps.c **** 
+   7:controller/IO/sensors/tps.c **** void sensor_tps_init(tps_sensor_s *sensor, tps_sensor_calib_s *sensor_calib)
+   8:controller/IO/sensors/tps.c **** {
+  37              		.loc 1 8 1 view -0
+  38              		.cfi_startproc
+  39              		@ args = 0, pretend = 0, frame = 0
+  40              		@ frame_needed = 0, uses_anonymous_args = 0
+  41              		.loc 1 8 1 is_stmt 0 view .LVU1
+  42 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s 			page 2
+
+
+  43              		.cfi_def_cfa_offset 8
+  44              		.cfi_offset 3, -8
+  45              		.cfi_offset 14, -4
+   9:controller/IO/sensors/tps.c ****     if (sensor == NULL || sensor_calib == NULL)
+  46              		.loc 1 9 5 is_stmt 1 view .LVU2
+  47              		.loc 1 9 8 is_stmt 0 view .LVU3
+  48 0002 48B1     		cbz	r0, .L2
+  49 0004 0346     		mov	r3, r0
+  50              		.loc 1 9 24 discriminator 1 view .LVU4
+  51 0006 39B1     		cbz	r1, .L2
+  10:controller/IO/sensors/tps.c ****     {
+  11:controller/IO/sensors/tps.c ****         log_error("tps init failed!");
+  12:controller/IO/sensors/tps.c ****         return;
+  13:controller/IO/sensors/tps.c ****     }
+  14:controller/IO/sensors/tps.c ****     if (sensor_calib->wide_open_throttle_adc_value == 0 && sensor_calib->closed_throttle_adc_value 
+  52              		.loc 1 14 5 is_stmt 1 view .LVU5
+  53              		.loc 1 14 21 is_stmt 0 view .LVU6
+  54 0008 0A88     		ldrh	r2, [r1]
+  55              		.loc 1 14 8 view .LVU7
+  56 000a 0AB9     		cbnz	r2, .L5
+  57              		.loc 1 14 72 discriminator 1 view .LVU8
+  58 000c 4A88     		ldrh	r2, [r1, #2]
+  59              		.loc 1 14 57 discriminator 1 view .LVU9
+  60 000e 3AB1     		cbz	r2, .L7
+  61              	.L5:
+  15:controller/IO/sensors/tps.c ****     {
+  16:controller/IO/sensors/tps.c ****         log_error("tps init fail no senosr calib");
+  17:controller/IO/sensors/tps.c ****         return;
+  18:controller/IO/sensors/tps.c ****     }
+  19:controller/IO/sensors/tps.c ****     sensor->calib = sensor_calib;
+  62              		.loc 1 19 5 is_stmt 1 view .LVU10
+  63              		.loc 1 19 19 is_stmt 0 view .LVU11
+  64 0010 1960     		str	r1, [r3]
+  20:controller/IO/sensors/tps.c ****     sensor->is_initialized = true;
+  65              		.loc 1 20 5 is_stmt 1 view .LVU12
+  66              		.loc 1 20 28 is_stmt 0 view .LVU13
+  67 0012 0122     		movs	r2, #1
+  68 0014 1A71     		strb	r2, [r3, #4]
+  69              	.LVL1:
+  70              	.L1:
+  21:controller/IO/sensors/tps.c **** }
+  71              		.loc 1 21 1 view .LVU14
+  72 0016 08BD     		pop	{r3, pc}
+  73              	.LVL2:
+  74              	.L2:
+  11:controller/IO/sensors/tps.c ****         return;
+  75              		.loc 1 11 9 is_stmt 1 view .LVU15
+  76 0018 0348     		ldr	r0, .L8
+  77              	.LVL3:
+  11:controller/IO/sensors/tps.c ****         return;
+  78              		.loc 1 11 9 is_stmt 0 view .LVU16
+  79 001a FFF7FEFF 		bl	log_error
+  80              	.LVL4:
+  12:controller/IO/sensors/tps.c ****     }
+  81              		.loc 1 12 9 is_stmt 1 view .LVU17
+  82 001e FAE7     		b	.L1
+  83              	.LVL5:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s 			page 3
+
+
+  84              	.L7:
+  16:controller/IO/sensors/tps.c ****         return;
+  85              		.loc 1 16 9 view .LVU18
+  86 0020 0248     		ldr	r0, .L8+4
+  87              	.LVL6:
+  16:controller/IO/sensors/tps.c ****         return;
+  88              		.loc 1 16 9 is_stmt 0 view .LVU19
+  89 0022 FFF7FEFF 		bl	log_error
+  90              	.LVL7:
+  17:controller/IO/sensors/tps.c ****     }
+  91              		.loc 1 17 9 is_stmt 1 view .LVU20
+  92 0026 F6E7     		b	.L1
+  93              	.L9:
+  94              		.align	2
+  95              	.L8:
+  96 0028 00000000 		.word	.LC0
+  97 002c 14000000 		.word	.LC1
+  98              		.cfi_endproc
+  99              	.LFE228:
+ 101              		.section	.rodata.sensor_tps_get.str1.4,"aMS",%progbits,1
+ 102              		.align	2
+ 103              	.LC2:
+ 104 0000 74707320 		.ascii	"tps no init!\000"
+ 104      6E6F2069 
+ 104      6E697421 
+ 104      00
+ 105              		.section	.text.sensor_tps_get,"ax",%progbits
+ 106              		.align	1
+ 107              		.global	sensor_tps_get
+ 108              		.syntax unified
+ 109              		.thumb
+ 110              		.thumb_func
+ 112              	sensor_tps_get:
+ 113              	.LVL8:
+ 114              	.LFB229:
+  22:controller/IO/sensors/tps.c **** 
+  23:controller/IO/sensors/tps.c **** percent_t sensor_tps_get(tps_sensor_s *sensor)
+  24:controller/IO/sensors/tps.c **** {
+ 115              		.loc 1 24 1 view -0
+ 116              		.cfi_startproc
+ 117              		@ args = 0, pretend = 0, frame = 0
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119              		.loc 1 24 1 is_stmt 0 view .LVU22
+ 120 0000 10B5     		push	{r4, lr}
+ 121              		.cfi_def_cfa_offset 8
+ 122              		.cfi_offset 4, -8
+ 123              		.cfi_offset 14, -4
+  25:controller/IO/sensors/tps.c ****     if (!sensor->is_initialized)
+ 124              		.loc 1 25 5 is_stmt 1 view .LVU23
+ 125              		.loc 1 25 16 is_stmt 0 view .LVU24
+ 126 0002 0379     		ldrb	r3, [r0, #4]	@ zero_extendqisi2
+ 127              		.loc 1 25 8 view .LVU25
+ 128 0004 93B3     		cbz	r3, .L23
+ 129 0006 0446     		mov	r4, r0
+  26:controller/IO/sensors/tps.c ****     {
+  27:controller/IO/sensors/tps.c ****         log_error("tps no init!");
+  28:controller/IO/sensors/tps.c ****         return SENSOR_TPS_FAIL_SAFE;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s 			page 4
+
+
+  29:controller/IO/sensors/tps.c ****     }
+  30:controller/IO/sensors/tps.c ****     percent_t result = 0;
+ 130              		.loc 1 30 5 is_stmt 1 view .LVU26
+ 131              	.LVL9:
+  31:controller/IO/sensors/tps.c ****     uint16_t raw_data = analog_inputs_get_data(sensor->calib->analog_channel);
+ 132              		.loc 1 31 5 view .LVU27
+ 133              		.loc 1 31 54 is_stmt 0 view .LVU28
+ 134 0008 0368     		ldr	r3, [r0]
+ 135              		.loc 1 31 25 view .LVU29
+ 136 000a 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
+ 137              	.LVL10:
+ 138              		.loc 1 31 25 view .LVU30
+ 139 000c FFF7FEFF 		bl	analog_inputs_get_data
+ 140              	.LVL11:
+ 141 0010 07EE900A 		vmov	s15, r0	@ int
+ 142              	.LVL12:
+  32:controller/IO/sensors/tps.c ****     if (sensor->calib->is_inverted)
+ 143              		.loc 1 32 5 is_stmt 1 view .LVU31
+ 144              		.loc 1 32 15 is_stmt 0 view .LVU32
+ 145 0014 2368     		ldr	r3, [r4]
+ 146              		.loc 1 32 22 view .LVU33
+ 147 0016 5A79     		ldrb	r2, [r3, #5]	@ zero_extendqisi2
+ 148              		.loc 1 32 8 view .LVU34
+ 149 0018 72B3     		cbz	r2, .L13
+  33:controller/IO/sensors/tps.c ****     {
+  34:controller/IO/sensors/tps.c ****         result = MAP((float)raw_data, (float)sensor->calib->wide_open_throttle_adc_value, (float)se
+ 150              		.loc 1 34 9 is_stmt 1 view .LVU35
+ 151              		.loc 1 34 18 is_stmt 0 view .LVU36
+ 152 001a F8EE677A 		vcvt.f32.u32	s15, s15
+ 153              	.LVL13:
+ 154              		.loc 1 34 18 view .LVU37
+ 155 001e 1A88     		ldrh	r2, [r3]
+ 156 0020 06EE902A 		vmov	s13, r2	@ int
+ 157 0024 F8EE666A 		vcvt.f32.u32	s13, s13
+ 158 0028 77EEE67A 		vsub.f32	s15, s15, s13
+ 159 002c 9FED217A 		vldr.32	s14, .L24
+ 160 0030 67EE877A 		vmul.f32	s15, s15, s14
+ 161 0034 5B88     		ldrh	r3, [r3, #2]
+ 162 0036 07EE103A 		vmov	s14, r3	@ int
+ 163 003a B8EE477A 		vcvt.f32.u32	s14, s14
+ 164 003e 37EE667A 		vsub.f32	s14, s14, s13
+ 165 0042 87EE870A 		vdiv.f32	s0, s15, s14
+ 166              		.loc 1 34 16 view .LVU38
+ 167 0046 DFED1C7A 		vldr.32	s15, .L24+4
+ 168 004a 30EE270A 		vadd.f32	s0, s0, s15
+ 169              	.LVL14:
+ 170              	.L14:
+  35:controller/IO/sensors/tps.c ****     }
+  36:controller/IO/sensors/tps.c ****     else
+  37:controller/IO/sensors/tps.c ****     {
+  38:controller/IO/sensors/tps.c ****         result = MAP((float)raw_data, (float)sensor->calib->closed_throttle_adc_value, (float)senso
+  39:controller/IO/sensors/tps.c ****     }
+  40:controller/IO/sensors/tps.c ****     if (!IS_IN_RANGE(result, (percent_t)0, (percent_t)100))
+ 171              		.loc 1 40 5 is_stmt 1 view .LVU39
+ 172              		.loc 1 40 8 is_stmt 0 view .LVU40
+ 173 004e B5EEC00A 		vcmpe.f32	s0, #0
+ 174 0052 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s 			page 5
+
+
+ 175 0056 2ADB     		blt	.L20
+ 176              		.loc 1 40 9 discriminator 1 view .LVU41
+ 177 0058 DFED167A 		vldr.32	s15, .L24
+ 178 005c B4EEE70A 		vcmpe.f32	s0, s15
+ 179 0060 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 180 0064 07D9     		bls	.L10
+  41:controller/IO/sensors/tps.c ****     {
+  42:controller/IO/sensors/tps.c ****         return SENSOR_TPS_FAIL_SAFE;
+ 181              		.loc 1 42 16 view .LVU42
+ 182 0066 9FED150A 		vldr.32	s0, .L24+8
+ 183              	.LVL15:
+ 184              		.loc 1 42 16 view .LVU43
+ 185 006a 04E0     		b	.L10
+ 186              	.LVL16:
+ 187              	.L23:
+  27:controller/IO/sensors/tps.c ****         return SENSOR_TPS_FAIL_SAFE;
+ 188              		.loc 1 27 9 is_stmt 1 view .LVU44
+ 189 006c 1448     		ldr	r0, .L24+12
+ 190              	.LVL17:
+  27:controller/IO/sensors/tps.c ****         return SENSOR_TPS_FAIL_SAFE;
+ 191              		.loc 1 27 9 is_stmt 0 view .LVU45
+ 192 006e FFF7FEFF 		bl	log_error
+ 193              	.LVL18:
+  28:controller/IO/sensors/tps.c ****     }
+ 194              		.loc 1 28 9 is_stmt 1 view .LVU46
+  28:controller/IO/sensors/tps.c ****     }
+ 195              		.loc 1 28 16 is_stmt 0 view .LVU47
+ 196 0072 9FED120A 		vldr.32	s0, .L24+8
+ 197              	.L10:
+  43:controller/IO/sensors/tps.c ****         log_error("tps out of range!");
+  44:controller/IO/sensors/tps.c ****     }
+  45:controller/IO/sensors/tps.c ****     return result;
+  46:controller/IO/sensors/tps.c **** }...
+ 198              		.loc 1 46 1 view .LVU48
+ 199 0076 10BD     		pop	{r4, pc}
+ 200              	.LVL19:
+ 201              	.L13:
+  38:controller/IO/sensors/tps.c ****         result = MAP((float)raw_data, (float)sensor->calib->closed_throttle_adc_value, (float)senso
+ 202              		.loc 1 38 9 is_stmt 1 view .LVU49
+  38:controller/IO/sensors/tps.c ****         result = MAP((float)raw_data, (float)sensor->calib->closed_throttle_adc_value, (float)senso
+ 203              		.loc 1 38 18 is_stmt 0 view .LVU50
+ 204 0078 F8EE677A 		vcvt.f32.u32	s15, s15
+ 205              	.LVL20:
+  38:controller/IO/sensors/tps.c ****         result = MAP((float)raw_data, (float)sensor->calib->closed_throttle_adc_value, (float)senso
+ 206              		.loc 1 38 18 view .LVU51
+ 207 007c 5A88     		ldrh	r2, [r3, #2]
+ 208 007e 06EE902A 		vmov	s13, r2	@ int
+ 209 0082 F8EE666A 		vcvt.f32.u32	s13, s13
+ 210 0086 77EEE67A 		vsub.f32	s15, s15, s13
+ 211 008a 9FED0A7A 		vldr.32	s14, .L24
+ 212 008e 67EE877A 		vmul.f32	s15, s15, s14
+ 213 0092 1B88     		ldrh	r3, [r3]
+ 214 0094 07EE103A 		vmov	s14, r3	@ int
+ 215 0098 B8EE477A 		vcvt.f32.u32	s14, s14
+ 216 009c 37EE667A 		vsub.f32	s14, s14, s13
+ 217 00a0 87EE870A 		vdiv.f32	s0, s15, s14
+  38:controller/IO/sensors/tps.c ****         result = MAP((float)raw_data, (float)sensor->calib->closed_throttle_adc_value, (float)senso
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s 			page 6
+
+
+ 218              		.loc 1 38 16 view .LVU52
+ 219 00a4 DFED047A 		vldr.32	s15, .L24+4
+ 220 00a8 30EE270A 		vadd.f32	s0, s0, s15
+ 221 00ac CFE7     		b	.L14
+ 222              	.LVL21:
+ 223              	.L20:
+  42:controller/IO/sensors/tps.c ****         return SENSOR_TPS_FAIL_SAFE;
+ 224              		.loc 1 42 16 view .LVU53
+ 225 00ae 9FED030A 		vldr.32	s0, .L24+8
+ 226              	.LVL22:
+  42:controller/IO/sensors/tps.c ****         return SENSOR_TPS_FAIL_SAFE;
+ 227              		.loc 1 42 16 view .LVU54
+ 228 00b2 E0E7     		b	.L10
+ 229              	.L25:
+ 230              		.align	2
+ 231              	.L24:
+ 232 00b4 0000C842 		.word	1120403456
+ 233 00b8 00000000 		.word	0
+ 234 00bc 0000C07F 		.word	2143289344
+ 235 00c0 00000000 		.word	.LC2
+ 236              		.cfi_endproc
+ 237              	.LFE229:
+ 239              		.text
+ 240              	.Letext0:
+ 241              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 242              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 243              		.file 4 "controller/types.h"
+ 244              		.file 5 "controller/IO/analog_inputs.h"
+ 245              		.file 6 "controller/IO/sensors/tps.h"
+ 246              		.file 7 "controller/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 tps.c
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:21     .rodata.sensor_tps_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:28     .text.sensor_tps_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:34     .text.sensor_tps_init:00000000 sensor_tps_init
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:96     .text.sensor_tps_init:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:102    .rodata.sensor_tps_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:106    .text.sensor_tps_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:112    .text.sensor_tps_get:00000000 sensor_tps_get
+C:\Users\alireza\AppData\Local\Temp\cc5gVof0.s:232    .text.sensor_tps_get:000000b4 $d
+
+UNDEFINED SYMBOLS
+log_error
+analog_inputs_get_data

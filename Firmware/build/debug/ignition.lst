@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -20,475 +20,1395 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 1
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
   19              		.file 1 "controller/engine_cycle/ignition.c"
-  20              		.section	.text.ignition_init,"ax",%progbits
-  21              		.align	1
-  22              		.global	ignition_init
-  23              		.syntax unified
-  24              		.thumb
-  25              		.thumb_func
-  27              	ignition_init:
-  28              	.LVL0:
-  29              	.LFB221:
+  20              		.section	.rodata.ignition_init.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 69676E69 		.ascii	"ignition init failed. No timer or ouput config\000"
+  23      74696F6E 
+  23      20696E69 
+  23      74206661 
+  23      696C6564 
+  24 002f 00       		.align	2
+  25              	.LC1:
+  26 0030 69676E69 		.ascii	"ignition init failed. unkown firing order.\000"
+  26      74696F6E 
+  26      20696E69 
+  26      74206661 
+  26      696C6564 
+  27 005b 00       		.align	2
+  28              	.LC2:
+  29 005c 4D756C74 		.ascii	"Multi spark is enabled but number of sparks are 0.\000"
+  29      69207370 
+  29      61726B20 
+  29      69732065 
+  29      6E61626C 
+  30              		.section	.text.ignition_init,"ax",%progbits
+  31              		.align	1
+  32              		.global	ignition_init
+  33              		.syntax unified
+  34              		.thumb
+  35              		.thumb_func
+  37              	ignition_init:
+  38              	.LVL0:
+  39              	.LFB229:
    1:controller/engine_cycle/ignition.c **** #include "ignition.h"
    2:controller/engine_cycle/ignition.c **** 
-   3:controller/engine_cycle/ignition.c **** 
-   4:controller/engine_cycle/ignition.c **** /**
-   5:controller/engine_cycle/ignition.c ****  * @brief Initializes the ignition system with the specified parameters.
-   6:controller/engine_cycle/ignition.c ****  * 
-   7:controller/engine_cycle/ignition.c ****  * @param htim Pointer to a TIM_HandleTypeDef structure that contains
-   8:controller/engine_cycle/ignition.c ****  *             the configuration information for the TIM peripheral.
-   9:controller/engine_cycle/ignition.c ****  * @param ignition_mode The mode of ignition to be used.
-  10:controller/engine_cycle/ignition.c ****  * @param pin Pointer to a structure of type ignition_output_pins_s
-  11:controller/engine_cycle/ignition.c ****  *            that defines the output pins for the ignition system.
-  12:controller/engine_cycle/ignition.c ****  */
-  13:controller/engine_cycle/ignition.c **** void ignition_init(TIM_HandleTypeDef *htim, ignition_mode_e ignition_mode, ignition_output_pins_s *
-  14:controller/engine_cycle/ignition.c **** {
-  30              		.loc 1 14 1 view -0
-  31              		.cfi_startproc
-  32              		@ args = 0, pretend = 0, frame = 32
-  33              		@ frame_needed = 0, uses_anonymous_args = 0
-  15:controller/engine_cycle/ignition.c ****     if (htim == NULL || pin == NULL)
-  34              		.loc 1 15 5 view .LVU1
-  35              		.loc 1 15 8 is_stmt 0 view .LVU2
-  36 0000 0028     		cmp	r0, #0
-  37 0002 44D0     		beq	.L6
-  14:controller/engine_cycle/ignition.c ****     if (htim == NULL || pin == NULL)
-  38              		.loc 1 14 1 view .LVU3
-  39 0004 10B5     		push	{r4, lr}
-  40              		.cfi_def_cfa_offset 8
-  41              		.cfi_offset 4, -8
-  42              		.cfi_offset 14, -4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 2
+   3:controller/engine_cycle/ignition.c **** ignition_output_pin_s ignition_outputs[IGNITION_MAX_OUTPUTS] = {0};
+   4:controller/engine_cycle/ignition.c **** 
+   5:controller/engine_cycle/ignition.c **** uint8_t ignition_order[IGNITION_MAX_OUTPUTS] = {0};
+   6:controller/engine_cycle/ignition.c **** 
+   7:controller/engine_cycle/ignition.c **** static TIM_HandleTypeDef *timer = 0;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 2
 
 
-  43 0006 88B0     		sub	sp, sp, #32
-  44              		.cfi_def_cfa_offset 40
-  45 0008 0446     		mov	r4, r0
-  46              		.loc 1 15 22 discriminator 1 view .LVU4
-  47 000a 12B1     		cbz	r2, .L1
-  16:controller/engine_cycle/ignition.c ****     {
-  17:controller/engine_cycle/ignition.c ****         /**
-  18:controller/engine_cycle/ignition.c ****          * @todo thorow an error
-  19:controller/engine_cycle/ignition.c ****          */
-  20:controller/engine_cycle/ignition.c ****         return;
-  21:controller/engine_cycle/ignition.c ****     }
-  22:controller/engine_cycle/ignition.c ****     if (engine.cylinder_count == 0)
-  48              		.loc 1 22 5 is_stmt 1 view .LVU5
-  49              		.loc 1 22 15 is_stmt 0 view .LVU6
-  50 000c 204B     		ldr	r3, .L10
-  51 000e 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
-  52              		.loc 1 22 8 view .LVU7
-  53 0010 0BB9     		cbnz	r3, .L9
-  54              	.LVL1:
-  55              	.L1:
-  23:controller/engine_cycle/ignition.c ****     {
-  24:controller/engine_cycle/ignition.c ****         return;
-  25:controller/engine_cycle/ignition.c ****         /**
-  26:controller/engine_cycle/ignition.c ****          * @todo throw an error
-  27:controller/engine_cycle/ignition.c ****          */
-  28:controller/engine_cycle/ignition.c ****     }
-  29:controller/engine_cycle/ignition.c ****     
-  30:controller/engine_cycle/ignition.c ****     if (configuration.ignition_is_multi_spark && !IS_IN_RANGE(configuration.ignition_multi_spark_nu
-  31:controller/engine_cycle/ignition.c ****     {
-  32:controller/engine_cycle/ignition.c ****         /**
-  33:controller/engine_cycle/ignition.c ****          * @todo throw a warning and tell the user that multi spark is enabled but the number of ad
-  34:controller/engine_cycle/ignition.c ****          */
+   8:controller/engine_cycle/ignition.c **** 
+   9:controller/engine_cycle/ignition.c **** static uint8_t current_firing_cylinder = 0;
+  10:controller/engine_cycle/ignition.c **** 
+  11:controller/engine_cycle/ignition.c **** 
+  12:controller/engine_cycle/ignition.c **** void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
+  13:controller/engine_cycle/ignition.c **** {
+  14:controller/engine_cycle/ignition.c ****     if (htim->Instance != timer->Instance)
+  15:controller/engine_cycle/ignition.c ****     {
+  16:controller/engine_cycle/ignition.c ****         return;
+  17:controller/engine_cycle/ignition.c ****     }
+  18:controller/engine_cycle/ignition.c ****     
+  19:controller/engine_cycle/ignition.c ****     if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+  20:controller/engine_cycle/ignition.c ****     {
+  21:controller/engine_cycle/ignition.c ****         ignition_coil_begin_charge(current_firing_cylinder - 1);
+  22:controller/engine_cycle/ignition.c ****     }
+  23:controller/engine_cycle/ignition.c ****     else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
+  24:controller/engine_cycle/ignition.c ****     {
+  25:controller/engine_cycle/ignition.c ****         ignition_coil_fire_spark(current_firing_cylinder- 1);
+  26:controller/engine_cycle/ignition.c ****     }
+  27:controller/engine_cycle/ignition.c **** }
+  28:controller/engine_cycle/ignition.c **** 
+  29:controller/engine_cycle/ignition.c **** void ignition_init(TIM_HandleTypeDef *htim,  ignition_output_conf_s *output_conf)
+  30:controller/engine_cycle/ignition.c **** {
+  40              		.loc 1 30 1 view -0
+  41              		.cfi_startproc
+  42              		@ args = 0, pretend = 0, frame = 32
+  43              		@ frame_needed = 0, uses_anonymous_args = 0
+  44              		.loc 1 30 1 is_stmt 0 view .LVU1
+  45 0000 10B5     		push	{r4, lr}
+  46              		.cfi_def_cfa_offset 8
+  47              		.cfi_offset 4, -8
+  48              		.cfi_offset 14, -4
+  49 0002 88B0     		sub	sp, sp, #32
+  50              		.cfi_def_cfa_offset 40
+  31:controller/engine_cycle/ignition.c ****     if (htim == NULL || output_conf == NULL)
+  51              		.loc 1 31 5 is_stmt 1 view .LVU2
+  52              		.loc 1 31 8 is_stmt 0 view .LVU3
+  53 0004 C0B1     		cbz	r0, .L2
+  54              		.loc 1 31 22 discriminator 1 view .LVU4
+  55 0006 B9B1     		cbz	r1, .L2
+  32:controller/engine_cycle/ignition.c ****     {
+  33:controller/engine_cycle/ignition.c ****         log_error("ignition init failed. No timer or ouput config");
+  34:controller/engine_cycle/ignition.c ****         return;
   35:controller/engine_cycle/ignition.c ****     }
-  36:controller/engine_cycle/ignition.c ****     
-  37:controller/engine_cycle/ignition.c ****     // Configure the timer to have a tick duration of 1 microsecond
-  38:controller/engine_cycle/ignition.c ****     uint32_t timer_clock = HAL_RCC_GetSysClockFreq(); // Assuming the timer clock is the same is sy
-  39:controller/engine_cycle/ignition.c ****     uint32_t prescaler = (timer_clock / 1000000UL) - 1;
-  40:controller/engine_cycle/ignition.c **** 
-  41:controller/engine_cycle/ignition.c ****     if (prescaler > 0xFFFF)
-  42:controller/engine_cycle/ignition.c ****     {
-  43:controller/engine_cycle/ignition.c ****         // @todo throw an error if the prescaler value is out of range
-  44:controller/engine_cycle/ignition.c ****         return;
-  45:controller/engine_cycle/ignition.c ****     }
-  46:controller/engine_cycle/ignition.c **** 
-  47:controller/engine_cycle/ignition.c ****     htim->Instance->PSC = prescaler; // Set the prescaler
-  48:controller/engine_cycle/ignition.c ****     htim->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
-  49:controller/engine_cycle/ignition.c ****     htim->Instance->CNT = 0; // Reset the counter
-  50:controller/engine_cycle/ignition.c **** 
-  51:controller/engine_cycle/ignition.c ****     // Enable the output compare no output mode for the first channel using HAL
-  52:controller/engine_cycle/ignition.c ****     TIM_OC_InitTypeDef sConfigOC = {0};
-  53:controller/engine_cycle/ignition.c ****     sConfigOC.OCMode = TIM_OCMODE_TIMING; // No output mode
-  54:controller/engine_cycle/ignition.c ****     sConfigOC.Pulse = 0;
-  55:controller/engine_cycle/ignition.c ****     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  56:controller/engine_cycle/ignition.c ****     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  36:controller/engine_cycle/ignition.c **** 
+  37:controller/engine_cycle/ignition.c ****     timer = htim;
+  56              		.loc 1 37 5 is_stmt 1 view .LVU5
+  57              		.loc 1 37 11 is_stmt 0 view .LVU6
+  58 0008 384A     		ldr	r2, .L12
+  59 000a 1060     		str	r0, [r2]
+  38:controller/engine_cycle/ignition.c **** 
+  39:controller/engine_cycle/ignition.c ****     switch (configuration.firing_order)
+  60              		.loc 1 39 5 is_stmt 1 view .LVU7
+  61              		.loc 1 39 26 is_stmt 0 view .LVU8
+  62 000c 384B     		ldr	r3, .L12+4
+  63 000e 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+  64              		.loc 1 39 5 view .LVU9
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 3
+
+
+  65 0010 BBB9     		cbnz	r3, .L5
+  40:controller/engine_cycle/ignition.c ****     {
+  41:controller/engine_cycle/ignition.c ****         case FO_1342:
+  42:controller/engine_cycle/ignition.c ****             engine.cylinder_count = 4;
+  66              		.loc 1 42 13 is_stmt 1 view .LVU10
+  67              		.loc 1 42 35 is_stmt 0 view .LVU11
+  68 0012 384A     		ldr	r2, .L12+8
+  69 0014 0420     		movs	r0, #4
+  70              	.LVL1:
+  71              		.loc 1 42 35 view .LVU12
+  72 0016 1074     		strb	r0, [r2, #16]
+  43:controller/engine_cycle/ignition.c ****             ignition_order[0] = 1;
+  73              		.loc 1 43 13 is_stmt 1 view .LVU13
+  74              		.loc 1 43 31 is_stmt 0 view .LVU14
+  75 0018 374B     		ldr	r3, .L12+12
+  76 001a 4FF0010C 		mov	ip, #1
+  77 001e 83F800C0 		strb	ip, [r3]
+  44:controller/engine_cycle/ignition.c ****             ignition_order[1] = 3;
+  78              		.loc 1 44 13 is_stmt 1 view .LVU15
+  79              		.loc 1 44 31 is_stmt 0 view .LVU16
+  80 0022 4FF0030C 		mov	ip, #3
+  81 0026 83F801C0 		strb	ip, [r3, #1]
+  45:controller/engine_cycle/ignition.c ****             ignition_order[2] = 4;
+  82              		.loc 1 45 13 is_stmt 1 view .LVU17
+  83              		.loc 1 45 31 is_stmt 0 view .LVU18
+  84 002a 9870     		strb	r0, [r3, #2]
+  46:controller/engine_cycle/ignition.c ****             ignition_order[3] = 2;
+  85              		.loc 1 46 13 is_stmt 1 view .LVU19
+  86              		.loc 1 46 31 is_stmt 0 view .LVU20
+  87 002c 0220     		movs	r0, #2
+  88 002e D870     		strb	r0, [r3, #3]
+  47:controller/engine_cycle/ignition.c ****         break;
+  89              		.loc 1 47 9 is_stmt 1 view .LVU21
+  48:controller/engine_cycle/ignition.c ****         
+  49:controller/engine_cycle/ignition.c ****         default:
+  50:controller/engine_cycle/ignition.c ****             log_error("ignition init failed. unkown firing order.");
+  51:controller/engine_cycle/ignition.c ****             return;
+  52:controller/engine_cycle/ignition.c ****         break;
+  90              		.loc 1 52 9 view .LVU22
+  53:controller/engine_cycle/ignition.c ****     }
+  54:controller/engine_cycle/ignition.c ****     
+  55:controller/engine_cycle/ignition.c ****     
+  56:controller/engine_cycle/ignition.c ****     engine.firing_interval = (angle_t)720 / engine.cylinder_count;
+  91              		.loc 1 56 5 view .LVU23
+  92              		.loc 1 56 28 is_stmt 0 view .LVU24
+  93 0030 324B     		ldr	r3, .L12+16
+  94 0032 5361     		str	r3, [r2, #20]	@ float
   57:controller/engine_cycle/ignition.c **** 
-  58:controller/engine_cycle/ignition.c ****     if (HAL_TIM_OC_ConfigChannel(htim, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  59:controller/engine_cycle/ignition.c ****     {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 3
+  58:controller/engine_cycle/ignition.c **** 
+  59:controller/engine_cycle/ignition.c ****     for (size_t i = 0; i < IGNITION_MAX_OUTPUTS; i++)
+  95              		.loc 1 59 5 is_stmt 1 view .LVU25
+  96              	.LBB6:
+  97              		.loc 1 59 10 view .LVU26
+  98              	.LVL2:
+  99              		.loc 1 59 17 is_stmt 0 view .LVU27
+ 100 0034 0023     		movs	r3, #0
+ 101              		.loc 1 59 5 view .LVU28
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 4
 
 
-  60:controller/engine_cycle/ignition.c ****         // @todo handle the error
-  61:controller/engine_cycle/ignition.c ****         return;
-  62:controller/engine_cycle/ignition.c ****     }
-  63:controller/engine_cycle/ignition.c **** 
-  64:controller/engine_cycle/ignition.c ****     HAL_TIM_Base_Start_IT(htim); // Start the timer in interrupt mode
-  65:controller/engine_cycle/ignition.c **** 
-  66:controller/engine_cycle/ignition.c ****     __HAL_TIM_SET_COMPARE(htim, TIM_CHANNEL_1, 0);
-  67:controller/engine_cycle/ignition.c ****     HAL_TIM_OC_Start_IT(htim , TIM_CHANNEL_1); // start the output compare mode and enable interrup
-  68:controller/engine_cycle/ignition.c ****     
+ 102 0036 14E0     		b	.L6
+ 103              	.LVL3:
+ 104              	.L2:
+ 105              		.loc 1 59 5 view .LVU29
+ 106              	.LBE6:
+  33:controller/engine_cycle/ignition.c ****         return;
+ 107              		.loc 1 33 9 is_stmt 1 view .LVU30
+ 108 0038 3148     		ldr	r0, .L12+20
+ 109              	.LVL4:
+  33:controller/engine_cycle/ignition.c ****         return;
+ 110              		.loc 1 33 9 is_stmt 0 view .LVU31
+ 111 003a FFF7FEFF 		bl	log_error
+ 112              	.LVL5:
+  34:controller/engine_cycle/ignition.c ****     }
+ 113              		.loc 1 34 9 is_stmt 1 view .LVU32
+ 114              	.L1:
+  60:controller/engine_cycle/ignition.c ****     {
+  61:controller/engine_cycle/ignition.c ****         ignition_outputs[i].gpio = output_conf->output[i].gpio;
+  62:controller/engine_cycle/ignition.c ****         ignition_outputs[i].pin = output_conf->output[i].pin;
+  63:controller/engine_cycle/ignition.c ****     }
+  64:controller/engine_cycle/ignition.c ****     
+  65:controller/engine_cycle/ignition.c ****     if (configuration.ignition_is_multi_spark && !IS_IN_RANGE(configuration.ignition_multi_spark_nu
+  66:controller/engine_cycle/ignition.c ****     {
+  67:controller/engine_cycle/ignition.c ****         log_warning("Multi spark is enabled but number of sparks are 0.");
+  68:controller/engine_cycle/ignition.c ****     }
   69:controller/engine_cycle/ignition.c ****     
-  70:controller/engine_cycle/ignition.c ****     switch (configuration.firing_order)
-  71:controller/engine_cycle/ignition.c ****     {
-  72:controller/engine_cycle/ignition.c ****         case FO_1342:
-  73:controller/engine_cycle/ignition.c ****             engine.cylinder_count = 4;
-  74:controller/engine_cycle/ignition.c ****             
-  75:controller/engine_cycle/ignition.c ****         break;
-  76:controller/engine_cycle/ignition.c ****         
-  77:controller/engine_cycle/ignition.c ****         default:
-  78:controller/engine_cycle/ignition.c ****         break;
+  70:controller/engine_cycle/ignition.c **** 
+  71:controller/engine_cycle/ignition.c ****     // Configure the timer to have a tick duration of 1 microsecond
+  72:controller/engine_cycle/ignition.c ****     uint32_t timer_clock = HAL_RCC_GetSysClockFreq(); // Assuming the timer clock is the same is sy
+  73:controller/engine_cycle/ignition.c ****     uint32_t prescaler = (timer_clock / 1000000UL) - 1;
+  74:controller/engine_cycle/ignition.c ****     
+  75:controller/engine_cycle/ignition.c ****     if (prescaler > 0xFFFF)
+  76:controller/engine_cycle/ignition.c ****     {
+  77:controller/engine_cycle/ignition.c ****         // @todo throw an error if the prescaler value is out of range
+  78:controller/engine_cycle/ignition.c ****         return;
   79:controller/engine_cycle/ignition.c ****     }
   80:controller/engine_cycle/ignition.c ****     
-  81:controller/engine_cycle/ignition.c ****     
-  82:controller/engine_cycle/ignition.c ****     engine.firing_interval = (angle_t)720 / engine.cylinder_count;
-  83:controller/engine_cycle/ignition.c **** }
-  56              		.loc 1 83 1 view .LVU8
-  57 0012 08B0     		add	sp, sp, #32
-  58              		.cfi_remember_state
-  59              		.cfi_def_cfa_offset 8
-  60              		@ sp needed
-  61 0014 10BD     		pop	{r4, pc}
-  62              	.LVL2:
-  63              	.L9:
-  64              		.cfi_restore_state
-  30:controller/engine_cycle/ignition.c ****     {
-  65              		.loc 1 30 5 is_stmt 1 view .LVU9
-  35:controller/engine_cycle/ignition.c ****     
-  66              		.loc 1 35 5 view .LVU10
-  38:controller/engine_cycle/ignition.c ****     uint32_t prescaler = (timer_clock / 1000000UL) - 1;
-  67              		.loc 1 38 5 view .LVU11
-  38:controller/engine_cycle/ignition.c ****     uint32_t prescaler = (timer_clock / 1000000UL) - 1;
-  68              		.loc 1 38 28 is_stmt 0 view .LVU12
-  69 0016 FFF7FEFF 		bl	HAL_RCC_GetSysClockFreq
-  70              	.LVL3:
-  39:controller/engine_cycle/ignition.c **** 
-  71              		.loc 1 39 5 is_stmt 1 view .LVU13
-  39:controller/engine_cycle/ignition.c **** 
-  72              		.loc 1 39 39 is_stmt 0 view .LVU14
-  73 001a 1E4B     		ldr	r3, .L10+4
-  74 001c A3FB0023 		umull	r2, r3, r3, r0
-  75 0020 9B0C     		lsrs	r3, r3, #18
-  39:controller/engine_cycle/ignition.c **** 
-  76              		.loc 1 39 14 view .LVU15
-  77 0022 013B     		subs	r3, r3, #1
-  78              	.LVL4:
-  41:controller/engine_cycle/ignition.c ****     {
-  79              		.loc 1 41 5 is_stmt 1 view .LVU16
-  41:controller/engine_cycle/ignition.c ****     {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 4
-
-
-  80              		.loc 1 41 8 is_stmt 0 view .LVU17
-  81 0024 B3F5803F 		cmp	r3, #65536
-  82 0028 F3D2     		bcs	.L1
-  47:controller/engine_cycle/ignition.c ****     htim->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
-  83              		.loc 1 47 5 is_stmt 1 view .LVU18
-  47:controller/engine_cycle/ignition.c ****     htim->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
-  84              		.loc 1 47 9 is_stmt 0 view .LVU19
-  85 002a 2268     		ldr	r2, [r4]
-  47:controller/engine_cycle/ignition.c ****     htim->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
-  86              		.loc 1 47 25 view .LVU20
-  87 002c 9362     		str	r3, [r2, #40]
-  48:controller/engine_cycle/ignition.c ****     htim->Instance->CNT = 0; // Reset the counter
-  88              		.loc 1 48 5 is_stmt 1 view .LVU21
-  48:controller/engine_cycle/ignition.c ****     htim->Instance->CNT = 0; // Reset the counter
-  89              		.loc 1 48 9 is_stmt 0 view .LVU22
-  90 002e 2368     		ldr	r3, [r4]
-  91              	.LVL5:
-  48:controller/engine_cycle/ignition.c ****     htim->Instance->CNT = 0; // Reset the counter
-  92              		.loc 1 48 25 view .LVU23
-  93 0030 4FF0FF32 		mov	r2, #-1
-  94              	.LVL6:
-  48:controller/engine_cycle/ignition.c ****     htim->Instance->CNT = 0; // Reset the counter
-  95              		.loc 1 48 25 view .LVU24
-  96 0034 DA62     		str	r2, [r3, #44]
-  49:controller/engine_cycle/ignition.c **** 
-  97              		.loc 1 49 5 is_stmt 1 view .LVU25
-  49:controller/engine_cycle/ignition.c **** 
-  98              		.loc 1 49 9 is_stmt 0 view .LVU26
-  99 0036 2368     		ldr	r3, [r4]
-  49:controller/engine_cycle/ignition.c **** 
- 100              		.loc 1 49 25 view .LVU27
- 101 0038 0022     		movs	r2, #0
- 102 003a 5A62     		str	r2, [r3, #36]
-  52:controller/engine_cycle/ignition.c ****     sConfigOC.OCMode = TIM_OCMODE_TIMING; // No output mode
- 103              		.loc 1 52 5 is_stmt 1 view .LVU28
-  52:controller/engine_cycle/ignition.c ****     sConfigOC.OCMode = TIM_OCMODE_TIMING; // No output mode
- 104              		.loc 1 52 24 is_stmt 0 view .LVU29
- 105 003c 01A9     		add	r1, sp, #4
- 106 003e 0192     		str	r2, [sp, #4]
- 107 0040 4A60     		str	r2, [r1, #4]
- 108 0042 8A60     		str	r2, [r1, #8]
- 109 0044 CA60     		str	r2, [r1, #12]
- 110 0046 0A61     		str	r2, [r1, #16]
- 111 0048 4A61     		str	r2, [r1, #20]
- 112 004a 8A61     		str	r2, [r1, #24]
-  53:controller/engine_cycle/ignition.c ****     sConfigOC.Pulse = 0;
- 113              		.loc 1 53 5 is_stmt 1 view .LVU30
-  54:controller/engine_cycle/ignition.c ****     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
- 114              		.loc 1 54 5 view .LVU31
-  55:controller/engine_cycle/ignition.c ****     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
- 115              		.loc 1 55 5 view .LVU32
-  56:controller/engine_cycle/ignition.c **** 
- 116              		.loc 1 56 5 view .LVU33
-  58:controller/engine_cycle/ignition.c ****     {
- 117              		.loc 1 58 5 view .LVU34
-  58:controller/engine_cycle/ignition.c ****     {
- 118              		.loc 1 58 9 is_stmt 0 view .LVU35
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 5
-
-
- 119 004c 2046     		mov	r0, r4
- 120              	.LVL7:
-  58:controller/engine_cycle/ignition.c ****     {
- 121              		.loc 1 58 9 view .LVU36
- 122 004e FFF7FEFF 		bl	HAL_TIM_OC_ConfigChannel
- 123              	.LVL8:
-  58:controller/engine_cycle/ignition.c ****     {
- 124              		.loc 1 58 8 discriminator 1 view .LVU37
- 125 0052 0028     		cmp	r0, #0
- 126 0054 DDD1     		bne	.L1
-  64:controller/engine_cycle/ignition.c **** 
- 127              		.loc 1 64 5 is_stmt 1 view .LVU38
- 128 0056 2046     		mov	r0, r4
- 129 0058 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
- 130              	.LVL9:
-  66:controller/engine_cycle/ignition.c ****     HAL_TIM_OC_Start_IT(htim , TIM_CHANNEL_1); // start the output compare mode and enable interrup
- 131              		.loc 1 66 5 view .LVU39
- 132 005c 2368     		ldr	r3, [r4]
- 133 005e 0021     		movs	r1, #0
- 134 0060 5963     		str	r1, [r3, #52]
-  67:controller/engine_cycle/ignition.c ****     
- 135              		.loc 1 67 5 view .LVU40
- 136 0062 2046     		mov	r0, r4
- 137 0064 FFF7FEFF 		bl	HAL_TIM_OC_Start_IT
- 138              	.LVL10:
-  70:controller/engine_cycle/ignition.c ****     {
- 139              		.loc 1 70 5 view .LVU41
-  70:controller/engine_cycle/ignition.c ****     {
- 140              		.loc 1 70 26 is_stmt 0 view .LVU42
- 141 0068 0B4B     		ldr	r3, .L10+8
- 142 006a DB78     		ldrb	r3, [r3, #3]	@ zero_extendqisi2
-  70:controller/engine_cycle/ignition.c ****     {
- 143              		.loc 1 70 5 view .LVU43
- 144 006c 13B9     		cbnz	r3, .L3
-  73:controller/engine_cycle/ignition.c ****             
- 145              		.loc 1 73 13 is_stmt 1 view .LVU44
-  73:controller/engine_cycle/ignition.c ****             
- 146              		.loc 1 73 35 is_stmt 0 view .LVU45
- 147 006e 084B     		ldr	r3, .L10
- 148 0070 0422     		movs	r2, #4
- 149 0072 1A74     		strb	r2, [r3, #16]
-  75:controller/engine_cycle/ignition.c ****         
- 150              		.loc 1 75 9 is_stmt 1 view .LVU46
- 151              	.L3:
-  82:controller/engine_cycle/ignition.c **** }
- 152              		.loc 1 82 5 view .LVU47
-  82:controller/engine_cycle/ignition.c **** }
- 153              		.loc 1 82 51 is_stmt 0 view .LVU48
- 154 0074 064B     		ldr	r3, .L10
- 155 0076 1A7C     		ldrb	r2, [r3, #16]	@ zero_extendqisi2
- 156 0078 07EE902A 		vmov	s15, r2	@ int
-  82:controller/engine_cycle/ignition.c **** }
- 157              		.loc 1 82 43 view .LVU49
- 158 007c F8EEE77A 		vcvt.f32.s32	s15, s15
- 159 0080 DFED066A 		vldr.32	s13, .L10+12
- 160 0084 86EEA77A 		vdiv.f32	s14, s13, s15
-  82:controller/engine_cycle/ignition.c **** }
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 6
-
-
- 161              		.loc 1 82 28 view .LVU50
- 162 0088 83ED057A 		vstr.32	s14, [r3, #20]
- 163 008c C1E7     		b	.L1
- 164              	.LVL11:
- 165              	.L6:
- 166              		.cfi_def_cfa_offset 0
- 167              		.cfi_restore 4
- 168              		.cfi_restore 14
-  82:controller/engine_cycle/ignition.c **** }
- 169              		.loc 1 82 28 view .LVU51
- 170 008e 7047     		bx	lr
- 171              	.L11:
- 172              		.align	2
- 173              	.L10:
- 174 0090 00000000 		.word	engine
- 175 0094 83DE1B43 		.word	1125899907
- 176 0098 00000000 		.word	configuration
- 177 009c 00003444 		.word	1144258560
- 178              		.cfi_endproc
- 179              	.LFE221:
- 181              		.section	.text.ignition_trigger_event_handle,"ax",%progbits
- 182              		.align	1
- 183              		.global	ignition_trigger_event_handle
- 184              		.syntax unified
- 185              		.thumb
- 186              		.thumb_func
- 188              	ignition_trigger_event_handle:
- 189              	.LVL12:
- 190              	.LFB222:
+  81:controller/engine_cycle/ignition.c ****     timer->Instance->PSC = prescaler; // Set the prescaler
+  82:controller/engine_cycle/ignition.c ****     timer->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
+  83:controller/engine_cycle/ignition.c ****     timer->Instance->CNT = 0; // Reset the counter
   84:controller/engine_cycle/ignition.c **** 
-  85:controller/engine_cycle/ignition.c **** /**
-  86:controller/engine_cycle/ignition.c ****  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.
-  87:controller/engine_cycle/ignition.c ****  * 
-  88:controller/engine_cycle/ignition.c ****  * @param crankshaft_angle The current angle of the crankshaft.
-  89:controller/engine_cycle/ignition.c ****  * @param rpm The current revolutions per minute of the engine.
-  90:controller/engine_cycle/ignition.c ****  * @param current_time_us The current time in microseconds.
-  91:controller/engine_cycle/ignition.c ****  */
-  92:controller/engine_cycle/ignition.c **** void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us)
-  93:controller/engine_cycle/ignition.c **** {
- 191              		.loc 1 93 1 is_stmt 1 view -0
- 192              		.cfi_startproc
- 193              		@ args = 0, pretend = 0, frame = 0
- 194              		@ frame_needed = 0, uses_anonymous_args = 0
- 195              		@ link register save eliminated.
-  94:controller/engine_cycle/ignition.c ****     /**
-  95:controller/engine_cycle/ignition.c ****      * @todo add the necessary checks and bounds
-  96:controller/engine_cycle/ignition.c ****      */
-  97:controller/engine_cycle/ignition.c ****     if (engine.ignition_mode == IM_NO_IGNITION)
- 196              		.loc 1 97 5 view .LVU53
+  85:controller/engine_cycle/ignition.c ****     // Enable the output compare no output mode for the first channel using HAL
+  86:controller/engine_cycle/ignition.c ****     TIM_OC_InitTypeDef sConfigOC = {0};
+  87:controller/engine_cycle/ignition.c ****     sConfigOC.OCMode = TIM_OCMODE_TIMING; // No output mode
+  88:controller/engine_cycle/ignition.c ****     sConfigOC.Pulse = 0;
+  89:controller/engine_cycle/ignition.c ****     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  90:controller/engine_cycle/ignition.c ****     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  91:controller/engine_cycle/ignition.c ****     
+  92:controller/engine_cycle/ignition.c ****     if (HAL_TIM_OC_ConfigChannel(timer, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  93:controller/engine_cycle/ignition.c ****     {
+  94:controller/engine_cycle/ignition.c ****         // @todo handle the error
+  95:controller/engine_cycle/ignition.c ****         return;
+  96:controller/engine_cycle/ignition.c ****     }
+  97:controller/engine_cycle/ignition.c ****     // Enable the output compare no output mode for the second channel using HAL
+  98:controller/engine_cycle/ignition.c ****     if (HAL_TIM_OC_ConfigChannel(timer, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  99:controller/engine_cycle/ignition.c ****     {
+ 100:controller/engine_cycle/ignition.c ****         // @todo handle the error
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 5
+
+
+ 101:controller/engine_cycle/ignition.c ****         return;
+ 102:controller/engine_cycle/ignition.c ****     }
+ 103:controller/engine_cycle/ignition.c ****     HAL_TIM_Base_Start(timer);
+ 104:controller/engine_cycle/ignition.c ****     HAL_TIM_PWM_Start_IT(timer, TIM_CHANNEL_1);
+ 105:controller/engine_cycle/ignition.c ****     HAL_TIM_PWM_Start_IT(timer, TIM_CHANNEL_2);
+ 106:controller/engine_cycle/ignition.c ****     
+ 107:controller/engine_cycle/ignition.c ****     
+ 108:controller/engine_cycle/ignition.c **** 
+ 109:controller/engine_cycle/ignition.c **** }
+ 115              		.loc 1 109 1 is_stmt 0 view .LVU33
+ 116 003e 08B0     		add	sp, sp, #32
+ 117              		.cfi_remember_state
+ 118              		.cfi_def_cfa_offset 8
+ 119              		@ sp needed
+ 120 0040 10BD     		pop	{r4, pc}
+ 121              	.LVL6:
+ 122              	.L5:
+ 123              		.cfi_restore_state
+  50:controller/engine_cycle/ignition.c ****             return;
+ 124              		.loc 1 50 13 is_stmt 1 view .LVU34
+ 125 0042 3048     		ldr	r0, .L12+24
+ 126              	.LVL7:
+  50:controller/engine_cycle/ignition.c ****             return;
+ 127              		.loc 1 50 13 is_stmt 0 view .LVU35
+ 128 0044 FFF7FEFF 		bl	log_error
+ 129              	.LVL8:
+  51:controller/engine_cycle/ignition.c ****         break;
+ 130              		.loc 1 51 13 is_stmt 1 view .LVU36
+ 131 0048 F9E7     		b	.L1
+ 132              	.LVL9:
+ 133              	.L7:
+ 134              	.LBB7:
+  61:controller/engine_cycle/ignition.c ****         ignition_outputs[i].pin = output_conf->output[i].pin;
+ 135              		.loc 1 61 9 view .LVU37
+  61:controller/engine_cycle/ignition.c ****         ignition_outputs[i].pin = output_conf->output[i].pin;
+ 136              		.loc 1 61 58 is_stmt 0 view .LVU38
+ 137 004a 51F83300 		ldr	r0, [r1, r3, lsl #3]
+  61:controller/engine_cycle/ignition.c ****         ignition_outputs[i].pin = output_conf->output[i].pin;
+ 138              		.loc 1 61 34 view .LVU39
+ 139 004e 2E4A     		ldr	r2, .L12+28
+ 140 0050 42F83300 		str	r0, [r2, r3, lsl #3]
+  62:controller/engine_cycle/ignition.c ****     }
+ 141              		.loc 1 62 9 is_stmt 1 view .LVU40
+  62:controller/engine_cycle/ignition.c ****     }
+ 142              		.loc 1 62 57 is_stmt 0 view .LVU41
+ 143 0054 01EBC300 		add	r0, r1, r3, lsl #3
+ 144 0058 4068     		ldr	r0, [r0, #4]
+  62:controller/engine_cycle/ignition.c ****     }
+ 145              		.loc 1 62 33 view .LVU42
+ 146 005a 02EBC302 		add	r2, r2, r3, lsl #3
+ 147 005e 5060     		str	r0, [r2, #4]
+  59:controller/engine_cycle/ignition.c ****     {
+ 148              		.loc 1 59 51 is_stmt 1 discriminator 3 view .LVU43
+ 149 0060 0133     		adds	r3, r3, #1
+ 150              	.LVL10:
+ 151              	.L6:
+  59:controller/engine_cycle/ignition.c ****     {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 6
+
+
+ 152              		.loc 1 59 26 discriminator 1 view .LVU44
+ 153 0062 032B     		cmp	r3, #3
+ 154 0064 F1D9     		bls	.L7
+ 155              	.LBE7:
+  65:controller/engine_cycle/ignition.c ****     {
+ 156              		.loc 1 65 5 view .LVU45
+  65:controller/engine_cycle/ignition.c ****     {
+ 157              		.loc 1 65 22 is_stmt 0 view .LVU46
+ 158 0066 224B     		ldr	r3, .L12+4
+ 159              	.LVL11:
+  65:controller/engine_cycle/ignition.c ****     {
+ 160              		.loc 1 65 22 view .LVU47
+ 161 0068 1B7A     		ldrb	r3, [r3, #8]	@ zero_extendqisi2
+  65:controller/engine_cycle/ignition.c ****     {
+ 162              		.loc 1 65 8 view .LVU48
+ 163 006a 1BB1     		cbz	r3, .L8
+  65:controller/engine_cycle/ignition.c ****     {
+ 164              		.loc 1 65 51 discriminator 1 view .LVU49
+ 165 006c 204B     		ldr	r3, .L12+4
+ 166 006e 5B7A     		ldrb	r3, [r3, #9]	@ zero_extendqisi2
+  65:controller/engine_cycle/ignition.c ****     {
+ 167              		.loc 1 65 47 discriminator 1 view .LVU50
+ 168 0070 082B     		cmp	r3, #8
+ 169 0072 36D8     		bhi	.L11
+ 170              	.LVL12:
+ 171              	.L8:
+  72:controller/engine_cycle/ignition.c ****     uint32_t prescaler = (timer_clock / 1000000UL) - 1;
+ 172              		.loc 1 72 5 is_stmt 1 view .LVU51
+  72:controller/engine_cycle/ignition.c ****     uint32_t prescaler = (timer_clock / 1000000UL) - 1;
+ 173              		.loc 1 72 28 is_stmt 0 view .LVU52
+ 174 0074 FFF7FEFF 		bl	HAL_RCC_GetSysClockFreq
+ 175              	.LVL13:
+  73:controller/engine_cycle/ignition.c ****     
+ 176              		.loc 1 73 5 is_stmt 1 view .LVU53
+  73:controller/engine_cycle/ignition.c ****     
+ 177              		.loc 1 73 39 is_stmt 0 view .LVU54
+ 178 0078 244B     		ldr	r3, .L12+32
+ 179 007a A3FB0023 		umull	r2, r3, r3, r0
+ 180 007e 9B0C     		lsrs	r3, r3, #18
+  73:controller/engine_cycle/ignition.c ****     
+ 181              		.loc 1 73 14 view .LVU55
+ 182 0080 013B     		subs	r3, r3, #1
+ 183              	.LVL14:
+  75:controller/engine_cycle/ignition.c ****     {
+ 184              		.loc 1 75 5 is_stmt 1 view .LVU56
+  75:controller/engine_cycle/ignition.c ****     {
+ 185              		.loc 1 75 8 is_stmt 0 view .LVU57
+ 186 0082 B3F5803F 		cmp	r3, #65536
+ 187 0086 DAD2     		bcs	.L1
+  81:controller/engine_cycle/ignition.c ****     timer->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
+ 188              		.loc 1 81 5 is_stmt 1 view .LVU58
+  81:controller/engine_cycle/ignition.c ****     timer->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
+ 189              		.loc 1 81 10 is_stmt 0 view .LVU59
+ 190 0088 184A     		ldr	r2, .L12
+ 191 008a 1068     		ldr	r0, [r2]
+ 192              	.LVL15:
+  81:controller/engine_cycle/ignition.c ****     timer->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 7
+
+
+ 193              		.loc 1 81 10 view .LVU60
+ 194 008c 0268     		ldr	r2, [r0]
+  81:controller/engine_cycle/ignition.c ****     timer->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
+ 195              		.loc 1 81 26 view .LVU61
+ 196 008e 9362     		str	r3, [r2, #40]
+  82:controller/engine_cycle/ignition.c ****     timer->Instance->CNT = 0; // Reset the counter
+ 197              		.loc 1 82 5 is_stmt 1 view .LVU62
+  82:controller/engine_cycle/ignition.c ****     timer->Instance->CNT = 0; // Reset the counter
+ 198              		.loc 1 82 10 is_stmt 0 view .LVU63
+ 199 0090 0368     		ldr	r3, [r0]
+ 200              	.LVL16:
+  82:controller/engine_cycle/ignition.c ****     timer->Instance->CNT = 0; // Reset the counter
+ 201              		.loc 1 82 26 view .LVU64
+ 202 0092 4FF0FF32 		mov	r2, #-1
+ 203              	.LVL17:
+  82:controller/engine_cycle/ignition.c ****     timer->Instance->CNT = 0; // Reset the counter
+ 204              		.loc 1 82 26 view .LVU65
+ 205 0096 DA62     		str	r2, [r3, #44]
+  83:controller/engine_cycle/ignition.c **** 
+ 206              		.loc 1 83 5 is_stmt 1 view .LVU66
+  83:controller/engine_cycle/ignition.c **** 
+ 207              		.loc 1 83 10 is_stmt 0 view .LVU67
+ 208 0098 0368     		ldr	r3, [r0]
+  83:controller/engine_cycle/ignition.c **** 
+ 209              		.loc 1 83 26 view .LVU68
+ 210 009a 0022     		movs	r2, #0
+ 211 009c 5A62     		str	r2, [r3, #36]
+  86:controller/engine_cycle/ignition.c ****     sConfigOC.OCMode = TIM_OCMODE_TIMING; // No output mode
+ 212              		.loc 1 86 5 is_stmt 1 view .LVU69
+  86:controller/engine_cycle/ignition.c ****     sConfigOC.OCMode = TIM_OCMODE_TIMING; // No output mode
+ 213              		.loc 1 86 24 is_stmt 0 view .LVU70
+ 214 009e 01A9     		add	r1, sp, #4
+ 215 00a0 0192     		str	r2, [sp, #4]
+ 216 00a2 4A60     		str	r2, [r1, #4]
+ 217 00a4 8A60     		str	r2, [r1, #8]
+ 218 00a6 CA60     		str	r2, [r1, #12]
+ 219 00a8 0A61     		str	r2, [r1, #16]
+ 220 00aa 4A61     		str	r2, [r1, #20]
+ 221 00ac 8A61     		str	r2, [r1, #24]
+  87:controller/engine_cycle/ignition.c ****     sConfigOC.Pulse = 0;
+ 222              		.loc 1 87 5 is_stmt 1 view .LVU71
+  88:controller/engine_cycle/ignition.c ****     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+ 223              		.loc 1 88 5 view .LVU72
+  89:controller/engine_cycle/ignition.c ****     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+ 224              		.loc 1 89 5 view .LVU73
+  90:controller/engine_cycle/ignition.c ****     
+ 225              		.loc 1 90 5 view .LVU74
+  92:controller/engine_cycle/ignition.c ****     {
+ 226              		.loc 1 92 5 view .LVU75
+  92:controller/engine_cycle/ignition.c ****     {
+ 227              		.loc 1 92 9 is_stmt 0 view .LVU76
+ 228 00ae FFF7FEFF 		bl	HAL_TIM_OC_ConfigChannel
+ 229              	.LVL18:
+  92:controller/engine_cycle/ignition.c ****     {
+ 230              		.loc 1 92 8 discriminator 1 view .LVU77
+ 231 00b2 0028     		cmp	r0, #0
+ 232 00b4 C3D1     		bne	.L1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 8
+
+
   98:controller/engine_cycle/ignition.c ****     {
-  99:controller/engine_cycle/ignition.c ****         // obviously, there is no need to do any furthure processing
- 100:controller/engine_cycle/ignition.c ****         return;
- 101:controller/engine_cycle/ignition.c ****     }
- 102:controller/engine_cycle/ignition.c ****     
- 103:controller/engine_cycle/ignition.c ****     if (!IS_IN_RANGE(configuration.ignition_dwell, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_T
- 197              		.loc 1 103 5 view .LVU54
- 104:controller/engine_cycle/ignition.c ****     {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 7
+ 233              		.loc 1 98 5 is_stmt 1 view .LVU78
+  98:controller/engine_cycle/ignition.c ****     {
+ 234              		.loc 1 98 9 is_stmt 0 view .LVU79
+ 235 00b6 0422     		movs	r2, #4
+ 236 00b8 0DEB0201 		add	r1, sp, r2
+ 237 00bc 0B4B     		ldr	r3, .L12
+ 238 00be 1868     		ldr	r0, [r3]
+ 239 00c0 FFF7FEFF 		bl	HAL_TIM_OC_ConfigChannel
+ 240              	.LVL19:
+  98:controller/engine_cycle/ignition.c ****     {
+ 241              		.loc 1 98 8 discriminator 1 view .LVU80
+ 242 00c4 0028     		cmp	r0, #0
+ 243 00c6 BAD1     		bne	.L1
+ 103:controller/engine_cycle/ignition.c ****     HAL_TIM_PWM_Start_IT(timer, TIM_CHANNEL_1);
+ 244              		.loc 1 103 5 is_stmt 1 view .LVU81
+ 245 00c8 084C     		ldr	r4, .L12
+ 246 00ca 2068     		ldr	r0, [r4]
+ 247 00cc FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 248              	.LVL20:
+ 104:controller/engine_cycle/ignition.c ****     HAL_TIM_PWM_Start_IT(timer, TIM_CHANNEL_2);
+ 249              		.loc 1 104 5 view .LVU82
+ 250 00d0 0021     		movs	r1, #0
+ 251 00d2 2068     		ldr	r0, [r4]
+ 252 00d4 FFF7FEFF 		bl	HAL_TIM_PWM_Start_IT
+ 253              	.LVL21:
+ 105:controller/engine_cycle/ignition.c ****     
+ 254              		.loc 1 105 5 view .LVU83
+ 255 00d8 0421     		movs	r1, #4
+ 256 00da 2068     		ldr	r0, [r4]
+ 257 00dc FFF7FEFF 		bl	HAL_TIM_PWM_Start_IT
+ 258              	.LVL22:
+ 259 00e0 ADE7     		b	.L1
+ 260              	.LVL23:
+ 261              	.L11:
+  67:controller/engine_cycle/ignition.c ****     }
+ 262              		.loc 1 67 9 view .LVU84
+ 263 00e2 0B48     		ldr	r0, .L12+36
+ 264 00e4 FFF7FEFF 		bl	log_warning
+ 265              	.LVL24:
+  67:controller/engine_cycle/ignition.c ****     }
+ 266              		.loc 1 67 9 is_stmt 0 view .LVU85
+ 267 00e8 C4E7     		b	.L8
+ 268              	.L13:
+ 269 00ea 00BF     		.align	2
+ 270              	.L12:
+ 271 00ec 00000000 		.word	timer
+ 272 00f0 00000000 		.word	configuration
+ 273 00f4 00000000 		.word	engine
+ 274 00f8 00000000 		.word	ignition_order
+ 275 00fc 00003443 		.word	1127481344
+ 276 0100 00000000 		.word	.LC0
+ 277 0104 30000000 		.word	.LC1
+ 278 0108 00000000 		.word	ignition_outputs
+ 279 010c 83DE1B43 		.word	1125899907
+ 280 0110 5C000000 		.word	.LC2
+ 281              		.cfi_endproc
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 9
 
 
- 105:controller/engine_cycle/ignition.c ****         /**
- 106:controller/engine_cycle/ignition.c ****          * @todo throw an error
- 107:controller/engine_cycle/ignition.c ****          */
- 108:controller/engine_cycle/ignition.c ****         return;
- 109:controller/engine_cycle/ignition.c ****     }
+ 282              	.LFE229:
+ 284              		.section	.rodata.ignition_trigger_event_handle.str1.4,"aMS",%progbits,1
+ 285              		.align	2
+ 286              	.LC3:
+ 287 0000 69676E69 		.ascii	"ignition no init.\000"
+ 287      74696F6E 
+ 287      206E6F20 
+ 287      696E6974 
+ 287      2E00
+ 288              		.section	.text.ignition_trigger_event_handle,"ax",%progbits
+ 289              		.align	1
+ 290              		.global	ignition_trigger_event_handle
+ 291              		.syntax unified
+ 292              		.thumb
+ 293              		.thumb_func
+ 295              	ignition_trigger_event_handle:
+ 296              	.LVL25:
+ 297              	.LFB230:
  110:controller/engine_cycle/ignition.c **** 
- 111:controller/engine_cycle/ignition.c ****     uint8_t sparks_per_coil = ignition_get_number_of_sparks_per_coil(engine.ignition_mode);
- 112:controller/engine_cycle/ignition.c ****     uint8_t aditional_sparks_per_coil = configuration.ignition_multi_spark_number_of_sparks;
- 113:controller/engine_cycle/ignition.c **** 
- 114:controller/engine_cycle/ignition.c ****     
- 115:controller/engine_cycle/ignition.c **** 
- 116:controller/engine_cycle/ignition.c **** }
- 198              		.loc 1 116 1 is_stmt 0 view .LVU55
- 199 0000 7047     		bx	lr
- 200              		.cfi_endproc
- 201              	.LFE222:
- 203              		.section	.text.ignition_get_number_of_sparks_per_coil,"ax",%progbits
- 204              		.align	1
- 205              		.global	ignition_get_number_of_sparks_per_coil
- 206              		.syntax unified
- 207              		.thumb
- 208              		.thumb_func
- 210              	ignition_get_number_of_sparks_per_coil:
- 211              	.LVL13:
- 212              	.LFB223:
- 117:controller/engine_cycle/ignition.c **** 
- 118:controller/engine_cycle/ignition.c **** /**
- 119:controller/engine_cycle/ignition.c ****  * @brief Schedules the next spark event for the ignition system.
- 120:controller/engine_cycle/ignition.c ****  */
- 121:controller/engine_cycle/ignition.c **** void ignition_schedule_spark();
- 122:controller/engine_cycle/ignition.c **** 
- 123:controller/engine_cycle/ignition.c **** /**
- 124:controller/engine_cycle/ignition.c ****  * @brief Gets the number of sparks per coil based on the ignition mode.
- 125:controller/engine_cycle/ignition.c ****  * 
- 126:controller/engine_cycle/ignition.c ****  * @param ignition_mode The mode of ignition, specified as an enumeration of type ignition_mode_e.
- 127:controller/engine_cycle/ignition.c ****  * @return The number of sparks per coil.
- 128:controller/engine_cycle/ignition.c ****  */
- 129:controller/engine_cycle/ignition.c **** uint8_t ignition_get_number_of_sparks_per_coil(ignition_mode_e ignition_mode)
- 130:controller/engine_cycle/ignition.c **** {
- 213              		.loc 1 130 1 is_stmt 1 view -0
- 214              		.cfi_startproc
- 215              		@ args = 0, pretend = 0, frame = 0
- 216              		@ frame_needed = 0, uses_anonymous_args = 0
- 217              		@ link register save eliminated.
- 131:controller/engine_cycle/ignition.c ****     switch (ignition_mode) {
- 218              		.loc 1 131 5 view .LVU57
- 219 0000 0128     		cmp	r0, #1
- 220 0002 03D0     		beq	.L14
- 221 0004 0328     		cmp	r0, #3
- 222 0006 04D1     		bne	.L16
- 132:controller/engine_cycle/ignition.c ****         case IM_ONE_COIL:
- 133:controller/engine_cycle/ignition.c ****             return engine.cylinder_count;
- 134:controller/engine_cycle/ignition.c ****         case IM_INDIVIDUAL_COILS:
- 135:controller/engine_cycle/ignition.c ****             return 1;
- 136:controller/engine_cycle/ignition.c ****         case IM_WASTED_SPARK:
- 137:controller/engine_cycle/ignition.c ****             return 2;
- 223              		.loc 1 137 20 is_stmt 0 view .LVU58
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 8
+ 111:controller/engine_cycle/ignition.c **** /**
+ 112:controller/engine_cycle/ignition.c ****  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.
+ 113:controller/engine_cycle/ignition.c ****  * 
+ 114:controller/engine_cycle/ignition.c ****  * @param crankshaft_angle The current angle of the crankshaft.
+ 115:controller/engine_cycle/ignition.c ****  * @param rpm The current revolutions per minute of the engine.
+ 116:controller/engine_cycle/ignition.c ****  * @param current_time_us The current time in microseconds.
+ 117:controller/engine_cycle/ignition.c ****  */
+ 118:controller/engine_cycle/ignition.c **** void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us)
+ 119:controller/engine_cycle/ignition.c **** {
+ 298              		.loc 1 119 1 is_stmt 1 view -0
+ 299              		.cfi_startproc
+ 300              		@ args = 0, pretend = 0, frame = 8
+ 301              		@ frame_needed = 0, uses_anonymous_args = 0
+ 120:controller/engine_cycle/ignition.c ****     if (configuration.ignition_mode == IM_NO_IGNITION)
+ 302              		.loc 1 120 5 view .LVU87
+ 303              		.loc 1 120 22 is_stmt 0 view .LVU88
+ 304 0000 464B     		ldr	r3, .L30
+ 305 0002 DB78     		ldrb	r3, [r3, #3]	@ zero_extendqisi2
+ 306              		.loc 1 120 8 view .LVU89
+ 307 0004 002B     		cmp	r3, #0
+ 308 0006 00F08780 		beq	.L26
+ 119:controller/engine_cycle/ignition.c ****     if (configuration.ignition_mode == IM_NO_IGNITION)
+ 309              		.loc 1 119 1 view .LVU90
+ 310 000a 10B5     		push	{r4, lr}
+ 311              		.cfi_def_cfa_offset 8
+ 312              		.cfi_offset 4, -8
+ 313              		.cfi_offset 14, -4
+ 314 000c 2DED048B 		vpush.64	{d8, d9}
+ 315              		.cfi_def_cfa_offset 24
+ 316              		.cfi_offset 80, -24
+ 317              		.cfi_offset 81, -20
+ 318              		.cfi_offset 82, -16
+ 319              		.cfi_offset 83, -12
+ 320 0010 82B0     		sub	sp, sp, #8
+ 321              		.cfi_def_cfa_offset 32
+ 322 0012 F0EE409A 		vmov.f32	s19, s0
+ 323 0016 B0EE609A 		vmov.f32	s18, s1
+ 121:controller/engine_cycle/ignition.c ****     {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 10
 
 
- 224 0008 0220     		movs	r0, #2
- 225              	.LVL14:
- 226              		.loc 1 137 20 view .LVU59
- 227 000a 7047     		bx	lr
- 228              	.LVL15:
- 229              	.L14:
- 133:controller/engine_cycle/ignition.c ****         case IM_INDIVIDUAL_COILS:
- 230              		.loc 1 133 13 is_stmt 1 view .LVU60
- 133:controller/engine_cycle/ignition.c ****         case IM_INDIVIDUAL_COILS:
- 231              		.loc 1 133 26 is_stmt 0 view .LVU61
- 232 000c 024B     		ldr	r3, .L17
- 233 000e 187C     		ldrb	r0, [r3, #16]	@ zero_extendqisi2
- 234              	.LVL16:
- 133:controller/engine_cycle/ignition.c ****         case IM_INDIVIDUAL_COILS:
- 235              		.loc 1 133 26 view .LVU62
- 236 0010 7047     		bx	lr
- 237              	.LVL17:
- 238              	.L16:
- 131:controller/engine_cycle/ignition.c ****     switch (ignition_mode) {
- 239              		.loc 1 131 5 view .LVU63
- 240 0012 0120     		movs	r0, #1
- 241              	.LVL18:
- 138:controller/engine_cycle/ignition.c ****         default:
- 139:controller/engine_cycle/ignition.c ****             //firmwareError(ObdCode::CUSTOM_ERR_IGNITION_MODE, "Unexpected ignition_mode_e %d", mod
- 140:controller/engine_cycle/ignition.c ****             return 1;
- 141:controller/engine_cycle/ignition.c ****         }
- 142:controller/engine_cycle/ignition.c **** }
- 242              		.loc 1 142 1 view .LVU64
- 243 0014 7047     		bx	lr
- 244              	.L18:
- 245 0016 00BF     		.align	2
- 246              	.L17:
- 247 0018 00000000 		.word	engine
- 248              		.cfi_endproc
- 249              	.LFE223:
- 251              		.text
- 252              	.Letext0:
- 253              		.file 2 "controller/enums.h"
- 254              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 255              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 256              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 257              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 258              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 259              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 260              		.file 9 "controller/types.h"
- 261              		.file 10 "controller/engine_cycle/trigger.h"
- 262              		.file 11 "controller/controller.h"
- 263              		.file 12 "controller/configuration.h"
- 264              		.file 13 "controller/engine_cycle/ignition.h"
- 265              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s 			page 9
+ 122:controller/engine_cycle/ignition.c ****         // obviously, there is no need to do any furthure processing
+ 123:controller/engine_cycle/ignition.c ****         return;
+ 124:controller/engine_cycle/ignition.c ****     }
+ 125:controller/engine_cycle/ignition.c ****     
+ 126:controller/engine_cycle/ignition.c ****     /**
+ 127:controller/engine_cycle/ignition.c ****      * @todo add the necessary checks and bounds
+ 128:controller/engine_cycle/ignition.c ****      */
+ 129:controller/engine_cycle/ignition.c ****     if (timer == NULL)
+ 324              		.loc 1 129 5 is_stmt 1 view .LVU91
+ 325              		.loc 1 129 15 is_stmt 0 view .LVU92
+ 326 001a 414B     		ldr	r3, .L30+4
+ 327 001c 1C68     		ldr	r4, [r3]
+ 328              		.loc 1 129 8 view .LVU93
+ 329 001e 002C     		cmp	r4, #0
+ 330 0020 70D0     		beq	.L29
+ 130:controller/engine_cycle/ignition.c ****     {
+ 131:controller/engine_cycle/ignition.c ****         log_error("ignition no init.");
+ 132:controller/engine_cycle/ignition.c ****         return;
+ 133:controller/engine_cycle/ignition.c ****     }
+ 134:controller/engine_cycle/ignition.c ****     
+ 135:controller/engine_cycle/ignition.c ****     if (!IS_IN_RANGE(configuration.ignition_dwell, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_T
+ 331              		.loc 1 135 5 is_stmt 1 view .LVU94
+ 332              		.loc 1 135 10 is_stmt 0 view .LVU95
+ 333 0022 3E4B     		ldr	r3, .L30
+ 334 0024 93ED018A 		vldr.32	s16, [r3, #4]
+ 335              		.loc 1 135 8 view .LVU96
+ 336 0028 F6EE007A 		vmov.f32	s15, #5.0e-1
+ 337 002c B4EEE78A 		vcmpe.f32	s16, s15
+ 338 0030 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 339 0034 62DB     		blt	.L14
+ 340              		.loc 1 135 9 discriminator 1 view .LVU97
+ 341 0036 F1EE007A 		vmov.f32	s15, #4.0e+0
+ 342 003a B4EEE78A 		vcmpe.f32	s16, s15
+ 343 003e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 344 0042 5BD8     		bhi	.L14
+ 136:controller/engine_cycle/ignition.c ****     {
+ 137:controller/engine_cycle/ignition.c ****         /**
+ 138:controller/engine_cycle/ignition.c ****          * @todo throw an error
+ 139:controller/engine_cycle/ignition.c ****          */
+ 140:controller/engine_cycle/ignition.c ****         return;
+ 141:controller/engine_cycle/ignition.c ****     }
+ 142:controller/engine_cycle/ignition.c ****     
+ 143:controller/engine_cycle/ignition.c ****     #ifdef TEST_MODE
+ 144:controller/engine_cycle/ignition.c ****     angle_t spark_advance = (angle_t)30;
+ 345              		.loc 1 144 5 is_stmt 1 view .LVU98
+ 346              	.LVL26:
+ 145:controller/engine_cycle/ignition.c ****     #else
+ 146:controller/engine_cycle/ignition.c ****     angle_t spark_advance = spark_logic_get_advance();
+ 147:controller/engine_cycle/ignition.c ****     #endif
+ 148:controller/engine_cycle/ignition.c **** 
+ 149:controller/engine_cycle/ignition.c ****     spark_advance = CLAMP(spark_advance, IGNITION_MIN_ADVANCE, IGNITION_MAX_ADVANCE);
+ 347              		.loc 1 149 5 view .LVU99
+ 150:controller/engine_cycle/ignition.c **** 
+ 151:controller/engine_cycle/ignition.c ****     //uint8_t sparks_per_coil = ignition_get_number_of_sparks_per_coil(configuration.ignition_mode)
+ 152:controller/engine_cycle/ignition.c ****     //uint8_t aditional_sparks_per_coil = configuration.ignition_multi_spark_number_of_sparks;
+ 153:controller/engine_cycle/ignition.c ****     
+ 154:controller/engine_cycle/ignition.c ****     /**
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 11
+
+
+ 155:controller/engine_cycle/ignition.c ****      * Here we detect which cylinder has to fire next
+ 156:controller/engine_cycle/ignition.c ****      */
+ 157:controller/engine_cycle/ignition.c ****     // Determine the current phase
+ 158:controller/engine_cycle/ignition.c ****     uint8_t phase = (uint8_t)(ceilf(crankshaft_angle / engine.firing_interval));
+ 348              		.loc 1 158 5 view .LVU100
+ 349              		.loc 1 158 62 is_stmt 0 view .LVU101
+ 350 0044 374B     		ldr	r3, .L30+8
+ 351 0046 D3ED058A 		vldr.32	s17, [r3, #20]
+ 352              		.loc 1 158 31 view .LVU102
+ 353 004a 89EEA80A 		vdiv.f32	s0, s19, s17
+ 354              	.LVL27:
+ 355              		.loc 1 158 31 view .LVU103
+ 356 004e FFF7FEFF 		bl	ceilf
+ 357              	.LVL28:
+ 358              		.loc 1 158 13 discriminator 1 view .LVU104
+ 359 0052 FCEEC07A 		vcvt.u32.f32	s15, s0
+ 360 0056 CDED017A 		vstr.32	s15, [sp, #4]	@ int
+ 361 005a 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 362              	.LVL29:
+ 159:controller/engine_cycle/ignition.c **** 
+ 160:controller/engine_cycle/ignition.c ****     
+ 161:controller/engine_cycle/ignition.c ****     /**
+ 162:controller/engine_cycle/ignition.c ****      * for a simple 4 cylinder engine this returns:
+ 163:controller/engine_cycle/ignition.c ****      * 1 when 0 < crankshaft angle < 180
+ 164:controller/engine_cycle/ignition.c ****      * 3 when 180 < crankshaft angle < 360
+ 165:controller/engine_cycle/ignition.c ****      */
+ 166:controller/engine_cycle/ignition.c ****     current_firing_cylinder = ignition_order[phase-1];
+ 363              		.loc 1 166 5 is_stmt 1 view .LVU105
+ 364              		.loc 1 166 51 is_stmt 0 view .LVU106
+ 365 005e 5A1E     		subs	r2, r3, #1
+ 366              		.loc 1 166 45 view .LVU107
+ 367 0060 3149     		ldr	r1, .L30+12
+ 368 0062 895C     		ldrb	r1, [r1, r2]	@ zero_extendqisi2
+ 369              		.loc 1 166 29 view .LVU108
+ 370 0064 314A     		ldr	r2, .L30+16
+ 371 0066 1170     		strb	r1, [r2]
+ 167:controller/engine_cycle/ignition.c **** 
+ 168:controller/engine_cycle/ignition.c ****     /**
+ 169:controller/engine_cycle/ignition.c ****      * Now we need to start the timer and calculate when the coil has to start charging and when it
+ 170:controller/engine_cycle/ignition.c ****      */
+ 171:controller/engine_cycle/ignition.c ****     angle_t spark_angle = (angle_t)phase * engine.firing_interval - spark_advance;
+ 372              		.loc 1 171 5 is_stmt 1 view .LVU109
+ 373              		.loc 1 171 27 is_stmt 0 view .LVU110
+ 374 0068 07EE903A 		vmov	s15, r3	@ int
+ 375 006c F8EE677A 		vcvt.f32.u32	s15, s15
+ 376              		.loc 1 171 42 view .LVU111
+ 377 0070 68EEA78A 		vmul.f32	s17, s17, s15
+ 378              		.loc 1 171 13 view .LVU112
+ 379 0074 F3EE0E7A 		vmov.f32	s15, #3.0e+1
+ 380 0078 78EEE78A 		vsub.f32	s17, s17, s15
+ 381              	.LVL30:
+ 172:controller/engine_cycle/ignition.c ****     angle_t dwell_angle = degrees_per_microsecond(rpm) * configuration.ignition_dwell * (float)1000
+ 382              		.loc 1 172 5 is_stmt 1 view .LVU113
+ 383              	.LBB8:
+ 384              	.LBI8:
+ 385              		.file 2 "controller/utils/utils.h"
+   1:controller/utils/utils.h **** /**
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 12
+
+
+   2:controller/utils/utils.h ****  * @file utils.h
+   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
+   4:controller/utils/utils.h ****  * 
+   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
+   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
+   7:controller/utils/utils.h ****  * 
+   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
+   9:controller/utils/utils.h ****  */
+  10:controller/utils/utils.h **** #ifndef UTILS_H
+  11:controller/utils/utils.h **** #define UTILS_H
+  12:controller/utils/utils.h **** 
+  13:controller/utils/utils.h **** #include "types.h"
+  14:controller/utils/utils.h **** #include "math.h"
+  15:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  18:controller/utils/utils.h **** 
+  19:controller/utils/utils.h **** /**
+  20:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
+  21:controller/utils/utils.h ****  * 
+  22:controller/utils/utils.h ****  * @param x The value to map.
+  23:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  24:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  25:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  26:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  27:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  28:controller/utils/utils.h ****  */
+  29:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
+  30:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
+  31:controller/utils/utils.h **** 
+  32:controller/utils/utils.h **** 
+  33:controller/utils/utils.h **** /**
+  34:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
+  35:controller/utils/utils.h ****  * 
+  36:controller/utils/utils.h ****  * @param x The value to map.
+  37:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  38:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  39:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  40:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  41:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  42:controller/utils/utils.h ****  */
+  43:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
+  44:controller/utils/utils.h **** {
+  45:controller/utils/utils.h ****     if (in_max == in_min)
+  46:controller/utils/utils.h ****     {
+  47:controller/utils/utils.h ****         return 0; // Avoid division by zero
+  48:controller/utils/utils.h ****     }
+  49:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+  50:controller/utils/utils.h **** }
+  51:controller/utils/utils.h **** 
+  52:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+  53:controller/utils/utils.h **** {
+  54:controller/utils/utils.h ****     if (in_max == in_min)
+  55:controller/utils/utils.h ****     {
+  56:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
+  57:controller/utils/utils.h ****     }
+  58:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 13
+
+
+  59:controller/utils/utils.h **** }
+  60:controller/utils/utils.h **** 
+  61:controller/utils/utils.h **** 
+  62:controller/utils/utils.h **** 
+  63:controller/utils/utils.h **** #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
+  64:controller/utils/utils.h **** #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
+  65:controller/utils/utils.h **** 
+  66:controller/utils/utils.h **** /**
+  67:controller/utils/utils.h ****  * @brief Function to calculate the microseconds it takes for the engine to turn one degree.
+  68:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
+  69:controller/utils/utils.h ****  */
+  70:controller/utils/utils.h **** static inline time_us_t microseconds_per_degree(rpm_t rpm)
+  71:controller/utils/utils.h **** {
+  72:controller/utils/utils.h ****     if (rpm == 0)
+  73:controller/utils/utils.h ****     {
+  74:controller/utils/utils.h ****         return 0;
+  75:controller/utils/utils.h ****     }
+  76:controller/utils/utils.h ****     return (time_us_t) 60.0f * 1e6f / (rpm * 360.0f);
+  77:controller/utils/utils.h **** }
+  78:controller/utils/utils.h **** 
+  79:controller/utils/utils.h **** /**
+  80:controller/utils/utils.h ****  * @brief Function to calculate the degrees the engine turns in one microsecond.
+  81:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
+  82:controller/utils/utils.h ****  */
+  83:controller/utils/utils.h **** static inline angle_t degrees_per_microsecond(rpm_t rpm)
+ 386              		.loc 2 83 23 view .LVU114
+ 387              	.LBB9:
+  84:controller/utils/utils.h **** {
+  85:controller/utils/utils.h ****     if (rpm == 0)
+ 388              		.loc 2 85 5 view .LVU115
+ 389              		.loc 2 85 8 is_stmt 0 view .LVU116
+ 390 007c B5EE409A 		vcmp.f32	s18, #0
+ 391 0080 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 392 0084 42D0     		beq	.L21
+  86:controller/utils/utils.h ****     {
+  87:controller/utils/utils.h ****         return 0.0f;
+  88:controller/utils/utils.h ****     }
+  89:controller/utils/utils.h ****     return (angle_t)(rpm * 360.0f) / (60.0f * 1e6f);
+ 393              		.loc 2 89 5 is_stmt 1 view .LVU117
+ 394              		.loc 2 89 12 is_stmt 0 view .LVU118
+ 395 0086 DFED2A7A 		vldr.32	s15, .L30+20
+ 396 008a 69EE277A 		vmul.f32	s15, s18, s15
+ 397              		.loc 2 89 36 view .LVU119
+ 398 008e DFED296A 		vldr.32	s13, .L30+24
+ 399 0092 87EEA67A 		vdiv.f32	s14, s15, s13
+ 400              	.L19:
+ 401              	.LVL31:
+ 402              		.loc 2 89 36 view .LVU120
+ 403              	.LBE9:
+ 404              	.LBE8:
+ 405              		.loc 1 172 56 discriminator 1 view .LVU121
+ 406 0096 28EE078A 		vmul.f32	s16, s16, s14
+ 407              		.loc 1 172 13 discriminator 1 view .LVU122
+ 408 009a DFED277A 		vldr.32	s15, .L30+28
+ 409 009e 28EE278A 		vmul.f32	s16, s16, s15
+ 410              	.LVL32:
+ 173:controller/engine_cycle/ignition.c ****     if ((spark_angle - dwell_angle - crankshaft_angle) < 0)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 14
+
+
+ 411              		.loc 1 173 5 is_stmt 1 view .LVU123
+ 412              		.loc 1 173 22 is_stmt 0 view .LVU124
+ 413 00a2 38EEC88A 		vsub.f32	s16, s17, s16
+ 414              	.LVL33:
+ 415              		.loc 1 173 36 view .LVU125
+ 416 00a6 38EE698A 		vsub.f32	s16, s16, s19
+ 417              		.loc 1 173 8 view .LVU126
+ 418 00aa B5EEC08A 		vcmpe.f32	s16, #0
+ 419 00ae F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 420 00b2 23D4     		bmi	.L14
+ 174:controller/engine_cycle/ignition.c ****     {
+ 175:controller/engine_cycle/ignition.c ****         /* This means that the spark is eather happened or is happening or maybe just about to happ
+ 176:controller/engine_cycle/ignition.c ****         return;
+ 177:controller/engine_cycle/ignition.c ****     }
+ 178:controller/engine_cycle/ignition.c ****     time_us_t start_charge_time = 0;
+ 421              		.loc 1 178 5 is_stmt 1 view .LVU127
+ 422              	.LVL34:
+ 179:controller/engine_cycle/ignition.c ****     time_us_t fire_spark_time = 0;
+ 423              		.loc 1 179 5 view .LVU128
+ 180:controller/engine_cycle/ignition.c ****     time_us_t microseconds_per_deg = microseconds_per_degree(rpm);
+ 424              		.loc 1 180 5 view .LVU129
+ 425              	.LBB11:
+ 426              	.LBI11:
+  70:controller/utils/utils.h **** {
+ 427              		.loc 2 70 25 view .LVU130
+ 428              	.LBB12:
+  72:controller/utils/utils.h ****     {
+ 429              		.loc 2 72 5 view .LVU131
+  72:controller/utils/utils.h ****     {
+ 430              		.loc 2 72 8 is_stmt 0 view .LVU132
+ 431 00b4 B5EE409A 		vcmp.f32	s18, #0
+ 432 00b8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 433 00bc 29D0     		beq	.L22
+  76:controller/utils/utils.h **** }
+ 434              		.loc 2 76 5 is_stmt 1 view .LVU133
+  76:controller/utils/utils.h **** }
+ 435              		.loc 2 76 44 is_stmt 0 view .LVU134
+ 436 00be DFED1C7A 		vldr.32	s15, .L30+20
+ 437 00c2 69EE270A 		vmul.f32	s1, s18, s15
+  76:controller/utils/utils.h **** }
+ 438              		.loc 2 76 37 view .LVU135
+ 439 00c6 9FED1B7A 		vldr.32	s14, .L30+24
+ 440 00ca C7EE207A 		vdiv.f32	s15, s14, s1
+ 441 00ce FCEEE77A 		vcvt.u32.f32	s15, s15
+ 442              	.L20:
+ 443              	.LVL35:
+  76:controller/utils/utils.h **** }
+ 444              		.loc 2 76 37 view .LVU136
+ 445              	.LBE12:
+ 446              	.LBE11:
+ 181:controller/engine_cycle/ignition.c ****     start_charge_time = (time_us_t)((spark_angle - dwell_angle - crankshaft_angle) * (float)microse
+ 447              		.loc 1 181 5 is_stmt 1 view .LVU137
+ 448              		.loc 1 181 86 is_stmt 0 view .LVU138
+ 449 00d2 F8EE677A 		vcvt.f32.u32	s15, s15
+ 450              	.LVL36:
+ 451              		.loc 1 181 84 view .LVU139
+ 452 00d6 28EE278A 		vmul.f32	s16, s16, s15
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 15
+
+
+ 453              		.loc 1 181 23 view .LVU140
+ 454 00da BCEEC88A 		vcvt.u32.f32	s16, s16
+ 455              	.LVL37:
+ 182:controller/engine_cycle/ignition.c ****     fire_spark_time = (time_us_t)((spark_angle - crankshaft_angle) * (float)microseconds_per_deg);
+ 456              		.loc 1 182 5 is_stmt 1 view .LVU141
+ 457              		.loc 1 182 48 is_stmt 0 view .LVU142
+ 458 00de 38EEE90A 		vsub.f32	s0, s17, s19
+ 459              		.loc 1 182 68 view .LVU143
+ 460 00e2 67EE807A 		vmul.f32	s15, s15, s0
+ 461              		.loc 1 182 21 view .LVU144
+ 462 00e6 FCEEE77A 		vcvt.u32.f32	s15, s15
+ 463              	.LVL38:
+ 183:controller/engine_cycle/ignition.c ****     __HAL_TIM_SET_COUNTER(timer, 0);
+ 464              		.loc 1 183 5 is_stmt 1 view .LVU145
+ 465 00ea 2368     		ldr	r3, [r4]
+ 466              	.LVL39:
+ 467              		.loc 1 183 5 is_stmt 0 view .LVU146
+ 468 00ec 0022     		movs	r2, #0
+ 469 00ee 5A62     		str	r2, [r3, #36]
+ 184:controller/engine_cycle/ignition.c ****     __HAL_TIM_SET_COMPARE(timer, TIM_CHANNEL_1, start_charge_time);
+ 470              		.loc 1 184 5 is_stmt 1 view .LVU147
+ 471 00f0 2368     		ldr	r3, [r4]
+ 472 00f2 83ED0D8A 		vstr.32	s16, [r3, #52]	@ int
+ 185:controller/engine_cycle/ignition.c ****     __HAL_TIM_SET_COMPARE(timer, TIM_CHANNEL_2, fire_spark_time);
+ 473              		.loc 1 185 5 view .LVU148
+ 474 00f6 2368     		ldr	r3, [r4]
+ 475 00f8 C3ED0E7A 		vstr.32	s15, [r3, #56]	@ int
+ 476              	.LVL40:
+ 477              	.L14:
+ 186:controller/engine_cycle/ignition.c **** 
+ 187:controller/engine_cycle/ignition.c **** }
+ 478              		.loc 1 187 1 is_stmt 0 view .LVU149
+ 479 00fc 02B0     		add	sp, sp, #8
+ 480              		.cfi_remember_state
+ 481              		.cfi_def_cfa_offset 24
+ 482              		@ sp needed
+ 483 00fe BDEC048B 		vldm	sp!, {d8-d9}
+ 484              		.cfi_restore 82
+ 485              		.cfi_restore 83
+ 486              		.cfi_restore 80
+ 487              		.cfi_restore 81
+ 488              		.cfi_def_cfa_offset 8
+ 489              	.LVL41:
+ 490              		.loc 1 187 1 view .LVU150
+ 491 0102 10BD     		pop	{r4, pc}
+ 492              	.LVL42:
+ 493              	.L29:
+ 494              		.cfi_restore_state
+ 131:controller/engine_cycle/ignition.c ****         return;
+ 495              		.loc 1 131 9 is_stmt 1 view .LVU151
+ 496 0104 0D48     		ldr	r0, .L30+32
+ 497              	.LVL43:
+ 131:controller/engine_cycle/ignition.c ****         return;
+ 498              		.loc 1 131 9 is_stmt 0 view .LVU152
+ 499 0106 FFF7FEFF 		bl	log_error
+ 500              	.LVL44:
+ 132:controller/engine_cycle/ignition.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 16
+
+
+ 501              		.loc 1 132 9 is_stmt 1 view .LVU153
+ 502 010a F7E7     		b	.L14
+ 503              	.LVL45:
+ 504              	.L21:
+ 505              	.LBB14:
+ 506              	.LBB10:
+  87:controller/utils/utils.h ****     }
+ 507              		.loc 2 87 16 is_stmt 0 view .LVU154
+ 508 010c 9FED0C7A 		vldr.32	s14, .L30+36
+ 509 0110 C1E7     		b	.L19
+ 510              	.LVL46:
+ 511              	.L22:
+  87:controller/utils/utils.h ****     }
+ 512              		.loc 2 87 16 view .LVU155
+ 513              	.LBE10:
+ 514              	.LBE14:
+ 515              	.LBB15:
+ 516              	.LBB13:
+  74:controller/utils/utils.h ****     }
+ 517              		.loc 2 74 16 view .LVU156
+ 518 0112 DFED0C7A 		vldr.32	s15, .L30+40	@ int
+ 519 0116 DCE7     		b	.L20
+ 520              	.LVL47:
+ 521              	.L26:
+ 522              		.cfi_def_cfa_offset 0
+ 523              		.cfi_restore 4
+ 524              		.cfi_restore 14
+ 525              		.cfi_restore 80
+ 526              		.cfi_restore 81
+ 527              		.cfi_restore 82
+ 528              		.cfi_restore 83
+  74:controller/utils/utils.h ****     }
+ 529              		.loc 2 74 16 view .LVU157
+ 530 0118 7047     		bx	lr
+ 531              	.L31:
+ 532 011a 00BF     		.align	2
+ 533              	.L30:
+ 534 011c 00000000 		.word	configuration
+ 535 0120 00000000 		.word	timer
+ 536 0124 00000000 		.word	engine
+ 537 0128 00000000 		.word	ignition_order
+ 538 012c 00000000 		.word	current_firing_cylinder
+ 539 0130 0000B443 		.word	1135869952
+ 540 0134 C0E1644C 		.word	1281679808
+ 541 0138 00007A44 		.word	1148846080
+ 542 013c 00000000 		.word	.LC3
+ 543 0140 00000000 		.word	0
+ 544 0144 00000000 		.word	0
+ 545              	.LBE13:
+ 546              	.LBE15:
+ 547              		.cfi_endproc
+ 548              	.LFE230:
+ 550              		.section	.rodata.ignition_get_number_of_sparks_per_coil.str1.4,"aMS",%progbits,1
+ 551              		.align	2
+ 552              	.LC4:
+ 553 0000 556E6B6F 		.ascii	"Unkown ignition mode\000"
+ 553      776E2069 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 17
+
+
+ 553      676E6974 
+ 553      696F6E20 
+ 553      6D6F6465 
+ 554              		.section	.text.ignition_get_number_of_sparks_per_coil,"ax",%progbits
+ 555              		.align	1
+ 556              		.global	ignition_get_number_of_sparks_per_coil
+ 557              		.syntax unified
+ 558              		.thumb
+ 559              		.thumb_func
+ 561              	ignition_get_number_of_sparks_per_coil:
+ 562              	.LVL48:
+ 563              	.LFB231:
+ 188:controller/engine_cycle/ignition.c **** 
+ 189:controller/engine_cycle/ignition.c **** 
+ 190:controller/engine_cycle/ignition.c **** /**
+ 191:controller/engine_cycle/ignition.c ****  * @brief Gets the number of sparks per coil based on the ignition mode.
+ 192:controller/engine_cycle/ignition.c ****  * 
+ 193:controller/engine_cycle/ignition.c ****  * @param ignition_mode The mode of ignition, specified as an enumeration of type ignition_mode_e.
+ 194:controller/engine_cycle/ignition.c ****  * @return The number of sparks per coil.
+ 195:controller/engine_cycle/ignition.c ****  */
+ 196:controller/engine_cycle/ignition.c **** uint8_t ignition_get_number_of_sparks_per_coil(ignition_mode_e ignition_mode)
+ 197:controller/engine_cycle/ignition.c **** {
+ 564              		.loc 1 197 1 is_stmt 1 view -0
+ 565              		.cfi_startproc
+ 566              		@ args = 0, pretend = 0, frame = 0
+ 567              		@ frame_needed = 0, uses_anonymous_args = 0
+ 198:controller/engine_cycle/ignition.c ****     switch (ignition_mode) {
+ 568              		.loc 1 198 5 view .LVU159
+ 569 0000 0228     		cmp	r0, #2
+ 570 0002 0CD0     		beq	.L35
+ 571 0004 0328     		cmp	r0, #3
+ 572 0006 0CD0     		beq	.L36
+ 197:controller/engine_cycle/ignition.c ****     switch (ignition_mode) {
+ 573              		.loc 1 197 1 is_stmt 0 view .LVU160
+ 574 0008 08B5     		push	{r3, lr}
+ 575              		.cfi_def_cfa_offset 8
+ 576              		.cfi_offset 3, -8
+ 577              		.cfi_offset 14, -4
+ 578              		.loc 1 198 5 view .LVU161
+ 579 000a 0128     		cmp	r0, #1
+ 580 000c 02D1     		bne	.L34
+ 199:controller/engine_cycle/ignition.c ****         case IM_ONE_COIL:
+ 200:controller/engine_cycle/ignition.c ****             return engine.cylinder_count;
+ 581              		.loc 1 200 13 is_stmt 1 view .LVU162
+ 582              		.loc 1 200 26 is_stmt 0 view .LVU163
+ 583 000e 064B     		ldr	r3, .L41
+ 584 0010 187C     		ldrb	r0, [r3, #16]	@ zero_extendqisi2
+ 585              	.LVL49:
+ 586              	.L33:
+ 201:controller/engine_cycle/ignition.c ****         case IM_INDIVIDUAL_COILS:
+ 202:controller/engine_cycle/ignition.c ****             return 1;
+ 203:controller/engine_cycle/ignition.c ****         case IM_WASTED_SPARK:
+ 204:controller/engine_cycle/ignition.c ****             return 2;
+ 205:controller/engine_cycle/ignition.c ****         default:
+ 206:controller/engine_cycle/ignition.c ****             log_error("Unkown ignition mode");
+ 207:controller/engine_cycle/ignition.c ****             return 1;
+ 208:controller/engine_cycle/ignition.c ****         }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 18
+
+
+ 209:controller/engine_cycle/ignition.c **** }
+ 587              		.loc 1 209 1 view .LVU164
+ 588 0012 08BD     		pop	{r3, pc}
+ 589              	.LVL50:
+ 590              	.L34:
+ 206:controller/engine_cycle/ignition.c ****             return 1;
+ 591              		.loc 1 206 13 is_stmt 1 view .LVU165
+ 592 0014 0548     		ldr	r0, .L41+4
+ 593              	.LVL51:
+ 206:controller/engine_cycle/ignition.c ****             return 1;
+ 594              		.loc 1 206 13 is_stmt 0 view .LVU166
+ 595 0016 FFF7FEFF 		bl	log_error
+ 596              	.LVL52:
+ 207:controller/engine_cycle/ignition.c ****         }
+ 597              		.loc 1 207 13 is_stmt 1 view .LVU167
+ 207:controller/engine_cycle/ignition.c ****         }
+ 598              		.loc 1 207 20 is_stmt 0 view .LVU168
+ 599 001a 0120     		movs	r0, #1
+ 600 001c F9E7     		b	.L33
+ 601              	.LVL53:
+ 602              	.L35:
+ 603              		.cfi_def_cfa_offset 0
+ 604              		.cfi_restore 3
+ 605              		.cfi_restore 14
+ 198:controller/engine_cycle/ignition.c ****         case IM_ONE_COIL:
+ 606              		.loc 1 198 5 view .LVU169
+ 607 001e 0120     		movs	r0, #1
+ 608              	.LVL54:
+ 198:controller/engine_cycle/ignition.c ****         case IM_ONE_COIL:
+ 609              		.loc 1 198 5 view .LVU170
+ 610 0020 7047     		bx	lr
+ 611              	.LVL55:
+ 612              	.L36:
+ 204:controller/engine_cycle/ignition.c ****         default:
+ 613              		.loc 1 204 20 view .LVU171
+ 614 0022 0220     		movs	r0, #2
+ 615              	.LVL56:
+ 616              		.loc 1 209 1 view .LVU172
+ 617 0024 7047     		bx	lr
+ 618              	.L42:
+ 619 0026 00BF     		.align	2
+ 620              	.L41:
+ 621 0028 00000000 		.word	engine
+ 622 002c 00000000 		.word	.LC4
+ 623              		.cfi_endproc
+ 624              	.LFE231:
+ 626              		.section	.rodata.ignition_coil_begin_charge.str1.4,"aMS",%progbits,1
+ 627              		.align	2
+ 628              	.LC5:
+ 629 0000 556E6B6F 		.ascii	"Unkown ignition output\000"
+ 629      776E2069 
+ 629      676E6974 
+ 629      696F6E20 
+ 629      6F757470 
+ 630              		.section	.text.ignition_coil_begin_charge,"ax",%progbits
+ 631              		.align	1
+ 632              		.global	ignition_coil_begin_charge
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 19
+
+
+ 633              		.syntax unified
+ 634              		.thumb
+ 635              		.thumb_func
+ 637              	ignition_coil_begin_charge:
+ 638              	.LVL57:
+ 639              	.LFB232:
+ 210:controller/engine_cycle/ignition.c **** 
+ 211:controller/engine_cycle/ignition.c **** /**
+ 212:controller/engine_cycle/ignition.c ****  * @brief Charges the ignition coil at the specified index.
+ 213:controller/engine_cycle/ignition.c ****  * 
+ 214:controller/engine_cycle/ignition.c ****  * @param coil_index The index of the coil to be charged.
+ 215:controller/engine_cycle/ignition.c ****  */
+ 216:controller/engine_cycle/ignition.c **** void ignition_coil_begin_charge(uint8_t coil_index)
+ 217:controller/engine_cycle/ignition.c **** {
+ 640              		.loc 1 217 1 is_stmt 1 view -0
+ 641              		.cfi_startproc
+ 642              		@ args = 0, pretend = 0, frame = 0
+ 643              		@ frame_needed = 0, uses_anonymous_args = 0
+ 644              		.loc 1 217 1 is_stmt 0 view .LVU174
+ 645 0000 08B5     		push	{r3, lr}
+ 646              		.cfi_def_cfa_offset 8
+ 647              		.cfi_offset 3, -8
+ 648              		.cfi_offset 14, -4
+ 218:controller/engine_cycle/ignition.c ****     if (coil_index > IGNITION_MAX_OUTPUTS - 1)
+ 649              		.loc 1 218 5 is_stmt 1 view .LVU175
+ 650              		.loc 1 218 8 is_stmt 0 view .LVU176
+ 651 0002 0328     		cmp	r0, #3
+ 652 0004 09D8     		bhi	.L47
+ 219:controller/engine_cycle/ignition.c ****     {
+ 220:controller/engine_cycle/ignition.c ****         log_error("Unkown ignition output");
+ 221:controller/engine_cycle/ignition.c ****         return;
+ 222:controller/engine_cycle/ignition.c ****     }
+ 223:controller/engine_cycle/ignition.c ****     HAL_GPIO_WritePin(ignition_outputs[coil_index].gpio, ignition_outputs[coil_index].pin, GPIO_PIN
+ 653              		.loc 1 223 5 is_stmt 1 view .LVU177
+ 654              		.loc 1 223 86 is_stmt 0 view .LVU178
+ 655 0006 074B     		ldr	r3, .L48
+ 656 0008 03EBC001 		add	r1, r3, r0, lsl #3
+ 657              		.loc 1 223 5 view .LVU179
+ 658 000c 0122     		movs	r2, #1
+ 659 000e 8988     		ldrh	r1, [r1, #4]
+ 660 0010 53F83000 		ldr	r0, [r3, r0, lsl #3]
+ 661              	.LVL58:
+ 662              		.loc 1 223 5 view .LVU180
+ 663 0014 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 664              	.LVL59:
+ 665              	.L43:
+ 224:controller/engine_cycle/ignition.c **** }
+ 666              		.loc 1 224 1 view .LVU181
+ 667 0018 08BD     		pop	{r3, pc}
+ 668              	.LVL60:
+ 669              	.L47:
+ 220:controller/engine_cycle/ignition.c ****         return;
+ 670              		.loc 1 220 9 is_stmt 1 view .LVU182
+ 671 001a 0348     		ldr	r0, .L48+4
+ 672              	.LVL61:
+ 220:controller/engine_cycle/ignition.c ****         return;
+ 673              		.loc 1 220 9 is_stmt 0 view .LVU183
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 20
+
+
+ 674 001c FFF7FEFF 		bl	log_error
+ 675              	.LVL62:
+ 221:controller/engine_cycle/ignition.c ****     }
+ 676              		.loc 1 221 9 is_stmt 1 view .LVU184
+ 677 0020 FAE7     		b	.L43
+ 678              	.L49:
+ 679 0022 00BF     		.align	2
+ 680              	.L48:
+ 681 0024 00000000 		.word	ignition_outputs
+ 682 0028 00000000 		.word	.LC5
+ 683              		.cfi_endproc
+ 684              	.LFE232:
+ 686              		.section	.text.ignition_coil_fire_spark,"ax",%progbits
+ 687              		.align	1
+ 688              		.global	ignition_coil_fire_spark
+ 689              		.syntax unified
+ 690              		.thumb
+ 691              		.thumb_func
+ 693              	ignition_coil_fire_spark:
+ 694              	.LVL63:
+ 695              	.LFB233:
+ 225:controller/engine_cycle/ignition.c **** 
+ 226:controller/engine_cycle/ignition.c **** /**
+ 227:controller/engine_cycle/ignition.c ****  * @brief Fires a spark from the ignition coil at the specified index.
+ 228:controller/engine_cycle/ignition.c ****  * 
+ 229:controller/engine_cycle/ignition.c ****  * @param coil_index The index of the coil to fire the spark from.
+ 230:controller/engine_cycle/ignition.c ****  */
+ 231:controller/engine_cycle/ignition.c **** void ignition_coil_fire_spark(uint8_t coil_index)
+ 232:controller/engine_cycle/ignition.c **** {
+ 696              		.loc 1 232 1 view -0
+ 697              		.cfi_startproc
+ 698              		@ args = 0, pretend = 0, frame = 0
+ 699              		@ frame_needed = 0, uses_anonymous_args = 0
+ 700              		.loc 1 232 1 is_stmt 0 view .LVU186
+ 701 0000 08B5     		push	{r3, lr}
+ 702              		.cfi_def_cfa_offset 8
+ 703              		.cfi_offset 3, -8
+ 704              		.cfi_offset 14, -4
+ 233:controller/engine_cycle/ignition.c ****     if (coil_index > IGNITION_MAX_OUTPUTS - 1)
+ 705              		.loc 1 233 5 is_stmt 1 view .LVU187
+ 706              		.loc 1 233 8 is_stmt 0 view .LVU188
+ 707 0002 0328     		cmp	r0, #3
+ 708 0004 09D8     		bhi	.L54
+ 234:controller/engine_cycle/ignition.c ****     {
+ 235:controller/engine_cycle/ignition.c ****         log_error("Unkown ignition output");
+ 236:controller/engine_cycle/ignition.c ****         return;
+ 237:controller/engine_cycle/ignition.c ****     }
+ 238:controller/engine_cycle/ignition.c ****     HAL_GPIO_WritePin(ignition_outputs[coil_index].gpio, ignition_outputs[coil_index].pin, GPIO_PIN
+ 709              		.loc 1 238 5 is_stmt 1 view .LVU189
+ 710              		.loc 1 238 86 is_stmt 0 view .LVU190
+ 711 0006 074B     		ldr	r3, .L55
+ 712 0008 03EBC001 		add	r1, r3, r0, lsl #3
+ 713              		.loc 1 238 5 view .LVU191
+ 714 000c 0022     		movs	r2, #0
+ 715 000e 8988     		ldrh	r1, [r1, #4]
+ 716 0010 53F83000 		ldr	r0, [r3, r0, lsl #3]
+ 717              	.LVL64:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 21
+
+
+ 718              		.loc 1 238 5 view .LVU192
+ 719 0014 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 720              	.LVL65:
+ 721              	.L50:
+ 239:controller/engine_cycle/ignition.c **** }
+ 722              		.loc 1 239 1 view .LVU193
+ 723 0018 08BD     		pop	{r3, pc}
+ 724              	.LVL66:
+ 725              	.L54:
+ 235:controller/engine_cycle/ignition.c ****         return;
+ 726              		.loc 1 235 9 is_stmt 1 view .LVU194
+ 727 001a 0348     		ldr	r0, .L55+4
+ 728              	.LVL67:
+ 235:controller/engine_cycle/ignition.c ****         return;
+ 729              		.loc 1 235 9 is_stmt 0 view .LVU195
+ 730 001c FFF7FEFF 		bl	log_error
+ 731              	.LVL68:
+ 236:controller/engine_cycle/ignition.c ****     }
+ 732              		.loc 1 236 9 is_stmt 1 view .LVU196
+ 733 0020 FAE7     		b	.L50
+ 734              	.L56:
+ 735 0022 00BF     		.align	2
+ 736              	.L55:
+ 737 0024 00000000 		.word	ignition_outputs
+ 738 0028 00000000 		.word	.LC5
+ 739              		.cfi_endproc
+ 740              	.LFE233:
+ 742              		.section	.text.HAL_TIM_OC_DelayElapsedCallback,"ax",%progbits
+ 743              		.align	1
+ 744              		.global	HAL_TIM_OC_DelayElapsedCallback
+ 745              		.syntax unified
+ 746              		.thumb
+ 747              		.thumb_func
+ 749              	HAL_TIM_OC_DelayElapsedCallback:
+ 750              	.LVL69:
+ 751              	.LFB228:
+  13:controller/engine_cycle/ignition.c ****     if (htim->Instance != timer->Instance)
+ 752              		.loc 1 13 1 view -0
+ 753              		.cfi_startproc
+ 754              		@ args = 0, pretend = 0, frame = 0
+ 755              		@ frame_needed = 0, uses_anonymous_args = 0
+  13:controller/engine_cycle/ignition.c ****     if (htim->Instance != timer->Instance)
+ 756              		.loc 1 13 1 is_stmt 0 view .LVU198
+ 757 0000 08B5     		push	{r3, lr}
+ 758              		.cfi_def_cfa_offset 8
+ 759              		.cfi_offset 3, -8
+ 760              		.cfi_offset 14, -4
+  14:controller/engine_cycle/ignition.c ****     {
+ 761              		.loc 1 14 5 is_stmt 1 view .LVU199
+  14:controller/engine_cycle/ignition.c ****     {
+ 762              		.loc 1 14 13 is_stmt 0 view .LVU200
+ 763 0002 0268     		ldr	r2, [r0]
+  14:controller/engine_cycle/ignition.c ****     {
+ 764              		.loc 1 14 32 view .LVU201
+ 765 0004 0C4B     		ldr	r3, .L63
+ 766 0006 1B68     		ldr	r3, [r3]
+ 767 0008 1B68     		ldr	r3, [r3]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 22
+
+
+  14:controller/engine_cycle/ignition.c ****     {
+ 768              		.loc 1 14 8 view .LVU202
+ 769 000a 9A42     		cmp	r2, r3
+ 770 000c 00D0     		beq	.L61
+ 771              	.LVL70:
+ 772              	.L57:
+  27:controller/engine_cycle/ignition.c **** 
+ 773              		.loc 1 27 1 view .LVU203
+ 774 000e 08BD     		pop	{r3, pc}
+ 775              	.LVL71:
+ 776              	.L61:
+  19:controller/engine_cycle/ignition.c ****     {
+ 777              		.loc 1 19 5 is_stmt 1 view .LVU204
+  19:controller/engine_cycle/ignition.c ****     {
+ 778              		.loc 1 19 13 is_stmt 0 view .LVU205
+ 779 0010 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+  19:controller/engine_cycle/ignition.c ****     {
+ 780              		.loc 1 19 8 view .LVU206
+ 781 0012 012B     		cmp	r3, #1
+ 782 0014 08D0     		beq	.L62
+  23:controller/engine_cycle/ignition.c ****     {
+ 783              		.loc 1 23 10 is_stmt 1 view .LVU207
+  23:controller/engine_cycle/ignition.c ****     {
+ 784              		.loc 1 23 13 is_stmt 0 view .LVU208
+ 785 0016 022B     		cmp	r3, #2
+ 786 0018 F9D1     		bne	.L57
+  25:controller/engine_cycle/ignition.c ****     }
+ 787              		.loc 1 25 9 is_stmt 1 view .LVU209
+ 788 001a 084B     		ldr	r3, .L63+4
+ 789 001c 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 790              	.LVL72:
+  25:controller/engine_cycle/ignition.c ****     }
+ 791              		.loc 1 25 9 is_stmt 0 view .LVU210
+ 792 001e 0138     		subs	r0, r0, #1
+ 793 0020 C0B2     		uxtb	r0, r0
+ 794 0022 FFF7FEFF 		bl	ignition_coil_fire_spark
+ 795              	.LVL73:
+ 796 0026 F2E7     		b	.L57
+ 797              	.LVL74:
+ 798              	.L62:
+  21:controller/engine_cycle/ignition.c ****     }
+ 799              		.loc 1 21 9 is_stmt 1 view .LVU211
+ 800 0028 044B     		ldr	r3, .L63+4
+ 801 002a 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 802              	.LVL75:
+  21:controller/engine_cycle/ignition.c ****     }
+ 803              		.loc 1 21 9 is_stmt 0 view .LVU212
+ 804 002c 0138     		subs	r0, r0, #1
+ 805 002e C0B2     		uxtb	r0, r0
+ 806 0030 FFF7FEFF 		bl	ignition_coil_begin_charge
+ 807              	.LVL76:
+ 808 0034 EBE7     		b	.L57
+ 809              	.L64:
+ 810 0036 00BF     		.align	2
+ 811              	.L63:
+ 812 0038 00000000 		.word	timer
+ 813 003c 00000000 		.word	current_firing_cylinder
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 23
+
+
+ 814              		.cfi_endproc
+ 815              	.LFE228:
+ 817              		.section	.bss.current_firing_cylinder,"aw",%nobits
+ 820              	current_firing_cylinder:
+ 821 0000 00       		.space	1
+ 822              		.section	.bss.timer,"aw",%nobits
+ 823              		.align	2
+ 826              	timer:
+ 827 0000 00000000 		.space	4
+ 828              		.global	ignition_order
+ 829              		.section	.bss.ignition_order,"aw",%nobits
+ 830              		.align	2
+ 833              	ignition_order:
+ 834 0000 00000000 		.space	4
+ 835              		.global	ignition_outputs
+ 836              		.section	.bss.ignition_outputs,"aw",%nobits
+ 837              		.align	2
+ 840              	ignition_outputs:
+ 841 0000 00000000 		.space	32
+ 841      00000000 
+ 841      00000000 
+ 841      00000000 
+ 841      00000000 
+ 842              		.text
+ 843              	.Letext0:
+ 844              		.file 3 "controller/enums.h"
+ 845              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 846              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 847              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 848              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 849              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 850              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 851              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 852              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 853              		.file 12 "controller/types.h"
+ 854              		.file 13 "controller/engine_cycle/trigger.h"
+ 855              		.file 14 "controller/IO/analog_inputs.h"
+ 856              		.file 15 "controller/IO/sensors/tps.h"
+ 857              		.file 16 "controller/IO/thermistor.h"
+ 858              		.file 17 "controller/controller.h"
+ 859              		.file 18 "controller/engine_cycle/ignition.h"
+ 860              		.file 19 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev
+ 861              		.file 20 "controller/error_handling.h"
+ 862              		.file 21 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s 			page 24
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 ignition.c
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:21     .text.ignition_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:27     .text.ignition_init:00000000 ignition_init
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:174    .text.ignition_init:00000090 $d
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:182    .text.ignition_trigger_event_handle:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:188    .text.ignition_trigger_event_handle:00000000 ignition_trigger_event_handle
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:204    .text.ignition_get_number_of_sparks_per_coil:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:210    .text.ignition_get_number_of_sparks_per_coil:00000000 ignition_get_number_of_sparks_per_coil
-C:\Users\alireza\AppData\Local\Temp\ccBrQ7t2.s:247    .text.ignition_get_number_of_sparks_per_coil:00000018 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:21     .rodata.ignition_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:31     .text.ignition_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:37     .text.ignition_init:00000000 ignition_init
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:271    .text.ignition_init:000000ec $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:826    .bss.timer:00000000 timer
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:833    .bss.ignition_order:00000000 ignition_order
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:840    .bss.ignition_outputs:00000000 ignition_outputs
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:285    .rodata.ignition_trigger_event_handle.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:289    .text.ignition_trigger_event_handle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:295    .text.ignition_trigger_event_handle:00000000 ignition_trigger_event_handle
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:534    .text.ignition_trigger_event_handle:0000011c $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:820    .bss.current_firing_cylinder:00000000 current_firing_cylinder
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:551    .rodata.ignition_get_number_of_sparks_per_coil.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:555    .text.ignition_get_number_of_sparks_per_coil:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:561    .text.ignition_get_number_of_sparks_per_coil:00000000 ignition_get_number_of_sparks_per_coil
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:621    .text.ignition_get_number_of_sparks_per_coil:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:627    .rodata.ignition_coil_begin_charge.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:631    .text.ignition_coil_begin_charge:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:637    .text.ignition_coil_begin_charge:00000000 ignition_coil_begin_charge
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:681    .text.ignition_coil_begin_charge:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:687    .text.ignition_coil_fire_spark:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:693    .text.ignition_coil_fire_spark:00000000 ignition_coil_fire_spark
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:737    .text.ignition_coil_fire_spark:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:743    .text.HAL_TIM_OC_DelayElapsedCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:749    .text.HAL_TIM_OC_DelayElapsedCallback:00000000 HAL_TIM_OC_DelayElapsedCallback
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:812    .text.HAL_TIM_OC_DelayElapsedCallback:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:821    .bss.current_firing_cylinder:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:823    .bss.timer:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:830    .bss.ignition_order:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqX4IOe.s:837    .bss.ignition_outputs:00000000 $d
 
 UNDEFINED SYMBOLS
+log_error
 HAL_RCC_GetSysClockFreq
 HAL_TIM_OC_ConfigChannel
-HAL_TIM_Base_Start_IT
-HAL_TIM_OC_Start_IT
-engine
+HAL_TIM_Base_Start
+HAL_TIM_PWM_Start_IT
+log_warning
 configuration
+engine
+ceilf
+HAL_GPIO_WritePin

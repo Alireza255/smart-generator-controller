@@ -1,0 +1,371 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"pid.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/utils/pid.c"
+  20              		.section	.text.pid_init,"ax",%progbits
+  21              		.align	1
+  22              		.global	pid_init
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	pid_init:
+  28              	.LVL0:
+  29              	.LFB220:
+   1:controller/utils/pid.c **** #include "pid.h"
+   2:controller/utils/pid.c **** 
+   3:controller/utils/pid.c **** void pid_init(pid_t *pid)
+   4:controller/utils/pid.c **** {
+  30              		.loc 1 4 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+   5:controller/utils/pid.c ****     /* Clearing controller variables */
+   6:controller/utils/pid.c ****     pid->integrator = 0.0f;
+  35              		.loc 1 6 5 view .LVU1
+  36              		.loc 1 6 21 is_stmt 0 view .LVU2
+  37 0000 0023     		movs	r3, #0
+  38 0002 4362     		str	r3, [r0, #36]	@ float
+   7:controller/utils/pid.c ****     pid->differentiator = 0.0f;
+  39              		.loc 1 7 5 is_stmt 1 view .LVU3
+  40              		.loc 1 7 25 is_stmt 0 view .LVU4
+  41 0004 8362     		str	r3, [r0, #40]	@ float
+   8:controller/utils/pid.c ****     pid->prev_error = 0.0f;
+  42              		.loc 1 8 5 is_stmt 1 view .LVU5
+  43              		.loc 1 8 21 is_stmt 0 view .LVU6
+  44 0006 C362     		str	r3, [r0, #44]	@ float
+   9:controller/utils/pid.c ****     pid->prev_input = 0.0f;
+  45              		.loc 1 9 5 is_stmt 1 view .LVU7
+  46              		.loc 1 9 21 is_stmt 0 view .LVU8
+  47 0008 0363     		str	r3, [r0, #48]	@ float
+  10:controller/utils/pid.c **** 
+  11:controller/utils/pid.c ****     pid->prev_controller_time_us = 0;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s 			page 2
+
+
+  48              		.loc 1 11 5 is_stmt 1 view .LVU9
+  49              		.loc 1 11 34 is_stmt 0 view .LVU10
+  50 000a 0022     		movs	r2, #0
+  51 000c 4263     		str	r2, [r0, #52]
+  12:controller/utils/pid.c ****     pid->output = 0.0f;
+  52              		.loc 1 12 5 is_stmt 1 view .LVU11
+  53              		.loc 1 12 17 is_stmt 0 view .LVU12
+  54 000e C363     		str	r3, [r0, #60]	@ float
+  13:controller/utils/pid.c **** 
+  14:controller/utils/pid.c ****     /**
+  15:controller/utils/pid.c ****      * @todo implement checks for the parameters
+  16:controller/utils/pid.c ****      */
+  17:controller/utils/pid.c ****     
+  18:controller/utils/pid.c **** }
+  55              		.loc 1 18 1 view .LVU13
+  56 0010 7047     		bx	lr
+  57              		.cfi_endproc
+  58              	.LFE220:
+  60              		.section	.text.pid_set_setpoint,"ax",%progbits
+  61              		.align	1
+  62              		.global	pid_set_setpoint
+  63              		.syntax unified
+  64              		.thumb
+  65              		.thumb_func
+  67              	pid_set_setpoint:
+  68              	.LVL1:
+  69              	.LFB221:
+  19:controller/utils/pid.c **** 
+  20:controller/utils/pid.c **** void pid_set_setpoint(pid_t *pid, float setpoint)
+  21:controller/utils/pid.c **** {
+  70              		.loc 1 21 1 is_stmt 1 view -0
+  71              		.cfi_startproc
+  72              		@ args = 0, pretend = 0, frame = 0
+  73              		@ frame_needed = 0, uses_anonymous_args = 0
+  74              		@ link register save eliminated.
+  22:controller/utils/pid.c ****     pid->setpoint = setpoint;
+  75              		.loc 1 22 5 view .LVU15
+  76              		.loc 1 22 19 is_stmt 0 view .LVU16
+  77 0000 80ED0E0A 		vstr.32	s0, [r0, #56]
+  23:controller/utils/pid.c **** }
+  78              		.loc 1 23 1 view .LVU17
+  79 0004 7047     		bx	lr
+  80              		.cfi_endproc
+  81              	.LFE221:
+  83              		.section	.text.pid_compute,"ax",%progbits
+  84              		.align	1
+  85              		.global	pid_compute
+  86              		.syntax unified
+  87              		.thumb
+  88              		.thumb_func
+  90              	pid_compute:
+  91              	.LVL2:
+  92              	.LFB222:
+  24:controller/utils/pid.c **** 
+  25:controller/utils/pid.c **** float pid_compute(pid_t *pid, time_us_t current_time_us, float input)
+  26:controller/utils/pid.c **** {
+  93              		.loc 1 26 1 is_stmt 1 view -0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s 			page 3
+
+
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97              		@ link register save eliminated.
+  27:controller/utils/pid.c ****     /* Compute the time between the function calls to determine T */
+  28:controller/utils/pid.c ****     time_us_t T_us = current_time_us - pid->prev_controller_time_us;
+  98              		.loc 1 28 5 view .LVU19
+  99              		.loc 1 28 43 is_stmt 0 view .LVU20
+ 100 0000 436B     		ldr	r3, [r0, #52]
+ 101              		.loc 1 28 15 view .LVU21
+ 102 0002 C91A     		subs	r1, r1, r3
+ 103              	.LVL3:
+  29:controller/utils/pid.c ****     float T_sec = (float)T_us / (float)1e6f;
+ 104              		.loc 1 29 5 is_stmt 1 view .LVU22
+ 105              		.loc 1 29 19 is_stmt 0 view .LVU23
+ 106 0004 07EE901A 		vmov	s15, r1	@ int
+ 107 0008 F8EE677A 		vcvt.f32.u32	s15, s15
+ 108              		.loc 1 29 11 view .LVU24
+ 109 000c 9FED397A 		vldr.32	s14, .L18
+ 110 0010 C7EE876A 		vdiv.f32	s13, s15, s14
+ 111              	.LVL4:
+  30:controller/utils/pid.c **** 
+  31:controller/utils/pid.c ****     /* Finding the error */
+  32:controller/utils/pid.c ****     float error = pid->setpoint - input;
+ 112              		.loc 1 32 5 is_stmt 1 view .LVU25
+ 113              		.loc 1 32 22 is_stmt 0 view .LVU26
+ 114 0014 90ED0E6A 		vldr.32	s12, [r0, #56]
+ 115              		.loc 1 32 11 view .LVU27
+ 116 0018 36EE406A 		vsub.f32	s12, s12, s0
+ 117              	.LVL5:
+  33:controller/utils/pid.c **** 
+  34:controller/utils/pid.c ****     /* Finding the P-term */
+  35:controller/utils/pid.c ****     float proportional = pid->Kp * error;
+ 118              		.loc 1 35 5 is_stmt 1 view .LVU28
+ 119              		.loc 1 35 29 is_stmt 0 view .LVU29
+ 120 001c D0ED005A 		vldr.32	s11, [r0]
+ 121              		.loc 1 35 11 view .LVU30
+ 122 0020 65EE865A 		vmul.f32	s11, s11, s12
+ 123              	.LVL6:
+  36:controller/utils/pid.c **** 
+  37:controller/utils/pid.c ****     /* Finding the integral term*/
+  38:controller/utils/pid.c ****     pid->integrator = pid->integrator + 0.5f * pid->Ki * T_sec *(error + pid->prev_error);
+ 124              		.loc 1 38 5 is_stmt 1 view .LVU31
+ 125              		.loc 1 38 26 is_stmt 0 view .LVU32
+ 126 0024 90ED097A 		vldr.32	s14, [r0, #36]
+ 127              		.loc 1 38 51 view .LVU33
+ 128 0028 D0ED017A 		vldr.32	s15, [r0, #4]
+ 129              		.loc 1 38 46 view .LVU34
+ 130 002c B6EE005A 		vmov.f32	s10, #5.0e-1
+ 131 0030 67EE857A 		vmul.f32	s15, s15, s10
+ 132              		.loc 1 38 56 view .LVU35
+ 133 0034 67EEA67A 		vmul.f32	s15, s15, s13
+ 134              		.loc 1 38 77 view .LVU36
+ 135 0038 90ED0B5A 		vldr.32	s10, [r0, #44]
+ 136              		.loc 1 38 72 view .LVU37
+ 137 003c 35EE065A 		vadd.f32	s10, s10, s12
+ 138              		.loc 1 38 64 view .LVU38
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s 			page 4
+
+
+ 139 0040 67EE857A 		vmul.f32	s15, s15, s10
+ 140              		.loc 1 38 39 view .LVU39
+ 141 0044 77EE277A 		vadd.f32	s15, s14, s15
+ 142              		.loc 1 38 21 view .LVU40
+ 143 0048 C0ED097A 		vstr.32	s15, [r0, #36]
+  39:controller/utils/pid.c **** 
+  40:controller/utils/pid.c ****     /* Anti-windup - works by clamping the integrator */
+  41:controller/utils/pid.c ****     if (pid->integrator > pid->limit_integrator_max)
+ 144              		.loc 1 41 5 is_stmt 1 view .LVU41
+ 145              		.loc 1 41 30 is_stmt 0 view .LVU42
+ 146 004c 90ED077A 		vldr.32	s14, [r0, #28]
+ 147              		.loc 1 41 8 view .LVU43
+ 148 0050 F4EEC77A 		vcmpe.f32	s15, s14
+ 149 0054 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 150 0058 37DD     		ble	.L16
+  42:controller/utils/pid.c ****     {
+  43:controller/utils/pid.c ****         pid->integrator = pid->limit_integrator_max;
+ 151              		.loc 1 43 9 is_stmt 1 view .LVU44
+ 152              		.loc 1 43 25 is_stmt 0 view .LVU45
+ 153 005a 80ED097A 		vstr.32	s14, [r0, #36]
+ 154              	.L6:
+  44:controller/utils/pid.c ****     }
+  45:controller/utils/pid.c ****     else if (pid->integrator < pid->limit_integrator_min)
+  46:controller/utils/pid.c ****     {
+  47:controller/utils/pid.c ****         pid->integrator = pid->limit_integrator_min;
+  48:controller/utils/pid.c ****     }
+  49:controller/utils/pid.c **** 
+  50:controller/utils/pid.c ****     /* Finding the derivative term @note has a low pass filter */
+  51:controller/utils/pid.c ****     /**
+  52:controller/utils/pid.c ****      * @note only derivative on input has been implemented for now
+  53:controller/utils/pid.c ****      */
+  54:controller/utils/pid.c ****     pid->differentiator = -(2.0f * pid->Kd * (input - pid->prev_input)
+ 155              		.loc 1 54 5 is_stmt 1 view .LVU46
+ 156              		.loc 1 54 39 is_stmt 0 view .LVU47
+ 157 005e D0ED027A 		vldr.32	s15, [r0, #8]
+ 158              		.loc 1 54 34 view .LVU48
+ 159 0062 77EEA77A 		vadd.f32	s15, s15, s15
+ 160              		.loc 1 54 58 view .LVU49
+ 161 0066 90ED0C7A 		vldr.32	s14, [r0, #48]
+ 162              		.loc 1 54 53 view .LVU50
+ 163 006a 30EE477A 		vsub.f32	s14, s0, s14
+ 164              		.loc 1 54 44 view .LVU51
+ 165 006e 67EE877A 		vmul.f32	s15, s15, s14
+  55:controller/utils/pid.c ****                           +(2.0f * pid->derivative_filter_tau - T_sec) * pid->differentiator)
+ 166              		.loc 1 55 39 view .LVU52
+ 167 0072 90ED037A 		vldr.32	s14, [r0, #12]
+ 168              		.loc 1 55 34 view .LVU53
+ 169 0076 37EE077A 		vadd.f32	s14, s14, s14
+ 170              		.loc 1 55 63 view .LVU54
+ 171 007a 37EE665A 		vsub.f32	s10, s14, s13
+ 172              		.loc 1 55 77 view .LVU55
+ 173 007e D0ED0A4A 		vldr.32	s9, [r0, #40]
+ 174              		.loc 1 55 72 view .LVU56
+ 175 0082 25EE245A 		vmul.f32	s10, s10, s9
+ 176              		.loc 1 55 27 view .LVU57
+ 177 0086 77EE857A 		vadd.f32	s15, s15, s10
+  54:controller/utils/pid.c ****                           +(2.0f * pid->derivative_filter_tau - T_sec) * pid->differentiator)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s 			page 5
+
+
+ 178              		.loc 1 54 27 view .LVU58
+ 179 008a F1EE677A 		vneg.f32	s15, s15
+  56:controller/utils/pid.c ****                           / (2.0f * pid->derivative_filter_tau + T_sec);
+ 180              		.loc 1 56 64 view .LVU59
+ 181 008e 37EE267A 		vadd.f32	s14, s14, s13
+ 182              		.loc 1 56 27 view .LVU60
+ 183 0092 C7EE876A 		vdiv.f32	s13, s15, s14
+ 184              	.LVL7:
+  54:controller/utils/pid.c ****                           +(2.0f * pid->derivative_filter_tau - T_sec) * pid->differentiator)
+ 185              		.loc 1 54 25 view .LVU61
+ 186 0096 C0ED0A6A 		vstr.32	s13, [r0, #40]
+  57:controller/utils/pid.c **** 
+  58:controller/utils/pid.c ****     /* Summing the terms to make the output */
+  59:controller/utils/pid.c ****     pid->output = proportional + pid->integrator + pid->differentiator;
+ 187              		.loc 1 59 5 is_stmt 1 view .LVU62
+ 188              		.loc 1 59 37 is_stmt 0 view .LVU63
+ 189 009a D0ED097A 		vldr.32	s15, [r0, #36]
+ 190              		.loc 1 59 32 view .LVU64
+ 191 009e 77EEA57A 		vadd.f32	s15, s15, s11
+ 192              		.loc 1 59 50 view .LVU65
+ 193 00a2 76EEA77A 		vadd.f32	s15, s13, s15
+ 194              		.loc 1 59 17 view .LVU66
+ 195 00a6 C0ED0F7A 		vstr.32	s15, [r0, #60]
+  60:controller/utils/pid.c **** 
+  61:controller/utils/pid.c ****     /* Clamp the output the the output bounds */
+  62:controller/utils/pid.c ****     if (pid->output > pid->limit_output_max)
+ 196              		.loc 1 62 5 is_stmt 1 view .LVU67
+ 197              		.loc 1 62 26 is_stmt 0 view .LVU68
+ 198 00aa 90ED057A 		vldr.32	s14, [r0, #20]
+ 199              		.loc 1 62 8 view .LVU69
+ 200 00ae F4EEC77A 		vcmpe.f32	s15, s14
+ 201 00b2 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 202 00b6 12DD     		ble	.L17
+  63:controller/utils/pid.c ****     {
+  64:controller/utils/pid.c ****         pid->output = pid->limit_output_max;
+ 203              		.loc 1 64 9 is_stmt 1 view .LVU70
+ 204              		.loc 1 64 21 is_stmt 0 view .LVU71
+ 205 00b8 80ED0F7A 		vstr.32	s14, [r0, #60]
+ 206              	.L10:
+  65:controller/utils/pid.c ****     }
+  66:controller/utils/pid.c ****     else if (pid->output < pid->limit_output_min)
+  67:controller/utils/pid.c ****     {
+  68:controller/utils/pid.c ****         pid->output = pid->limit_output_min;
+  69:controller/utils/pid.c ****     }
+  70:controller/utils/pid.c **** 
+  71:controller/utils/pid.c ****     /* Save the variables for the next function call */
+  72:controller/utils/pid.c ****     pid->prev_error = error;
+ 207              		.loc 1 72 5 is_stmt 1 view .LVU72
+ 208              		.loc 1 72 21 is_stmt 0 view .LVU73
+ 209 00bc 80ED0B6A 		vstr.32	s12, [r0, #44]
+  73:controller/utils/pid.c ****     pid->prev_input = input;
+ 210              		.loc 1 73 5 is_stmt 1 view .LVU74
+ 211              		.loc 1 73 21 is_stmt 0 view .LVU75
+ 212 00c0 80ED0C0A 		vstr.32	s0, [r0, #48]
+  74:controller/utils/pid.c **** 
+  75:controller/utils/pid.c ****     return pid->output;
+ 213              		.loc 1 75 5 is_stmt 1 view .LVU76
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s 			page 6
+
+
+  76:controller/utils/pid.c **** }
+ 214              		.loc 1 76 1 is_stmt 0 view .LVU77
+ 215 00c4 90ED0F0A 		vldr.32	s0, [r0, #60]
+ 216              	.LVL8:
+ 217              		.loc 1 76 1 view .LVU78
+ 218 00c8 7047     		bx	lr
+ 219              	.LVL9:
+ 220              	.L16:
+  45:controller/utils/pid.c ****     {
+ 221              		.loc 1 45 10 is_stmt 1 view .LVU79
+  45:controller/utils/pid.c ****     {
+ 222              		.loc 1 45 35 is_stmt 0 view .LVU80
+ 223 00ca 90ED067A 		vldr.32	s14, [r0, #24]
+  45:controller/utils/pid.c ****     {
+ 224              		.loc 1 45 13 view .LVU81
+ 225 00ce F4EEC77A 		vcmpe.f32	s15, s14
+ 226 00d2 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 227 00d6 C2D5     		bpl	.L6
+  47:controller/utils/pid.c ****     }
+ 228              		.loc 1 47 9 is_stmt 1 view .LVU82
+  47:controller/utils/pid.c ****     }
+ 229              		.loc 1 47 25 is_stmt 0 view .LVU83
+ 230 00d8 80ED097A 		vstr.32	s14, [r0, #36]
+ 231 00dc BFE7     		b	.L6
+ 232              	.LVL10:
+ 233              	.L17:
+  66:controller/utils/pid.c ****     {
+ 234              		.loc 1 66 10 is_stmt 1 view .LVU84
+  66:controller/utils/pid.c ****     {
+ 235              		.loc 1 66 31 is_stmt 0 view .LVU85
+ 236 00de 90ED047A 		vldr.32	s14, [r0, #16]
+  66:controller/utils/pid.c ****     {
+ 237              		.loc 1 66 13 view .LVU86
+ 238 00e2 F4EEC77A 		vcmpe.f32	s15, s14
+ 239 00e6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 240 00ea E7D5     		bpl	.L10
+  68:controller/utils/pid.c ****     }
+ 241              		.loc 1 68 9 is_stmt 1 view .LVU87
+  68:controller/utils/pid.c ****     }
+ 242              		.loc 1 68 21 is_stmt 0 view .LVU88
+ 243 00ec 80ED0F7A 		vstr.32	s14, [r0, #60]
+ 244 00f0 E4E7     		b	.L10
+ 245              	.L19:
+ 246 00f2 00BF     		.align	2
+ 247              	.L18:
+ 248 00f4 00247449 		.word	1232348160
+ 249              		.cfi_endproc
+ 250              	.LFE222:
+ 252              		.text
+ 253              	.Letext0:
+ 254              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 255              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 256              		.file 4 "controller/types.h"
+ 257              		.file 5 "controller/utils/pid.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 pid.c
+C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s:21     .text.pid_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s:27     .text.pid_init:00000000 pid_init
+C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s:61     .text.pid_set_setpoint:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s:67     .text.pid_set_setpoint:00000000 pid_set_setpoint
+C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s:84     .text.pid_compute:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s:90     .text.pid_compute:00000000 pid_compute
+C:\Users\alireza\AppData\Local\Temp\ccQERYOA.s:248    .text.pid_compute:000000f4 $d
+
+NO UNDEFINED SYMBOLS

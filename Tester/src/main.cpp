@@ -2,16 +2,12 @@
 
 //#define DEBUG_MODE
 
-#define TRIGGER_OUT_PIN 23
-#define TRIGGER_ADJUST_PIN 4
+/**
+ * Important notes i found out the hard way :(
+ * Strapping Pins: GPIO0, GPIO2, GPIO12, and GPIO15 are used during the boot process.
+ * Avoid using them for analog input to prevent unexpected behavior.
+ */
 
-#define TRIGGER_WHEEL_TOTAL_TEETH 60
-#define TRIGGER_WHEEL_MISSING_TEETH 2
-
-
-bool trigger_pattern[TRIGGER_WHEEL_TOTAL_TEETH] = {0};
-uint16_t trigger_wheel_rpm = 1000;
-uint32_t trigger_tooth_time_gap = 0;
 
 uint32_t map_uint(uint32_t x, uint32_t x_min, uint32_t x_max, uint32_t result_min, uint32_t result_max)
 {
@@ -38,64 +34,49 @@ uint32_t filter_smooth_uint(uint32_t x)
   return smoothed_value;
 }
 
+// ADC pins (excluding GPIO25 and GPIO26 which are used for DAC)
+const int analogPins[] = {32, 33, 34, 35, 36, 37, 38, 39, 27};
+const int numPins = sizeof(analogPins) / sizeof(analogPins[0]);
+
+// DAC pins
+const int dacPins[] = {25, 26}; // GPIO25 = DAC1, GPIO26 = DAC2
+const int numDacPins = sizeof(dacPins) / sizeof(dacPins[0]);
+
+int dacValue = 0;
+int step = 5;
+
 void setup() {
-  // put your setup code here, to run once:
-
   Serial.begin(115200);
-
-  pinMode(TRIGGER_OUT_PIN, OUTPUT);
-  pinMode(TRIGGER_ADJUST_PIN, INPUT);
-  analogSetAttenuation(ADC_2_5db);
-
-  for (uint8_t i = 0; i < TRIGGER_WHEEL_TOTAL_TEETH; i++)
-  {
-    if (i < (TRIGGER_WHEEL_TOTAL_TEETH - TRIGGER_WHEEL_MISSING_TEETH))
-    {
-      trigger_pattern[i] = 1;
-    }
-    else
-    {
-      trigger_pattern[i] = 0;
-    }
-  }
-
-  trigger_tooth_time_gap = 1000000 / trigger_wheel_rpm;
-  
-
+  delay(1000); // Allow time for serial monitor to initialize
+  Serial.println("ESP32 Analog Input and DAC Output Test");
 }
 
 void loop() {
-  uint16_t trigger_adjust_value_raw = analogRead(TRIGGER_ADJUST_PIN);
-  trigger_adjust_value_raw = filter_smooth_uint(trigger_adjust_value_raw);
-  trigger_wheel_rpm = map_uint(trigger_adjust_value_raw, 0, 1600, 50, 10000);
-  trigger_wheel_rpm = round_uint(trigger_wheel_rpm, 1);
-
-
-  trigger_wheel_rpm = 5000;
-
-  trigger_tooth_time_gap = 1000000 / trigger_wheel_rpm;
-  
-
-  #ifdef DEBUG_MODE
-  Serial.print("raw value: ");
-  Serial.print(trigger_adjust_value_raw);
-  Serial.print("  Mapped RPM: ");
-  Serial.println(trigger_wheel_rpm);
-  #endif
-
-
-
-    
-//Rest of code here that does some boring stuff and is known to 100% work every time.
-
-  for (uint8_t i = 0; i < TRIGGER_WHEEL_TOTAL_TEETH; i++)
-  {
-    digitalWrite(TRIGGER_OUT_PIN, trigger_pattern[i]);
-    delayMicroseconds(trigger_tooth_time_gap / 2);
-    digitalWrite(TRIGGER_OUT_PIN, 0);
-    delayMicroseconds(trigger_tooth_time_gap / 2);
-
+  Serial.println("Analog Input Readings:");
+  for (int i = 0; i < numPins; i++) {
+    int pin = analogPins[i];
+    int value = analogRead(pin);
+    Serial.print("GPIO");
+    Serial.print(pin);
+    Serial.print(": ");
+    Serial.println(value);
   }
 
-  
+  Serial.println("Writing to DAC Pins:");
+  for (int i = 0; i < numDacPins; i++) {
+    int pin = dacPins[i];
+    dacWrite(pin, dacValue);
+    Serial.print("GPIO");
+    Serial.print(pin);
+    Serial.print(" (DAC): ");
+    Serial.println(dacValue);
+  }
+
+  dacValue += step;
+  if (dacValue >= 255 || dacValue <= 0) {
+    step = -step;
+  }
+
+  Serial.println("-----------------------------");
+  delay(100);
 }
