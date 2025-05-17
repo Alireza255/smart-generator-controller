@@ -63,7 +63,7 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  controller/algorithm/air_mass/airmass.h controller/IO/sensors/map.h \
  controller/error_handling.h controller/IO/sensors/iat.h \
  controller/IO/thermistor.h controller/IO/resistor.h \
- controller/IO/analog_inputs.h
+ controller/IO/analog_inputs.h controller/utils/pid.h
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -147,3 +147,4 @@ controller/IO/sensors/iat.h:
 controller/IO/thermistor.h:
 controller/IO/resistor.h:
 controller/IO/analog_inputs.h:
+controller/utils/pid.h:

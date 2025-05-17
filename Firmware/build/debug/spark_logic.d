@@ -49,7 +49,8 @@ build/debug/spark_logic.o: controller/algorithm/spark/spark_logic.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- controller/IO/sensors/map.h controller/IO/sensors/iat.h
+ controller/utils/pid.h controller/IO/sensors/map.h \
+ controller/IO/sensors/iat.h
 controller/algorithm/spark/spark_logic.h:
 controller/tables.h:
 controller/types.h:
@@ -116,5 +117,6 @@ USB_DEVICE/Target/usbd_conf.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
+controller/utils/pid.h:
 controller/IO/sensors/map.h:
 controller/IO/sensors/iat.h:

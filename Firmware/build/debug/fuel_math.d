@@ -50,7 +50,8 @@ build/debug/fuel_math.o: controller/algorithm/fuel/fuel_math.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/IO/sensors/iat.h controller/IO/thermistor.h \
- controller/IO/resistor.h controller/IO/analog_inputs.h
+ controller/IO/resistor.h controller/IO/analog_inputs.h \
+ controller/utils/pid.h
 controller/algorithm/fuel/fuel_math.h:
 controller/algorithm/air_mass/airmass.h:
 controller/controller.h:
@@ -119,3 +120,4 @@ controller/IO/sensors/iat.h:
 controller/IO/thermistor.h:
 controller/IO/resistor.h:
 controller/IO/analog_inputs.h:
+controller/utils/pid.h:

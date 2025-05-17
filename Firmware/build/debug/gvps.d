@@ -49,7 +49,7 @@ build/debug/gvps.o: controller/IO/sensors/gvps.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/IO/sensors/iat.h controller/IO/thermistor.h \
  controller/IO/resistor.h controller/IO/analog_inputs.h \
- controller/IO/sensors/tps.h
+ controller/utils/pid.h controller/IO/sensors/tps.h
 controller/IO/sensors/gvps.h:
 controller/controller.h:
 controller/enums.h:
@@ -118,4 +118,5 @@ controller/IO/sensors/iat.h:
 controller/IO/thermistor.h:
 controller/IO/resistor.h:
 controller/IO/analog_inputs.h:
+controller/utils/pid.h:
 controller/IO/sensors/tps.h:

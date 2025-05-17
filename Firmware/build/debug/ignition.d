@@ -49,7 +49,7 @@ build/debug/ignition.o: controller/engine_cycle/ignition.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/algorithm/spark/spark_logic.h controller/tables.h \
  controller/algorithm/air_mass/airmass.h controller/IO/sensors/map.h \
- controller/IO/sensors/iat.h
+ controller/IO/sensors/iat.h controller/utils/pid.h
 controller/engine_cycle/ignition.h:
 controller/controller.h:
 controller/enums.h:
@@ -118,3 +118,4 @@ controller/tables.h:
 controller/algorithm/air_mass/airmass.h:
 controller/IO/sensors/map.h:
 controller/IO/sensors/iat.h:
+controller/utils/pid.h:

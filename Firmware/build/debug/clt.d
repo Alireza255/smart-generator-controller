@@ -49,7 +49,7 @@ build/debug/clt.o: controller/IO/sensors/clt.c \
  controller/IO/analog_inputs.h controller/engine_cycle/ignition.h \
  controller/algorithm/spark/spark_logic.h controller/tables.h \
  controller/algorithm/air_mass/airmass.h controller/IO/sensors/map.h \
- controller/IO/sensors/iat.h
+ controller/IO/sensors/iat.h controller/utils/pid.h
 controller/IO/sensors/clt.h:
 controller/IO/thermistor.h:
 controller/IO/resistor.h:
@@ -118,3 +118,4 @@ controller/tables.h:
 controller/algorithm/air_mass/airmass.h:
 controller/IO/sensors/map.h:
 controller/IO/sensors/iat.h:
+controller/utils/pid.h:
