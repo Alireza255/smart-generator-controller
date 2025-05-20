@@ -7,7 +7,7 @@
 #ifndef PID_H
 #define PID_H
 
-#include "controller_time.h"
+#include "timing.h"
 
 
 typedef struct

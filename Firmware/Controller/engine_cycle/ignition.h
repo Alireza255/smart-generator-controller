@@ -5,8 +5,9 @@
 #include "main.h"
 #include "utils.h"
 #include "stm32f4xx_hal.h"
-
-#include "spark_logic.h"
+#include "iat.h"
+#include "map.h"
+#include "clt.h"
 
 #define TEST_MODE
 
@@ -30,8 +31,13 @@ typedef struct
     ignition_output_pin_s output[IGNITION_MAX_OUTPUTS];
 } ignition_output_conf_s;
 
+typedef enum
+{
+    IGNITION_COIL_STATE_NOT_CHARGING = 0,
+    IGNITION_COIL_STATE_CHARGING = 1,
+} ignition_coil_state_e;
 
-void ignition_init(TIM_HandleTypeDef *htim, ignition_output_conf_s *output_conf);
+void ignition_init(ignition_output_conf_s *output_conf);
 
 /**
  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.
@@ -55,14 +61,14 @@ uint8_t ignition_get_number_of_sparks_per_coil(ignition_mode_e ignition_mode);
  * 
  * @param coil_index The index of the coil to be charged.
  */
-void ignition_coil_begin_charge(uint8_t coil_index);
+void ignition_coil_begin_charge(void *arg);
 
 /**
  * @brief Fires a spark from the ignition coil at the specified index.
  * 
  * @param coil_index The index of the coil to fire the spark from.
  */
-void ignition_coil_fire_spark(uint8_t coil_index);
+void ignition_coil_fire_spark(void *arg);
 
 /**
  * @brief Gets the duty cycle of the ignition coil as a percentage.
@@ -71,5 +77,6 @@ void ignition_coil_fire_spark(uint8_t coil_index);
  */
 percent_t ignition_get_coil_duty_cycle();
 
+angle_t ignition_get_advance();
 
 #endif // IGNITION_H

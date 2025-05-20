@@ -15,9 +15,14 @@ void controller_init()
     engine.firing_interval = 180.0f;
     // engine.trigger = .....;
 
-    configuration.ignition_dwell = (float_time_ms_t)1;
+    configuration.ignition_dwell = (float_time_ms_t)3;
     configuration.ignition_mode = IM_WASTED_SPARK;
 
+    configuration.trigger.filtering = TF_FILTERING_NONE;
+    configuration.trigger.full_teeth = 60;
+    configuration.trigger.missing_teeth = 2;
+    configuration.cranking_rpm_threshold = 400;
+    
     ignition_output_conf_s ignition_output_conf =
     {
         .output[0] = {.gpio = IGNITION_OUTPUT1_GPIO_Port, .pin = IGNITION_OUTPUT1_Pin},
@@ -25,9 +30,10 @@ void controller_init()
         .output[2] = {.gpio = IGNITION_OUTPUT3_GPIO_Port, .pin = IGNITION_OUTPUT3_Pin},
         .output[3] = {.gpio = IGNITION_OUTPUT4_GPIO_Port, .pin = IGNITION_OUTPUT4_Pin}
     };
-    controller_time_start(&htim5);
-    ignition_init(&htim2, &ignition_output_conf);
 
+    controller_timing_start(&htim2);
+    trigger_init(&engine.trigger);
+    ignition_init(&ignition_output_conf);
 
     //HAL_FLASH_Unlock();
     //EE_Init();

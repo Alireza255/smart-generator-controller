@@ -5,7 +5,7 @@ trigger_s *trigger = NULL;
 
 void set_filtering(trigger_s *trigger)
 {
-  switch (trigger->settings.filtering)
+  switch (configuration.trigger.filtering)
   {
     case TF_FILTERING_NONE:
       trigger->_trigger_filter_time_us = 0;
@@ -40,9 +40,9 @@ void trigger_init(trigger_s *instance)
   
   trigger->sync_status = TS_NOT_SYNCED;
   set_filtering(trigger);
-  trigger->_trigger_actual_teeth = trigger->settings.full_teeth - trigger->settings.missing_teeth;
+  trigger->_trigger_actual_teeth = configuration.trigger.full_teeth - configuration.trigger.missing_teeth;
     
-  if (trigger->settings.full_teeth == 0 || trigger->settings.missing_teeth == 0)
+  if (configuration.trigger.full_teeth == 0 || configuration.trigger.missing_teeth == 0)
   {
     temp_status = false;
   }
@@ -100,13 +100,13 @@ void trigger_tooth_handle()
     
 
   //If the time between the current tooth and the last is greater than 1.5x the time between the last tooth and the tooth before that, we make the assertion that we must be at the first tooth after the gap
-  if(trigger->settings.missing_teeth == 1)
+  if(configuration.trigger.missing_teeth == 1)
   {
     trigger->_target_tooth_gap_us = (3 * trigger->_shorter_tooth_gap) >> 1; 
   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply by 3 then divide by 2. Much faster than multiplying by 1.5)
   else
   {
-    trigger->_target_tooth_gap_us = trigger->_shorter_tooth_gap * trigger->settings.missing_teeth;
+    trigger->_target_tooth_gap_us = trigger->_shorter_tooth_gap * configuration.trigger.missing_teeth;
   } //Multiply by 2 (Checks for a gap 2x greater than the last one    
   
   //if( (_tooth_time_us[1] == 0) || (_tooth_time_us[2] == 0) ) { _current_tooth_gap_us = 0; } 
@@ -136,19 +136,19 @@ void trigger_tooth_handle()
     }
   }
   
-  engine.crankshaft_angle = 360.0f / (angle_t)trigger->settings.full_teeth * (angle_t)trigger->_counted_tooth;
-  engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SECONDS / trigger->_shorter_tooth_gap / trigger->settings.full_teeth);
+  engine.crankshaft_angle = 360.0f / (angle_t)configuration.trigger.full_teeth * (angle_t)trigger->_counted_tooth;
+  engine.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SECONDS / trigger->_shorter_tooth_gap / configuration.trigger.full_teeth);
 
 
-  if (trigger->sync_status == TS_FULLY_SYNCED && engine.rpm >= trigger->cranking_rpm_threshold)
+  if (trigger->sync_status == TS_FULLY_SYNCED && engine.rpm >= configuration.cranking_rpm_threshold)
   {
     engine.spinning_state = SS_RUNNING;
   }
-  if (trigger->sync_status == TS_FULLY_SYNCED && engine.rpm < trigger->cranking_rpm_threshold)
+  else if (trigger->sync_status == TS_FULLY_SYNCED && engine.rpm < configuration.cranking_rpm_threshold)
   {
     engine.spinning_state = SS_CRANKING;
   }
-  if (trigger->sync_status == TS_NOT_SYNCED)
+  else if (trigger->sync_status == TS_NOT_SYNCED)
   {
     engine.spinning_state = SS_SPINNING_UP;
   }
@@ -169,6 +169,10 @@ void trigger_tooth_handle()
   
   trigger->_tooth_time_us[2] = trigger->_tooth_time_us[1];
   trigger->_tooth_time_us[1] = trigger->_tooth_time_us[0];
+
+  /* call trigger driven events such as ignition etc... */
+  ignition_trigger_event_handle(crankshaft_get_angle(), crankshaft_get_rpm(), get_time_us());
+
 }
 
 

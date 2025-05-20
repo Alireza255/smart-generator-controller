@@ -1,8 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-
 #include "enums.h"
+#include "timing.h"
 #include "types.h"
 #include "eeprom.h"
 #include "trigger.h"
@@ -11,7 +11,6 @@
 #include "tps.h"
 #include "ignition.h"
 #include "thermistor.h"
-#include "spark_logic.h"
 #include "pid.h"
 
 typedef struct
@@ -40,6 +39,9 @@ typedef struct
     bool is_fuel_injection_enabled;
     bool is_gas_injection_enabled;
     
+    trigger_settings_s trigger;
+    rpm_t cranking_rpm_threshold;
+    
     firing_order_e firing_order;
 
     ignition_mode_e ignition_mode;
@@ -47,20 +49,20 @@ typedef struct
     bool ignition_is_multi_spark;
     uint8_t ignition_multi_spark_number_of_sparks;
     rpm_t ignition_multi_spark_rpm_threshold;
+    float_time_ms_t multi_spark_rest_time;
 
     volume_liter_t engine_displacment;
     afr_t stoich_afr_gas;
     afr_t stoich_afr_petrol;
     
-    tps_sensor_calib_s tps_calib;
-    tps_sensor_calib_s gvps_calib;
+    sensor_tps_s tps1_calib;
+    sensor_tps_s tps2_calib;
 
     thermistor_conf_s clt_thermistor_calib;
 
     sensor_iat_type_e iat_sensor_type;
 
     sensor_map_type_e map_sensor_type;
-    
 
 } configuration_s;
 
@@ -71,5 +73,6 @@ void controller_init();
 void controller_load_configuration();
 
 void controller_save_configuration();
+
 
 #endif // CONTROLLER_H

@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "controller.h"
+#include "trigger_simulator.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +46,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+rpm_t simulated_rpm = 1000;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -54,13 +55,23 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for trig_sim */
+osThreadId_t trig_simHandle;
+const osThreadAttr_t trig_sim_attributes = {
+  .name = "trig_sim",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 
+void toggle_led();
+
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void trigger_simulator_task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -95,6 +106,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
+  /* creation of trig_sim */
+  trig_simHandle = osThreadNew(trigger_simulator_task, NULL, &trig_sim_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -119,27 +133,41 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 
   controller_init();
-  static angle_t simulated_crankshaft_angle = 0;
   osDelay(100);
+  
   /* Infinite loop */
   for(;;)
   {
-    if (simulated_crankshaft_angle < (360 - 6))
-    {
-      simulated_crankshaft_angle += (angle_t)6;
-    }
-    else
-    {
-      simulated_crankshaft_angle = 0;
-    }
+
     osDelay(1);
-    ignition_trigger_event_handle(simulated_crankshaft_angle, 1, get_time_us());
   }
   /* USER CODE END StartDefaultTask */
 }
 
+/* USER CODE BEGIN Header_trigger_simulator_task */
+/**
+* @brief Function implementing the trig_sim thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_trigger_simulator_task */
+void trigger_simulator_task(void *argument)
+{
+  /* USER CODE BEGIN trigger_simulator_task */
+  trigger_simulator_init(60, 2, trigger_tooth_handle);
+  /* Infinite loop */
+  for(;;)
+  {
+    trigger_simulator_update(simulated_rpm);
+  }
+  /* USER CODE END trigger_simulator_task */
+}
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void toggle_led()
+{
+  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+}
 /* USER CODE END Application */
 

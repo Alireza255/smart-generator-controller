@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -40,387 +40,416 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 1
   30              		.cfi_startproc
   31              		@ args = 0, pretend = 0, frame = 32
   32              		@ frame_needed = 0, uses_anonymous_args = 0
-  33 0000 10B5     		push	{r4, lr}
-  34              		.cfi_def_cfa_offset 8
-  35              		.cfi_offset 4, -8
-  36              		.cfi_offset 14, -4
-  37 0002 88B0     		sub	sp, sp, #32
-  38              		.cfi_def_cfa_offset 40
+  33 0000 30B5     		push	{r4, r5, lr}
+  34              		.cfi_def_cfa_offset 12
+  35              		.cfi_offset 4, -12
+  36              		.cfi_offset 5, -8
+  37              		.cfi_offset 14, -4
+  38 0002 89B0     		sub	sp, sp, #36
+  39              		.cfi_def_cfa_offset 48
    9:controller/controller.c ****     engine.total_revolutions = 0;
-  39              		.loc 1 9 5 view .LVU1
-  40              		.loc 1 9 30 is_stmt 0 view .LVU2
-  41 0004 114B     		ldr	r3, .L3
-  42 0006 0021     		movs	r1, #0
-  43 0008 1960     		str	r1, [r3]
+  40              		.loc 1 9 5 view .LVU1
+  41              		.loc 1 9 30 is_stmt 0 view .LVU2
+  42 0004 164D     		ldr	r5, .L3
+  43 0006 0022     		movs	r2, #0
+  44 0008 2A60     		str	r2, [r5]
   10:controller/controller.c ****     engine.crankshaft_angle = 0;
-  44              		.loc 1 10 5 is_stmt 1 view .LVU3
-  45              		.loc 1 10 29 is_stmt 0 view .LVU4
-  46 000a 0022     		movs	r2, #0
-  47 000c 5A60     		str	r2, [r3, #4]	@ float
+  45              		.loc 1 10 5 is_stmt 1 view .LVU3
+  46              		.loc 1 10 29 is_stmt 0 view .LVU4
+  47 000a 0023     		movs	r3, #0
+  48 000c 6B60     		str	r3, [r5, #4]	@ float
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 2
+
+
   11:controller/controller.c ****     engine.camshaft_angle = 0;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 2
-
-
-  48              		.loc 1 11 5 is_stmt 1 view .LVU5
-  49              		.loc 1 11 27 is_stmt 0 view .LVU6
-  50 000e 9A60     		str	r2, [r3, #8]	@ float
+  49              		.loc 1 11 5 is_stmt 1 view .LVU5
+  50              		.loc 1 11 27 is_stmt 0 view .LVU6
+  51 000e AB60     		str	r3, [r5, #8]	@ float
   12:controller/controller.c ****     engine.rpm = 0;
-  51              		.loc 1 12 5 is_stmt 1 view .LVU7
-  52              		.loc 1 12 16 is_stmt 0 view .LVU8
-  53 0010 DA60     		str	r2, [r3, #12]	@ float
+  52              		.loc 1 12 5 is_stmt 1 view .LVU7
+  53              		.loc 1 12 16 is_stmt 0 view .LVU8
+  54 0010 EB60     		str	r3, [r5, #12]	@ float
   13:controller/controller.c ****     engine.cylinder_count = 4;
-  54              		.loc 1 13 5 is_stmt 1 view .LVU9
-  55              		.loc 1 13 27 is_stmt 0 view .LVU10
-  56 0012 0422     		movs	r2, #4
-  57 0014 1A74     		strb	r2, [r3, #16]
+  55              		.loc 1 13 5 is_stmt 1 view .LVU9
+  56              		.loc 1 13 27 is_stmt 0 view .LVU10
+  57 0012 0423     		movs	r3, #4
+  58 0014 2B74     		strb	r3, [r5, #16]
   14:controller/controller.c ****     engine.spinning_state = SS_STOPPED;
-  58              		.loc 1 14 5 is_stmt 1 view .LVU11
-  59              		.loc 1 14 27 is_stmt 0 view .LVU12
-  60 0016 5974     		strb	r1, [r3, #17]
+  59              		.loc 1 14 5 is_stmt 1 view .LVU11
+  60              		.loc 1 14 27 is_stmt 0 view .LVU12
+  61 0016 6A74     		strb	r2, [r5, #17]
   15:controller/controller.c ****     engine.firing_interval = 180.0f;
-  61              		.loc 1 15 5 is_stmt 1 view .LVU13
-  62              		.loc 1 15 28 is_stmt 0 view .LVU14
-  63 0018 0D4A     		ldr	r2, .L3+4
-  64 001a 5A61     		str	r2, [r3, #20]	@ float
+  62              		.loc 1 15 5 is_stmt 1 view .LVU13
+  63              		.loc 1 15 28 is_stmt 0 view .LVU14
+  64 0018 124B     		ldr	r3, .L3+4
+  65 001a 6B61     		str	r3, [r5, #20]	@ float
   16:controller/controller.c ****     // engine.trigger = .....;
   17:controller/controller.c **** 
-  18:controller/controller.c ****     configuration.ignition_dwell = (float_time_ms_t)1;
-  65              		.loc 1 18 5 is_stmt 1 view .LVU15
-  66              		.loc 1 18 34 is_stmt 0 view .LVU16
-  67 001c 0D4B     		ldr	r3, .L3+8
-  68 001e 4FF07E52 		mov	r2, #1065353216
-  69 0022 5A60     		str	r2, [r3, #4]	@ float
+  18:controller/controller.c ****     configuration.ignition_dwell = (float_time_ms_t)3;
+  66              		.loc 1 18 5 is_stmt 1 view .LVU15
+  67              		.loc 1 18 34 is_stmt 0 view .LVU16
+  68 001c 124B     		ldr	r3, .L3+8
+  69 001e 1349     		ldr	r1, .L3+12
+  70 0020 1961     		str	r1, [r3, #16]	@ float
   19:controller/controller.c ****     configuration.ignition_mode = IM_WASTED_SPARK;
-  70              		.loc 1 19 5 is_stmt 1 view .LVU17
-  71              		.loc 1 19 33 is_stmt 0 view .LVU18
-  72 0024 0322     		movs	r2, #3
-  73 0026 DA70     		strb	r2, [r3, #3]
+  71              		.loc 1 19 5 is_stmt 1 view .LVU17
+  72              		.loc 1 19 33 is_stmt 0 view .LVU18
+  73 0022 0321     		movs	r1, #3
+  74 0024 5973     		strb	r1, [r3, #13]
   20:controller/controller.c **** 
-  21:controller/controller.c ****     ignition_output_conf_s ignition_output_conf =
-  74              		.loc 1 21 5 is_stmt 1 view .LVU19
-  75              		.loc 1 21 28 is_stmt 0 view .LVU20
-  76 0028 EC46     		mov	ip, sp
-  77 002a 0B4C     		ldr	r4, .L3+12
-  78 002c 0FCC     		ldmia	r4!, {r0, r1, r2, r3}
-  79 002e ACE80F00 		stmia	ip!, {r0, r1, r2, r3}
-  80 0032 94E80F00 		ldm	r4, {r0, r1, r2, r3}
-  81 0036 8CE80F00 		stm	ip, {r0, r1, r2, r3}
-  22:controller/controller.c ****     {
-  23:controller/controller.c ****         .output[0] = {.gpio = IGNITION_OUTPUT1_GPIO_Port, .pin = IGNITION_OUTPUT1_Pin},
-  24:controller/controller.c ****         .output[1] = {.gpio = IGNITION_OUTPUT2_GPIO_Port, .pin = IGNITION_OUTPUT2_Pin},
-  25:controller/controller.c ****         .output[2] = {.gpio = IGNITION_OUTPUT3_GPIO_Port, .pin = IGNITION_OUTPUT3_Pin},
-  26:controller/controller.c ****         .output[3] = {.gpio = IGNITION_OUTPUT4_GPIO_Port, .pin = IGNITION_OUTPUT4_Pin}
-  27:controller/controller.c ****     };
-  28:controller/controller.c ****     controller_time_start(&htim5);
-  82              		.loc 1 28 5 is_stmt 1 view .LVU21
-  83 003a 0848     		ldr	r0, .L3+16
-  84 003c FFF7FEFF 		bl	controller_time_start
-  85              	.LVL0:
-  29:controller/controller.c ****     ignition_init(&htim2, &ignition_output_conf);
-  86              		.loc 1 29 5 view .LVU22
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 3
+  21:controller/controller.c ****     configuration.trigger.filtering = TF_FILTERING_NONE;
+  75              		.loc 1 21 5 is_stmt 1 view .LVU19
+  76              		.loc 1 21 37 is_stmt 0 view .LVU20
+  77 0026 9A70     		strb	r2, [r3, #2]
+  22:controller/controller.c ****     configuration.trigger.full_teeth = 60;
+  78              		.loc 1 22 5 is_stmt 1 view .LVU21
+  79              		.loc 1 22 38 is_stmt 0 view .LVU22
+  80 0028 3C22     		movs	r2, #60
+  81 002a DA70     		strb	r2, [r3, #3]
+  23:controller/controller.c ****     configuration.trigger.missing_teeth = 2;
+  82              		.loc 1 23 5 is_stmt 1 view .LVU23
+  83              		.loc 1 23 41 is_stmt 0 view .LVU24
+  84 002c 0222     		movs	r2, #2
+  85 002e 1A71     		strb	r2, [r3, #4]
+  24:controller/controller.c ****     configuration.cranking_rpm_threshold = 400;
+  86              		.loc 1 24 5 is_stmt 1 view .LVU25
+  87              		.loc 1 24 42 is_stmt 0 view .LVU26
+  88 0030 0F4A     		ldr	r2, .L3+16
+  89 0032 9A60     		str	r2, [r3, #8]	@ float
+  25:controller/controller.c ****     
+  26:controller/controller.c ****     ignition_output_conf_s ignition_output_conf =
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 3
 
 
-  87 0040 6946     		mov	r1, sp
-  88 0042 0748     		ldr	r0, .L3+20
-  89 0044 FFF7FEFF 		bl	ignition_init
-  90              	.LVL1:
-  30:controller/controller.c **** 
-  31:controller/controller.c **** 
-  32:controller/controller.c ****     //HAL_FLASH_Unlock();
-  33:controller/controller.c ****     //EE_Init();
-  34:controller/controller.c **** }
-  91              		.loc 1 34 1 is_stmt 0 view .LVU23
-  92 0048 08B0     		add	sp, sp, #32
-  93              		.cfi_def_cfa_offset 8
-  94              		@ sp needed
-  95 004a 10BD     		pop	{r4, pc}
-  96              	.L4:
-  97              		.align	2
-  98              	.L3:
-  99 004c 00000000 		.word	engine
- 100 0050 00003443 		.word	1127481344
- 101 0054 00000000 		.word	configuration
- 102 0058 00000000 		.word	.LANCHOR0
- 103 005c 00000000 		.word	htim5
- 104 0060 00000000 		.word	htim2
- 105              		.cfi_endproc
- 106              	.LFE228:
- 108              		.section	.rodata.controller_load_configuration.str1.4,"aMS",%progbits,1
- 109              		.align	2
- 110              	.LC1:
- 111 0000 436F6E66 		.ascii	"Configuration load failed!\000"
- 111      69677572 
- 111      6174696F 
- 111      6E206C6F 
- 111      61642066 
- 112              		.section	.text.controller_load_configuration,"ax",%progbits
- 113              		.align	1
- 114              		.global	controller_load_configuration
- 115              		.syntax unified
- 116              		.thumb
- 117              		.thumb_func
- 119              	controller_load_configuration:
- 120              	.LFB229:
-  35:controller/controller.c **** 
-  36:controller/controller.c **** void controller_load_configuration()
-  37:controller/controller.c **** {
- 121              		.loc 1 37 1 is_stmt 1 view -0
- 122              		.cfi_startproc
- 123              		@ args = 0, pretend = 0, frame = 0
- 124              		@ frame_needed = 0, uses_anonymous_args = 0
- 125 0000 10B5     		push	{r4, lr}
- 126              		.cfi_def_cfa_offset 8
- 127              		.cfi_offset 4, -8
- 128              		.cfi_offset 14, -4
-  38:controller/controller.c ****     uint16_t status = HAL_OK;
- 129              		.loc 1 38 5 view .LVU25
- 130              	.LVL2:
-  39:controller/controller.c ****     uint32_t read_size = sizeof(configuration) / sizeof(uint16_t);
- 131              		.loc 1 39 5 view .LVU26
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 4
+  90              		.loc 1 26 5 is_stmt 1 view .LVU27
+  91              		.loc 1 26 28 is_stmt 0 view .LVU28
+  92 0034 EC46     		mov	ip, sp
+  93 0036 0F4C     		ldr	r4, .L3+20
+  94 0038 0FCC     		ldmia	r4!, {r0, r1, r2, r3}
+  95 003a ACE80F00 		stmia	ip!, {r0, r1, r2, r3}
+  96 003e 94E80F00 		ldm	r4, {r0, r1, r2, r3}
+  97 0042 8CE80F00 		stm	ip, {r0, r1, r2, r3}
+  27:controller/controller.c ****     {
+  28:controller/controller.c ****         .output[0] = {.gpio = IGNITION_OUTPUT1_GPIO_Port, .pin = IGNITION_OUTPUT1_Pin},
+  29:controller/controller.c ****         .output[1] = {.gpio = IGNITION_OUTPUT2_GPIO_Port, .pin = IGNITION_OUTPUT2_Pin},
+  30:controller/controller.c ****         .output[2] = {.gpio = IGNITION_OUTPUT3_GPIO_Port, .pin = IGNITION_OUTPUT3_Pin},
+  31:controller/controller.c ****         .output[3] = {.gpio = IGNITION_OUTPUT4_GPIO_Port, .pin = IGNITION_OUTPUT4_Pin}
+  32:controller/controller.c ****     };
+  33:controller/controller.c **** 
+  34:controller/controller.c ****     controller_timing_start(&htim2);
+  98              		.loc 1 34 5 is_stmt 1 view .LVU29
+  99 0046 0C48     		ldr	r0, .L3+24
+ 100 0048 FFF7FEFF 		bl	controller_timing_start
+ 101              	.LVL0:
+  35:controller/controller.c ****     trigger_init(&engine.trigger);
+ 102              		.loc 1 35 5 view .LVU30
+ 103 004c 05F11800 		add	r0, r5, #24
+ 104 0050 FFF7FEFF 		bl	trigger_init
+ 105              	.LVL1:
+  36:controller/controller.c ****     ignition_init(&ignition_output_conf);
+ 106              		.loc 1 36 5 view .LVU31
+ 107 0054 6846     		mov	r0, sp
+ 108 0056 FFF7FEFF 		bl	ignition_init
+ 109              	.LVL2:
+  37:controller/controller.c **** 
+  38:controller/controller.c ****     //HAL_FLASH_Unlock();
+  39:controller/controller.c ****     //EE_Init();
+  40:controller/controller.c **** }
+ 110              		.loc 1 40 1 is_stmt 0 view .LVU32
+ 111 005a 09B0     		add	sp, sp, #36
+ 112              		.cfi_def_cfa_offset 12
+ 113              		@ sp needed
+ 114 005c 30BD     		pop	{r4, r5, pc}
+ 115              	.L4:
+ 116 005e 00BF     		.align	2
+ 117              	.L3:
+ 118 0060 00000000 		.word	engine
+ 119 0064 00003443 		.word	1127481344
+ 120 0068 00000000 		.word	configuration
+ 121 006c 00004040 		.word	1077936128
+ 122 0070 0000C843 		.word	1137180672
+ 123 0074 00000000 		.word	.LANCHOR0
+ 124 0078 00000000 		.word	htim2
+ 125              		.cfi_endproc
+ 126              	.LFE228:
+ 128              		.section	.rodata.controller_load_configuration.str1.4,"aMS",%progbits,1
+ 129              		.align	2
+ 130              	.LC1:
+ 131 0000 436F6E66 		.ascii	"Configuration load failed!\000"
+ 131      69677572 
+ 131      6174696F 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 4
 
 
-  40:controller/controller.c ****     uint16_t *starting_point = (uint16_t *) &configuration;
- 132              		.loc 1 40 5 view .LVU27
-  41:controller/controller.c ****     for (size_t i = 0; i < read_size; i++)
- 133              		.loc 1 41 5 view .LVU28
- 134              	.LBB2:
- 135              		.loc 1 41 10 view .LVU29
- 136              		.loc 1 41 17 is_stmt 0 view .LVU30
- 137 0002 0024     		movs	r4, #0
- 138              	.LVL3:
- 139              	.L6:
- 140              		.loc 1 41 26 is_stmt 1 discriminator 1 view .LVU31
- 141 0004 212C     		cmp	r4, #33
- 142 0006 0BD8     		bhi	.L5
-  42:controller/controller.c ****     {
-  43:controller/controller.c ****         status = EE_ReadVariable(i, starting_point + i);
- 143              		.loc 1 43 9 view .LVU32
- 144              		.loc 1 43 18 is_stmt 0 view .LVU33
- 145 0008 0649     		ldr	r1, .L12
- 146 000a 01EB4401 		add	r1, r1, r4, lsl #1
- 147 000e A0B2     		uxth	r0, r4
- 148 0010 FFF7FEFF 		bl	EE_ReadVariable
- 149              	.LVL4:
-  44:controller/controller.c ****         if (status != HAL_OK)
- 150              		.loc 1 44 9 is_stmt 1 view .LVU34
- 151              		.loc 1 44 12 is_stmt 0 view .LVU35
- 152 0014 08B9     		cbnz	r0, .L11
-  41:controller/controller.c ****     for (size_t i = 0; i < read_size; i++)
- 153              		.loc 1 41 40 is_stmt 1 discriminator 2 view .LVU36
- 154 0016 0134     		adds	r4, r4, #1
- 155              	.LVL5:
-  41:controller/controller.c ****     for (size_t i = 0; i < read_size; i++)
- 156              		.loc 1 41 40 is_stmt 0 discriminator 2 view .LVU37
- 157 0018 F4E7     		b	.L6
- 158              	.LVL6:
- 159              	.L11:
-  45:controller/controller.c ****         {
-  46:controller/controller.c ****             log_error("Configuration load failed!");
- 160              		.loc 1 46 13 is_stmt 1 view .LVU38
- 161 001a 0348     		ldr	r0, .L12+4
- 162              	.LVL7:
- 163              		.loc 1 46 13 is_stmt 0 view .LVU39
- 164 001c FFF7FEFF 		bl	log_error
- 165              	.LVL8:
-  47:controller/controller.c ****             break;
- 166              		.loc 1 47 13 is_stmt 1 view .LVU40
- 167              	.L5:
- 168              		.loc 1 47 13 is_stmt 0 view .LVU41
- 169              	.LBE2:
-  48:controller/controller.c ****         }
-  49:controller/controller.c ****     }
-  50:controller/controller.c **** }
- 170              		.loc 1 50 1 view .LVU42
- 171 0020 10BD     		pop	{r4, pc}
- 172              	.LVL9:
- 173              	.L13:
- 174              		.loc 1 50 1 view .LVU43
- 175 0022 00BF     		.align	2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 5
+ 131      6E206C6F 
+ 131      61642066 
+ 132              		.section	.text.controller_load_configuration,"ax",%progbits
+ 133              		.align	1
+ 134              		.global	controller_load_configuration
+ 135              		.syntax unified
+ 136              		.thumb
+ 137              		.thumb_func
+ 139              	controller_load_configuration:
+ 140              	.LFB229:
+  41:controller/controller.c **** 
+  42:controller/controller.c **** void controller_load_configuration()
+  43:controller/controller.c **** {
+ 141              		.loc 1 43 1 is_stmt 1 view -0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145 0000 10B5     		push	{r4, lr}
+ 146              		.cfi_def_cfa_offset 8
+ 147              		.cfi_offset 4, -8
+ 148              		.cfi_offset 14, -4
+  44:controller/controller.c ****     uint16_t status = HAL_OK;
+ 149              		.loc 1 44 5 view .LVU34
+ 150              	.LVL3:
+  45:controller/controller.c ****     uint32_t read_size = sizeof(configuration) / sizeof(uint16_t);
+ 151              		.loc 1 45 5 view .LVU35
+  46:controller/controller.c ****     uint16_t *starting_point = (uint16_t *) &configuration;
+ 152              		.loc 1 46 5 view .LVU36
+  47:controller/controller.c ****     for (size_t i = 0; i < read_size; i++)
+ 153              		.loc 1 47 5 view .LVU37
+ 154              	.LBB2:
+ 155              		.loc 1 47 10 view .LVU38
+ 156              		.loc 1 47 17 is_stmt 0 view .LVU39
+ 157 0002 0024     		movs	r4, #0
+ 158              	.LVL4:
+ 159              	.L6:
+ 160              		.loc 1 47 26 is_stmt 1 discriminator 1 view .LVU40
+ 161 0004 292C     		cmp	r4, #41
+ 162 0006 0BD8     		bhi	.L5
+  48:controller/controller.c ****     {
+  49:controller/controller.c ****         status = EE_ReadVariable(i, starting_point + i);
+ 163              		.loc 1 49 9 view .LVU41
+ 164              		.loc 1 49 18 is_stmt 0 view .LVU42
+ 165 0008 0649     		ldr	r1, .L12
+ 166 000a 01EB4401 		add	r1, r1, r4, lsl #1
+ 167 000e A0B2     		uxth	r0, r4
+ 168 0010 FFF7FEFF 		bl	EE_ReadVariable
+ 169              	.LVL5:
+  50:controller/controller.c ****         if (status != HAL_OK)
+ 170              		.loc 1 50 9 is_stmt 1 view .LVU43
+ 171              		.loc 1 50 12 is_stmt 0 view .LVU44
+ 172 0014 08B9     		cbnz	r0, .L11
+  47:controller/controller.c ****     for (size_t i = 0; i < read_size; i++)
+ 173              		.loc 1 47 40 is_stmt 1 discriminator 2 view .LVU45
+ 174 0016 0134     		adds	r4, r4, #1
+ 175              	.LVL6:
+  47:controller/controller.c ****     for (size_t i = 0; i < read_size; i++)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 5
 
 
- 176              	.L12:
- 177 0024 00000000 		.word	configuration
- 178 0028 00000000 		.word	.LC1
- 179              		.cfi_endproc
- 180              	.LFE229:
- 182              		.section	.rodata.controller_save_configuration.str1.4,"aMS",%progbits,1
- 183              		.align	2
- 184              	.LC2:
- 185 0000 436F6E66 		.ascii	"Configuration save failed!\000"
- 185      69677572 
- 185      6174696F 
- 185      6E207361 
- 185      76652066 
- 186              		.section	.text.controller_save_configuration,"ax",%progbits
- 187              		.align	1
- 188              		.global	controller_save_configuration
- 189              		.syntax unified
- 190              		.thumb
- 191              		.thumb_func
- 193              	controller_save_configuration:
- 194              	.LFB230:
-  51:controller/controller.c **** 
-  52:controller/controller.c **** void controller_save_configuration()
-  53:controller/controller.c **** {
- 195              		.loc 1 53 1 is_stmt 1 view -0
- 196              		.cfi_startproc
- 197              		@ args = 0, pretend = 0, frame = 0
- 198              		@ frame_needed = 0, uses_anonymous_args = 0
- 199 0000 10B5     		push	{r4, lr}
- 200              		.cfi_def_cfa_offset 8
- 201              		.cfi_offset 4, -8
- 202              		.cfi_offset 14, -4
-  54:controller/controller.c ****     uint16_t status = HAL_OK;
- 203              		.loc 1 54 5 view .LVU45
- 204              	.LVL10:
-  55:controller/controller.c ****     uint32_t write_size = sizeof(configuration) / sizeof(uint16_t);
- 205              		.loc 1 55 5 view .LVU46
-  56:controller/controller.c ****     uint16_t *starting_point = (uint16_t *) &configuration;
- 206              		.loc 1 56 5 view .LVU47
-  57:controller/controller.c ****     for (size_t i = 0; i < write_size; i++)
- 207              		.loc 1 57 5 view .LVU48
- 208              	.LBB3:
- 209              		.loc 1 57 10 view .LVU49
- 210              		.loc 1 57 17 is_stmt 0 view .LVU50
- 211 0002 0024     		movs	r4, #0
- 212              		.loc 1 57 5 view .LVU51
- 213 0004 00E0     		b	.L15
- 214              	.LVL11:
- 215              	.L16:
- 216              		.loc 1 57 41 is_stmt 1 discriminator 2 view .LVU52
- 217 0006 0134     		adds	r4, r4, #1
- 218              	.LVL12:
- 219              	.L15:
- 220              		.loc 1 57 26 discriminator 1 view .LVU53
- 221 0008 212C     		cmp	r4, #33
- 222 000a 0BD8     		bhi	.L19
-  58:controller/controller.c ****     {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 6
+ 176              		.loc 1 47 40 is_stmt 0 discriminator 2 view .LVU46
+ 177 0018 F4E7     		b	.L6
+ 178              	.LVL7:
+ 179              	.L11:
+  51:controller/controller.c ****         {
+  52:controller/controller.c ****             log_error("Configuration load failed!");
+ 180              		.loc 1 52 13 is_stmt 1 view .LVU47
+ 181 001a 0348     		ldr	r0, .L12+4
+ 182              	.LVL8:
+ 183              		.loc 1 52 13 is_stmt 0 view .LVU48
+ 184 001c FFF7FEFF 		bl	log_error
+ 185              	.LVL9:
+  53:controller/controller.c ****             break;
+ 186              		.loc 1 53 13 is_stmt 1 view .LVU49
+ 187              	.L5:
+ 188              		.loc 1 53 13 is_stmt 0 view .LVU50
+ 189              	.LBE2:
+  54:controller/controller.c ****         }
+  55:controller/controller.c ****     }
+  56:controller/controller.c **** }
+ 190              		.loc 1 56 1 view .LVU51
+ 191 0020 10BD     		pop	{r4, pc}
+ 192              	.LVL10:
+ 193              	.L13:
+ 194              		.loc 1 56 1 view .LVU52
+ 195 0022 00BF     		.align	2
+ 196              	.L12:
+ 197 0024 00000000 		.word	configuration
+ 198 0028 00000000 		.word	.LC1
+ 199              		.cfi_endproc
+ 200              	.LFE229:
+ 202              		.section	.rodata.controller_save_configuration.str1.4,"aMS",%progbits,1
+ 203              		.align	2
+ 204              	.LC2:
+ 205 0000 436F6E66 		.ascii	"Configuration save failed!\000"
+ 205      69677572 
+ 205      6174696F 
+ 205      6E207361 
+ 205      76652066 
+ 206              		.section	.text.controller_save_configuration,"ax",%progbits
+ 207              		.align	1
+ 208              		.global	controller_save_configuration
+ 209              		.syntax unified
+ 210              		.thumb
+ 211              		.thumb_func
+ 213              	controller_save_configuration:
+ 214              	.LFB230:
+  57:controller/controller.c **** 
+  58:controller/controller.c **** void controller_save_configuration()
+  59:controller/controller.c **** {
+ 215              		.loc 1 59 1 is_stmt 1 view -0
+ 216              		.cfi_startproc
+ 217              		@ args = 0, pretend = 0, frame = 0
+ 218              		@ frame_needed = 0, uses_anonymous_args = 0
+ 219 0000 10B5     		push	{r4, lr}
+ 220              		.cfi_def_cfa_offset 8
+ 221              		.cfi_offset 4, -8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 6
 
 
-  59:controller/controller.c ****         status = EE_WriteVariable(i, *(starting_point + i));
- 223              		.loc 1 59 9 view .LVU54
- 224              		.loc 1 59 18 is_stmt 0 view .LVU55
- 225 000c 064B     		ldr	r3, .L20
- 226 000e 33F81410 		ldrh	r1, [r3, r4, lsl #1]
- 227 0012 A0B2     		uxth	r0, r4
- 228 0014 FFF7FEFF 		bl	EE_WriteVariable
- 229              	.LVL13:
-  60:controller/controller.c ****         if (status != HAL_OK)
- 230              		.loc 1 60 9 is_stmt 1 view .LVU56
- 231              		.loc 1 60 12 is_stmt 0 view .LVU57
- 232 0018 0028     		cmp	r0, #0
- 233 001a F4D0     		beq	.L16
-  61:controller/controller.c ****         {
-  62:controller/controller.c ****             log_error("Configuration save failed!");
- 234              		.loc 1 62 13 is_stmt 1 view .LVU58
- 235 001c 0348     		ldr	r0, .L20+4
- 236              	.LVL14:
- 237              		.loc 1 62 13 is_stmt 0 view .LVU59
- 238 001e FFF7FEFF 		bl	log_error
- 239              	.LVL15:
- 240 0022 F0E7     		b	.L16
- 241              	.LVL16:
- 242              	.L19:
- 243              		.loc 1 62 13 view .LVU60
- 244              	.LBE3:
-  63:controller/controller.c ****         }
-  64:controller/controller.c ****     }
-  65:controller/controller.c **** }
- 245              		.loc 1 65 1 view .LVU61
- 246 0024 10BD     		pop	{r4, pc}
- 247              	.LVL17:
- 248              	.L21:
- 249              		.loc 1 65 1 view .LVU62
- 250 0026 00BF     		.align	2
- 251              	.L20:
- 252 0028 00000000 		.word	configuration
- 253 002c 00000000 		.word	.LC2
- 254              		.cfi_endproc
- 255              	.LFE230:
- 257              		.global	engine
- 258              		.section	.bss.engine,"aw",%nobits
- 259              		.align	2
- 262              	engine:
- 263 0000 00000000 		.space	68
- 263      00000000 
- 263      00000000 
- 263      00000000 
- 263      00000000 
- 264              		.global	configuration
- 265              		.section	.bss.configuration,"aw",%nobits
- 266              		.align	2
- 269              	configuration:
- 270 0000 00000000 		.space	68
- 270      00000000 
- 270      00000000 
- 270      00000000 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 7
+ 222              		.cfi_offset 14, -4
+  60:controller/controller.c ****     uint16_t status = HAL_OK;
+ 223              		.loc 1 60 5 view .LVU54
+ 224              	.LVL11:
+  61:controller/controller.c ****     uint32_t write_size = sizeof(configuration) / sizeof(uint16_t);
+ 225              		.loc 1 61 5 view .LVU55
+  62:controller/controller.c ****     uint16_t *starting_point = (uint16_t *) &configuration;
+ 226              		.loc 1 62 5 view .LVU56
+  63:controller/controller.c ****     for (size_t i = 0; i < write_size; i++)
+ 227              		.loc 1 63 5 view .LVU57
+ 228              	.LBB3:
+ 229              		.loc 1 63 10 view .LVU58
+ 230              		.loc 1 63 17 is_stmt 0 view .LVU59
+ 231 0002 0024     		movs	r4, #0
+ 232              		.loc 1 63 5 view .LVU60
+ 233 0004 00E0     		b	.L15
+ 234              	.LVL12:
+ 235              	.L16:
+ 236              		.loc 1 63 41 is_stmt 1 discriminator 2 view .LVU61
+ 237 0006 0134     		adds	r4, r4, #1
+ 238              	.LVL13:
+ 239              	.L15:
+ 240              		.loc 1 63 26 discriminator 1 view .LVU62
+ 241 0008 292C     		cmp	r4, #41
+ 242 000a 0BD8     		bhi	.L19
+  64:controller/controller.c ****     {
+  65:controller/controller.c ****         status = EE_WriteVariable(i, *(starting_point + i));
+ 243              		.loc 1 65 9 view .LVU63
+ 244              		.loc 1 65 18 is_stmt 0 view .LVU64
+ 245 000c 064B     		ldr	r3, .L20
+ 246 000e 33F81410 		ldrh	r1, [r3, r4, lsl #1]
+ 247 0012 A0B2     		uxth	r0, r4
+ 248 0014 FFF7FEFF 		bl	EE_WriteVariable
+ 249              	.LVL14:
+  66:controller/controller.c ****         if (status != HAL_OK)
+ 250              		.loc 1 66 9 is_stmt 1 view .LVU65
+ 251              		.loc 1 66 12 is_stmt 0 view .LVU66
+ 252 0018 0028     		cmp	r0, #0
+ 253 001a F4D0     		beq	.L16
+  67:controller/controller.c ****         {
+  68:controller/controller.c ****             log_error("Configuration save failed!");
+ 254              		.loc 1 68 13 is_stmt 1 view .LVU67
+ 255 001c 0348     		ldr	r0, .L20+4
+ 256              	.LVL15:
+ 257              		.loc 1 68 13 is_stmt 0 view .LVU68
+ 258 001e FFF7FEFF 		bl	log_error
+ 259              	.LVL16:
+ 260 0022 F0E7     		b	.L16
+ 261              	.LVL17:
+ 262              	.L19:
+ 263              		.loc 1 68 13 view .LVU69
+ 264              	.LBE3:
+  69:controller/controller.c ****         }
+  70:controller/controller.c ****     }
+  71:controller/controller.c **** }
+ 265              		.loc 1 71 1 view .LVU70
+ 266 0024 10BD     		pop	{r4, pc}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 7
 
 
- 270      00000000 
- 271              		.section	.rodata
- 272              		.align	2
- 273              		.set	.LANCHOR0,. + 0
- 274              	.LC0:
- 275 0000 00040240 		.word	1073873920
- 276 0004 00800000 		.word	32768
- 277 0008 00040240 		.word	1073873920
- 278 000c 00400000 		.word	16384
- 279 0010 00040240 		.word	1073873920
- 280 0014 00200000 		.word	8192
- 281 0018 00040240 		.word	1073873920
- 282 001c 00100000 		.word	4096
- 283              		.text
- 284              	.Letext0:
- 285              		.file 2 "controller/enums.h"
- 286              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 287              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 288              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 289              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 290              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 291              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 292              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 293              		.file 10 "controller/types.h"
- 294              		.file 11 "Core/Inc/tim.h"
- 295              		.file 12 "controller/engine_cycle/trigger.h"
- 296              		.file 13 "controller/IO/analog_inputs.h"
- 297              		.file 14 "controller/IO/sensors/tps.h"
- 298              		.file 15 "controller/IO/thermistor.h"
- 299              		.file 16 "controller/engine_cycle/ignition.h"
- 300              		.file 17 "controller/controller.h"
- 301              		.file 18 "controller/eeprom/eeprom.h"
- 302              		.file 19 "controller/error_handling.h"
- 303              		.file 20 "controller/controller_time.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s 			page 8
+ 267              	.LVL18:
+ 268              	.L21:
+ 269              		.loc 1 71 1 view .LVU71
+ 270 0026 00BF     		.align	2
+ 271              	.L20:
+ 272 0028 00000000 		.word	configuration
+ 273 002c 00000000 		.word	.LC2
+ 274              		.cfi_endproc
+ 275              	.LFE230:
+ 277              		.global	engine
+ 278              		.section	.bss.engine,"aw",%nobits
+ 279              		.align	2
+ 282              	engine:
+ 283 0000 00000000 		.space	60
+ 283      00000000 
+ 283      00000000 
+ 283      00000000 
+ 283      00000000 
+ 284              		.global	configuration
+ 285              		.section	.bss.configuration,"aw",%nobits
+ 286              		.align	2
+ 289              	configuration:
+ 290 0000 00000000 		.space	84
+ 290      00000000 
+ 290      00000000 
+ 290      00000000 
+ 290      00000000 
+ 291              		.section	.rodata
+ 292              		.align	2
+ 293              		.set	.LANCHOR0,. + 0
+ 294              	.LC0:
+ 295 0000 00040240 		.word	1073873920
+ 296 0004 00800000 		.word	32768
+ 297 0008 00040240 		.word	1073873920
+ 298 000c 00400000 		.word	16384
+ 299 0010 00040240 		.word	1073873920
+ 300 0014 00200000 		.word	8192
+ 301 0018 00040240 		.word	1073873920
+ 302 001c 00100000 		.word	4096
+ 303              		.text
+ 304              	.Letext0:
+ 305              		.file 2 "controller/enums.h"
+ 306              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 307              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 308              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 309              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 310              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 311              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 312              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 313              		.file 10 "controller/types.h"
+ 314              		.file 11 "controller/engine_cycle/trigger.h"
+ 315              		.file 12 "controller/IO/analog_inputs.h"
+ 316              		.file 13 "controller/IO/sensors/tps.h"
+ 317              		.file 14 "controller/IO/thermistor.h"
+ 318              		.file 15 "controller/engine_cycle/ignition.h"
+ 319              		.file 16 "controller/controller.h"
+ 320              		.file 17 "Core/Inc/tim.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 8
+
+
+ 321              		.file 18 "controller/eeprom/eeprom.h"
+ 322              		.file 19 "controller/utils/error_handling.h"
+ 323              		.file 20 "controller/utils/timing.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 controller.c
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:21     .text.controller_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:27     .text.controller_init:00000000 controller_init
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:99     .text.controller_init:0000004c $d
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:262    .bss.engine:00000000 engine
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:269    .bss.configuration:00000000 configuration
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:109    .rodata.controller_load_configuration.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:113    .text.controller_load_configuration:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:119    .text.controller_load_configuration:00000000 controller_load_configuration
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:177    .text.controller_load_configuration:00000024 $d
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:183    .rodata.controller_save_configuration.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:187    .text.controller_save_configuration:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:193    .text.controller_save_configuration:00000000 controller_save_configuration
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:252    .text.controller_save_configuration:00000028 $d
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:259    .bss.engine:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:266    .bss.configuration:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccgYMcxY.s:272    .rodata:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:21     .text.controller_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:27     .text.controller_init:00000000 controller_init
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:118    .text.controller_init:00000060 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:282    .bss.engine:00000000 engine
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:289    .bss.configuration:00000000 configuration
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:129    .rodata.controller_load_configuration.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:133    .text.controller_load_configuration:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:139    .text.controller_load_configuration:00000000 controller_load_configuration
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:197    .text.controller_load_configuration:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:203    .rodata.controller_save_configuration.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:207    .text.controller_save_configuration:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:213    .text.controller_save_configuration:00000000 controller_save_configuration
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:272    .text.controller_save_configuration:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:279    .bss.engine:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:286    .bss.configuration:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccK87b9V.s:292    .rodata:00000000 $d
 
 UNDEFINED SYMBOLS
-controller_time_start
+controller_timing_start
+trigger_init
 ignition_init
-htim5
 htim2
 EE_ReadVariable
 log_error

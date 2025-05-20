@@ -30,7 +30,8 @@ build/debug/stm32f4xx_it.o: Core/Src/stm32f4xx_it.c Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
- Core/Inc/stm32f4xx_it.h
+ Core/Inc/stm32f4xx_it.h controller/utils/timing.h controller/types.h \
+ Core/Inc/tim.h Core/Inc/main.h
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -66,3 +67,7 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
 Core/Inc/stm32f4xx_it.h:
+controller/utils/timing.h:
+controller/types.h:
+Core/Inc/tim.h:
+Core/Inc/main.h:

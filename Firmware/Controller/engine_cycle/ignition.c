@@ -2,39 +2,21 @@
 
 ignition_output_pin_s ignition_outputs[IGNITION_MAX_OUTPUTS] = {0};
 
+volatile ignition_coil_state_e ignition_coil_state[IGNITION_MAX_OUTPUTS] = {0};
+
 uint8_t ignition_order[IGNITION_MAX_OUTPUTS] = {0};
 
-static TIM_HandleTypeDef *timer = 0;
-
-static uint8_t current_firing_cylinder = 0;
+static volatile bool spark_is_in_progress = false;
 
 
-void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
+void ignition_init(ignition_output_conf_s *output_conf)
 {
-    if (htim->Instance != timer->Instance)
+    if (output_conf == NULL)
     {
-        return;
-    }
-    
-    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-    {
-        ignition_coil_begin_charge(current_firing_cylinder - 1);
-    }
-    else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
-    {
-        ignition_coil_fire_spark(current_firing_cylinder- 1);
-    }
-}
-
-void ignition_init(TIM_HandleTypeDef *htim,  ignition_output_conf_s *output_conf)
-{
-    if (htim == NULL || output_conf == NULL)
-    {
-        log_error("ignition init failed. No timer or ouput config");
+        log_error("ignition init failed. No output config");
         return;
     }
 
-    timer = htim;
 
     switch (configuration.firing_order)
     {
@@ -52,7 +34,6 @@ void ignition_init(TIM_HandleTypeDef *htim,  ignition_output_conf_s *output_conf
         break;
     }
     
-    
     engine.firing_interval = (angle_t)720 / engine.cylinder_count;
 
 
@@ -61,51 +42,21 @@ void ignition_init(TIM_HandleTypeDef *htim,  ignition_output_conf_s *output_conf
         ignition_outputs[i].gpio = output_conf->output[i].gpio;
         ignition_outputs[i].pin = output_conf->output[i].pin;
     }
+    /* Read the pin states from real hardware */
+    for (size_t i = 0; i < IGNITION_MAX_OUTPUTS; i++)
+    {
+        ignition_coil_state[i] = HAL_GPIO_ReadPin(ignition_outputs[i].gpio, ignition_outputs->pin);
+    }
+    /* Set all outputs to reset just in case */
+    for (size_t i = 0; i < IGNITION_MAX_OUTPUTS; i++)
+    {
+        HAL_GPIO_WritePin(ignition_outputs[i].gpio, ignition_outputs->pin, GPIO_PIN_RESET);
+    }
     
     if (configuration.ignition_is_multi_spark && !IS_IN_RANGE(configuration.ignition_multi_spark_number_of_sparks, 0, IGNITION_MULTI_SPARK_MAX_SPARKS))
     {
         log_warning("Multi spark is enabled but number of sparks are 0.");
     }
-    
-
-    // Configure the timer to have a tick duration of 1 microsecond
-    uint32_t timer_clock = HAL_RCC_GetSysClockFreq(); // Assuming the timer clock is the same is system clock
-    uint32_t prescaler = (timer_clock / 1000000UL) - 1;
-    
-    if (prescaler > 0xFFFF)
-    {
-        // @todo throw an error if the prescaler value is out of range
-        return;
-    }
-    
-    timer->Instance->PSC = prescaler; // Set the prescaler
-    timer->Instance->ARR = 0xFFFFFFFF; // Set auto-reload register to max for 32-bit timer
-    timer->Instance->CNT = 0; // Reset the counter
-
-    // Enable the output compare no output mode for the first channel using HAL
-    TIM_OC_InitTypeDef sConfigOC = {0};
-    sConfigOC.OCMode = TIM_OCMODE_TIMING; // No output mode
-    sConfigOC.Pulse = 0;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    
-    if (HAL_TIM_OC_ConfigChannel(timer, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-    {
-        // @todo handle the error
-        return;
-    }
-    // Enable the output compare no output mode for the second channel using HAL
-    if (HAL_TIM_OC_ConfigChannel(timer, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-    {
-        // @todo handle the error
-        return;
-    }
-    HAL_TIM_Base_Start(timer);
-    HAL_TIM_PWM_Start_IT(timer, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start_IT(timer, TIM_CHANNEL_2);
-    
-    
-
 }
 
 /**
@@ -117,18 +68,13 @@ void ignition_init(TIM_HandleTypeDef *htim,  ignition_output_conf_s *output_conf
  */
 void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us)
 {
-    if (configuration.ignition_mode == IM_NO_IGNITION)
-    {
-        // obviously, there is no need to do any furthure processing
-        return;
-    }
-    
     /**
      * @todo add the necessary checks and bounds
      */
-    if (timer == NULL)
+
+    if (configuration.ignition_mode == IM_NO_IGNITION)
     {
-        log_error("ignition no init.");
+        // obviously, there is no need to do any furthure processing
         return;
     }
     
@@ -137,9 +83,11 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
         /**
          * @todo throw an error
          */
+        log_error("ignition dwell out of bounds.");
         return;
     }
-    
+
+
     #ifdef TEST_MODE
     angle_t spark_advance = (angle_t)30;
     #else
@@ -147,43 +95,35 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
     #endif
 
     spark_advance = CLAMP(spark_advance, IGNITION_MIN_ADVANCE, IGNITION_MAX_ADVANCE);
-
-    //uint8_t sparks_per_coil = ignition_get_number_of_sparks_per_coil(configuration.ignition_mode);
-    //uint8_t aditional_sparks_per_coil = configuration.ignition_multi_spark_number_of_sparks;
     
-    /**
-     * Here we detect which cylinder has to fire next
-     */
-    // Determine the current phase
-    uint8_t phase = (uint8_t)(ceilf(crankshaft_angle / engine.firing_interval));
-
-    
-    /**
-     * for a simple 4 cylinder engine this returns:
-     * 1 when 0 < crankshaft angle < 180
-     * 3 when 180 < crankshaft angle < 360
-     */
-    current_firing_cylinder = ignition_order[phase-1];
-
-    /**
-     * Now we need to start the timer and calculate when the coil has to start charging and when it has to fire the spark
-     */
-    angle_t spark_angle = (angle_t)phase * engine.firing_interval - spark_advance;
-    angle_t dwell_angle = degrees_per_microsecond(rpm) * configuration.ignition_dwell * (float)1000;
-    if ((spark_angle - dwell_angle - crankshaft_angle) < 0)
+    uint8_t multi_spark_count = 0;
+    if (configuration.ignition_is_multi_spark && rpm < configuration.ignition_multi_spark_rpm_threshold)
     {
-        /* This means that the spark is eather happened or is happening or maybe just about to happen(we are in dwell time)*/
-        return;
+        multi_spark_count = configuration.ignition_multi_spark_number_of_sparks;
     }
-    time_us_t start_charge_time = 0;
-    time_us_t fire_spark_time = 0;
-    time_us_t microseconds_per_deg = microseconds_per_degree(rpm);
-    start_charge_time = (time_us_t)((spark_angle - dwell_angle - crankshaft_angle) * (float)microseconds_per_deg);
-    fire_spark_time = (time_us_t)((spark_angle - crankshaft_angle) * (float)microseconds_per_deg);
-    __HAL_TIM_SET_COUNTER(timer, 0);
-    __HAL_TIM_SET_COMPARE(timer, TIM_CHANNEL_1, start_charge_time);
-    __HAL_TIM_SET_COMPARE(timer, TIM_CHANNEL_2, fire_spark_time);
+    
 
+    /* First we have to detect the engine phase */
+    uint8_t phase = (uint8_t)(crankshaft_angle / engine.firing_interval);
+    
+    volatile angle_t next_spark_angle = phase * engine.firing_interval - spark_advance + engine.firing_interval;
+    volatile angle_t next_dwell_angle = next_spark_angle - (float)configuration.ignition_dwell * (float)1000 * degrees_per_microsecond(rpm);
+    
+    /* phase index now shows which stage of crankshaft rotation we are in. */
+    static uint8_t next_firing_cylinder_index = 0;
+    next_firing_cylinder_index = ignition_order[phase] - 1;
+ 
+    if ((next_dwell_angle - crankshaft_angle) < 10 && !spark_is_in_progress && (next_dwell_angle - crankshaft_angle) > 0)
+    {
+        /* Now we are close enough to the dwell angle that we can schedule the coil charge start */
+        spark_is_in_progress = true;
+        time_us_t dwell_start_time_us = current_time_us + (time_us_t)((next_dwell_angle - crankshaft_angle) * microseconds_per_degree(rpm));
+        time_us_t spark_start_time_us = current_time_us + (time_us_t)((next_spark_angle - crankshaft_angle) * microseconds_per_degree(rpm));
+        scheduler_schedule_event_with_arg(dwell_start_time_us, ignition_coil_begin_charge, (void*)&next_firing_cylinder_index);
+        scheduler_schedule_event_with_arg(spark_start_time_us, ignition_coil_fire_spark, (void*)&next_firing_cylinder_index);
+
+    }
+    
 }
 
 
@@ -195,17 +135,18 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
  */
 uint8_t ignition_get_number_of_sparks_per_coil(ignition_mode_e ignition_mode)
 {
-    switch (ignition_mode) {
-        case IM_ONE_COIL:
-            return engine.cylinder_count;
-        case IM_INDIVIDUAL_COILS:
-            return 1;
-        case IM_WASTED_SPARK:
-            return 2;
-        default:
-            log_error("Unkown ignition mode");
-            return 1;
-        }
+    switch (ignition_mode)
+    {
+    case IM_ONE_COIL:
+        return engine.cylinder_count;
+    case IM_INDIVIDUAL_COILS:
+        return 1;
+    case IM_WASTED_SPARK:
+        return 2;
+    default:
+        log_error("Unkown ignition mode");
+        return 1;
+    }
 }
 
 /**
@@ -213,13 +154,20 @@ uint8_t ignition_get_number_of_sparks_per_coil(ignition_mode_e ignition_mode)
  * 
  * @param coil_index The index of the coil to be charged.
  */
-void ignition_coil_begin_charge(uint8_t coil_index)
+void ignition_coil_begin_charge(void *arg)
 {
+    if (arg == NULL)
+    {
+        return;
+    }
+    uint8_t coil_index = *(uint8_t*)arg;
+
     if (coil_index > IGNITION_MAX_OUTPUTS - 1)
     {
         log_error("Unkown ignition output");
         return;
     }
+    ignition_coil_state[coil_index] = IGNITION_COIL_STATE_CHARGING;
     HAL_GPIO_WritePin(ignition_outputs[coil_index].gpio, ignition_outputs[coil_index].pin, GPIO_PIN_SET);
 }
 
@@ -228,14 +176,22 @@ void ignition_coil_begin_charge(uint8_t coil_index)
  * 
  * @param coil_index The index of the coil to fire the spark from.
  */
-void ignition_coil_fire_spark(uint8_t coil_index)
+void ignition_coil_fire_spark(void *arg)
 {
+    if (arg == NULL)
+    {
+        return;
+    }
+    
+    uint8_t coil_index = *(uint8_t*)arg;
     if (coil_index > IGNITION_MAX_OUTPUTS - 1)
     {
         log_error("Unkown ignition output");
         return;
     }
+    ignition_coil_state[coil_index] = IGNITION_COIL_STATE_NOT_CHARGING;
     HAL_GPIO_WritePin(ignition_outputs[coil_index].gpio, ignition_outputs[coil_index].pin, GPIO_PIN_RESET);
+    spark_is_in_progress = false;
 }
 
 /**
@@ -243,4 +199,22 @@ void ignition_coil_fire_spark(uint8_t coil_index)
  * 
  * @return The duty cycle of the ignition coil.
  */
-percent_t ignition_get_coil_duty_cycle();
+percent_t ignition_get_coil_duty_cycle()
+{
+
+}
+
+angle_t ignition_get_advance()
+{
+    temperature_t intake_air_temp = sensor_iat_get();
+    table_ignition_t *ignition_table = table_ignition_get_table();
+    rpm_t rpm = crankshaft_get_rpm();
+    pressure_t map = sensor_map_get();
+
+    angle_t table_advance = table_ignition_get_value(ignition_table, rpm, map);
+
+    /* Here we can apply all kinds of correction to the table */
+    angle_t final_advance = table_advance; // + corrections
+
+    return final_advance;
+}

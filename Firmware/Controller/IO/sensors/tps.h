@@ -25,19 +25,10 @@ typedef struct
     uint16_t closed_throttle_adc_value;
     analog_input_adc_channel_mapping_e analog_channel;
     bool is_inverted;
-} tps_sensor_calib_s;
-
-typedef struct
-{
-    tps_sensor_calib_s *calib;
-    bool is_initialized;
-} tps_sensor_s;
+} sensor_tps_s;
 
 
-
-void sensor_tps_init(tps_sensor_s *sensor, tps_sensor_calib_s *sensor_calib);
-
-percent_t sensor_tps_get(tps_sensor_s *sensor);
+percent_t sensor_tps_get(sensor_tps_s *sensor);
 
 
 #endif // TPS_H

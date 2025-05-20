@@ -1,5 +1,5 @@
-build/debug/error_handling.o: controller/error_handling.c \
- controller/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
+build/debug/error_handling.o: controller/utils/error_handling.c \
+ controller/utils/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
  Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
@@ -38,7 +38,7 @@ build/debug/error_handling.o: controller/error_handling.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
-controller/error_handling.h:
+controller/utils/error_handling.h:
 USB_DEVICE/App/usbd_cdc_if.h:
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:

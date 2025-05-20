@@ -1,9 +1,8 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
-#include "controller_time.h"
+#include "timing.h"
 #include "types.h"
-
 
 typedef enum
 {
@@ -12,6 +11,7 @@ typedef enum
     TF_FILTERING_MEDIUM,
     TF_FILTERING_AGGRESSIVE,
 } trigger_filtering_e;
+
 typedef struct
 {
     trigger_filtering_e filtering;
@@ -31,9 +31,7 @@ typedef struct
     bool initialized;
     trigger_sync_status_e sync_status;
     uint16_t sync_loss_counter;
-    trigger_settings_s settings;
-    rpm_t cranking_rpm_threshold;
-    
+
     time_us_t _trigger_filter_time_us;
     time_us_t _tooth_time_us[3]; // the higher the index, the older the sample. 0 is the current tooth time
     time_us_t _current_tooth_gap_us;

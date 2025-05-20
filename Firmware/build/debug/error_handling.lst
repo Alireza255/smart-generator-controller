@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -19,7 +19,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
   16              		.text
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
-  19              		.file 1 "controller/error_handling.c"
+  19              		.file 1 "controller/utils/error_handling.c"
   20              		.section	.rodata.log_error.str1.4,"aMS",%progbits,1
   21              		.align	2
   22              	.LC0:
@@ -35,20 +35,20 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
   31              	log_error:
   32              	.LVL0:
   33              	.LFB224:
-   1:controller/error_handling.c **** #include "error_handling.h"
-   2:controller/error_handling.c **** 
-   3:controller/error_handling.c **** 
-   4:controller/error_handling.c **** void log_error(const char* message)
-   5:controller/error_handling.c **** {
+   1:controller/utils/error_handling.c **** #include "error_handling.h"
+   2:controller/utils/error_handling.c **** 
+   3:controller/utils/error_handling.c **** 
+   4:controller/utils/error_handling.c **** void log_error(const char* message)
+   5:controller/utils/error_handling.c **** {
   34              		.loc 1 5 1 view -0
   35              		.cfi_startproc
   36              		@ args = 0, pretend = 0, frame = 104
   37              		@ frame_needed = 0, uses_anonymous_args = 0
-   6:controller/error_handling.c ****     if (message == NULL) return;
+   6:controller/utils/error_handling.c ****     if (message == NULL) return;
   38              		.loc 1 6 5 view .LVU1
   39              		.loc 1 6 8 is_stmt 0 view .LVU2
   40 0000 C0B1     		cbz	r0, .L5
-   5:controller/error_handling.c ****     if (message == NULL) return;
+   5:controller/utils/error_handling.c ****     if (message == NULL) return;
   41              		.loc 1 5 1 view .LVU3
   42 0002 70B5     		push	{r4, r5, r6, lr}
   43              		.cfi_def_cfa_offset 16
@@ -58,12 +58,12 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
   47              		.cfi_offset 14, -4
   48 0004 9AB0     		sub	sp, sp, #104
   49              		.cfi_def_cfa_offset 120
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s 			page 2
 
 
   50 0006 0646     		mov	r6, r0
-   7:controller/error_handling.c **** 
-   8:controller/error_handling.c ****     uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
+   7:controller/utils/error_handling.c **** 
+   8:controller/utils/error_handling.c ****     uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
   51              		.loc 1 8 5 is_stmt 1 view .LVU4
   52              		.loc 1 8 13 is_stmt 0 view .LVU5
   53 0008 01AC     		add	r4, sp, #4
@@ -75,8 +75,8 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
   59              		.loc 1 8 13 view .LVU6
   60 0012 FFF7FEFF 		bl	memset
   61              	.LVL2:
-   9:controller/error_handling.c **** 
-  10:controller/error_handling.c ****     snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Error: %s\n", message);
+   9:controller/utils/error_handling.c **** 
+  10:controller/utils/error_handling.c ****     snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Error: %s\n", message);
   62              		.loc 1 10 5 is_stmt 1 view .LVU7
   63 0016 3346     		mov	r3, r6
   64 0018 074A     		ldr	r2, .L8
@@ -84,8 +84,8 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
   66 001c 2046     		mov	r0, r4
   67 001e FFF7FEFF 		bl	snprintf
   68              	.LVL3:
-  11:controller/error_handling.c **** 
-  12:controller/error_handling.c ****     CDC_Transmit_FS(buffer, strlen((char*)buffer));
+  11:controller/utils/error_handling.c **** 
+  12:controller/utils/error_handling.c ****     CDC_Transmit_FS(buffer, strlen((char*)buffer));
   69              		.loc 1 12 5 view .LVU8
   70              		.loc 1 12 29 is_stmt 0 view .LVU9
   71 0022 2046     		mov	r0, r4
@@ -96,7 +96,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
   76 002a 2046     		mov	r0, r4
   77 002c FFF7FEFF 		bl	CDC_Transmit_FS
   78              	.LVL5:
-  13:controller/error_handling.c **** }
+  13:controller/utils/error_handling.c **** }
   79              		.loc 1 13 1 view .LVU11
   80 0030 1AB0     		add	sp, sp, #104
   81              		.cfi_def_cfa_offset 16
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
   97              		.cfi_endproc
   98              	.LFE224:
  100              		.section	.rodata.log_warning.str1.4,"aMS",%progbits,1
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s 			page 3
 
 
  101              		.align	2
@@ -136,18 +136,18 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
  111              	log_warning:
  112              	.LVL7:
  113              	.LFB225:
-  14:controller/error_handling.c **** 
-  15:controller/error_handling.c **** void log_warning(const char* message)
-  16:controller/error_handling.c **** {
+  14:controller/utils/error_handling.c **** 
+  15:controller/utils/error_handling.c **** void log_warning(const char* message)
+  16:controller/utils/error_handling.c **** {
  114              		.loc 1 16 1 is_stmt 1 view -0
  115              		.cfi_startproc
  116              		@ args = 0, pretend = 0, frame = 104
  117              		@ frame_needed = 0, uses_anonymous_args = 0
-  17:controller/error_handling.c ****     if (message == NULL) return;
+  17:controller/utils/error_handling.c ****     if (message == NULL) return;
  118              		.loc 1 17 5 view .LVU14
  119              		.loc 1 17 8 is_stmt 0 view .LVU15
  120 0000 C0B1     		cbz	r0, .L14
-  16:controller/error_handling.c ****     if (message == NULL) return;
+  16:controller/utils/error_handling.c ****     if (message == NULL) return;
  121              		.loc 1 16 1 view .LVU16
  122 0002 70B5     		push	{r4, r5, r6, lr}
  123              		.cfi_def_cfa_offset 16
@@ -158,8 +158,8 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
  128 0004 9AB0     		sub	sp, sp, #104
  129              		.cfi_def_cfa_offset 120
  130 0006 0646     		mov	r6, r0
-  18:controller/error_handling.c **** 
-  19:controller/error_handling.c ****     uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
+  18:controller/utils/error_handling.c **** 
+  19:controller/utils/error_handling.c ****     uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
  131              		.loc 1 19 5 is_stmt 1 view .LVU17
  132              		.loc 1 19 13 is_stmt 0 view .LVU18
  133 0008 01AC     		add	r4, sp, #4
@@ -171,20 +171,20 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
  139              		.loc 1 19 13 view .LVU19
  140 0012 FFF7FEFF 		bl	memset
  141              	.LVL9:
-  20:controller/error_handling.c **** 
-  21:controller/error_handling.c ****     snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Warning: %s\n", message);
+  20:controller/utils/error_handling.c **** 
+  21:controller/utils/error_handling.c ****     snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Warning: %s\n", message);
  142              		.loc 1 21 5 is_stmt 1 view .LVU20
  143 0016 3346     		mov	r3, r6
  144 0018 074A     		ldr	r2, .L17
  145 001a 2946     		mov	r1, r5
  146 001c 2046     		mov	r0, r4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s 			page 4
 
 
  147 001e FFF7FEFF 		bl	snprintf
  148              	.LVL10:
-  22:controller/error_handling.c **** 
-  23:controller/error_handling.c ****     CDC_Transmit_FS(buffer, strlen((char*)buffer));
+  22:controller/utils/error_handling.c **** 
+  23:controller/utils/error_handling.c ****     CDC_Transmit_FS(buffer, strlen((char*)buffer));
  149              		.loc 1 23 5 view .LVU21
  150              		.loc 1 23 29 is_stmt 0 view .LVU22
  151 0022 2046     		mov	r0, r4
@@ -195,7 +195,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
  156 002a 2046     		mov	r0, r4
  157 002c FFF7FEFF 		bl	CDC_Transmit_FS
  158              	.LVL12:
-  24:controller/error_handling.c **** }...
+  24:controller/utils/error_handling.c **** }...
  159              		.loc 1 24 1 view .LVU24
  160 0030 1AB0     		add	sp, sp, #104
  161              		.cfi_def_cfa_offset 16
@@ -225,19 +225,19 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 1
  186              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
  187              		.file 7 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
  188              		.file 8 "<built-in>"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s 			page 5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s 			page 5
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 error_handling.c
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:21     .rodata.log_error.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:25     .text.log_error:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:31     .text.log_error:00000000 log_error
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:96     .text.log_error:00000038 $d
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:101    .rodata.log_warning.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:105    .text.log_warning:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:111    .text.log_warning:00000000 log_warning
-C:\Users\alireza\AppData\Local\Temp\cctpkGVN.s:176    .text.log_warning:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:21     .rodata.log_error.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:25     .text.log_error:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:31     .text.log_error:00000000 log_error
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:96     .text.log_error:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:101    .rodata.log_warning.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:105    .text.log_warning:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:111    .text.log_warning:00000000 log_warning
+C:\Users\alireza\AppData\Local\Temp\ccqTXxzP.s:176    .text.log_warning:00000038 $d
 
 UNDEFINED SYMBOLS
 memset
