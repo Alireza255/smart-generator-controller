@@ -3,6 +3,7 @@
 configuration_s configuration = {0};
 engine_s engine = {0};
 
+static electronic_throttle_s etb1 = {0};
 
 void controller_init()
 {
@@ -30,10 +31,24 @@ void controller_init()
         .output[2] = {.gpio = IGNITION_OUTPUT3_GPIO_Port, .pin = IGNITION_OUTPUT3_Pin},
         .output[3] = {.gpio = IGNITION_OUTPUT4_GPIO_Port, .pin = IGNITION_OUTPUT4_Pin}
     };
+    configuration.governer_pid.Kp = 1;
+    configuration.cranking_throttle = 10;
+    configuration.governer_target_rpm = 1100;
 
     controller_timing_start(&htim2);
+    analog_inputs_init(&hadc1);
     trigger_init(&engine.trigger);
     ignition_init(&ignition_output_conf);
+
+    // this has to eventually use the configuration 
+    static pid_t etb1_pid = {.Kp = 10, .Ki = 0, .Kd = 0, .setpoint = 50};
+    pid_init(&etb1_pid);
+    static sensor_tps_s etb1_tps = {.analog_channel = ANALOG_INPUT_ETB1_SENSE1, .closed_throttle_adc_value = 0, .wide_open_throttle_adc_value = 4095, .is_inverted = false};
+    static dc_motor_s etb1_motor = {0};
+    dc_motor_init(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 1000);
+    electronic_throttle_init(&etb1, &etb1_pid, &etb1_tps, &etb1_motor);
+
+    governer_init(&etb1);
 
     //HAL_FLASH_Unlock();
     //EE_Init();

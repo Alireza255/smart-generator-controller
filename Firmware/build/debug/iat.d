@@ -33,6 +33,7 @@ build/debug/iat.o: controller/IO/sensors/iat.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
  controller/types.h controller/utils/utils.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  controller/utils/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
  Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
@@ -49,7 +50,9 @@ build/debug/iat.o: controller/IO/sensors/iat.c \
  controller/IO/analog_inputs.h controller/engine_cycle/ignition.h \
  controller/IO/sensors/iat.h controller/IO/sensors/map.h \
  controller/IO/sensors/clt.h controller/utils/pid.h \
- controller/utils/timing.h
+ controller/utils/timing.h controller/actuators/electronic_throttle.h \
+ controller/actuators/dc_motors.h Core/Inc/adc.h \
+ controller/algorithm/governer.h
 controller/IO/sensors/iat.h:
 controller/IO/thermistor.h:
 controller/IO/resistor.h:
@@ -89,6 +92,7 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
 controller/types.h:
 controller/utils/utils.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/utils/error_handling.h:
 USB_DEVICE/App/usbd_cdc_if.h:
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
@@ -118,3 +122,7 @@ controller/IO/sensors/map.h:
 controller/IO/sensors/clt.h:
 controller/utils/pid.h:
 controller/utils/timing.h:
+controller/actuators/electronic_throttle.h:
+controller/actuators/dc_motors.h:
+Core/Inc/adc.h:
+controller/algorithm/governer.h:

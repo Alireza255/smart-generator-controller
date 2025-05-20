@@ -4,6 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "types.h"
 #include "utils.h"
+#include "cmsis_os2.h"
 
 /**
  * @note it is very important that this matches the stm32cubemx configuration

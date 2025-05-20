@@ -71,6 +71,24 @@ float pid_compute(pid_t *pid, time_us_t current_time_us, float input)
     /* Save the variables for the next function call */
     pid->prev_error = error;
     pid->prev_input = input;
-
+    pid->prev_controller_time_us = current_time_us;
+    
     return pid->output;
+}
+
+void pid_set_tuning(pid_t *pid, pid_configuration_s *conf)
+{
+    if (pid == NULL)
+    {
+        return;
+    }
+    /**
+     * @todo provide propper range checks in the furture
+     */
+    pid->Kp = conf->Kp;
+    pid->Ki = conf->Ki;
+    pid->Kd = conf->Kd;
+    pid->limit_integrator_min = conf->limit_integrator_min;
+    pid->limit_integrator_max = conf->limit_integrator_max;
+    pid->derivative_filter_tau = conf->derivative_filter_tau;
 }

@@ -138,6 +138,7 @@ controller/actuators/dc_motors.c \
 controller/actuators/electronic_throttle.c \
 controller/algorithm/air_mass/airmass.c \
 controller/algorithm/fuel/fuel_math.c \
+controller/algorithm/governer.c \
 controller/controller.c \
 controller/eeprom/eeprom.c \
 controller/engine_cycle/ignition.c \

@@ -87,11 +87,11 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
         return;
     }
 
-
+    angle_t spark_advance = 0;
     #ifdef TEST_MODE
-    angle_t spark_advance = (angle_t)30;
+    spark_advance = (angle_t)30;
     #else
-    angle_t spark_advance = spark_logic_get_advance();
+    spark_advance = spark_logic_get_advance();
     #endif
 
     spark_advance = CLAMP(spark_advance, IGNITION_MIN_ADVANCE, IGNITION_MAX_ADVANCE);
@@ -206,6 +206,12 @@ percent_t ignition_get_coil_duty_cycle()
 
 angle_t ignition_get_advance()
 {
+    angle_t final_advance = IGNITION_ADVANCE_FAIL_SAFE;
+    if (engine.spinning_state != SS_RUNNING)
+    {
+        return configuration.cranking_advance;
+    }
+    
     temperature_t intake_air_temp = sensor_iat_get();
     table_ignition_t *ignition_table = table_ignition_get_table();
     rpm_t rpm = crankshaft_get_rpm();
@@ -214,7 +220,7 @@ angle_t ignition_get_advance()
     angle_t table_advance = table_ignition_get_value(ignition_table, rpm, map);
 
     /* Here we can apply all kinds of correction to the table */
-    angle_t final_advance = table_advance; // + corrections
+    final_advance = table_advance; // + corrections
 
     return final_advance;
 }

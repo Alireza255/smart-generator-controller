@@ -35,11 +35,12 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  controller/engine_cycle/trigger.h controller/actuators/dc_motors.h \
  Core/Inc/main.h controller/tables.h controller/constants.h \
  controller/IO/sensors/tps.h controller/IO/analog_inputs.h \
- controller/utils/utils.h controller/engine_cycle/ignition.h \
- controller/controller.h controller/IO/sensors/iat.h \
- controller/IO/thermistor.h controller/IO/resistor.h \
- controller/IO/analog_inputs.h controller/utils/error_handling.h \
- USB_DEVICE/App/usbd_cdc_if.h \
+ controller/utils/utils.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ controller/engine_cycle/ignition.h controller/controller.h \
+ controller/IO/sensors/iat.h controller/IO/thermistor.h \
+ controller/IO/resistor.h controller/IO/analog_inputs.h \
+ controller/utils/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
  Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
@@ -48,7 +49,10 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/IO/sensors/map.h controller/IO/sensors/clt.h \
- controller/utils/pid.h controller/utils/timing.h
+ controller/utils/pid.h controller/utils/timing.h \
+ controller/actuators/electronic_throttle.h \
+ controller/actuators/dc_motors.h Core/Inc/adc.h \
+ controller/algorithm/governer.h
 controller/controller.h:
 controller/enums.h:
 controller/utils/timing.h:
@@ -98,6 +102,7 @@ controller/constants.h:
 controller/IO/sensors/tps.h:
 controller/IO/analog_inputs.h:
 controller/utils/utils.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/engine_cycle/ignition.h:
 controller/controller.h:
 controller/IO/sensors/iat.h:
@@ -117,3 +122,7 @@ controller/IO/sensors/map.h:
 controller/IO/sensors/clt.h:
 controller/utils/pid.h:
 controller/utils/timing.h:
+controller/actuators/electronic_throttle.h:
+controller/actuators/dc_motors.h:
+Core/Inc/adc.h:
+controller/algorithm/governer.h:

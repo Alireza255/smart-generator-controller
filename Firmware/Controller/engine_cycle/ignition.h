@@ -19,6 +19,7 @@
 #define IGNITION_MIN_ADVANCE (angle_t)0
 #define IGNITION_MAX_ADVANCE (angle_t)40
 
+#define IGNITION_ADVANCE_FAIL_SAFE (angle_t)10
 
 typedef struct
 {

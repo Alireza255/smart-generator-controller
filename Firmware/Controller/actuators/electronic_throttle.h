@@ -7,6 +7,7 @@
 #ifndef ELECTRONIC_THROTTLE_H
 #define ELECTRONIC_THROTTLE_H
 
+#include "cmsis_os2.h"
 #include "dc_motors.h"
 #include "pid.h"
 #include "tps.h"
@@ -39,6 +40,6 @@ void electronic_throttle_init(electronic_throttle_s *etb, pid_t *pid, sensor_tps
 
 void electronic_throttle_set(electronic_throttle_s *etb, percent_t position);
 
-void electronic_throttle_update(electronic_throttle_s *etb);
+void electronic_throttle_update(void *arg);
 
 #endif // ELECTRONIC_THROTTLE_H

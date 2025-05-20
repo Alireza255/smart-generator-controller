@@ -16,6 +16,16 @@ void electronic_throttle_init(electronic_throttle_s *etb, pid_t *pid, sensor_tps
     etb->pid->limit_output_max = (float)255;
     etb->pid->limit_output_min = (float)-255;
 
+    //electronic_throttle_update(etb);
+    osTimerId_t timer_id = osTimerNew(
+        electronic_throttle_update,
+        osTimerPeriodic,
+        etb,
+        NULL
+    );
+    osTimerStart(timer_id, 1); // every 1 tick = every 1ms = 1000Hz
+    etb->state = ETB_STATE_NORMAL;
+
 }
 
 void electronic_throttle_set(electronic_throttle_s *etb, percent_t position)
@@ -27,17 +37,19 @@ void electronic_throttle_set(electronic_throttle_s *etb, percent_t position)
     etb->target_position = position;
 }
 
-void electronic_throttle_update(electronic_throttle_s *etb)
+void electronic_throttle_update(void *arg)
 {
-    if (etb == NULL || etb->pid == NULL || etb->sensor == NULL || etb->motor || NULL)
+    electronic_throttle_s *etb = (electronic_throttle_s *)arg;
+    if (etb == NULL || etb->pid == NULL || etb->sensor == NULL || etb->motor == NULL)
     {
         log_error("Electronic throttle not initialized");
         return;
     }
     percent_t postion = sensor_tps_get(etb->sensor);
+    pid_set_setpoint(etb->pid, etb->target_position);
     percent_t motor_effort = pid_compute(etb->pid, get_time_us(), postion);
     dc_motor_direction_e dir = motor_effort > 0 ? MD_FORWARD : MD_REVERSE;
-    dc_motor_set(etb->motor, dir ,  ABS((uint8_t)motor_effort));
+    dc_motor_set(etb->motor, dir ,  (uint8_t)ABS(motor_effort));
 }
 
 

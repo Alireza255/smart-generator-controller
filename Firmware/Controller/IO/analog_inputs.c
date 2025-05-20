@@ -2,7 +2,7 @@
 #include "error_handling.h"
 
 ADC_HandleTypeDef *hadc = NULL;
-volatile analog_inputs_s analog_data[ANALOG_INPUTS_MAX] ={0};
+volatile analog_inputs_s analog_data ={0};
 
 volatile bool conversion_is_happening = false;
 
@@ -33,7 +33,19 @@ void analog_inputs_init(ADC_HandleTypeDef *adc_handle)
     hadc = adc_handle;
 
     conversion_is_happening = true;
-    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data->raw_values, ANALOG_INPUTS_MAX);
+
+    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data.raw_values, ANALOG_INPUTS_MAX);
+    /**
+    * @todo this is just a temporary fix make this a proper thing
+    */
+    osTimerId_t timer_id = osTimerNew(
+        analog_inputs_start_conversion,
+        osTimerPeriodic,
+        NULL,
+        NULL
+    );
+    osTimerStart(timer_id, 1);
+
 }
 
 /**
@@ -54,7 +66,7 @@ void analog_inputs_start_conversion()
     }
     
     conversion_is_happening = true;
-    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data->raw_values, ANALOG_INPUTS_MAX);
+    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data.raw_values, ANALOG_INPUTS_MAX);
 }
 
 /**
@@ -78,7 +90,7 @@ uint32_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index)
         log_error("Invalid index in analog input.");
         return 0;
     }
-    return analog_data->raw_values[input_index];
+    return analog_data.raw_values[input_index];
 }
 
 voltage_t analog_inputs_get_voltage(analog_input_adc_channel_mapping_e input_index)

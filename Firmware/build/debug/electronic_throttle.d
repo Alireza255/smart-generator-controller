@@ -1,6 +1,7 @@
 build/debug/electronic_throttle.o: \
  controller/actuators/electronic_throttle.c \
  controller/actuators/electronic_throttle.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  controller/actuators/dc_motors.h controller/types.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  Core/Inc/stm32f4xx_hal_conf.h \
@@ -45,6 +46,7 @@ build/debug/electronic_throttle.o: \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
 controller/actuators/electronic_throttle.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/actuators/dc_motors.h:
 controller/types.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:

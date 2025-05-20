@@ -1,6 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+
 #include "enums.h"
 #include "timing.h"
 #include "types.h"
@@ -12,6 +13,9 @@
 #include "ignition.h"
 #include "thermistor.h"
 #include "pid.h"
+#include "electronic_throttle.h"
+#include "adc.h"
+#include "governer.h"
 
 typedef struct
 {
@@ -30,6 +34,8 @@ typedef struct
     angle_t firing_interval;
 
     trigger_s trigger;
+    
+    governer_status_e governer_status;
 } engine_s;
 
 extern engine_s engine;
@@ -41,7 +47,9 @@ typedef struct
     
     trigger_settings_s trigger;
     rpm_t cranking_rpm_threshold;
-    
+    angle_t cranking_advance;
+    percent_t cranking_throttle;
+
     firing_order_e firing_order;
 
     ignition_mode_e ignition_mode;
@@ -55,8 +63,8 @@ typedef struct
     afr_t stoich_afr_gas;
     afr_t stoich_afr_petrol;
     
-    sensor_tps_s tps1_calib;
-    sensor_tps_s tps2_calib;
+    sensor_tps_s tps1;
+    sensor_tps_s tps2;
 
     thermistor_conf_s clt_thermistor_calib;
 
@@ -64,6 +72,12 @@ typedef struct
 
     sensor_map_type_e map_sensor_type;
 
+    rpm_t governer_target_rpm;
+    rpm_t governer_idle_rpm;
+
+    pid_configuration_s etb_pid;
+    pid_configuration_s governer_pid;
+    
 } configuration_s;
 
 extern configuration_s configuration;

@@ -81,6 +81,7 @@ void dc_motor_set(dc_motor_s *motor, dc_motor_direction_e dir, uint8_t duty_cycl
 		break;
 	}
 	motor->current_duty_cycle = duty_cycle;
+	motor->current_direction = dir;
 }
 
 /**
