@@ -42,24 +42,25 @@ extern engine_s engine;
 
 typedef struct
 {
-    bool is_fuel_injection_enabled;
-    bool is_gas_injection_enabled;
+    volume_liter_t engine_displacment;
+    firing_order_e firing_order;
+    fuel_type_e fuel_type;
+    
     
     trigger_settings_s trigger;
+
     rpm_t cranking_rpm_threshold;
     angle_t cranking_advance;
     percent_t cranking_throttle;
 
-    firing_order_e firing_order;
 
     ignition_mode_e ignition_mode;
     float_time_ms_t ignition_dwell;
     bool ignition_is_multi_spark;
     uint8_t ignition_multi_spark_number_of_sparks;
     rpm_t ignition_multi_spark_rpm_threshold;
-    float_time_ms_t multi_spark_rest_time;
+    float_time_ms_t ignition_multi_spark_rest_time;
 
-    volume_liter_t engine_displacment;
     afr_t stoich_afr_gas;
     afr_t stoich_afr_petrol;
     
@@ -77,6 +78,15 @@ typedef struct
 
     pid_configuration_s etb_pid;
     pid_configuration_s governer_pid;
+
+    time_ms_t protection_oil_pressure_time;
+    bool protection_oil_pressure_enabled;
+
+    bool protection_clt_enabled;
+    bool protection_clt_load_disconnect_enabled;
+    temperature_t protection_clt_shutdown_temprature;
+    temperature_t protection_clt_load_disconnect_temprature;
+    
     
 } configuration_s;
 

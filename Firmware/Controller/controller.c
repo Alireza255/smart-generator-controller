@@ -33,7 +33,7 @@ void controller_init()
     };
     configuration.governer_pid.Kp = 1;
     configuration.cranking_throttle = 10;
-    configuration.governer_target_rpm = 1100;
+    configuration.governer_target_rpm = 1000;
 
     controller_timing_start(&htim2);
     analog_inputs_init(&hadc1);
@@ -45,7 +45,7 @@ void controller_init()
     pid_init(&etb1_pid);
     static sensor_tps_s etb1_tps = {.analog_channel = ANALOG_INPUT_ETB1_SENSE1, .closed_throttle_adc_value = 0, .wide_open_throttle_adc_value = 4095, .is_inverted = false};
     static dc_motor_s etb1_motor = {0};
-    dc_motor_init(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 1000);
+    dc_motor_init(&etb1_motor, &htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 1000);
     electronic_throttle_init(&etb1, &etb1_pid, &etb1_tps, &etb1_motor);
 
     governer_init(&etb1);

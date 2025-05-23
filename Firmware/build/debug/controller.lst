@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
   46 0008 0027     		movs	r7, #0
   47 000a 3760     		str	r7, [r6]
   11:controller/controller.c ****     engine.crankshaft_angle = 0;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 2
 
 
   48              		.loc 1 11 5 is_stmt 1 view .LVU3
@@ -94,35 +94,35 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
   70              		.loc 1 19 34 is_stmt 0 view .LVU16
   71 0022 244D     		ldr	r5, .L3+8
   72 0024 244B     		ldr	r3, .L3+12
-  73 0026 AB61     		str	r3, [r5, #24]	@ float
+  73 0026 EB61     		str	r3, [r5, #28]	@ float
   20:controller/controller.c ****     configuration.ignition_mode = IM_WASTED_SPARK;
   74              		.loc 1 20 5 is_stmt 1 view .LVU17
   75              		.loc 1 20 33 is_stmt 0 view .LVU18
   76 0028 0323     		movs	r3, #3
-  77 002a 6B75     		strb	r3, [r5, #21]
+  77 002a 2B76     		strb	r3, [r5, #24]
   21:controller/controller.c **** 
   22:controller/controller.c ****     configuration.trigger.filtering = TF_FILTERING_NONE;
   78              		.loc 1 22 5 is_stmt 1 view .LVU19
   79              		.loc 1 22 37 is_stmt 0 view .LVU20
-  80 002c AF70     		strb	r7, [r5, #2]
+  80 002c AF71     		strb	r7, [r5, #6]
   23:controller/controller.c ****     configuration.trigger.full_teeth = 60;
   81              		.loc 1 23 5 is_stmt 1 view .LVU21
   82              		.loc 1 23 38 is_stmt 0 view .LVU22
   83 002e 3C23     		movs	r3, #60
-  84 0030 EB70     		strb	r3, [r5, #3]
+  84 0030 EB71     		strb	r3, [r5, #7]
   24:controller/controller.c ****     configuration.trigger.missing_teeth = 2;
   85              		.loc 1 24 5 is_stmt 1 view .LVU23
   86              		.loc 1 24 41 is_stmt 0 view .LVU24
   87 0032 0223     		movs	r3, #2
-  88 0034 2B71     		strb	r3, [r5, #4]
+  88 0034 2B72     		strb	r3, [r5, #8]
   25:controller/controller.c ****     configuration.cranking_rpm_threshold = 400;
   89              		.loc 1 25 5 is_stmt 1 view .LVU25
   90              		.loc 1 25 42 is_stmt 0 view .LVU26
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 3
 
 
   91 0036 214B     		ldr	r3, .L3+16
-  92 0038 AB60     		str	r3, [r5, #8]	@ float
+  92 0038 EB60     		str	r3, [r5, #12]	@ float
   26:controller/controller.c ****     
   27:controller/controller.c ****     ignition_output_conf_s ignition_output_conf =
   93              		.loc 1 27 5 is_stmt 1 view .LVU27
@@ -148,8 +148,8 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
  105              		.loc 1 35 5 is_stmt 1 view .LVU31
  106              		.loc 1 35 37 is_stmt 0 view .LVU32
  107 0054 1B4B     		ldr	r3, .L3+24
- 108 0056 2B61     		str	r3, [r5, #16]	@ float
-  36:controller/controller.c ****     configuration.governer_target_rpm = 1100;
+ 108 0056 6B61     		str	r3, [r5, #20]	@ float
+  36:controller/controller.c ****     configuration.governer_target_rpm = 1000;
  109              		.loc 1 36 5 is_stmt 1 view .LVU33
  110              		.loc 1 36 39 is_stmt 0 view .LVU34
  111 0058 1B4B     		ldr	r3, .L3+28
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
   42:controller/controller.c **** 
   43:controller/controller.c ****     // this has to eventually use the configuration 
   44:controller/controller.c ****     static pid_t etb1_pid = {.Kp = 10, .Ki = 0, .Kd = 0, .setpoint = 50};
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 4
 
 
  129              		.loc 1 44 5 view .LVU39
@@ -192,7 +192,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
  135              		.loc 1 46 5 view .LVU41
   47:controller/controller.c ****     static dc_motor_s etb1_motor = {0};
  136              		.loc 1 47 5 view .LVU42
-  48:controller/controller.c ****     dc_motor_init(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 1000);
+  48:controller/controller.c ****     dc_motor_init(&etb1_motor, &htim1, TIM_CHANNEL_1, TIM_CHANNEL_2, 1000);
  137              		.loc 1 48 5 view .LVU43
  138 007e 164E     		ldr	r6, .L3+44
  139 0080 4FF47A73 		mov	r3, #1000
@@ -237,15 +237,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
  171 00bc 0000C843 		.word	1137180672
  172 00c0 00000000 		.word	.LANCHOR0
  173 00c4 00002041 		.word	1092616192
- 174 00c8 00808944 		.word	1149861888
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 5
+ 174 00c8 00007A44 		.word	1148846080
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 5
 
 
  175 00cc 00000000 		.word	htim2
  176 00d0 00000000 		.word	hadc1
  177 00d4 00000000 		.word	etb1_pid.2
  178 00d8 00000000 		.word	etb1_motor.1
- 179 00dc 00000000 		.word	htim3
+ 179 00dc 00000000 		.word	htim1
  180 00e0 00000000 		.word	etb1
  181 00e4 00000000 		.word	etb1_tps.0
  182              		.cfi_endproc
@@ -293,12 +293,12 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
  215              	.LVL9:
  216              	.L6:
  217              		.loc 1 62 26 is_stmt 1 discriminator 1 view .LVU54
- 218 0004 492C     		cmp	r4, #73
+ 218 0004 4D2C     		cmp	r4, #77
  219 0006 0BD8     		bhi	.L5
   63:controller/controller.c ****     {
   64:controller/controller.c ****         status = EE_ReadVariable(i, starting_point + i);
  220              		.loc 1 64 9 view .LVU55
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 6
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 6
 
 
  221              		.loc 1 64 18 is_stmt 0 view .LVU56
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
  263              		.section	.text.controller_save_configuration,"ax",%progbits
  264              		.align	1
  265              		.global	controller_save_configuration
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 7
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 7
 
 
  266              		.syntax unified
@@ -391,188 +391,196 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 1
  287              		.loc 1 78 17 is_stmt 0 view .LVU73
  288 0002 0024     		movs	r4, #0
  289              		.loc 1 78 5 view .LVU74
- 290 0004 00E0     		b	.L15
+ 290 0004 03E0     		b	.L15
  291              	.LVL17:
- 292              	.L16:
- 293              		.loc 1 78 41 is_stmt 1 discriminator 2 view .LVU75
- 294 0006 0134     		adds	r4, r4, #1
- 295              	.LVL18:
- 296              	.L15:
- 297              		.loc 1 78 26 discriminator 1 view .LVU76
- 298 0008 492C     		cmp	r4, #73
- 299 000a 0BD8     		bhi	.L19
+ 292              	.L20:
   79:controller/controller.c ****     {
   80:controller/controller.c ****         status = EE_WriteVariable(i, *(starting_point + i));
- 300              		.loc 1 80 9 view .LVU77
- 301              		.loc 1 80 18 is_stmt 0 view .LVU78
- 302 000c 064B     		ldr	r3, .L20
- 303 000e 33F81410 		ldrh	r1, [r3, r4, lsl #1]
- 304 0012 A0B2     		uxth	r0, r4
- 305 0014 FFF7FEFF 		bl	EE_WriteVariable
- 306              	.LVL19:
   81:controller/controller.c ****         if (status != HAL_OK)
- 307              		.loc 1 81 9 is_stmt 1 view .LVU79
- 308              		.loc 1 81 12 is_stmt 0 view .LVU80
- 309 0018 0028     		cmp	r0, #0
- 310 001a F4D0     		beq	.L16
   82:controller/controller.c ****         {
   83:controller/controller.c ****             log_error("Configuration save failed!");
- 311              		.loc 1 83 13 is_stmt 1 view .LVU81
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 8
+ 293              		.loc 1 83 13 is_stmt 1 view .LVU75
+ 294 0006 0848     		ldr	r0, .L21
+ 295              	.LVL18:
+ 296              		.loc 1 83 13 is_stmt 0 view .LVU76
+ 297 0008 FFF7FEFF 		bl	log_error
+ 298              	.LVL19:
+ 299              	.L16:
+  78:controller/controller.c ****     for (size_t i = 0; i < write_size; i++)
+ 300              		.loc 1 78 41 is_stmt 1 discriminator 2 view .LVU77
+ 301 000c 0134     		adds	r4, r4, #1
+ 302              	.LVL20:
+ 303              	.L15:
+  78:controller/controller.c ****     for (size_t i = 0; i < write_size; i++)
+ 304              		.loc 1 78 26 discriminator 1 view .LVU78
+ 305 000e 4D2C     		cmp	r4, #77
+ 306 0010 08D8     		bhi	.L19
+  80:controller/controller.c ****         if (status != HAL_OK)
+ 307              		.loc 1 80 9 view .LVU79
+  80:controller/controller.c ****         if (status != HAL_OK)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 8
 
 
- 312 001c 0348     		ldr	r0, .L20+4
- 313              	.LVL20:
- 314              		.loc 1 83 13 is_stmt 0 view .LVU82
- 315 001e FFF7FEFF 		bl	log_error
- 316              	.LVL21:
- 317 0022 F0E7     		b	.L16
- 318              	.LVL22:
- 319              	.L19:
- 320              		.loc 1 83 13 view .LVU83
- 321              	.LBE3:
+ 308              		.loc 1 80 18 is_stmt 0 view .LVU80
+ 309 0012 064B     		ldr	r3, .L21+4
+ 310 0014 33F81410 		ldrh	r1, [r3, r4, lsl #1]
+ 311 0018 A0B2     		uxth	r0, r4
+ 312 001a FFF7FEFF 		bl	EE_WriteVariable
+ 313              	.LVL21:
+  81:controller/controller.c ****         {
+ 314              		.loc 1 81 9 is_stmt 1 view .LVU81
+  81:controller/controller.c ****         {
+ 315              		.loc 1 81 12 is_stmt 0 view .LVU82
+ 316 001e 0028     		cmp	r0, #0
+ 317 0020 F4D0     		beq	.L16
+ 318 0022 F0E7     		b	.L20
+ 319              	.LVL22:
+ 320              	.L19:
+  81:controller/controller.c ****         {
+ 321              		.loc 1 81 12 view .LVU83
+ 322              	.LBE3:
   84:controller/controller.c ****         }
   85:controller/controller.c ****     }
   86:controller/controller.c **** }
- 322              		.loc 1 86 1 view .LVU84
- 323 0024 10BD     		pop	{r4, pc}
- 324              	.LVL23:
- 325              	.L21:
- 326              		.loc 1 86 1 view .LVU85
- 327 0026 00BF     		.align	2
- 328              	.L20:
- 329 0028 00000000 		.word	configuration
- 330 002c 00000000 		.word	.LC2
- 331              		.cfi_endproc
- 332              	.LFE230:
- 334              		.section	.data.etb1_tps.0,"aw"
- 335              		.align	2
- 338              	etb1_tps.0:
- 339 0000 FF0F     		.short	4095
- 340 0002 0000     		.short	0
- 341 0004 00       		.byte	0
- 342 0005 00       		.byte	0
- 343              		.section	.bss.etb1_motor.1,"aw",%nobits
- 344              		.align	2
- 347              	etb1_motor.1:
- 348 0000 00000000 		.space	16
- 348      00000000 
- 348      00000000 
- 348      00000000 
- 349              		.section	.data.etb1_pid.2,"aw"
- 350              		.align	2
- 353              	etb1_pid.2:
- 354 0000 00002041 		.word	1092616192
- 355 0004 00000000 		.word	0
- 356 0008 00000000 		.word	0
- 357 000c 00000000 		.space	40
- 357      00000000 
- 357      00000000 
- 357      00000000 
- 357      00000000 
- 358 0034 00004842 		.word	1112014848
- 359 0038 00000000 		.space	4
- 360              		.section	.bss.etb1,"aw",%nobits
- 361              		.align	2
- 364              	etb1:
- 365 0000 00000000 		.space	20
- 365      00000000 
- 365      00000000 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 9
+ 323              		.loc 1 86 1 view .LVU84
+ 324 0024 10BD     		pop	{r4, pc}
+ 325              	.LVL23:
+ 326              	.L22:
+ 327              		.loc 1 86 1 view .LVU85
+ 328 0026 00BF     		.align	2
+ 329              	.L21:
+ 330 0028 00000000 		.word	.LC2
+ 331 002c 00000000 		.word	configuration
+ 332              		.cfi_endproc
+ 333              	.LFE230:
+ 335              		.section	.data.etb1_tps.0,"aw"
+ 336              		.align	2
+ 339              	etb1_tps.0:
+ 340 0000 FF0F     		.short	4095
+ 341 0002 0000     		.short	0
+ 342 0004 00       		.byte	0
+ 343 0005 00       		.byte	0
+ 344              		.section	.bss.etb1_motor.1,"aw",%nobits
+ 345              		.align	2
+ 348              	etb1_motor.1:
+ 349 0000 00000000 		.space	16
+ 349      00000000 
+ 349      00000000 
+ 349      00000000 
+ 350              		.section	.data.etb1_pid.2,"aw"
+ 351              		.align	2
+ 354              	etb1_pid.2:
+ 355 0000 00002041 		.word	1092616192
+ 356 0004 00000000 		.word	0
+ 357 0008 00000000 		.word	0
+ 358 000c 00000000 		.space	40
+ 358      00000000 
+ 358      00000000 
+ 358      00000000 
+ 358      00000000 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 9
 
 
- 365      00000000 
- 365      00000000 
- 366              		.global	engine
- 367              		.section	.bss.engine,"aw",%nobits
- 368              		.align	2
- 371              	engine:
- 372 0000 00000000 		.space	64
- 372      00000000 
- 372      00000000 
- 372      00000000 
- 372      00000000 
- 373              		.global	configuration
- 374              		.section	.bss.configuration,"aw",%nobits
- 375              		.align	2
- 378              	configuration:
- 379 0000 00000000 		.space	148
- 379      00000000 
- 379      00000000 
- 379      00000000 
- 379      00000000 
- 380              		.section	.rodata
- 381              		.align	2
- 382              		.set	.LANCHOR0,. + 0
- 383              	.LC0:
- 384 0000 00040240 		.word	1073873920
- 385 0004 00800000 		.word	32768
- 386 0008 00040240 		.word	1073873920
- 387 000c 00400000 		.word	16384
- 388 0010 00040240 		.word	1073873920
- 389 0014 00200000 		.word	8192
- 390 0018 00040240 		.word	1073873920
- 391 001c 00100000 		.word	4096
- 392              		.text
- 393              	.Letext0:
- 394              		.file 2 "controller/enums.h"
- 395              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 396              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 397              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 398              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 399              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
- 400              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 401              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 402              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
- 403              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 404              		.file 12 "controller/types.h"
- 405              		.file 13 "Core/Inc/tim.h"
- 406              		.file 14 "controller/engine_cycle/trigger.h"
- 407              		.file 15 "controller/actuators/dc_motors.h"
- 408              		.file 16 "controller/IO/analog_inputs.h"
- 409              		.file 17 "controller/IO/sensors/tps.h"
- 410              		.file 18 "controller/IO/thermistor.h"
- 411              		.file 19 "controller/engine_cycle/ignition.h"
- 412              		.file 20 "controller/utils/pid.h"
- 413              		.file 21 "controller/actuators/electronic_throttle.h"
- 414              		.file 22 "Core/Inc/adc.h"
- 415              		.file 23 "controller/algorithm/governer.h"
- 416              		.file 24 "controller/controller.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 10
+ 359 0034 00004842 		.word	1112014848
+ 360 0038 00000000 		.space	4
+ 361              		.section	.bss.etb1,"aw",%nobits
+ 362              		.align	2
+ 365              	etb1:
+ 366 0000 00000000 		.space	20
+ 366      00000000 
+ 366      00000000 
+ 366      00000000 
+ 366      00000000 
+ 367              		.global	engine
+ 368              		.section	.bss.engine,"aw",%nobits
+ 369              		.align	2
+ 372              	engine:
+ 373 0000 00000000 		.space	64
+ 373      00000000 
+ 373      00000000 
+ 373      00000000 
+ 373      00000000 
+ 374              		.global	configuration
+ 375              		.section	.bss.configuration,"aw",%nobits
+ 376              		.align	2
+ 379              	configuration:
+ 380 0000 00000000 		.space	156
+ 380      00000000 
+ 380      00000000 
+ 380      00000000 
+ 380      00000000 
+ 381              		.section	.rodata
+ 382              		.align	2
+ 383              		.set	.LANCHOR0,. + 0
+ 384              	.LC0:
+ 385 0000 00040240 		.word	1073873920
+ 386 0004 00800000 		.word	32768
+ 387 0008 00040240 		.word	1073873920
+ 388 000c 00400000 		.word	16384
+ 389 0010 00040240 		.word	1073873920
+ 390 0014 00200000 		.word	8192
+ 391 0018 00040240 		.word	1073873920
+ 392 001c 00100000 		.word	4096
+ 393              		.text
+ 394              	.Letext0:
+ 395              		.file 2 "controller/enums.h"
+ 396              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 397              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 398              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 399              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 400              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 401              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 402              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 403              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 404              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 405              		.file 12 "controller/types.h"
+ 406              		.file 13 "Core/Inc/tim.h"
+ 407              		.file 14 "controller/engine_cycle/trigger.h"
+ 408              		.file 15 "controller/actuators/dc_motors.h"
+ 409              		.file 16 "controller/IO/analog_inputs.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 10
 
 
- 417              		.file 25 "controller/eeprom/eeprom.h"
- 418              		.file 26 "controller/utils/error_handling.h"
- 419              		.file 27 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s 			page 11
+ 410              		.file 17 "controller/IO/sensors/tps.h"
+ 411              		.file 18 "controller/IO/thermistor.h"
+ 412              		.file 19 "controller/engine_cycle/ignition.h"
+ 413              		.file 20 "controller/utils/pid.h"
+ 414              		.file 21 "controller/actuators/electronic_throttle.h"
+ 415              		.file 22 "Core/Inc/adc.h"
+ 416              		.file 23 "controller/algorithm/governer.h"
+ 417              		.file 24 "controller/controller.h"
+ 418              		.file 25 "controller/eeprom/eeprom.h"
+ 419              		.file 26 "controller/utils/error_handling.h"
+ 420              		.file 27 "controller/utils/timing.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s 			page 11
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 controller.c
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:21     .text.controller_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:27     .text.controller_init:00000000 controller_init
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:167    .text.controller_init:000000ac $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:371    .bss.engine:00000000 engine
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:378    .bss.configuration:00000000 configuration
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:353    .data.etb1_pid.2:00000000 etb1_pid.2
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:347    .bss.etb1_motor.1:00000000 etb1_motor.1
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:364    .bss.etb1:00000000 etb1
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:338    .data.etb1_tps.0:00000000 etb1_tps.0
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:186    .rodata.controller_load_configuration.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:190    .text.controller_load_configuration:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:196    .text.controller_load_configuration:00000000 controller_load_configuration
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:254    .text.controller_load_configuration:00000024 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:260    .rodata.controller_save_configuration.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:264    .text.controller_save_configuration:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:270    .text.controller_save_configuration:00000000 controller_save_configuration
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:329    .text.controller_save_configuration:00000028 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:335    .data.etb1_tps.0:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:344    .bss.etb1_motor.1:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:350    .data.etb1_pid.2:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:361    .bss.etb1:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:368    .bss.engine:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:375    .bss.configuration:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccxAfdCg.s:381    .rodata:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:21     .text.controller_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:27     .text.controller_init:00000000 controller_init
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:167    .text.controller_init:000000ac $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:372    .bss.engine:00000000 engine
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:379    .bss.configuration:00000000 configuration
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:354    .data.etb1_pid.2:00000000 etb1_pid.2
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:348    .bss.etb1_motor.1:00000000 etb1_motor.1
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:365    .bss.etb1:00000000 etb1
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:339    .data.etb1_tps.0:00000000 etb1_tps.0
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:186    .rodata.controller_load_configuration.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:190    .text.controller_load_configuration:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:196    .text.controller_load_configuration:00000000 controller_load_configuration
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:254    .text.controller_load_configuration:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:260    .rodata.controller_save_configuration.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:264    .text.controller_save_configuration:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:270    .text.controller_save_configuration:00000000 controller_save_configuration
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:330    .text.controller_save_configuration:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:336    .data.etb1_tps.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:345    .bss.etb1_motor.1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:351    .data.etb1_pid.2:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:362    .bss.etb1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:369    .bss.engine:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:376    .bss.configuration:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccwrs5HQ.s:382    .rodata:00000000 $d
 
 UNDEFINED SYMBOLS
 controller_timing_start
@@ -585,7 +593,7 @@ electronic_throttle_init
 governer_init
 htim2
 hadc1
-htim3
+htim1
 EE_ReadVariable
 log_error
 EE_WriteVariable

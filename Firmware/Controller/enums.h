@@ -68,13 +68,13 @@ typedef enum __attribute__ ((__packed__)) {
  */
 typedef enum __attribute__ ((__packed__)) {
     /**
-     * Gasoline fuel type
-     */
-    FT_GASOLINE = 0,
-    /**
      * Natural gas fuel
      */
-    FT_NATURAL_GAS = 1,
+    FT_NATURAL_GAS = 0,
+    /**
+     * Gasoline fuel type
+     */
+    FT_GASOLINE = 1,
     /**
      * both fuel types are used, useful for when we want to start on gasoline and switch to natural gas after startup
      */
