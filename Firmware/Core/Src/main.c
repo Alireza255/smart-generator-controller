@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "adc.h"
+#include "crc.h"
 #include "dma.h"
 #include "tim.h"
 #include "usb_device.h"
@@ -65,9 +66,10 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN 0 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if (GPIO_Pin == GPIO_PIN_12)
+  __NOP();
+  if (GPIO_Pin == GPIO_PIN_9)
   {
-    trigger_tooth_handle(&engine.trigger);
+    trigger_tooth_handle();
   }
 }
 
@@ -110,6 +112,7 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
    
   /* USER CODE END 2 */

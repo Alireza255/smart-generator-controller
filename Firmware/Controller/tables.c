@@ -5,7 +5,6 @@
 table_ignition_t ignition_table;
 table_ve_t ve_table;
 
-
 percent_t table_ve_get_value(table_ve_t *table, rpm_t rpm, pressure_t load)
 {
     if (!IS_IN_RANGE(rpm, 0, FIRMWARE_LIMIT_MAX_RPM) || !IS_IN_RANGE(load, 0, FIRMWARE_LIMIT_MAX_MAP))

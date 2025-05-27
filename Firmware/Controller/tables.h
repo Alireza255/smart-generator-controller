@@ -16,7 +16,15 @@ typedef struct
     percent_t data[TABLE_PRIMARY_SIZE_X][TABLE_PRIMARY_SIZE_Y];
 } table_ve_t;
 
+typedef struct
+{
+    float data[TABLE_PRIMARY_SIZE_X][TABLE_PRIMARY_SIZE_Y];
+    float x_bins[TABLE_PRIMARY_SIZE_X];
+    float y_bins[TABLE_PRIMARY_SIZE_Y];
+} table_2d_t;
 
+
+float table_2d_get_value(table_2d_t *table, float x, float y);
 
 /**
  * @brief Retrieves the value from the VE (Volumetric Efficiency) table based on the given RPM and load.

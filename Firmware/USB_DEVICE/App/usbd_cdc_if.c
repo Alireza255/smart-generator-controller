@@ -22,6 +22,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
+#include "comms.h" // For usb_rx_queue_handle and usb_rx_packet_t
 
 /* USER CODE END INCLUDE */
 
@@ -263,6 +264,19 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
   /* USER CODE BEGIN 6 */
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+      // Prepare the packet to send to the FreeRTOS task
+    usb_rx_packet_t rx_packet;
+    if (*Len > 0 && *Len <= USB_RX_PACKET_MAX_SIZE) {
+        memcpy(rx_packet.data, Buf, *Len); // Copy data from USB buffer
+        rx_packet.len = *Len;
+
+        // Put the packet into the message queue.
+        // Use '0' for the timeout because this is an ISR. We don't want to block.
+        // If the queue is full, the packet will be dropped, which for this basic
+        // handshake is acceptable for now. For a full system, you'd handle this.
+        osMessageQueuePut(usb_rx_queue_handle, &rx_packet, 5, 0);
+
+    }
   return (USBD_OK);
   /* USER CODE END 6 */
 }

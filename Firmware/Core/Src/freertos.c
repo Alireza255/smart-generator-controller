@@ -160,6 +160,7 @@ void trigger_simulator_task(void *argument)
   {
     trigger_simulator_update(simulated_rpm);
     osDelay(1);
+    
   }
   /* USER CODE END trigger_simulator_task */
 }

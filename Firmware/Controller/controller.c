@@ -39,7 +39,7 @@ void controller_init()
     analog_inputs_init(&hadc1);
     trigger_init(&engine.trigger);
     ignition_init(&ignition_output_conf);
-
+    comms_init();
     // this has to eventually use the configuration 
     static pid_t etb1_pid = {.Kp = 10, .Ki = 0, .Kd = 0, .setpoint = 50};
     pid_init(&etb1_pid);

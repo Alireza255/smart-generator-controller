@@ -86,6 +86,8 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
         log_error("ignition dwell out of bounds.");
         return;
     }
+    /* Wether or not cam phase is known */
+    bool is_cam_phase_available = false;
 
     angle_t spark_advance = 0;
     #ifdef TEST_MODE
@@ -105,22 +107,32 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
 
     /* First we have to detect the engine phase */
     uint8_t phase = (uint8_t)(crankshaft_angle / engine.firing_interval);
-    
+    uint8_t phase_count = (uint8_t)(angle_t)360 / (angle_t)engine.firing_interval;
+
     volatile angle_t next_spark_angle = phase * engine.firing_interval - spark_advance + engine.firing_interval;
     volatile angle_t next_dwell_angle = next_spark_angle - (float)configuration.ignition_dwell * (float)1000 * degrees_per_microsecond(rpm);
     
-    /* phase index now shows which stage of crankshaft rotation we are in. */
-    static uint8_t next_firing_cylinder_index = 0;
-    next_firing_cylinder_index = ignition_order[phase] - 1;
- 
-    if ((next_dwell_angle - crankshaft_angle) < 10 && !spark_is_in_progress && (next_dwell_angle - crankshaft_angle) > 0)
+    static uint8_t next_firing_cylinders[2] = {0};
+
+    next_firing_cylinders[0] = ignition_order[phase] - 1;
+    next_firing_cylinders[1] = ignition_order[phase] - 1;
+
+    if (!is_cam_phase_available)
+    {
+        next_firing_cylinders[1] = ignition_order[phase + 2] - 1;
+        
+    }
+    
+
+    bool is_synced = engine.trigger.sync_status == TS_FULLY_SYNCED;
+    if (is_synced && (next_dwell_angle - crankshaft_angle) < 10 && !spark_is_in_progress && (next_dwell_angle - crankshaft_angle) > 0)
     {
         /* Now we are close enough to the dwell angle that we can schedule the coil charge start */
         spark_is_in_progress = true;
         time_us_t dwell_start_time_us = current_time_us + (time_us_t)((next_dwell_angle - crankshaft_angle) * microseconds_per_degree(rpm));
         time_us_t spark_start_time_us = current_time_us + (time_us_t)((next_spark_angle - crankshaft_angle) * microseconds_per_degree(rpm));
-        scheduler_schedule_event_with_arg(dwell_start_time_us, ignition_coil_begin_charge, (void*)&next_firing_cylinder_index);
-        scheduler_schedule_event_with_arg(spark_start_time_us, ignition_coil_fire_spark, (void*)&next_firing_cylinder_index);
+        scheduler_schedule_event_with_arg(dwell_start_time_us, ignition_coil_begin_charge, (void*)next_firing_cylinders);
+        scheduler_schedule_event_with_arg(spark_start_time_us, ignition_coil_fire_spark, (void*)next_firing_cylinders);
 
     }
     
@@ -149,6 +161,7 @@ uint8_t ignition_get_number_of_sparks_per_coil(ignition_mode_e ignition_mode)
     }
 }
 
+
 /**
  * @brief Charges the ignition coil at the specified index.
  * 
@@ -160,15 +173,17 @@ void ignition_coil_begin_charge(void *arg)
     {
         return;
     }
-    uint8_t coil_index = *(uint8_t*)arg;
+    uint8_t *coil_index = (uint8_t*)arg;
 
-    if (coil_index > IGNITION_MAX_OUTPUTS - 1)
+    if (coil_index[1] > IGNITION_MAX_OUTPUTS - 1)
     {
         log_error("Unkown ignition output");
         return;
     }
-    ignition_coil_state[coil_index] = IGNITION_COIL_STATE_CHARGING;
-    HAL_GPIO_WritePin(ignition_outputs[coil_index].gpio, ignition_outputs[coil_index].pin, GPIO_PIN_SET);
+    ignition_coil_state[coil_index[0]] = IGNITION_COIL_STATE_CHARGING;
+    ignition_coil_state[coil_index[1]] = IGNITION_COIL_STATE_CHARGING;
+    HAL_GPIO_WritePin(ignition_outputs[coil_index[0]].gpio, ignition_outputs[coil_index[0]].pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(ignition_outputs[coil_index[1]].gpio, ignition_outputs[coil_index[1]].pin, GPIO_PIN_SET);
 }
 
 /**
@@ -183,14 +198,17 @@ void ignition_coil_fire_spark(void *arg)
         return;
     }
     
-    uint8_t coil_index = *(uint8_t*)arg;
-    if (coil_index > IGNITION_MAX_OUTPUTS - 1)
+    uint8_t *coil_index = (uint8_t*)arg;
+    if (coil_index[1] > IGNITION_MAX_OUTPUTS - 1)
     {
         log_error("Unkown ignition output");
         return;
     }
-    ignition_coil_state[coil_index] = IGNITION_COIL_STATE_NOT_CHARGING;
-    HAL_GPIO_WritePin(ignition_outputs[coil_index].gpio, ignition_outputs[coil_index].pin, GPIO_PIN_RESET);
+    
+    ignition_coil_state[coil_index[0]] = IGNITION_COIL_STATE_NOT_CHARGING;
+    ignition_coil_state[coil_index[1]] = IGNITION_COIL_STATE_NOT_CHARGING;
+    HAL_GPIO_WritePin(ignition_outputs[coil_index[0]].gpio, ignition_outputs[coil_index[0]].pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(ignition_outputs[coil_index[1]].gpio, ignition_outputs[coil_index[1]].pin, GPIO_PIN_RESET);
     spark_is_in_progress = false;
 }
 

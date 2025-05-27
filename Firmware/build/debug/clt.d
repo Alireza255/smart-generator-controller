@@ -22,6 +22,7 @@ build/debug/clt.o: controller/IO/sensors/clt.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_crc.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
@@ -52,7 +53,7 @@ build/debug/clt.o: controller/IO/sensors/clt.c \
  controller/IO/sensors/clt.h controller/utils/pid.h \
  controller/utils/timing.h controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
- controller/algorithm/governer.h
+ controller/algorithm/governer.h controller/utils/comms.h
 controller/IO/sensors/clt.h:
 controller/IO/thermistor.h:
 controller/IO/resistor.h:
@@ -80,6 +81,7 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_crc.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
@@ -126,3 +128,4 @@ controller/actuators/electronic_throttle.h:
 controller/actuators/dc_motors.h:
 Core/Inc/adc.h:
 controller/algorithm/governer.h:
+controller/utils/comms.h:

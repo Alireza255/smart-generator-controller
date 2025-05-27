@@ -9,6 +9,8 @@
 #define CONSTANTS_H
 
 #include "types.h"
+
+
 // The highest rpm the firmware is expected to ever see
 // this is different from cutt-off rpm
 #define FIRMWARE_LIMIT_MAX_RPM 6000
