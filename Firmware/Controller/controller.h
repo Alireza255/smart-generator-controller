@@ -37,6 +37,7 @@ typedef struct
 
     trigger_s trigger;
     
+    governer_status_e governer_status;
 } engine_s;
 
 extern engine_s engine;
