@@ -40,8 +40,8 @@ build/debug/comms.o: controller/utils/comms.c controller/utils/comms.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- controller/controller.h controller/enums.h controller/utils/timing.h \
- controller/types.h Core/Inc/tim.h Core/Inc/main.h controller/types.h \
+ controller/controller.h controller/utils/timing.h controller/types.h \
+ Core/Inc/tim.h Core/Inc/main.h controller/types.h \
  controller/eeprom/eeprom.h controller/engine_cycle/trigger.h \
  controller/actuators/dc_motors.h controller/tables.h \
  controller/constants.h controller/IO/sensors/tps.h \
@@ -100,7 +100,6 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
 controller/controller.h:
-controller/enums.h:
 controller/utils/timing.h:
 controller/types.h:
 Core/Inc/tim.h:

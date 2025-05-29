@@ -42,13 +42,13 @@ build/debug/freertos.o: Core/Src/freertos.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- controller/controller.h controller/enums.h controller/utils/timing.h \
- controller/types.h Core/Inc/tim.h Core/Inc/main.h controller/types.h \
+ controller/controller.h controller/utils/timing.h controller/types.h \
+ Core/Inc/tim.h Core/Inc/main.h controller/types.h \
  controller/eeprom/eeprom.h controller/engine_cycle/trigger.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  controller/actuators/dc_motors.h controller/tables.h \
  controller/constants.h controller/IO/sensors/tps.h \
  controller/IO/analog_inputs.h controller/utils/utils.h \
- Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  controller/engine_cycle/ignition.h controller/IO/sensors/iat.h \
  controller/IO/thermistor.h controller/IO/resistor.h \
  controller/IO/analog_inputs.h controller/utils/error_handling.h \
@@ -113,7 +113,6 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/controller.h:
-controller/enums.h:
 controller/utils/timing.h:
 controller/types.h:
 Core/Inc/tim.h:
@@ -121,13 +120,13 @@ Core/Inc/main.h:
 controller/types.h:
 controller/eeprom/eeprom.h:
 controller/engine_cycle/trigger.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/actuators/dc_motors.h:
 controller/tables.h:
 controller/constants.h:
 controller/IO/sensors/tps.h:
 controller/IO/analog_inputs.h:
 controller/utils/utils.h:
-Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/engine_cycle/ignition.h:
 controller/IO/sensors/iat.h:
 controller/IO/thermistor.h:

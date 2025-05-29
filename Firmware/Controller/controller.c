@@ -5,8 +5,10 @@ engine_s engine = {0};
 
 static electronic_throttle_s etb1 = {0};
 
-void controller_init()
+void controller_init(osEventFlagsId_t engine_event_flags)
 {
+    engine.flags = engine_event_flags;
+
     engine.total_revolutions = 0;
     engine.crankshaft_angle = 0;
     engine.camshaft_angle = 0;
@@ -52,6 +54,8 @@ void controller_init()
 
     //HAL_FLASH_Unlock();
     //EE_Init();
+
+    
 }
 
 void controller_load_configuration()

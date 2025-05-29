@@ -2,67 +2,53 @@
 #include "error_handling.h"
 #include "utils.h"
 
-table_ignition_t ignition_table;
-table_ve_t ve_table;
-
-percent_t table_ve_get_value(table_ve_t *table, rpm_t rpm, pressure_t load)
+float table_2d_get_value(table_2d_t *table, float x, float y)
 {
-    if (!IS_IN_RANGE(rpm, 0, FIRMWARE_LIMIT_MAX_RPM) || !IS_IN_RANGE(load, 0, FIRMWARE_LIMIT_MAX_MAP))
+    uint8_t num_x_bins = sizeof(table->x_bins) / sizeof(table->x_bins[0]);
+    uint8_t num_y_bins = sizeof(table->y_bins) / sizeof(table->y_bins[0]);
+    x = CLAMP(x, table->x_bins[0], table->x_bins[num_x_bins - 1]);
+    y = CLAMP(y, table->y_bins[0], table->y_bins[num_y_bins - 1]);
+
+    // Find x_bin (lower index)
+    uint8_t x_bin = 0;
+    while (x_bin < num_x_bins - 1 && x >= table->x_bins[x_bin + 1])
     {
-        log_error("Table error! Out of bound access request");
-        return 0;
+        x_bin++;
     }
-    
-    uint8_t x_size = sizeof(table->data) / sizeof(table->data[0]); // Number of rows
-    uint8_t y_size = sizeof(table->data[0]) / sizeof(table->data[0][0]); // Number of columns
+    uint8_t x_bin_next = (x_bin < num_x_bins - 1) ? x_bin + 1 : x_bin;
 
-    if (x_size == 0 || y_size == 0)
+    // Find y_bin (lower index)
+    uint8_t y_bin = 0;
+    while (y_bin < num_y_bins - 1 && y >= table->y_bins[y_bin + 1])
     {
-        log_error("Table access error! Dim is 0");
-        return 0;
+        y_bin++;
     }
-    rpm_t rpm_bin_size = FIRMWARE_LIMIT_MAX_RPM / x_size;
-    pressure_t load_bin_size = FIRMWARE_LIMIT_MAX_MAP / y_size;
+    uint8_t y_bin_next = (y_bin < num_y_bins - 1) ? y_bin + 1 : y_bin;
 
-    uint8_t rpm_index = (uint8_t)(rpm / rpm_bin_size);
-    uint8_t load_index = (uint8_t)(load / load_bin_size);
+    // Get bin edges
+    float x0 = table->x_bins[x_bin];
+    float x1 = table->x_bins[x_bin_next];
+    float y0 = table->y_bins[y_bin];
+    float y1 = table->y_bins[y_bin_next];
 
-    return table->data[rpm_index][load_index];
+    // Get table values at corners
+    float q11 = table->data[x_bin][y_bin];
+    float q21 = table->data[x_bin_next][y_bin];
+    float q12 = table->data[x_bin][y_bin_next];
+    float q22 = table->data[x_bin_next][y_bin_next];
 
+    // Handle edge cases (avoid division by zero)
+    float x_frac = (x1 != x0) ? (x - x0) / (x1 - x0) : 0.0f;
+    float y_frac = (y1 != y0) ? (y - y0) / (y1 - y0) : 0.0f;
+
+    // Bilinear interpolation
+    float interp =
+        q11 * (1 - x_frac) * (1 - y_frac) +
+        q21 * x_frac * (1 - y_frac) +
+        q12 * (1 - x_frac) * y_frac +
+        q22 * x_frac * y_frac;
+
+    return interp;
 }
 
-angle_t table_ignition_get_value(table_ignition_t *table, rpm_t rpm, pressure_t load)
-{
-    if (!IS_IN_RANGE(rpm, 0, FIRMWARE_LIMIT_MAX_RPM) || !IS_IN_RANGE(load, 0, FIRMWARE_LIMIT_MAX_MAP))
-    {
-        log_error("Table error! Out of bound access request");
-        return 0;
-    }
-    
-    uint8_t x_size = sizeof(table->data) / sizeof(table->data[0]); // Number of rows
-    uint8_t y_size = sizeof(table->data[0]) / sizeof(table->data[0][0]); // Number of columns
 
-    if (x_size == 0 || y_size == 0)
-    {
-        log_error("Table access error! Dim is 0");
-        return 0;
-    }
-    rpm_t rpm_bin_size = FIRMWARE_LIMIT_MAX_RPM / x_size;
-    pressure_t load_bin_size = FIRMWARE_LIMIT_MAX_MAP / y_size;
-
-    uint8_t rpm_index = (uint8_t)(rpm / rpm_bin_size);
-    uint8_t load_index = (uint8_t)(load / load_bin_size);
-
-    return table->data[rpm_index][load_index];
-    
-}
-
-table_ignition_t* table_ignition_get_table()
-{
-    return &ignition_table;
-}
-
-table_ve_t* table_ve_get_table()
-{
-    return &ve_table;
-}

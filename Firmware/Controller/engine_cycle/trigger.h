@@ -3,6 +3,7 @@
 
 #include "timing.h"
 #include "types.h"
+#include "cmsis_os2.h"
 
 typedef enum
 {

@@ -47,6 +47,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 rpm_t simulated_rpm = 1000;
+table_2d_t test_table = {0};
+float table_value = 0.0f;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -62,6 +64,25 @@ const osThreadAttr_t trig_sim_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for fuel_task */
+osThreadId_t fuel_taskHandle;
+const osThreadAttr_t fuel_task_attributes = {
+  .name = "fuel_task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for init_task */
+osThreadId_t init_taskHandle;
+const osThreadAttr_t init_task_attributes = {
+  .name = "init_task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for engine_flags */
+osEventFlagsId_t engine_flagsHandle;
+const osEventFlagsAttr_t engine_flags_attributes = {
+  .name = "engine_flags"
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -72,6 +93,8 @@ void toggle_led();
 
 void StartDefaultTask(void *argument);
 void trigger_simulator_task(void *argument);
+void start_fuel_task(void *argument);
+void controller_init_task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -109,9 +132,19 @@ void MX_FREERTOS_Init(void) {
   /* creation of trig_sim */
   trig_simHandle = osThreadNew(trigger_simulator_task, NULL, &trig_sim_attributes);
 
+  /* creation of fuel_task */
+  fuel_taskHandle = osThreadNew(start_fuel_task, NULL, &fuel_task_attributes);
+
+  /* creation of init_task */
+  init_taskHandle = osThreadNew(controller_init_task, NULL, &init_task_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
+  /* Create the event(s) */
+  /* creation of engine_flags */
+  engine_flagsHandle = osEventFlagsNew(&engine_flags_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
@@ -132,7 +165,6 @@ void StartDefaultTask(void *argument)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
 
-  controller_init();
   osDelay(100);
   
   /* Infinite loop */
@@ -163,6 +195,73 @@ void trigger_simulator_task(void *argument)
     
   }
   /* USER CODE END trigger_simulator_task */
+}
+
+/* USER CODE BEGIN Header_start_fuel_task */
+/**
+* @brief Function implementing the fuel_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_start_fuel_task */
+void start_fuel_task(void *argument)
+{
+  /* USER CODE BEGIN start_fuel_task */
+
+
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END start_fuel_task */
+}
+
+/* USER CODE BEGIN Header_controller_init_task */
+/**
+* @brief Function implementing the init_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_controller_init_task */
+void controller_init_task(void *argument)
+{
+  /* USER CODE BEGIN controller_init_task */
+
+  controller_init(engine_flagsHandle);
+
+
+  for (size_t i = 0; i < (sizeof(test_table.x_bins) / sizeof(test_table.x_bins[0])); i++)
+  {
+    test_table.x_bins[i] = i * 100;  // Example values
+  }
+  for (size_t i = 0; i < (sizeof(test_table.y_bins) / sizeof(test_table.y_bins[0])); i++)
+  {
+    test_table.y_bins[i] = i * 10;  // Example values
+  }
+  for (size_t i = 0; i < (sizeof(test_table.data) / sizeof(test_table.data[0])); i++)
+  {
+    for (size_t j = 0; j < (sizeof(test_table.data[0]) / sizeof(test_table.data[0][0])); j++)
+    {
+      test_table.data[i][j] = (i + 1) * (j + 1);  // Example values
+    }
+  }
+
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(10);
+    static float rpm = 0;
+    static float load = 0;
+    rpm += 10;  // Simulate RPM increase
+    load = 11.25f;  // Simulate load increase
+    if (rpm > 5000)
+    {
+      rpm = -1000;
+    }
+    table_value = table_2d_get_value(&test_table, rpm, load);
+  }
+  /* USER CODE END controller_init_task */
 }
 
 /* Private application code --------------------------------------------------*/

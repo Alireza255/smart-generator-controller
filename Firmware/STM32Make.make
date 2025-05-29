@@ -138,7 +138,6 @@ controller/IO/sensors/tps.c \
 controller/IO/thermistor.c \
 controller/actuators/dc_motors.c \
 controller/actuators/electronic_throttle.c \
-controller/algorithm/air_mass/airmass.c \
 controller/algorithm/fuel/fuel_math.c \
 controller/algorithm/governer.c \
 controller/controller.c \
@@ -260,7 +259,6 @@ C_INCLUDES =  \
 -Icontroller/IO/sensors \
 -Icontroller/actuators \
 -Icontroller/algorithm \
--Icontroller/algorithm/air_mass \
 -Icontroller/algorithm/fuel \
 -Icontroller/eeprom \
 -Icontroller/engine_cycle \

@@ -90,11 +90,4 @@ static inline angle_t degrees_per_microsecond(rpm_t rpm)
 }
 
 
-/* Bilinear interpolation */
-/**
- * @brief Bilinear interpolation used to interpolate 2d tables
- * It uses the closest 4 values in the table surrounding the point in the table
- * and gives a smooth output based on those values
- */
-
 #endif // UTILS_H

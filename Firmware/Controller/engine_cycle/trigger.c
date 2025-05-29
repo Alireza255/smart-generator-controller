@@ -133,6 +133,7 @@ void trigger_tooth_handle()
       engine.total_revolutions++;
       trigger->_counted_tooth = 0;
      //here we can say we are at TDC!
+      osEventFlagsSet(engine.flags, ENGINE_FLAG_ROTATION_EVENT);
     }
   }
   
@@ -172,6 +173,8 @@ void trigger_tooth_handle()
 
   /* call trigger driven events such as ignition etc... */
   ignition_trigger_event_handle(crankshaft_get_angle(), crankshaft_get_rpm(), get_time_us());
+  /* set the os flags for the engine */
+  osEventFlagsSet(engine.flags, ENGINE_FLAG_TRIGGER_EVENT);
 
 }
 

@@ -53,12 +53,13 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- controller/controller.h controller/enums.h controller/utils/timing.h \
- controller/types.h controller/types.h controller/eeprom/eeprom.h \
- controller/engine_cycle/trigger.h controller/actuators/dc_motors.h \
- controller/tables.h controller/constants.h controller/IO/sensors/tps.h \
- controller/IO/analog_inputs.h controller/utils/utils.h \
+ controller/controller.h controller/utils/timing.h controller/types.h \
+ controller/types.h controller/eeprom/eeprom.h \
+ controller/engine_cycle/trigger.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ controller/actuators/dc_motors.h controller/tables.h \
+ controller/constants.h controller/IO/sensors/tps.h \
+ controller/IO/analog_inputs.h controller/utils/utils.h \
  controller/engine_cycle/ignition.h controller/IO/sensors/iat.h \
  controller/IO/thermistor.h controller/IO/resistor.h \
  controller/IO/analog_inputs.h controller/utils/error_handling.h \
@@ -130,19 +131,18 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
 controller/controller.h:
-controller/enums.h:
 controller/utils/timing.h:
 controller/types.h:
 controller/types.h:
 controller/eeprom/eeprom.h:
 controller/engine_cycle/trigger.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/actuators/dc_motors.h:
 controller/tables.h:
 controller/constants.h:
 controller/IO/sensors/tps.h:
 controller/IO/analog_inputs.h:
 controller/utils/utils.h:
-Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/engine_cycle/ignition.h:
 controller/IO/sensors/iat.h:
 controller/IO/thermistor.h:

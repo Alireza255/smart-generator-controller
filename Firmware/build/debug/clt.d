@@ -43,11 +43,10 @@ build/debug/clt.o: controller/IO/sensors/clt.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- controller/controller.h controller/enums.h controller/utils/timing.h \
- Core/Inc/tim.h Core/Inc/main.h controller/types.h \
- controller/eeprom/eeprom.h controller/engine_cycle/trigger.h \
- controller/actuators/dc_motors.h controller/tables.h \
- controller/constants.h controller/IO/sensors/tps.h \
+ controller/controller.h controller/utils/timing.h Core/Inc/tim.h \
+ Core/Inc/main.h controller/types.h controller/eeprom/eeprom.h \
+ controller/engine_cycle/trigger.h controller/actuators/dc_motors.h \
+ controller/tables.h controller/constants.h controller/IO/sensors/tps.h \
  controller/IO/analog_inputs.h controller/engine_cycle/ignition.h \
  controller/IO/sensors/iat.h controller/IO/sensors/map.h \
  controller/IO/sensors/clt.h controller/utils/pid.h \
@@ -106,7 +105,6 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
 controller/controller.h:
-controller/enums.h:
 controller/utils/timing.h:
 Core/Inc/tim.h:
 Core/Inc/main.h:
