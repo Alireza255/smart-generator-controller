@@ -1,6 +1,6 @@
 #include "electronic_throttle.h"
 
-void electronic_throttle_init(electronic_throttle_s *etb, pid_t *pid, sensor_tps_s *sensor, dc_motor_s *motor)
+void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor)
 {
     if (etb == NULL || sensor == NULL || motor == NULL)
     {
@@ -28,7 +28,7 @@ void electronic_throttle_init(electronic_throttle_s *etb, pid_t *pid, sensor_tps
 
 }
 
-void electronic_throttle_set(electronic_throttle_s *etb, percent_t position)
+void electronic_throttle_set(electronic_throttle_t *etb, percent_t position)
 {
     if (!IS_IN_RANGE(position, (percent_t)0, (percent_t)100))
     {
@@ -39,7 +39,7 @@ void electronic_throttle_set(electronic_throttle_s *etb, percent_t position)
 
 void electronic_throttle_update(void *arg)
 {
-    electronic_throttle_s *etb = (electronic_throttle_s *)arg;
+    electronic_throttle_t *etb = (electronic_throttle_t *)arg;
     if (etb == NULL || etb->pid == NULL || etb->sensor == NULL || etb->motor == NULL)
     {
         log_error("Electronic throttle not initialized");
@@ -48,7 +48,7 @@ void electronic_throttle_update(void *arg)
     percent_t postion = sensor_tps_get(etb->sensor);
     pid_set_setpoint(etb->pid, etb->target_position);
     percent_t motor_effort = pid_compute(etb->pid, get_time_us(), postion);
-    dc_motor_direction_e dir = motor_effort > 0 ? MD_FORWARD : MD_REVERSE;
+    dc_motor_direction_t dir = motor_effort > 0 ? MOTOR_DIRECTION_FORWARD : MOTOR_DIRECTION_REVERSE;
     dc_motor_set(etb->motor, dir ,  (uint8_t)ABS(motor_effort));
 }
 

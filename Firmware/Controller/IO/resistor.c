@@ -1,6 +1,6 @@
 #include "resistor.h"
 
-void resistor_init(resistor_s* resistor, float pull_resistor, resistor_pull_type_e pull_type, analog_input_adc_channel_mapping_e analog_input)
+void resistor_init(resistor_t* resistor, float pull_resistor, resistor_pull_type_t pull_type, analog_input_channel_t analog_input)
 {
     if (resistor == NULL)
     {
@@ -12,11 +12,13 @@ void resistor_init(resistor_s* resistor, float pull_resistor, resistor_pull_type
     resistor->analog_input = analog_input;
 }
 
-
-float resistor_get_resistance(const resistor_s *resistor)
+/**
+ * @todo div by zero will break this!
+ */
+float resistor_get_resistance(const resistor_t *resistor)
 {
     uint16_t adc_value = analog_inputs_get_data(resistor->analog_input);
-    float voltage = (adc_value / ADC_MAX_VALUE) * ADC_REF_VOLTAGE;
+    float voltage = ((float)adc_value / (float)ADC_MAX_VALUE) * (float)ADC_REF_VOLTAGE;
     // simple check to see if the sensor is open circuit or not
     if (!IS_IN_RANGE(voltage, 0.05f * ADC_REF_VOLTAGE, 0.95f * ADC_REF_VOLTAGE))
     {
@@ -24,8 +26,8 @@ float resistor_get_resistance(const resistor_s *resistor)
         return NAN;
     }
     if (resistor->pull_type == RESISTOR_PULL_UP) {
-        return (voltage * resistor->pull_resistor) / (ADC_REF_VOLTAGE - voltage);
+        return (voltage * (float)resistor->pull_resistor) / ((float)ADC_REF_VOLTAGE - voltage);
     } else { // PULL_DOWN
-        return ((ADC_REF_VOLTAGE - voltage) * resistor->pull_resistor) / voltage;
+        return ((ADC_REF_VOLTAGE - voltage) * (float)resistor->pull_resistor) / voltage;
     }
 }

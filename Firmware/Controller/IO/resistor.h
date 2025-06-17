@@ -9,7 +9,7 @@
 typedef enum {
     RESISTOR_PULL_UP,
     RESISTOR_PULL_DOWN
-} resistor_pull_type_e;
+} resistor_pull_type_t;
 
 /**
  * @struct resistor_s
@@ -25,10 +25,10 @@ typedef enum {
  * The analog input channel associated with the resistor.
  */
 typedef struct {
-    resistor_pull_type_e pull_type;
+    resistor_pull_type_t pull_type;
     float pull_resistor;
-    analog_input_adc_channel_mapping_e analog_input;
-} resistor_s;
+    analog_input_channel_t analog_input;
+} resistor_t;
 
 /**
  * @brief Initializes a resistor configuration.
@@ -38,7 +38,7 @@ typedef struct {
  * @param pull_type Type of pull configuration (e.g., pull-up or pull-down).
  * @param analog_input Analog input channel mapping associated with the resistor.
  */
-void resistor_init(resistor_s* resistor, float pull_resistor, resistor_pull_type_e pull_type, analog_input_adc_channel_mapping_e analog_input);
+void resistor_init(resistor_t* resistor, float pull_resistor, resistor_pull_type_t pull_type, analog_input_channel_t analog_input);
 
 /**
  * @brief Calculates the resistance of a resistor based on ADC input and configuration.
@@ -50,6 +50,6 @@ void resistor_init(resistor_s* resistor, float pull_resistor, resistor_pull_type
  * @param resistor Pointer to a resistor_s structure containing resistor configuration.
  * @return The calculated resistance in ohms, or NAN if the sensor is open circuit.
  */
-float resistor_get_resistance(const resistor_s *resistor);
+float resistor_get_resistance(const resistor_t *resistor);
 
 #endif // RESISTOR_H

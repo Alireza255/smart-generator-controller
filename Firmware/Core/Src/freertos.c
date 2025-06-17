@@ -62,7 +62,7 @@ osThreadId_t trig_simHandle;
 const osThreadAttr_t trig_sim_attributes = {
   .name = "trig_sim",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for fuel_task */
 osThreadId_t fuel_taskHandle;
@@ -75,6 +75,13 @@ const osThreadAttr_t fuel_task_attributes = {
 osThreadId_t init_taskHandle;
 const osThreadAttr_t init_task_attributes = {
   .name = "init_task",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for sensor_task */
+osThreadId_t sensor_taskHandle;
+const osThreadAttr_t sensor_task_attributes = {
+  .name = "sensor_task",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -95,6 +102,7 @@ void StartDefaultTask(void *argument);
 void trigger_simulator_task(void *argument);
 void start_fuel_task(void *argument);
 void controller_init_task(void *argument);
+void sensors_task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -137,6 +145,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of init_task */
   init_taskHandle = osThreadNew(controller_init_task, NULL, &init_task_attributes);
+
+  /* creation of sensor_task */
+  sensor_taskHandle = osThreadNew(sensors_task, NULL, &sensor_task_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -186,10 +197,13 @@ void StartDefaultTask(void *argument)
 void trigger_simulator_task(void *argument)
 {
   /* USER CODE BEGIN trigger_simulator_task */
+  osDelay(100);
   trigger_simulator_init(60, 2, trigger_tooth_handle);
+
   /* Infinite loop */
   for(;;)
   {
+    simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
     trigger_simulator_update(simulated_rpm);
     osDelay(1);
     
@@ -228,7 +242,7 @@ void controller_init_task(void *argument)
 {
   /* USER CODE BEGIN controller_init_task */
 
-  controller_init(engine_flagsHandle);
+  controller_init_with_defaults();
 
 
   for (size_t i = 0; i < (sizeof(test_table.x_bins) / sizeof(test_table.x_bins[0])); i++)
@@ -250,7 +264,7 @@ void controller_init_task(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(10);
+    osDelay(100);
     static float rpm = 0;
     static float load = 0;
     rpm += 10;  // Simulate RPM increase
@@ -262,6 +276,28 @@ void controller_init_task(void *argument)
     table_value = table_2d_get_value(&test_table, rpm, load);
   }
   /* USER CODE END controller_init_task */
+}
+
+/* USER CODE BEGIN Header_sensors_task */
+/**
+* @brief Function implementing the sensor_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_sensors_task */
+void sensors_task(void *argument)
+{
+  /* USER CODE BEGIN sensors_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+    engine.clt = sensor_clt_get();
+    engine.iat = sensor_iat_get();
+    engine.oil_pressure = sensor_ops_get();
+    //engine.map = sensor_map_get();
+  }
+  /* USER CODE END sensors_task */
 }
 
 /* Private application code --------------------------------------------------*/

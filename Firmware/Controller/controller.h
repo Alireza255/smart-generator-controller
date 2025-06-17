@@ -9,7 +9,7 @@
 #include "trigger.h"
 #include "dc_motors.h"
 #include "tables.h"
-#include "tps.h"
+#include "sensors.h"
 #include "ignition.h"
 #include "thermistor.h"
 #include "pid.h"
@@ -17,7 +17,7 @@
 #include "adc.h"
 #include "governer.h"
 #include "comms.h"
-
+#include "fan_control.h"
 
 typedef struct
 {
@@ -35,23 +35,32 @@ typedef struct
 
     angle_t firing_interval;
 
-    trigger_s trigger;
-    
+    angle_t ignition_advance;
+
+    trigger_t trigger;
+
     governer_status_e governer_status;
 
     osEventFlagsId_t flags;
-} engine_s;
 
-extern engine_s engine;
+    pressure_t map;
+    temperature_t clt;
+    temperature_t iat;
+    bool oil_pressure;
+    
+
+} engine_t;
+
+extern engine_t engine;
 
 typedef struct
 {
     volume_liter_t engine_displacment;
     firing_order_e firing_order;
-    fuel_type_e fuel_type;
-    
-    
-    trigger_settings_s trigger;
+    fuel_type_t fuel_type;
+
+
+    trigger_settings_t trigger;
 
     rpm_t cranking_rpm_threshold;
     angle_t cranking_advance;
@@ -71,14 +80,14 @@ typedef struct
     afr_t stoich_afr_gas;
     afr_t stoich_afr_petrol;
     
-    sensor_tps_s tps1;
-    sensor_tps_s tps2;
+    sensor_tps_t tps1;
+    sensor_tps_t tps2;
 
-    thermistor_conf_s clt_thermistor_calib;
+    sensor_clt_type_t clt_sensor_type;
 
-    sensor_iat_type_e iat_sensor_type;
+    sensor_iat_type_t iat_sensor_type;
 
-    sensor_map_type_e map_sensor_type;
+    sensor_map_type_t map_sensor_type;
 
     rpm_t governer_target_rpm;
     rpm_t governer_idle_rpm;
@@ -94,17 +103,20 @@ typedef struct
     temperature_t protection_clt_shutdown_temprature;
     temperature_t protection_clt_load_disconnect_temprature;
     
-    
-} configuration_s;
+    temperature_t fan1_off_temp;
+    temperature_t fan1_on_temp;
 
-extern configuration_s configuration;
+    temperature_t fan2_off_temp;
+    temperature_t fan2_on_temp;
 
-void controller_init(osEventFlagsId_t engine_event_flags);
+} configuration_t;
+
+extern configuration_t configuration;
+
+void controller_init_with_defaults();
 
 void controller_load_configuration();
 
 void controller_save_configuration();
-
-void controller_protections_check();
 
 #endif // CONTROLLER_H

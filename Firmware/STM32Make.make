@@ -130,14 +130,11 @@ USB_DEVICE/App/usbd_desc.c \
 USB_DEVICE/Target/usbd_conf.c \
 controller/IO/analog_inputs.c \
 controller/IO/resistor.c \
-controller/IO/sensors/clt.c \
-controller/IO/sensors/iat.c \
-controller/IO/sensors/map.c \
-controller/IO/sensors/ops.c \
-controller/IO/sensors/tps.c \
+controller/IO/sensors.c \
 controller/IO/thermistor.c \
 controller/actuators/dc_motors.c \
 controller/actuators/electronic_throttle.c \
+controller/actuators/fan_control.c \
 controller/algorithm/fuel/fuel_math.c \
 controller/algorithm/governer.c \
 controller/controller.c \
@@ -256,7 +253,6 @@ C_INCLUDES =  \
 -IUSB_DEVICE/Target \
 -Icontroller \
 -Icontroller/IO \
--Icontroller/IO/sensors \
 -Icontroller/actuators \
 -Icontroller/algorithm \
 -Icontroller/algorithm/fuel \

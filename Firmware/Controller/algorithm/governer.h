@@ -12,7 +12,7 @@ typedef enum
     GOVERNER_STATUS_TARGET,
 } governer_status_e;
 
-void governer_init(electronic_throttle_s *etb);
+void governer_init(electronic_throttle_t *etb);
 
 governer_status_e governer_get_status();
 

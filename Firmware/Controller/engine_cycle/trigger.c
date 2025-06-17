@@ -1,22 +1,23 @@
 #include "trigger.h"
 #include "controller.h"
 
-trigger_s *trigger = NULL;
+/* just a temporary fix */
+trigger_t *trigger = NULL;
 
-void set_filtering(trigger_s *trigger)
+void set_filtering()
 {
-  switch (configuration.trigger.filtering)
+  switch (trigger->settings->filtering)
   {
-    case TF_FILTERING_NONE:
+    case TRIGGER_FILTERING_NONE:
       trigger->_trigger_filter_time_us = 0;
         break;
-    case TF_FILTERING_LITE:
-      trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us / 4U; 
+    case TRIGGER_FILTERING_LITE:
+      trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us / 4U;
         break;
-    case TF_FILTERING_MEDIUM:
+    case TRIGGER_FILTERING_MEDIUM:
       trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us / 1U;
         break;
-    case TF_FILTERING_AGGRESSIVE:
+    case TRIGGER_FILTERING_AGGRESSIVE:
       trigger->_trigger_filter_time_us = trigger->_current_tooth_gap_us * 3 / 4;
         break;
     default:
@@ -26,28 +27,34 @@ void set_filtering(trigger_s *trigger)
   }
 }
 
-void trigger_init(trigger_s *instance)
+void trigger_init(trigger_t *trigger_ptr, trigger_settings_t *settings)
 {   
   bool temp_status = true;
-  if (instance == NULL)
+  if (trigger_ptr == NULL)
   {
-    /**
-     * @todo and maybe throw an error!
-     */
+    log_error("Trigger initialization failed. Trigger is NULL.");
     return;
   }
-  trigger = instance;
+  trigger = trigger_ptr;
+
+  if (settings == NULL)
+  {
+    log_error("Trigger initialization failed. Settings are NULL.");
+    return;
+  }
   
-  trigger->sync_status = TS_NOT_SYNCED;
-  set_filtering(trigger);
-  trigger->_trigger_actual_teeth = configuration.trigger.full_teeth - configuration.trigger.missing_teeth;
-    
-  if (configuration.trigger.full_teeth == 0 || configuration.trigger.missing_teeth == 0)
+  if (settings->full_teeth == 0 || settings->missing_teeth == 0)
   {
     temp_status = false;
+    trigger->initialized = temp_status;
+    log_error("Trigger initialization failed. Teeth misconfigured.");
+    return;
   }
-  trigger->initialized = temp_status;
-    
+  trigger->settings = settings;
+  trigger->sync_status = TS_NOT_SYNCED;
+  set_filtering(trigger);
+  trigger->_trigger_actual_teeth = settings->full_teeth - settings->missing_teeth;
+  trigger->initialized = true;
 }
 
 void trigger_tooth_handle()
@@ -55,10 +62,8 @@ void trigger_tooth_handle()
 
   if (!trigger->initialized)
   {
-      /**
-       * @todo add an error message
-       */
-      return;
+    log_error("Trigger is not initialized.");
+    return;
   }
 
   trigger->_tooth_time_us[0] = get_time_us();
@@ -100,16 +105,16 @@ void trigger_tooth_handle()
     
 
   //If the time between the current tooth and the last is greater than 1.5x the time between the last tooth and the tooth before that, we make the assertion that we must be at the first tooth after the gap
-  if(configuration.trigger.missing_teeth == 1)
+  if(trigger->settings->missing_teeth == 1)
   {
     trigger->_target_tooth_gap_us = (3 * trigger->_shorter_tooth_gap) >> 1; 
   } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply by 3 then divide by 2. Much faster than multiplying by 1.5)
   else
   {
-    trigger->_target_tooth_gap_us = trigger->_shorter_tooth_gap * configuration.trigger.missing_teeth;
-  } //Multiply by 2 (Checks for a gap 2x greater than the last one    
-  
-  //if( (_tooth_time_us[1] == 0) || (_tooth_time_us[2] == 0) ) { _current_tooth_gap_us = 0; } 
+    trigger->_target_tooth_gap_us = trigger->_shorter_tooth_gap * trigger->settings->missing_teeth;
+  } //Multiply by 2 (Checks for a gap 2x greater than the last one
+
+  //if( (_tooth_time_us[1] == 0) || (_tooth_time_us[2] == 0) ) { _current_tooth_gap_us = 0; }
 
     
   if ((trigger->_current_tooth_gap_us > trigger->_target_tooth_gap_us) || (trigger->_counted_tooth > trigger->_trigger_actual_teeth))

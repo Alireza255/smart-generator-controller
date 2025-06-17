@@ -1,10 +1,10 @@
 #include "governer.h"
 #include "controller.h"
 
-electronic_throttle_s *governer_etb = NULL;
+electronic_throttle_t *governer_etb = NULL;
 static pid_t governer_pid;
 
-void governer_init(electronic_throttle_s *etb)
+void governer_init(electronic_throttle_t *etb)
 {
     if (etb == NULL)
     {

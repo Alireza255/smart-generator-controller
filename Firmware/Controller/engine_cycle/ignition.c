@@ -1,15 +1,15 @@
 #include "ignition.h"
 
-ignition_output_pin_s ignition_outputs[IGNITION_MAX_OUTPUTS] = {0};
+controller_output_pin_t ignition_outputs[IGNITION_MAX_OUTPUTS] = {0};
 
-volatile ignition_coil_state_e ignition_coil_state[IGNITION_MAX_OUTPUTS] = {0};
+volatile ignition_coil_state_t ignition_coil_state[IGNITION_MAX_OUTPUTS] = {0};
 
 uint8_t ignition_order[IGNITION_MAX_OUTPUTS] = {0};
 
 static volatile bool spark_is_in_progress = false;
 
 
-void ignition_init(ignition_output_conf_s *output_conf)
+void ignition_init(ignition_output_conf_t *output_conf)
 {
     if (output_conf == NULL)
     {
@@ -57,6 +57,7 @@ void ignition_init(ignition_output_conf_s *output_conf)
     {
         log_warning("Multi spark is enabled but number of sparks are 0.");
     }
+
 }
 
 /**
@@ -71,7 +72,12 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
     /**
      * @todo add the necessary checks and bounds
      */
-
+    if (engine.firing_interval == 0)
+    {
+        log_error("ignition not initialized.");
+        return;
+    }
+    
     if (configuration.ignition_mode == IM_NO_IGNITION)
     {
         // obviously, there is no need to do any furthure processing
@@ -229,8 +235,7 @@ angle_t ignition_get_advance()
     {
         return configuration.cranking_advance;
     }
-    
-    temperature_t intake_air_temp = sensor_iat_get();
+
     rpm_t rpm = crankshaft_get_rpm();
     pressure_t map = sensor_map_get();
 

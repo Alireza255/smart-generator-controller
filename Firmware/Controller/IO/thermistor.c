@@ -2,7 +2,7 @@
 #include "utils.h"
 
 
-void thermistor_init(thermistor_s *thermistor, thermistor_conf_s cfg)
+void thermistor_init(thermistor_t *thermistor, thermistor_conf_t cfg)
 {
     if (thermistor == NULL)
     {
@@ -47,11 +47,11 @@ void thermistor_init(thermistor_s *thermistor, thermistor_conf_s cfg)
     */
 }
 
-temperature_t thermistor_get_temp(thermistor_s *thermistor)
+temperature_t thermistor_get_temp(thermistor_t *thermistor)
 {
     // This resistance should have already been validated - only
 	// thing we can check is that it's non-negative
-    float ohms = resistor_get_resistance(thermistor->resistor);
+    float ohms = resistor_get_resistance(&thermistor->resistor);
     if (ohms == NAN)
     {
         log_error("Thermistor invalid resistance!");

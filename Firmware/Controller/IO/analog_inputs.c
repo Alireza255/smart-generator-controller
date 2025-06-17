@@ -2,7 +2,7 @@
 #include "error_handling.h"
 
 ADC_HandleTypeDef *hadc = NULL;
-volatile analog_inputs_s analog_data ={0};
+volatile analog_inputs_t analog_data ={0};
 
 volatile bool conversion_is_happening = false;
 
@@ -80,9 +80,9 @@ void analog_inputs_start_conversion()
  * @return The digital value of the specified analog input.
  */
 #if ANALOG_INPUTS_ADC_BITS == 12
-uint16_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index)
+uint16_t analog_inputs_get_data(analog_input_channel_t input_index)
 #elif ANALOG_INPUTS_ADC_BITS == 24
-uint32_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index)
+uint32_t analog_inputs_get_data(analog_input_channel_t input_index)
 #endif
 {
     if (input_index > (ANALOG_INPUTS_MAX - 1))
@@ -91,9 +91,10 @@ uint32_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index)
         return 0;
     }
     return analog_data.raw_values[input_index];
+
 }
 
-voltage_t analog_inputs_get_voltage(analog_input_adc_channel_mapping_e input_index)
+voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index)
 {
     voltage_t v = 0;
     uint16_t raw_data = 0;

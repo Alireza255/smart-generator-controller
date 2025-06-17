@@ -44,14 +44,14 @@ mass_t fuel_get_required_mass(mass_t air_mass, afr_t afr)
 {
     switch (configuration.fuel_type)
     {
-    case FT_NATURAL_GAS:
+    case FUEL_TYPE_GAS:
         return air_mass / configuration.stoich_afr_gas;
         break;
-    case FT_GASOLINE:
+    case FUEL_TYPE_GASOLINE:
         return air_mass / configuration.stoich_afr_petrol;
         break;
 
-    case FT_DUAL_FUEL:
+    case FUEL_TYPE_DUAL_FUEL:
         /* @todo implement this*/
         break;
         

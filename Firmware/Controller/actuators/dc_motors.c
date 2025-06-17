@@ -9,7 +9,7 @@
  * @param timer_channel_output_2 which timer channel is connected to the second input of the driver
  * @param frequency the desired pwm frequency
  */
-void dc_motor_init(dc_motor_s *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, pwm_freq_t frequency)
+void dc_motor_init(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, pwm_freq_t frequency)
 {
     if (motor == NULL || timer == NULL)
     {
@@ -22,8 +22,8 @@ void dc_motor_init(dc_motor_s *motor, TIM_HandleTypeDef *timer, uint32_t timer_c
     motor->timer = timer;
     motor->timer_channel_output_1 = timer_channel_output_1;
     motor->timer_channel_output_2 = timer_channel_output_2;
-	motor->current_direction = MD_FORWARD;
-	motor->status = MS_NORMAL;
+	motor->current_direction = MOTOR_DIRECTION_FORWARD;
+	motor->status = MOTOR_STATE_NORMAL;
 
 	/**
 	 * Enable the timer using HAL
@@ -45,7 +45,7 @@ void dc_motor_init(dc_motor_s *motor, TIM_HandleTypeDef *timer, uint32_t timer_c
  * @param dir the desired direction of the motor
  * @param duty_cycle a number between 0 and 255 not a percentage
  */
-void dc_motor_set(dc_motor_s *motor, dc_motor_direction_e dir, uint8_t duty_cycle)
+void dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycle)
 {
 	if (motor == NULL || motor->timer == NULL)
 	{
@@ -64,11 +64,11 @@ void dc_motor_set(dc_motor_s *motor, dc_motor_direction_e dir, uint8_t duty_cycl
 	
 	switch (dir)
 	{
-	case MD_FORWARD:
+	case MOTOR_DIRECTION_FORWARD:
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_value);
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
 		break;
-	case MD_REVERSE:
+	case MOTOR_DIRECTION_REVERSE:
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_value);
 		break;
@@ -88,7 +88,7 @@ void dc_motor_set(dc_motor_s *motor, dc_motor_direction_e dir, uint8_t duty_cycl
  * @brief sets the pwm frequency
  * @note this changes the frequency of the entire timer, this includes all four channels
  */
-void dc_motor_set_timer_freq(dc_motor_s *motor, pwm_freq_t frequency)
+void dc_motor_set_timer_freq(dc_motor_t *motor, pwm_freq_t frequency)
 {
 	if (frequency == 0)
 	{
@@ -133,7 +133,7 @@ void dc_motor_set_timer_freq(dc_motor_s *motor, pwm_freq_t frequency)
 /**
  * @brief disables the motor.
  */
-void dc_motor_disable(dc_motor_s *motor)
+void dc_motor_disable(dc_motor_t *motor)
 {
 	if (motor == NULL || motor->timer == NULL)
 	{
@@ -147,14 +147,14 @@ void dc_motor_disable(dc_motor_s *motor)
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
 	motor->current_duty_cycle = 0;
-	motor->status = MS_DISABLED;
+	motor->status = MOTOR_STATE_DISABLED;
 }
 
 /**
  * @brief enables the motor.
  * @note sets the duty cycle to 0 for safety
  */
-void dc_motor_enable(dc_motor_s *motor)
+void dc_motor_enable(dc_motor_t *motor)
 {
 	if (motor == NULL || motor->timer == NULL)
 	{
@@ -163,7 +163,7 @@ void dc_motor_enable(dc_motor_s *motor)
 		 * @todo throw an error
 		 */
 	}
-	if (motor->status == MS_NORMAL || motor->status == MS_FAULT || motor == NULL)
+	if (motor->status == MOTOR_STATE_NORMAL || motor->status == MOTOR_STATE_FAULT || motor == NULL)
 	{
 		return;
 		/**
@@ -175,5 +175,5 @@ void dc_motor_enable(dc_motor_s *motor)
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
 	motor->current_duty_cycle = 0;
-	motor->status = MS_NORMAL;
+	motor->status = MOTOR_STATE_NORMAL;
 }

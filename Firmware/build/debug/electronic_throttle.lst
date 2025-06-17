@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -39,7 +39,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
   33              	.LFB230:
    1:controller/actuators/electronic_throttle.c **** #include "electronic_throttle.h"
    2:controller/actuators/electronic_throttle.c **** 
-   3:controller/actuators/electronic_throttle.c **** void electronic_throttle_init(electronic_throttle_s *etb, pid_t *pid, sensor_tps_s *sensor, dc_moto
+   3:controller/actuators/electronic_throttle.c **** void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_moto
    4:controller/actuators/electronic_throttle.c **** {
    5:controller/actuators/electronic_throttle.c ****     if (etb == NULL || sensor == NULL || motor == NULL)
    6:controller/actuators/electronic_throttle.c ****     {
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
   19:controller/actuators/electronic_throttle.c ****     //electronic_throttle_update(etb);
   20:controller/actuators/electronic_throttle.c ****     osTimerId_t timer_id = osTimerNew(
   21:controller/actuators/electronic_throttle.c ****         electronic_throttle_update,
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 2
 
 
   22:controller/actuators/electronic_throttle.c ****         osTimerPeriodic,
@@ -70,7 +70,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
   28:controller/actuators/electronic_throttle.c **** 
   29:controller/actuators/electronic_throttle.c **** }
   30:controller/actuators/electronic_throttle.c **** 
-  31:controller/actuators/electronic_throttle.c **** void electronic_throttle_set(electronic_throttle_s *etb, percent_t position)
+  31:controller/actuators/electronic_throttle.c **** void electronic_throttle_set(electronic_throttle_t *etb, percent_t position)
   32:controller/actuators/electronic_throttle.c **** {
   33:controller/actuators/electronic_throttle.c ****     if (!IS_IN_RANGE(position, (percent_t)0, (percent_t)100))
   34:controller/actuators/electronic_throttle.c ****     {
@@ -97,7 +97,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
   47              		.cfi_offset 81, -16
   48 0006 83B0     		sub	sp, sp, #12
   49              		.cfi_def_cfa_offset 32
-  42:controller/actuators/electronic_throttle.c ****     electronic_throttle_s *etb = (electronic_throttle_s *)arg;
+  42:controller/actuators/electronic_throttle.c ****     electronic_throttle_t *etb = (electronic_throttle_t *)arg;
   50              		.loc 1 42 5 is_stmt 1 view .LVU2
   51              	.LVL1:
   43:controller/actuators/electronic_throttle.c ****     if (etb == NULL || etb->pid == NULL || etb->sensor == NULL || etb->motor == NULL)
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
   66 0014 6368     		ldr	r3, [r4, #4]
   67              		.loc 1 43 64 discriminator 3 view .LVU10
   68 0016 1BB3     		cbz	r3, .L2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 3
 
 
   44:controller/actuators/electronic_throttle.c ****     {
@@ -152,12 +152,12 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
   90 0036 2846     		mov	r0, r5
   91 0038 FFF7FEFF 		bl	pid_compute
   92              	.LVL8:
-  51:controller/actuators/electronic_throttle.c ****     dc_motor_direction_e dir = motor_effort > 0 ? MD_FORWARD : MD_REVERSE;
+  51:controller/actuators/electronic_throttle.c ****     dc_motor_direction_t dir = motor_effort > 0 ? MOTOR_DIRECTION_FORWARD : MOTOR_DIRECTION_REVERSE
   93              		.loc 1 51 5 is_stmt 1 view .LVU18
   94              		.loc 1 51 45 is_stmt 0 view .LVU19
   95 003c B5EEC00A 		vcmpe.f32	s0, #0
   96 0040 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
-  97              		.loc 1 51 62 view .LVU20
+  97              		.loc 1 51 75 view .LVU20
   98 0044 D4BF     		ite	le
   99 0046 0121     		movle	r1, #1
  100 0048 0021     		movgt	r1, #0
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
  114              		.loc 1 52 5 discriminator 4 view .LVU24
  115 005e 02E0     		b	.L1
  116              	.LVL12:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 4
 
 
  117              	.L2:
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
  164              	.LVL16:
  165              	.LFB228:
    4:controller/actuators/electronic_throttle.c ****     if (etb == NULL || sensor == NULL || motor == NULL)
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 5
 
 
  166              		.loc 1 4 1 is_stmt 1 view -0
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
  203              		.loc 1 17 5 is_stmt 1 view .LVU47
   17:controller/actuators/electronic_throttle.c **** 
  204              		.loc 1 17 8 is_stmt 0 view .LVU48
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 6
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 6
 
 
  205 0018 8368     		ldr	r3, [r0, #8]
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
  246 003e 00BF     		.align	2
  247              	.L19:
  248 0040 00007F43 		.word	1132396544
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 7
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 7
 
 
  249 0044 00007FC3 		.word	-1015087104
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
  296              	.LFE229:
  298              		.text
  299              	.Letext0:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 8
 
 
  300              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
@@ -432,26 +432,26 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 1
  308              		.file 10 "controller/actuators/dc_motors.h"
  309              		.file 11 "controller/utils/pid.h"
  310              		.file 12 "controller/IO/analog_inputs.h"
- 311              		.file 13 "controller/IO/sensors/tps.h"
+ 311              		.file 13 "controller/IO/sensors.h"
  312              		.file 14 "controller/actuators/electronic_throttle.h"
  313              		.file 15 "controller/utils/error_handling.h"
  314              		.file 16 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s 			page 9
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 electronic_throttle.c
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:21     .rodata.electronic_throttle_update.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:25     .text.electronic_throttle_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:31     .text.electronic_throttle_update:00000000 electronic_throttle_update
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:148    .text.electronic_throttle_update:00000080 $d
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:153    .rodata.electronic_throttle_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:157    .text.electronic_throttle_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:163    .text.electronic_throttle_init:00000000 electronic_throttle_init
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:248    .text.electronic_throttle_init:00000040 $d
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:256    .text.electronic_throttle_set:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:262    .text.electronic_throttle_set:00000000 electronic_throttle_set
-C:\Users\alireza\AppData\Local\Temp\ccCsYXT3.s:294    .text.electronic_throttle_set:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:21     .rodata.electronic_throttle_update.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:25     .text.electronic_throttle_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:31     .text.electronic_throttle_update:00000000 electronic_throttle_update
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:148    .text.electronic_throttle_update:00000080 $d
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:153    .rodata.electronic_throttle_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:157    .text.electronic_throttle_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:163    .text.electronic_throttle_init:00000000 electronic_throttle_init
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:248    .text.electronic_throttle_init:00000040 $d
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:256    .text.electronic_throttle_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:262    .text.electronic_throttle_set:00000000 electronic_throttle_set
+C:\Users\alireza\AppData\Local\Temp\cclLcUiM.s:294    .text.electronic_throttle_set:00000024 $d
 
 UNDEFINED SYMBOLS
 sensor_tps_get

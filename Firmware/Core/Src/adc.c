@@ -219,7 +219,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = ETB1_SENSE1_Pin|ETB1_SENSE2_Pin|ETB2_SENSE1_Pin|ETB2_SENSE2_Pin
-                          |SENSOR_MAP_PIN_Pin|SENSOR_MAT_PIN_Pin|SENSOR_CLT_PIN_Pin|SENSOR_OIL_PIN_Pin;
+                          |SENSOR_MAP_PIN_Pin|SENSOR_IAT_PIN_Pin|SENSOR_CLT_PIN_Pin|SENSOR_OIL_PIN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -279,7 +279,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
                           |VBAT_SENSE_PIN_Pin);
 
     HAL_GPIO_DeInit(GPIOA, ETB1_SENSE1_Pin|ETB1_SENSE2_Pin|ETB2_SENSE1_Pin|ETB2_SENSE2_Pin
-                          |SENSOR_MAP_PIN_Pin|SENSOR_MAT_PIN_Pin|SENSOR_CLT_PIN_Pin|SENSOR_OIL_PIN_Pin);
+                          |SENSOR_MAP_PIN_Pin|SENSOR_IAT_PIN_Pin|SENSOR_CLT_PIN_Pin|SENSOR_OIL_PIN_Pin);
 
     /* ADC1 DMA DeInit */
     HAL_DMA_DeInit(adcHandle->DMA_Handle);

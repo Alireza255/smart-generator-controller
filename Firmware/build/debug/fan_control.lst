@@ -1,0 +1,225 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"fan_control.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/actuators/fan_control.c"
+  20              		.section	.rodata.fan_control_update.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 46616E20 		.ascii	"Fan off or on temperature is not set\000"
+  23      6F666620 
+  23      6F72206F 
+  23      6E207465 
+  23      6D706572 
+  24              		.section	.text.fan_control_update,"ax",%progbits
+  25              		.align	1
+  26              		.global	fan_control_update
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  31              	fan_control_update:
+  32              	.LVL0:
+  33              	.LFB228:
+   1:controller/actuators/fan_control.c **** #include "fan_control.h"
+   2:controller/actuators/fan_control.c **** 
+   3:controller/actuators/fan_control.c **** void fan_control_update(fan_control_t *fan)
+   4:controller/actuators/fan_control.c **** {
+  34              		.loc 1 4 1 view -0
+  35              		.cfi_startproc
+  36              		@ args = 0, pretend = 0, frame = 0
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+  38              		.loc 1 4 1 is_stmt 0 view .LVU1
+  39 0000 10B5     		push	{r4, lr}
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 4, -8
+  42              		.cfi_offset 14, -4
+  43 0002 0446     		mov	r4, r0
+   5:controller/actuators/fan_control.c ****     if (fan->temp_off == fan->temp_on)
+  44              		.loc 1 5 5 is_stmt 1 view .LVU2
+  45              		.loc 1 5 12 is_stmt 0 view .LVU3
+  46 0004 90ED027A 		vldr.32	s14, [r0, #8]
+  47              		.loc 1 5 29 view .LVU4
+  48 0008 D0ED037A 		vldr.32	s15, [r0, #12]
+  49              		.loc 1 5 8 view .LVU5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s 			page 2
+
+
+  50 000c B4EE677A 		vcmp.f32	s14, s15
+  51 0010 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  52 0014 12D0     		beq	.L11
+  53              	.LVL1:
+  54              	.L2:
+   6:controller/actuators/fan_control.c ****     {
+   7:controller/actuators/fan_control.c ****         HAL_GPIO_WritePin(fan->pin.gpio, fan->pin.pin, GPIO_PIN_RESET);
+   8:controller/actuators/fan_control.c ****         osEventFlagsClear(engine.flags, ENGINE_FLAG_FAN_ON);
+   9:controller/actuators/fan_control.c ****         log_error("Fan off or on temperature is not set");
+  10:controller/actuators/fan_control.c ****     }
+  11:controller/actuators/fan_control.c **** 
+  12:controller/actuators/fan_control.c ****     temperature_t current_temp = sensor_clt_get();
+  55              		.loc 1 12 5 is_stmt 1 view .LVU6
+  56              		.loc 1 12 34 is_stmt 0 view .LVU7
+  57 0016 FFF7FEFF 		bl	sensor_clt_get
+  58              	.LVL2:
+  13:controller/actuators/fan_control.c ****     // Fan control logic here
+  14:controller/actuators/fan_control.c ****     if (current_temp > configuration.fan1_on_temp)
+  59              		.loc 1 14 5 is_stmt 1 view .LVU8
+  60              		.loc 1 14 37 is_stmt 0 view .LVU9
+  61 001a 1A4B     		ldr	r3, .L14
+  62 001c D3ED007A 		vldr.32	s15, [r3]
+  63              		.loc 1 14 8 view .LVU10
+  64 0020 F4EEC07A 		vcmpe.f32	s15, s0
+  65 0024 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  66 0028 16D4     		bmi	.L12
+  15:controller/actuators/fan_control.c ****     {
+  16:controller/actuators/fan_control.c ****         HAL_GPIO_WritePin(FAN1_GPIO_Port, FAN1_Pin, GPIO_PIN_SET);
+  17:controller/actuators/fan_control.c ****         osEventFlagsSet(engine.flags, fan->on_flag);
+  18:controller/actuators/fan_control.c ****     }
+  19:controller/actuators/fan_control.c ****     else if (current_temp < configuration.fan1_off_temp)
+  67              		.loc 1 19 10 is_stmt 1 view .LVU11
+  68              		.loc 1 19 42 is_stmt 0 view .LVU12
+  69 002a 174B     		ldr	r3, .L14+4
+  70 002c D3ED007A 		vldr.32	s15, [r3]
+  71              		.loc 1 19 13 view .LVU13
+  72 0030 F4EEC07A 		vcmpe.f32	s15, s0
+  73 0034 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  74 0038 19DC     		bgt	.L13
+  75              	.LVL3:
+  76              	.L1:
+  20:controller/actuators/fan_control.c ****     {
+  21:controller/actuators/fan_control.c ****         HAL_GPIO_WritePin(FAN1_GPIO_Port, FAN1_Pin, GPIO_PIN_RESET);
+  22:controller/actuators/fan_control.c ****         osEventFlagsClear(engine.flags, fan->on_flag);
+  23:controller/actuators/fan_control.c ****     }
+  24:controller/actuators/fan_control.c **** 
+  25:controller/actuators/fan_control.c **** 
+  26:controller/actuators/fan_control.c **** }...
+  77              		.loc 1 26 1 view .LVU14
+  78 003a 10BD     		pop	{r4, pc}
+  79              	.LVL4:
+  80              	.L11:
+   7:controller/actuators/fan_control.c ****         HAL_GPIO_WritePin(fan->pin.gpio, fan->pin.pin, GPIO_PIN_RESET);
+  81              		.loc 1 7 9 is_stmt 1 view .LVU15
+  82 003c 0022     		movs	r2, #0
+  83 003e 8188     		ldrh	r1, [r0, #4]
+  84 0040 0068     		ldr	r0, [r0]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s 			page 3
+
+
+  85              	.LVL5:
+   7:controller/actuators/fan_control.c ****         HAL_GPIO_WritePin(fan->pin.gpio, fan->pin.pin, GPIO_PIN_RESET);
+  86              		.loc 1 7 9 is_stmt 0 view .LVU16
+  87 0042 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  88              	.LVL6:
+   8:controller/actuators/fan_control.c ****         osEventFlagsClear(engine.flags, ENGINE_FLAG_FAN_ON);
+  89              		.loc 1 8 9 is_stmt 1 view .LVU17
+  90 0046 1021     		movs	r1, #16
+  91 0048 104B     		ldr	r3, .L14+8
+  92 004a 986C     		ldr	r0, [r3, #72]
+  93 004c FFF7FEFF 		bl	osEventFlagsClear
+  94              	.LVL7:
+   9:controller/actuators/fan_control.c ****         log_error("Fan off or on temperature is not set");
+  95              		.loc 1 9 9 view .LVU18
+  96 0050 0F48     		ldr	r0, .L14+12
+  97 0052 FFF7FEFF 		bl	log_error
+  98              	.LVL8:
+  99 0056 DEE7     		b	.L2
+ 100              	.LVL9:
+ 101              	.L12:
+  16:controller/actuators/fan_control.c ****         HAL_GPIO_WritePin(FAN1_GPIO_Port, FAN1_Pin, GPIO_PIN_SET);
+ 102              		.loc 1 16 9 view .LVU19
+ 103 0058 0122     		movs	r2, #1
+ 104 005a 0421     		movs	r1, #4
+ 105 005c 0D48     		ldr	r0, .L14+16
+ 106 005e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 107              	.LVL10:
+  17:controller/actuators/fan_control.c ****         osEventFlagsSet(engine.flags, fan->on_flag);
+ 108              		.loc 1 17 9 view .LVU20
+ 109 0062 2169     		ldr	r1, [r4, #16]
+ 110 0064 094B     		ldr	r3, .L14+8
+ 111 0066 986C     		ldr	r0, [r3, #72]
+ 112 0068 FFF7FEFF 		bl	osEventFlagsSet
+ 113              	.LVL11:
+ 114 006c E5E7     		b	.L1
+ 115              	.LVL12:
+ 116              	.L13:
+  21:controller/actuators/fan_control.c ****         HAL_GPIO_WritePin(FAN1_GPIO_Port, FAN1_Pin, GPIO_PIN_RESET);
+ 117              		.loc 1 21 9 view .LVU21
+ 118 006e 0022     		movs	r2, #0
+ 119 0070 0421     		movs	r1, #4
+ 120 0072 0848     		ldr	r0, .L14+16
+ 121 0074 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 122              	.LVL13:
+  22:controller/actuators/fan_control.c ****         osEventFlagsClear(engine.flags, fan->on_flag);
+ 123              		.loc 1 22 9 view .LVU22
+ 124 0078 2169     		ldr	r1, [r4, #16]
+ 125 007a 044B     		ldr	r3, .L14+8
+ 126 007c 986C     		ldr	r0, [r3, #72]
+ 127 007e FFF7FEFF 		bl	osEventFlagsClear
+ 128              	.LVL14:
+ 129              		.loc 1 26 1 is_stmt 0 view .LVU23
+ 130 0082 DAE7     		b	.L1
+ 131              	.L15:
+ 132              		.align	2
+ 133              	.L14:
+ 134 0084 90090000 		.word	configuration+2448
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s 			page 4
+
+
+ 135 0088 8C090000 		.word	configuration+2444
+ 136 008c 00000000 		.word	engine
+ 137 0090 00000000 		.word	.LC0
+ 138 0094 00040240 		.word	1073873920
+ 139              		.cfi_endproc
+ 140              	.LFE228:
+ 142              		.text
+ 143              	.Letext0:
+ 144              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 145              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 146              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 147              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 148              		.file 6 "controller/types.h"
+ 149              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 150              		.file 8 "controller/IO/analog_inputs.h"
+ 151              		.file 9 "controller/IO/sensors.h"
+ 152              		.file 10 "controller/engine_cycle/trigger.h"
+ 153              		.file 11 "controller/tables.h"
+ 154              		.file 12 "controller/utils/pid.h"
+ 155              		.file 13 "controller/algorithm/governer.h"
+ 156              		.file 14 "controller/utils/comms.h"
+ 157              		.file 15 "controller/controller.h"
+ 158              		.file 16 "controller/actuators/fan_control.h"
+ 159              		.file 17 "controller/utils/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fan_control.c
+C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s:21     .rodata.fan_control_update.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s:25     .text.fan_control_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s:31     .text.fan_control_update:00000000 fan_control_update
+C:\Users\alireza\AppData\Local\Temp\ccLeumP1.s:134    .text.fan_control_update:00000084 $d
+
+UNDEFINED SYMBOLS
+sensor_clt_get
+HAL_GPIO_WritePin
+osEventFlagsClear
+log_error
+osEventFlagsSet
+configuration
+engine

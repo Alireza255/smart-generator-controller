@@ -5,9 +5,7 @@
 #include "main.h"
 #include "utils.h"
 #include "stm32f4xx_hal.h"
-#include "iat.h"
-#include "map.h"
-#include "clt.h"
+#include "sensors.h"
 
 #define TEST_MODE
 
@@ -23,22 +21,16 @@
 
 typedef struct
 {
-    GPIO_TypeDef    *gpio;
-    uint32_t         pin;
-} ignition_output_pin_s;
-
-typedef struct
-{
-    ignition_output_pin_s output[IGNITION_MAX_OUTPUTS];
-} ignition_output_conf_s;
+    controller_output_pin_t output[IGNITION_MAX_OUTPUTS];
+} ignition_output_conf_t;
 
 typedef enum
 {
     IGNITION_COIL_STATE_NOT_CHARGING = 0,
     IGNITION_COIL_STATE_CHARGING = 1,
-} ignition_coil_state_e;
+} ignition_coil_state_t;
 
-void ignition_init(ignition_output_conf_s *output_conf);
+void ignition_init(ignition_output_conf_t *output_conf);
 
 /**
  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.

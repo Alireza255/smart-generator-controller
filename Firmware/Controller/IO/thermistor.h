@@ -38,15 +38,15 @@ typedef struct
 	 * units: Ohm
 	 */
 	float resistance_3;
-} thermistor_conf_s;
+} thermistor_conf_t;
 
 typedef struct
 {
-    resistor_s *resistor;
+    resistor_t resistor;
     float m_a;
     float m_b;
     float m_c;
-} thermistor_s;
+} thermistor_t;
 
 /**
  * @brief Initializes a thermistor instance with the specified configuration.
@@ -54,7 +54,7 @@ typedef struct
  * @param thermistor Pointer to the thermistor instance to initialize.
  * @param config Pointer to the configuration structure for the thermistor.
  */
-void thermistor_init(thermistor_s *thermistor, thermistor_conf_s cfg);
+void thermistor_init(thermistor_t *thermistor, thermistor_conf_t cfg);
 
 /**
  * @brief Retrieves the temperature reading from the specified thermistor.
@@ -63,6 +63,6 @@ void thermistor_init(thermistor_s *thermistor, thermistor_conf_s cfg);
  * @return The temperature value in C.
  * @note Returns NAN if invalid temp is measured.
  */
-temperature_t thermistor_get_temp(thermistor_s *thermistor);
+temperature_t thermistor_get_temp(thermistor_t *thermistor);
 
 #endif // THERMISTOR_H

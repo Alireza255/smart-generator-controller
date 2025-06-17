@@ -52,7 +52,7 @@ typedef enum
     ANALOG_INPUT_AD_INPUT2_PIN = 10,
     ANALOG_INPUT_AD_INPUT3_PIN = 11,
     ANALOG_INPUT_AD_INPUT4_PIN = 12,
-} analog_input_adc_channel_mapping_e;
+} analog_input_channel_t;
 
 
 /**
@@ -73,7 +73,7 @@ typedef struct
     #elif ANALOG_INPUTS_ADC_BITS == 24
     uint32_t raw_values[ANALOG_INPUTS_MAX];
     #endif
-} analog_inputs_s;
+} analog_inputs_t;
 
 /**
  * @brief Initializes the analog inputs module.
@@ -107,11 +107,11 @@ void analog_inputs_start_conversion();
  * @return The digital value of the specified analog input.
  */
 #if ANALOG_INPUTS_ADC_BITS == 12
-uint16_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index);
+uint16_t analog_inputs_get_data(analog_input_channel_t input_index);
 #elif ANALOG_INPUTS_ADC_BITS == 24
-uint32_t analog_inputs_get_data(analog_input_adc_channel_mapping_e input_index);
+uint32_t analog_inputs_get_data(analog_input_channel_t input_index);
 #endif
 
-voltage_t analog_inputs_get_voltage(analog_input_adc_channel_mapping_e input_index);
+voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index);
 
 #endif // ANALOG_INPUTS_H

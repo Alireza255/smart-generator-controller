@@ -90,7 +90,8 @@ typedef enum
     ENGINE_FLAG_ROTATION_EVENT = 2,
     ENGINE_FLAG_OIL_PRESSURE_LOW = 4,
     ENGINE_FLAG_COOLANT_TEMPERATURE_HIGH = 8,
-    
+    ENGINE_FLAG_FAN_ON = 16,
+
 
 } engine_flags_t;
 
@@ -100,9 +101,6 @@ typedef struct
     GPIO_TypeDef    *gpio;
     uint32_t         pin;
 } controller_output_pin_t;
-
-
-
 
 
 
@@ -173,20 +171,20 @@ typedef enum __attribute__ ((__packed__)) {
  */
 typedef enum __attribute__ ((__packed__)) {
     /**
-     * Natural gas fuel
+     * Gaseus fuel
      */
-    FT_NATURAL_GAS = 0,
+    FUEL_TYPE_GAS = 0,
     /**
      * Gasoline fuel type
      */
-    FT_GASOLINE = 1,
+    FUEL_TYPE_GASOLINE = 1,
     /**
      * both fuel types are used, useful for when we want to start on gasoline and switch to natural gas after startup
-     * 
+     *
      */
-    FT_DUAL_FUEL = 2,
+    FUEL_TYPE_DUAL_FUEL = 2,
 
-} fuel_type_e;
+} fuel_type_t;
 
 
 
@@ -213,13 +211,23 @@ typedef enum __attribute__ ((__packed__))
 
 typedef enum __attribute__ ((__packed__))
 {
+    SENSOR_IAT_TYPE_TEST,
     SENSOR_IAT_TYPE_BOSCH_816,
-} sensor_iat_type_e;
+} sensor_iat_type_t;
 
 
 typedef enum __attribute__ ((__packed__))
 {
+    SENSOR_MAP_TYPE_TEST,
     SENSOR_MAP_TYPE_BOSCH_816,
-} sensor_map_type_e;
+} sensor_map_type_t;
+
+typedef enum __attribute__ ((__packed__))
+{
+    SENSOR_CLT_TYPE_TEST,
+    SENSOR_CLT_TYPE_NISSAN,
+} sensor_clt_type_t;
+
+
 
 #endif // TYPES_H

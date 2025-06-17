@@ -4,33 +4,34 @@
 #include "timing.h"
 #include "types.h"
 #include "cmsis_os2.h"
+#include "error_handling.h"
 
 typedef enum
 {
-    TF_FILTERING_NONE,
-    TF_FILTERING_LITE,
-    TF_FILTERING_MEDIUM,
-    TF_FILTERING_AGGRESSIVE,
-} trigger_filtering_e;
+    TRIGGER_FILTERING_NONE,
+    TRIGGER_FILTERING_LITE,
+    TRIGGER_FILTERING_MEDIUM,
+    TRIGGER_FILTERING_AGGRESSIVE,
+} trigger_filtering_t;
 
 typedef struct
 {
-    trigger_filtering_e filtering;
+    trigger_filtering_t filtering;
     uint8_t full_teeth;
     uint8_t missing_teeth;
-} trigger_settings_s;
+} trigger_settings_t;
 
 typedef enum
 {
     TS_NOT_SYNCED,
     TS_FULLY_SYNCED,
-} trigger_sync_status_e;
+} trigger_sync_status_t;
 
 
 typedef struct
 {
     bool initialized;
-    trigger_sync_status_e sync_status;
+    trigger_sync_status_t sync_status;
     uint16_t sync_loss_counter;
 
     time_us_t _trigger_filter_time_us;
@@ -40,8 +41,8 @@ typedef struct
     time_us_t _target_tooth_gap_us;
     uint16_t _counted_tooth;
     uint8_t _trigger_actual_teeth;
-
-} trigger_s;
+    trigger_settings_t *settings;
+} trigger_t;
 
 typedef enum {
     /**
@@ -84,6 +85,6 @@ rpm_t crankshaft_get_rpm();
  * @todo add filtering capability
  */
 void trigger_tooth_handle();
-void trigger_init(trigger_s *trigger);
+void trigger_init(trigger_t *trigger, trigger_settings_t *settings);
 
 #endif // TRIGGER_H
