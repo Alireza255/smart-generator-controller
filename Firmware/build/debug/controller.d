@@ -35,6 +35,14 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  Core/Inc/main.h controller/types.h controller/eeprom/eeprom.h \
  controller/engine_cycle/trigger.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+<<<<<<< Updated upstream
+=======
+ controller/actuators/dc_motors.h Core/Inc/main.h controller/tables.h \
+ controller/constants.h controller/engine_cycle/ignition.h \
+ controller/controller.h controller/utils/utils.h \
+ controller/IO/sensors/sensors.h controller/IO/thermistor.h \
+ controller/IO/resistor.h controller/IO/analog_inputs.h \
+>>>>>>> Stashed changes
  controller/utils/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
  Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
@@ -43,6 +51,7 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
+<<<<<<< Updated upstream
  controller/actuators/dc_motors.h controller/tables.h \
  controller/constants.h controller/IO/sensors.h \
  controller/IO/analog_inputs.h controller/utils/utils.h \
@@ -51,6 +60,10 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  controller/controller.h controller/IO/thermistor.h \
  controller/utils/pid.h controller/utils/timing.h \
  controller/actuators/electronic_throttle.h \
+=======
+ controller/IO/analog_inputs.h controller/utils/pid.h \
+ controller/utils/timing.h controller/actuators/electronic_throttle.h \
+>>>>>>> Stashed changes
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/utils/comms.h \
  controller/actuators/fan_control.h
@@ -97,6 +110,20 @@ controller/types.h:
 controller/eeprom/eeprom.h:
 controller/engine_cycle/trigger.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+<<<<<<< Updated upstream
+=======
+controller/actuators/dc_motors.h:
+Core/Inc/main.h:
+controller/tables.h:
+controller/constants.h:
+controller/engine_cycle/ignition.h:
+controller/controller.h:
+controller/utils/utils.h:
+controller/IO/sensors/sensors.h:
+controller/IO/thermistor.h:
+controller/IO/resistor.h:
+controller/IO/analog_inputs.h:
+>>>>>>> Stashed changes
 controller/utils/error_handling.h:
 USB_DEVICE/App/usbd_cdc_if.h:
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
@@ -107,6 +134,7 @@ Core/Inc/main.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
+<<<<<<< Updated upstream
 controller/actuators/dc_motors.h:
 controller/tables.h:
 controller/constants.h:
@@ -119,6 +147,9 @@ controller/constants.h:
 controller/engine_cycle/ignition.h:
 controller/controller.h:
 controller/IO/thermistor.h:
+=======
+controller/IO/analog_inputs.h:
+>>>>>>> Stashed changes
 controller/utils/pid.h:
 controller/utils/timing.h:
 controller/actuators/electronic_throttle.h:

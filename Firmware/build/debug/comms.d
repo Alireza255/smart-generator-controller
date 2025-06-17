@@ -43,12 +43,21 @@ build/debug/comms.o: controller/utils/comms.c controller/utils/comms.h \
  controller/controller.h controller/utils/timing.h controller/types.h \
  Core/Inc/tim.h Core/Inc/main.h controller/types.h \
  controller/eeprom/eeprom.h controller/engine_cycle/trigger.h \
+<<<<<<< Updated upstream
  controller/utils/error_handling.h controller/actuators/dc_motors.h \
  controller/tables.h controller/constants.h controller/IO/sensors.h \
  controller/IO/analog_inputs.h controller/utils/utils.h \
  controller/IO/resistor.h controller/IO/thermistor.h \
  controller/constants.h controller/engine_cycle/ignition.h \
  controller/IO/thermistor.h controller/utils/pid.h \
+=======
+ controller/actuators/dc_motors.h controller/tables.h \
+ controller/constants.h controller/engine_cycle/ignition.h \
+ controller/utils/utils.h controller/IO/sensors/sensors.h \
+ controller/IO/thermistor.h controller/IO/resistor.h \
+ controller/IO/analog_inputs.h controller/utils/error_handling.h \
+ controller/IO/analog_inputs.h controller/utils/pid.h \
+>>>>>>> Stashed changes
  controller/utils/timing.h controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/utils/comms.h \
@@ -110,6 +119,7 @@ controller/utils/error_handling.h:
 controller/actuators/dc_motors.h:
 controller/tables.h:
 controller/constants.h:
+<<<<<<< Updated upstream
 controller/IO/sensors.h:
 controller/IO/analog_inputs.h:
 controller/utils/utils.h:
@@ -118,6 +128,16 @@ controller/IO/thermistor.h:
 controller/constants.h:
 controller/engine_cycle/ignition.h:
 controller/IO/thermistor.h:
+=======
+controller/engine_cycle/ignition.h:
+controller/utils/utils.h:
+controller/IO/sensors/sensors.h:
+controller/IO/thermistor.h:
+controller/IO/resistor.h:
+controller/IO/analog_inputs.h:
+controller/utils/error_handling.h:
+controller/IO/analog_inputs.h:
+>>>>>>> Stashed changes
 controller/utils/pid.h:
 controller/utils/timing.h:
 controller/actuators/electronic_throttle.h:

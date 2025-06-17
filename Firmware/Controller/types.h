@@ -84,6 +84,35 @@ typedef uint16_t pwm_freq_t;
 #define CONVERSION_FACTOR_MILLISECONDS_TO_MICROSECONDS 1000
 
 
+// Section for Coolant Temperature (CLT) Sensor
+#define SENSOR_CLT_FAIL_SAFE (temperature_t)30
+// Section for Intake Air Temperature (IAT) Sensor
+#define SENSOR_IAT_FAIL_SAFE (temperature_t)40
+
+#define SENSOR_MAP_FAIL_SAFE (pressure_t)0
+
+// Section for Manifold Absolute Pressure (MAP) Sensor
+typedef struct
+{
+    uint16_t adc_value_0_bar;
+    uint16_t adc_value_1_bar;
+} sensor_map_calib_s;
+
+// Section for Throttle Position Sensor (TPS)
+/**
+ * @todo implement fail safe so that it uses the other sensor input when the main one fails
+ */
+#define SENSOR_TPS_FAIL_SAFE (percent_t) NAN
+
+typedef struct
+{
+    uint16_t wide_open_throttle_adc_value;
+    uint16_t closed_throttle_adc_value;
+    analog_input_adc_channel_mapping_e analog_channel;
+    bool is_inverted;
+} sensor_tps_s;
+
+
 typedef enum
 {
     ENGINE_FLAG_TRIGGER_EVENT = 1,
@@ -229,5 +258,89 @@ typedef enum __attribute__ ((__packed__))
 } sensor_clt_type_t;
 
 
+
+
+
+
+typedef struct
+{
+    /**
+     * total number of revolutions from startup
+     */
+    uint32_t total_revolutions;
+    angle_t crankshaft_angle;
+    angle_t camshaft_angle;
+    rpm_t rpm;
+   
+    uint8_t cylinder_count;
+    
+    spinning_state_e spinning_state;
+
+    angle_t firing_interval;
+
+    trigger_s trigger;
+    
+    governer_status_e governer_status;
+
+    osEventFlagsId_t flags;
+} engine_s;
+
+extern engine_s engine;
+
+
+typedef struct
+{
+    volume_liter_t engine_displacment;
+    firing_order_e firing_order;
+    fuel_type_e fuel_type;
+    
+    
+    trigger_settings_s trigger;
+
+    rpm_t cranking_rpm_threshold;
+    angle_t cranking_advance;
+    percent_t cranking_throttle;
+
+
+    ignition_mode_e ignition_mode;
+    float_time_ms_t ignition_dwell;
+    bool ignition_is_multi_spark;
+    uint8_t ignition_multi_spark_number_of_sparks;
+    rpm_t ignition_multi_spark_rpm_threshold;
+    float_time_ms_t ignition_multi_spark_rest_time;
+
+    table_2d_t ignition_table;
+    table_2d_t ve_table;
+    
+    afr_t stoich_afr_gas;
+    afr_t stoich_afr_petrol;
+    
+    sensor_tps_s tps1;
+    sensor_tps_s tps2;
+
+    thermistor_conf_s clt_thermistor_calib;
+
+    sensor_iat_type_e iat_sensor_type;
+
+    sensor_map_type_e map_sensor_type;
+
+    rpm_t governer_target_rpm;
+    rpm_t governer_idle_rpm;
+
+    pid_configuration_s etb_pid;
+    pid_configuration_s governer_pid;
+
+    time_ms_t protection_oil_pressure_time;
+    bool protection_oil_pressure_enabled;
+
+    bool protection_clt_enabled;
+    bool protection_clt_load_disconnect_enabled;
+    temperature_t protection_clt_shutdown_temprature;
+    temperature_t protection_clt_load_disconnect_temprature;
+    
+    
+} configuration_s;
+
+extern configuration_s configuration;
 
 #endif // TYPES_H

@@ -130,7 +130,11 @@ USB_DEVICE/App/usbd_desc.c \
 USB_DEVICE/Target/usbd_conf.c \
 controller/IO/analog_inputs.c \
 controller/IO/resistor.c \
+<<<<<<< Updated upstream
 controller/IO/sensors.c \
+=======
+controller/IO/sensors/sensors.c \
+>>>>>>> Stashed changes
 controller/IO/thermistor.c \
 controller/actuators/dc_motors.c \
 controller/actuators/electronic_throttle.c \

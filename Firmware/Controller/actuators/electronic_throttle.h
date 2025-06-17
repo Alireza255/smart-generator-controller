@@ -15,6 +15,7 @@
 #include "error_handling.h"
 #include "math.h"
 
+<<<<<<< Updated upstream
 #define ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION (percent_t)0
 
 typedef enum
@@ -32,6 +33,8 @@ typedef struct
     sensor_tps_t *sensor;
     percent_t target_position;
 } electronic_throttle_t;
+=======
+>>>>>>> Stashed changes
 
 /**
  * @note sensor and motor have to be initialized before calling this function

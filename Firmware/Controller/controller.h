@@ -9,7 +9,10 @@
 #include "trigger.h"
 #include "dc_motors.h"
 #include "tables.h"
+<<<<<<< Updated upstream
 #include "sensors.h"
+=======
+>>>>>>> Stashed changes
 #include "ignition.h"
 #include "thermistor.h"
 #include "pid.h"
@@ -17,6 +20,7 @@
 #include "adc.h"
 #include "governer.h"
 #include "comms.h"
+<<<<<<< Updated upstream
 #include "fan_control.h"
 
 typedef struct
@@ -114,6 +118,12 @@ typedef struct
 extern configuration_t configuration;
 
 void controller_init_with_defaults();
+=======
+#include "sensors.h"
+
+
+void controller_init(osEventFlagsId_t engine_event_flags);
+>>>>>>> Stashed changes
 
 void controller_load_configuration();
 
