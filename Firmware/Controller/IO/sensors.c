@@ -117,7 +117,7 @@ void sensor_iat_init(thermistor_t *sensor, sensor_iat_type_t type)
             sensor_iat = sensor;
             break;
         case SENSOR_IAT_TYPE_TEST:
-            resistor_init(&sensor->resistor, 10000, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_IAT_PIN);
+            resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_IAT_PIN);
             thermistor_conf_t genric_5k =
             {
                 .resistance_1 = 22.263e3f,
@@ -177,7 +177,7 @@ void sensor_clt_init(thermistor_t *sensor, sensor_clt_type_t type)
         sensor_clt = sensor;
         break;
     case SENSOR_CLT_TYPE_TEST:
-        resistor_init(&sensor->resistor, 10000, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_CLT_PIN);
+        resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_CLT_PIN);
         thermistor_conf_t genric_5k =
         {
             .resistance_1 = 22.263e3f,

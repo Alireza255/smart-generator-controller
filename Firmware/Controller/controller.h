@@ -18,6 +18,7 @@
 #include "governer.h"
 #include "comms.h"
 #include "fan_control.h"
+#include "eeprom.h"
 
 typedef struct
 {
