@@ -4,11 +4,16 @@ configuration_t configuration = {0};
 engine_t engine = {0};
 
 
-uint16_t VirtAddVarTab[NB_OF_VAR];
-uint16_t VarDataTab[NB_OF_VAR] = {'M', 'a', 't', 'e', 'u', 's', 'z', ' ', 'S', 'a', 'l', 'a', 'm', 'o', 'n',
-									' ', 'm', 's', 'a', 'l', 'a', 'm', 'o', 'n', '.', 'p', 'l'};
-uint16_t VarDataTabRead[NB_OF_VAR];
-uint16_t VarIndex,VarDataTmp = 0;
+sensor_tps_t tps1 = {
+      .analog_channel = ANALOG_INPUT_ETB1_SENSE1,
+      .closed_throttle_adc_value = 1700,
+      .wide_open_throttle_adc_value = 3000,
+      .is_inverted = false};
+
+  static electronic_throttle_t etb1 = {0};
+  static dc_motor_t etb1_motor = {0};
+  static pid_t etb1_pid = {.derivative_filter_tau = 0.1f, .Kp = 20.0f, .Ki = 1, .Kd = 0, .limit_output_min = -100, .limit_output_max = 100, .limit_integrator_min = -255, .limit_integrator_max = 255, .setpoint = 50};
+
 
 void controller_init_with_defaults()
 {
@@ -53,16 +58,15 @@ void controller_init_with_defaults()
   configuration.trigger.full_teeth = 60;
   configuration.trigger.missing_teeth = 2;
   trigger_init(&engine.trigger, &configuration.trigger);
-    
+
   // comms_init();
 
   /* Initialize analog sensors BEGIN*/
   /* TPS */
-  static sensor_tps_t tps1 = {
-      .analog_channel = ANALOG_INPUT_ETB1_SENSE1,
-      .closed_throttle_adc_value = 0,
-      .wide_open_throttle_adc_value = 4095,
-      .is_inverted = false};
+  dc_motor_init_simple_Hbridge(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_3, TIM_CHANNEL_4, 25000);
+  pid_init(&etb1_pid);
+  electronic_throttle_init(&etb1, &etb1_pid, &tps1, &etb1_motor);
+  electronic_throttle_set(&etb1, 70);
 
   /* CLT */
   configuration.clt_sensor_type = SENSOR_CLT_TYPE_TEST;
@@ -83,49 +87,6 @@ void controller_init_with_defaults()
   static sensor_ops_t sensor_ops = {0};
   sensor_ops_init(&sensor_ops);
 
-//#define flash
-#ifdef flash
-  /* Unlock the Flash Program Erase controller */
-  volatile HAL_StatusTypeDef flash_unlock_status = 0;
-  flash_unlock_status = HAL_FLASH_Unlock();
-
-  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-
-  /* EEPROM Init */
-  if (EE_Init() != EE_OK)
-  {
-    Error_Handler();
-  }
-
-  // Fill EEPROM variables addresses
-  for (VarIndex = 1; VarIndex <= NB_OF_VAR; VarIndex++)
-  {
-    VirtAddVarTab[VarIndex - 1] = VarIndex;
-  }
-
-  // Store Values in EEPROM emulation
-  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-  for (VarIndex = 0; VarIndex < NB_OF_VAR; VarIndex++)
-  {
-    /* Sequence 1 */
-    if ((EE_WriteVariable(VirtAddVarTab[VarIndex], VarDataTab[VarIndex])) != HAL_OK)
-    {
-      Error_Handler();
-    }
-  }
-  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-
-  // Read values
-  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-  for (VarIndex = 0; VarIndex < NB_OF_VAR; VarIndex++)
-  {
-    if ((EE_ReadVariable(VirtAddVarTab[VarIndex], &VarDataTabRead[VarIndex])) != HAL_OK)
-    {
-      Error_Handler();
-    }
-  }
-  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-#endif
   /* Initialize analog sensors END*/
 
   /* Initialize fan*/
@@ -140,35 +101,31 @@ void controller_init_with_defaults()
           .output[2] = {.gpio = IGNITION_OUTPUT3_GPIO_Port, .pin = IGNITION_OUTPUT3_Pin},
           .output[3] = {.gpio = IGNITION_OUTPUT4_GPIO_Port, .pin = IGNITION_OUTPUT4_Pin}};
   ignition_init(&ignition_output_conf);
+  
+    osTimerId_t timer_id = osTimerNew(
+        controller_update_stats,
+        osTimerPeriodic,
+        NULL,
+        NULL
+    );
+    osTimerStart(timer_id, 10); // every 10 tick = every 10ms = 100Hz
+    
+
+    comms_init();
 }
 
 void controller_load_configuration()
 {
-    uint16_t status = HAL_OK;
-    uint32_t read_size = sizeof(configuration) / sizeof(uint16_t);
-    uint16_t *starting_point = (uint16_t *) &configuration;
-    for (size_t i = 0; i < read_size; i++)
-    {
-        status = EE_ReadVariable(i, starting_point + i);
-        if (status != HAL_OK)
-        {
-            log_error("Configuration load failed!");
-            break;
-        }
-    }
+  
 }
 
 void controller_save_configuration()
 {
-    uint16_t status = HAL_OK;
-    uint32_t write_size = sizeof(configuration) / sizeof(uint16_t);
-    uint16_t *starting_point = (uint16_t *) &configuration;
-    for (size_t i = 0; i < write_size; i++)
-    {
-        status = EE_WriteVariable(i, *(starting_point + i));
-        if (status != HAL_OK)
-        {
-            log_error("Configuration save failed!");
-        }
-    }
+}
+
+void controller_update_stats(void *arg)
+{
+  // this must not run before the controller is initialized
+  engine.tps1 = sensor_tps_get(&tps1);
+
 }

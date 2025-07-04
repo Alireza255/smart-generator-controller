@@ -85,6 +85,10 @@ void Error_Handler(void);
 #define SENSOR_OIL_PIN_GPIO_Port GPIOA
 #define VBAT_SENSE_PIN_Pin GPIO_PIN_4
 #define VBAT_SENSE_PIN_GPIO_Port GPIOC
+#define PWM_OUT3_Pin GPIO_PIN_0
+#define PWM_OUT3_GPIO_Port GPIOB
+#define PWM_OUT4_Pin GPIO_PIN_1
+#define PWM_OUT4_GPIO_Port GPIOB
 #define FAN1_Pin GPIO_PIN_2
 #define FAN1_GPIO_Port GPIOB
 #define FAN2_Pin GPIO_PIN_10
@@ -97,18 +101,14 @@ void Error_Handler(void);
 #define IGNITION_OUTPUT2_GPIO_Port GPIOB
 #define IGNITION_OUTPUT1_Pin GPIO_PIN_15
 #define IGNITION_OUTPUT1_GPIO_Port GPIOB
-#define PWM_OUT1_Pin GPIO_PIN_6
-#define PWM_OUT1_GPIO_Port GPIOC
-#define PWM_OUT2_Pin GPIO_PIN_7
-#define PWM_OUT2_GPIO_Port GPIOC
-#define PWM_OUT3_Pin GPIO_PIN_8
-#define PWM_OUT3_GPIO_Port GPIOC
-#define PWM_OUT4_Pin GPIO_PIN_9
-#define PWM_OUT4_GPIO_Port GPIOC
 #define ETB1_MOTOR1_Pin GPIO_PIN_8
 #define ETB1_MOTOR1_GPIO_Port GPIOA
 #define ETB1_MOTOR2_Pin GPIO_PIN_9
 #define ETB1_MOTOR2_GPIO_Port GPIOA
+#define PWM_OUT1_Pin GPIO_PIN_4
+#define PWM_OUT1_GPIO_Port GPIOB
+#define PWM_OUT2_Pin GPIO_PIN_5
+#define PWM_OUT2_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

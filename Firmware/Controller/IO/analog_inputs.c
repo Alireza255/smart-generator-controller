@@ -2,13 +2,12 @@
 #include "error_handling.h"
 
 ADC_HandleTypeDef *hadc = NULL;
-volatile analog_inputs_t analog_data ={0};
-
-volatile bool conversion_is_happening = false;
+static volatile uint16_t analog_data[ANALOG_INPUTS_MAX * ANALOG_INPUTS_NUMBER_OF_SAMPLES];
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-    conversion_is_happening = false;
+
+    
 }
 
 /**
@@ -32,9 +31,6 @@ void analog_inputs_init(ADC_HandleTypeDef *adc_handle)
     
     hadc = adc_handle;
 
-    conversion_is_happening = true;
-
-    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data.raw_values, ANALOG_INPUTS_MAX);
     /**
     * @todo this is just a temporary fix make this a proper thing
     */
@@ -60,13 +56,13 @@ void analog_inputs_start_conversion()
     {
         return;
     }
-    if (conversion_is_happening)
-    {
-        return;
-    }
     
-    conversion_is_happening = true;
-    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data.raw_values, ANALOG_INPUTS_MAX);
+    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data, ANALOG_INPUTS_MAX * ANALOG_INPUTS_NUMBER_OF_SAMPLES);
+}
+
+void analog_inputs_start_conversion_injected()
+{
+
 }
 
 /**
@@ -79,19 +75,20 @@ void analog_inputs_start_conversion()
  *                    This index corresponds to the specific channel of the ADC.
  * @return The digital value of the specified analog input.
  */
-#if ANALOG_INPUTS_ADC_BITS == 12
 uint16_t analog_inputs_get_data(analog_input_channel_t input_index)
-#elif ANALOG_INPUTS_ADC_BITS == 24
-uint32_t analog_inputs_get_data(analog_input_channel_t input_index)
-#endif
 {
-    if (input_index > (ANALOG_INPUTS_MAX - 1))
+    if (input_index >= ANALOG_INPUTS_MAX)
     {
         log_error("Invalid index in analog input.");
         return 0;
     }
-    return analog_data.raw_values[input_index];
-
+    uint_fast32_t sum = 0;
+    for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
+    {
+        sum += analog_data[i * ANALOG_INPUTS_MAX + input_index];
+    }
+    
+    return sum / ANALOG_INPUTS_NUMBER_OF_SAMPLES;
 }
 
 voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index)

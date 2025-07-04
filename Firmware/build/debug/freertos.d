@@ -33,6 +33,8 @@ build/debug/freertos.o: Core/Src/freertos.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
@@ -44,9 +46,9 @@ build/debug/freertos.o: Core/Src/freertos.c \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  controller/controller.h controller/utils/timing.h controller/types.h \
  Core/Inc/tim.h Core/Inc/main.h controller/types.h \
- controller/eeprom/eeprom.h controller/engine_cycle/trigger.h \
+ controller/utils/comms.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- controller/utils/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
+ USB_DEVICE/App/usbd_cdc_if.h \
  Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
@@ -54,6 +56,7 @@ build/debug/freertos.o: Core/Src/freertos.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
+ controller/engine_cycle/trigger.h controller/utils/error_handling.h \
  controller/actuators/dc_motors.h controller/tables.h \
  controller/constants.h controller/IO/sensors.h \
  controller/IO/analog_inputs.h controller/utils/utils.h \
@@ -62,9 +65,8 @@ build/debug/freertos.o: Core/Src/freertos.c \
  controller/IO/thermistor.h controller/utils/pid.h \
  controller/utils/timing.h controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
- controller/algorithm/governer.h controller/utils/comms.h \
- controller/actuators/fan_control.h controller/utils/trigger_simulator.h \
- controller/utils/utils.h
+ controller/algorithm/governer.h controller/actuators/fan_control.h \
+ controller/utils/trigger_simulator.h controller/utils/utils.h
 Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 Core/Inc/FreeRTOSConfig.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -102,6 +104,8 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_crc.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
@@ -117,10 +121,8 @@ controller/types.h:
 Core/Inc/tim.h:
 Core/Inc/main.h:
 controller/types.h:
-controller/eeprom/eeprom.h:
-controller/engine_cycle/trigger.h:
+controller/utils/comms.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
-controller/utils/error_handling.h:
 USB_DEVICE/App/usbd_cdc_if.h:
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
@@ -129,6 +131,8 @@ USB_DEVICE/Target/usbd_conf.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
+controller/engine_cycle/trigger.h:
+controller/utils/error_handling.h:
 controller/actuators/dc_motors.h:
 controller/tables.h:
 controller/constants.h:
@@ -146,7 +150,6 @@ controller/actuators/electronic_throttle.h:
 controller/actuators/dc_motors.h:
 Core/Inc/adc.h:
 controller/algorithm/governer.h:
-controller/utils/comms.h:
 controller/actuators/fan_control.h:
 controller/utils/trigger_simulator.h:
 controller/utils/utils.h:

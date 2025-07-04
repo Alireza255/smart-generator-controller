@@ -95,7 +95,7 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
-
+static usb_rx_packet_t isr_packet;  // Reusable packet for ISR
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -259,26 +259,21 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   * @param  Len: Number of data received (in bytes)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
-static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
-{
-  /* USER CODE BEGIN 6 */
-  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
-  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-      // Prepare the packet to send to the FreeRTOS task
-    usb_rx_packet_t rx_packet;
-    if (*Len > 0 && *Len <= USB_RX_PACKET_MAX_SIZE) {
-        memcpy(rx_packet.data, Buf, *Len); // Copy data from USB buffer
-        rx_packet.len = *Len;
+static int8_t CDC_Receive_FS(uint8_t *Buf, uint32_t *Len) {
+    /* USER CODE BEGIN 6 */
+    // Copy data to packet structure
+    isr_packet.len = (*Len > USB_MAX_PACKET_SIZE) ? USB_MAX_PACKET_SIZE : *Len;
+    memcpy(isr_packet.data, Buf, isr_packet.len);
+    
+    // Send to queue from ISR (non-blocking)
+    osMessageQueuePut(usb_rx_queue, &isr_packet, 0, 0);
 
-        // Put the packet into the message queue.
-        // Use '0' for the timeout because this is an ISR. We don't want to block.
-        // If the queue is full, the packet will be dropped, which for this basic
-        // handshake is acceptable for now. For a full system, you'd handle this.
-        osMessageQueuePut(usb_rx_queue_handle, &rx_packet, 5, 0);
-
-    }
-  return (USBD_OK);
-  /* USER CODE END 6 */
+    // Re-arm USB reception
+    USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+    USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+    
+    return USBD_OK;
+    /* USER CODE END 6 */
 }
 
 /**

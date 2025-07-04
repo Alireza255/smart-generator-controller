@@ -55,7 +55,7 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityRealtime,
 };
 /* Definitions for trig_sim */
 osThreadId_t trig_simHandle;
@@ -76,7 +76,7 @@ osThreadId_t init_taskHandle;
 const osThreadAttr_t init_task_attributes = {
   .name = "init_task",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityRealtime,
 };
 /* Definitions for sensor_task */
 osThreadId_t sensor_taskHandle;
@@ -204,6 +204,7 @@ void trigger_simulator_task(void *argument)
   for(;;)
   {
     simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
+    //simulated_rpm = 500;
     trigger_simulator_update(simulated_rpm);
     osDelay(1);
     
