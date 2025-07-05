@@ -43,7 +43,18 @@ build/debug/comms.o: controller/utils/comms.c controller/utils/comms.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/utils/utils.h controller/types.h Core/Inc/crc.h \
- Core/Inc/main.h controller/utils/timing.h Core/Inc/tim.h
+ Core/Inc/main.h controller/utils/timing.h Core/Inc/tim.h \
+ controller/controller.h controller/utils/timing.h controller/types.h \
+ controller/utils/comms.h controller/engine_cycle/trigger.h \
+ controller/utils/error_handling.h controller/actuators/dc_motors.h \
+ controller/tables.h controller/constants.h controller/IO/sensors.h \
+ controller/IO/analog_inputs.h controller/utils/utils.h \
+ controller/IO/resistor.h controller/IO/thermistor.h \
+ controller/constants.h controller/engine_cycle/ignition.h \
+ controller/IO/thermistor.h controller/utils/pid.h \
+ controller/actuators/electronic_throttle.h \
+ controller/actuators/dc_motors.h Core/Inc/adc.h \
+ controller/algorithm/governer.h controller/actuators/fan_control.h
 controller/utils/comms.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -97,3 +108,26 @@ Core/Inc/crc.h:
 Core/Inc/main.h:
 controller/utils/timing.h:
 Core/Inc/tim.h:
+controller/controller.h:
+controller/utils/timing.h:
+controller/types.h:
+controller/utils/comms.h:
+controller/engine_cycle/trigger.h:
+controller/utils/error_handling.h:
+controller/actuators/dc_motors.h:
+controller/tables.h:
+controller/constants.h:
+controller/IO/sensors.h:
+controller/IO/analog_inputs.h:
+controller/utils/utils.h:
+controller/IO/resistor.h:
+controller/IO/thermistor.h:
+controller/constants.h:
+controller/engine_cycle/ignition.h:
+controller/IO/thermistor.h:
+controller/utils/pid.h:
+controller/actuators/electronic_throttle.h:
+controller/actuators/dc_motors.h:
+Core/Inc/adc.h:
+controller/algorithm/governer.h:
+controller/actuators/fan_control.h:

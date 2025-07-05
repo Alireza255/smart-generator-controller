@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "crc.h"
 #include "timing.h"
+#include "controller.h"
 /*******************************************************************************
  *                          TUNERSTUDIO PROTOCOL PACKET FORMAT
  * 
@@ -35,17 +36,14 @@ reception. The sender MUST act on the response code and MUST check the CRC32.
  ******************************************************************************/
 // ==================== Global Variables ====================
 osMessageQueueId_t usb_rx_queue;
-calibration_page cal_page = {
-    .start_address = 0x08008000,
-    .modified = 0};
 runtime_data runtime_values;
-osMutexId_t runtime_mutex;
-osMutexId_t page_mutex;
+calibration_page calibration_values;
+
 usb_rx_packet_t rx_packet;
 /**
  * See 'blockingFactor' in .ini
  */
-static uint8_t tx_buffer[BLOCKING_FACTOR + 30];
+static uint8_t tx_buffer[TS_BLOCKING_FACTOR + 30];
 
 
 /* Function delcearations  */
@@ -73,19 +71,16 @@ void send_response(uint8_t *data, size_t size, comms_response_format_t mode)
     {
         if (size > 0)
         {
-            CDC_Transmit_FS(data, size);
+			memcpy(tx_buffer, data, size);
+            CDC_Transmit_FS(tx_buffer, size);
         }
     }
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 }
 
 void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
 {
-    /* Determine the size first */
-    if (!buf || buf == NULL)
-    {
-        size = 0;
-    }
+
 	/* We first calculate the prefix */
     uint16_t packet_size = 0;
 	packet_size += 2; // prefix
@@ -95,18 +90,17 @@ void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
 
 	/* Converte the size to big endian */
 	uint16_t prefix = 0;
-	prefix = swap_endian_uint16(packet_size);
+	prefix = swap_endian_uint16(sizeof(flag) + size);
 
 	/* Now we calculate the CRC, over the flag and payload */
 	uint32_t crc = 0;
-	crc += crc32_inc(0, (void*)flag, 1); // flag
-	crc += crc32_inc(crc, buf, size); // payload
+	crc = crc32_inc(0, (void*)&flag, 1); // flag
+	crc = crc32_inc(crc, buf, size); // payload
 
 	/* Converte the crc to big endian */
 	uint32_t suffix = 0;
 	suffix = swap_endian_uint32(crc);
 
-	
 	/* Form the packet in the transmit buffer */
 	size_t tx_buffer_index = 0;
 	memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
@@ -119,6 +113,7 @@ void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
 	tx_buffer_index += sizeof(suffix);
 	
 	/* Finally transmit over USB */
+
 	CDC_Transmit_FS(tx_buffer, packet_size);
 }
 
@@ -137,14 +132,6 @@ void comms_init(void)
         .name = "comms_mutex",
         .attr_bits = osMutexRecursive | osMutexPrioInherit,
     };
-    runtime_mutex = osMutexNew(&mutex_attrs);
-    page_mutex = osMutexNew(&mutex_attrs);
-
-    if (osMutexAcquire(page_mutex, osWaitForever) == osOK)
-    {
-        memcpy(cal_page.data, (void *)cal_page.start_address, PAGE_SIZE);
-        osMutexRelease(page_mutex);
-    }
 
     const osThreadAttr_t comms_task_attrs = {
         .name = "comms_task",
@@ -152,6 +139,13 @@ void comms_init(void)
         .priority = osPriorityNormal,
     };
     osThreadNew(comms_task, NULL, &comms_task_attrs);
+
+	const osThreadAttr_t runtime_update_task_attrs = {
+		.name = "update_task",
+		.stack_size = 1024,
+		.priority = osPriorityNormal,
+	};
+	osThreadNew(runtime_update_task, NULL, &runtime_update_task_attrs);
 }
 
 // ==================== Communication Task ====================
@@ -171,12 +165,13 @@ void comms_task(void *argument)
 bool process_plain_command(uint8_t *cmd, uint16_t size)
 {
     uint8_t first_byte = cmd[0];
-    // Bail fast if guaranteed not to be a plain command
 	switch (first_byte)
 	{
 	case TS_COMMAND_F:
+	#ifndef TS_USE_OLD_PROTOCOL
 		send_response((uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
 		return true;
+	#endif
 		break;
 	case TS_HELLO_COMMAND:
 		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
@@ -187,16 +182,15 @@ bool process_plain_command(uint8_t *cmd, uint16_t size)
 		return true;
 		break;
 	case TS_TEST_COMMS_COMMAND:
-		uint16_t seconds_running = (uint16_t)(get_time_ms() / 1000U);
-		send_response((uint8_t*)&seconds_running, sizeof(seconds_running), TS_PLAIN);
+		send_response((uint8_t *)0xFF, 1, TS_PLAIN);
 		return true;
 		break;
 	case TS_CAN_ID_COMMAND:
-		uint8_t id = TS_CAN_ID;
-		send_response((uint8_t*)&id, sizeof(id), TS_PLAIN);
+
+		send_response((uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
 		return true;
 		break;
-	
+
 	default:
 		break;
 	}
@@ -211,36 +205,80 @@ void process_command(uint8_t *cmd, uint16_t size)
     {
         return;
     }
+	uint16_t packet_size = 0;
+	uint32_t packet_crc = 0;
+	uint32_t calculated_packet_crc = 0;
+	bool is_packet_valid = false;
+	if (size > 5)
+	{
+		packet_size = swap_endian_uint16(*(uint16_t*)cmd);
+		packet_crc = swap_endian_uint32(*(uint32_t*)cmd[size - 1 - TS_PACKET_CRC_SIZE]);
+		calculated_packet_crc = crc32_inc(0, (void*)(cmd + TS_PACKET_PREFIX_SIZE), size - TS_PACKET_PREFIX_SIZE - TS_PACKET_CRC_SIZE );
+
+	}
+	if (calculated_packet_crc == packet_crc)
+	{
+		is_packet_valid = true;
+	}
+	
 	uint8_t command = cmd[2];
 
 	switch (command)
 	{
 	case TS_TEST_COMMS_COMMAND:
-		uint16_t seconds_running = (uint16_t)(get_time_ms() / 1000U);
-		send_response((uint8_t*)&seconds_running, sizeof(seconds_running), TS_CRC);
+		send_response((uint8_t *)0xFF, 1, TS_CRC);
+		return;
 		break;
 
 	case TS_COMMAND_F:
-		send_response((uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_CRC);
+	#ifndef TS_USE_OLD_PROTOCOL
+		send_response((uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL)  - 1, TS_CRC);
+	#endif
+		return;
 		break;
 
 	case TS_CAN_ID_COMMAND:
-		uint8_t id = TS_CAN_ID;
-		send_response((uint8_t *)&id, sizeof(id), TS_CRC);
+		send_response((uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
+		return;
 		break;
+
 	case TS_QUERY_COMMAND:
-		send_response((uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
-
+		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
+		return;
 		break;
+
 	case TS_HELLO_COMMAND:
-		send_response((uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
-
+		send_response((uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
+		return;
+		break;
+	case TS_SERIAL_INFO_COMMAND:
+		uint8_t response[5];
+		response[0] = 2; // serial version
+		*(uint16_t*)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
+		*(uint16_t*)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
+		send_response((uint8_t*)response, sizeof(response), TS_CRC);
+		return;
 		break;
 
+	case TS_OUTPUT_COMMAND:
+		send_response((uint8_t*)&runtime_values, sizeof(runtime_values), TS_CRC);
+		return;
+		break;
+	case TS_READ_COMMAND:
+		send_response((uint8_t*)&calibration_values.data, sizeof(calibration_values.data), TS_CRC);
+		return;
+		break;
+	case TS_CRC_CHECK_COMMAND:
+		uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
+		send_response((uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
+		return;
+		break;
 	default:
 		break;
 	}
 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+
+	
 #if FALSE
  	uint8_t secondByte;
 	/* second byte should be received within minimal delay */
@@ -345,21 +383,18 @@ void process_command(uint8_t *cmd, uint16_t size)
 // ==================== Runtime Update Task ====================
 void runtime_update_task(void *argument)
 {
-    for (;;)
-    {
-        if (osMutexAcquire(runtime_mutex, osWaitForever) == osOK)
-        {
-            // Replace with actual sensor readings
-            runtime_values.rpm = 1;
-            runtime_values.map = 2;
-            runtime_values.tps = 3;
-            runtime_values.lambda = 4;
-            runtime_values.advance = 5;
-            runtime_values.dwell = 6;
-            runtime_values.vbatt = 7;
-            runtime_values.clt = 8;
-            osMutexRelease(runtime_mutex);
-        }
-        osDelay(20);
-    }
+	for (;;)
+	{
+
+		// Replace with actual sensor readings
+		runtime_values.rpm = engine.rpm;
+		runtime_values.map = engine.map;
+		runtime_values.tps = engine.tps1;
+		runtime_values.lambda = 10;
+		runtime_values.advance = engine.ignition_advance;
+		runtime_values.dwell = configuration.ignition_dwell;
+		runtime_values.vbatt = 10;
+		runtime_values.clt = engine.clt;
+		osDelay(10);
+	}
 }

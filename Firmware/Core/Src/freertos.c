@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "controller.h"
 #include "trigger_simulator.h"
+#include "utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -207,7 +208,7 @@ void trigger_simulator_task(void *argument)
     //simulated_rpm = 500;
     trigger_simulator_update(simulated_rpm);
     osDelay(1);
-    
+
   }
   /* USER CODE END trigger_simulator_task */
 }

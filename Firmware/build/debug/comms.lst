@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -20,156 +20,567 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 1
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
   19              		.file 1 "controller/utils/comms.c"
-  20              		.section	.text.transmit_crc_packet,"ax",%progbits
+  20              		.section	.text.runtime_update_task,"ax",%progbits
   21              		.align	1
-  22              		.global	transmit_crc_packet
+  22              		.global	runtime_update_task
   23              		.syntax unified
   24              		.thumb
   25              		.thumb_func
-  27              	transmit_crc_packet:
-  28              	.LVL0:
-  29              	.LFB231:
+  27              	runtime_update_task:
+  28              	.LFB237:
    1:controller/utils/comms.c **** #include "comms.h"
    2:controller/utils/comms.c **** #include "usbd_cdc_if.h"
    3:controller/utils/comms.c **** #include <string.h>
    4:controller/utils/comms.c **** #include "utils.h"
    5:controller/utils/comms.c **** #include "crc.h"
    6:controller/utils/comms.c **** #include "timing.h"
-   7:controller/utils/comms.c **** /*******************************************************************************
-   8:controller/utils/comms.c ****  *                          TUNERSTUDIO PROTOCOL PACKET FORMAT
-   9:controller/utils/comms.c ****  * 
-  10:controller/utils/comms.c ****  * ┌───────────────────────────────
-  11:controller/utils/comms.c ****  * │                            HOST → ECU REQUEST                            │
-  12:controller/utils/comms.c ****  * ├──────────┬────────────────────
-  13:controller/utils/comms.c ****  * │   SIZE   │              PAYLOAD (CMD + DATA)              │    CRC32     │
-  14:controller/utils/comms.c ****  * └──────────┴────────────────────
-  15:controller/utils/comms.c ****  * 
-  16:controller/utils/comms.c ****  *    2 bytes                      N bytes                         4 bytes
-  17:controller/utils/comms.c ****  * 
+   7:controller/utils/comms.c **** #include "controller.h"
+   8:controller/utils/comms.c **** /*******************************************************************************
+   9:controller/utils/comms.c ****  *                          TUNERSTUDIO PROTOCOL PACKET FORMAT
+  10:controller/utils/comms.c ****  * 
+  11:controller/utils/comms.c ****  * ┌───────────────────────────────
+  12:controller/utils/comms.c ****  * │                            HOST → ECU REQUEST                            │
+  13:controller/utils/comms.c ****  * ├──────────┬────────────────────
+  14:controller/utils/comms.c ****  * │   SIZE   │              PAYLOAD (CMD + DATA)              │    CRC32     │
+  15:controller/utils/comms.c ****  * └──────────┴────────────────────
+  16:controller/utils/comms.c ****  * 
+  17:controller/utils/comms.c ****  *    2 bytes                      N bytes                         4 bytes
   18:controller/utils/comms.c ****  * 
-  19:controller/utils/comms.c ****  * ┌───────────────────────────────
-  20:controller/utils/comms.c ****  * │                            ECU → HOST RESPONSE                            │
-  21:controller/utils/comms.c ****  * ├──────────┬──────────┬─────────
-  22:controller/utils/comms.c ****  * │   SIZE   │   FLAG   │           PAYLOAD (DATA)             │    CRC32     │
-  23:controller/utils/comms.c ****  * └──────────┴──────────┴─────────
-  24:controller/utils/comms.c ****  * 
-  25:controller/utils/comms.c ****  *    2 bytes    1 byte                 N bytes                    4 bytes
-  26:controller/utils/comms.c ****  * 
-  27:controller/utils/comms.c ****  * NOTES:
-  28:controller/utils/comms.c ****  * - SIZE: Big-endian uint16 (payload length EXCLUDING CRC)
-  29:controller/utils/comms.c ****  * - FLAG: 0x00=OK, 0x7F=ERROR, 0x5A=DATA_PENDING
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 2
+  19:controller/utils/comms.c ****  * 
+  20:controller/utils/comms.c ****  * ┌───────────────────────────────
+  21:controller/utils/comms.c ****  * │                            ECU → HOST RESPONSE                            │
+  22:controller/utils/comms.c ****  * ├──────────┬──────────┬─────────
+  23:controller/utils/comms.c ****  * │   SIZE   │   FLAG   │           PAYLOAD (DATA)             │    CRC32     │
+  24:controller/utils/comms.c ****  * └──────────┴──────────┴─────────
+  25:controller/utils/comms.c ****  * 
+  26:controller/utils/comms.c ****  *    2 bytes    1 byte                 N bytes                    4 bytes
+  27:controller/utils/comms.c ****  * 
+  28:controller/utils/comms.c ****  * NOTES:
+  29:controller/utils/comms.c ****  * - SIZE: Big-endian uint16 (payload length EXCLUDING CRC)
+  30:controller/utils/comms.c ****  * - FLAG: 0x00=OK, 0x7F=ERROR, 0x5A=DATA_PENDING
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 2
 
 
-  30:controller/utils/comms.c ****  * - CRC32: Calculated over Size+Payload (EXCLUDING the CRC itself)
-  31:controller/utils/comms.c ****  * - All multi-byte fields use BIG-ENDIAN byte order
-  32:controller/utils/comms.c ****  * - Minimum packet size: 7 bytes (2+1+0+4 for empty response)
-  33:controller/utils/comms.c ****  * For every packet sent to the Megasquirt, there will be a response packet, so the sender can vali
-  34:controller/utils/comms.c **** reception. The sender MUST act on the response code and MUST check the CRC32.
-  35:controller/utils/comms.c ****  ******************************************************************************/
-  36:controller/utils/comms.c **** // ==================== Global Variables ====================
-  37:controller/utils/comms.c **** osMessageQueueId_t usb_rx_queue;
-  38:controller/utils/comms.c **** calibration_page cal_page = {
-  39:controller/utils/comms.c ****     .start_address = 0x08008000,
-  40:controller/utils/comms.c ****     .modified = 0};
-  41:controller/utils/comms.c **** runtime_data runtime_values;
-  42:controller/utils/comms.c **** osMutexId_t runtime_mutex;
-  43:controller/utils/comms.c **** osMutexId_t page_mutex;
-  44:controller/utils/comms.c **** usb_rx_packet_t rx_packet;
-  45:controller/utils/comms.c **** /**
-  46:controller/utils/comms.c ****  * See 'blockingFactor' in .ini
-  47:controller/utils/comms.c ****  */
-  48:controller/utils/comms.c **** static uint8_t tx_buffer[BLOCKING_FACTOR + 30];
-  49:controller/utils/comms.c **** 
-  50:controller/utils/comms.c **** 
-  51:controller/utils/comms.c **** /* Function delcearations  */
-  52:controller/utils/comms.c **** /**
-  53:controller/utils/comms.c ****  * @note size can be zero to transmit an empty packet
-  54:controller/utils/comms.c ****  */
-  55:controller/utils/comms.c **** void send_response(uint8_t *data, size_t size, comms_response_format_t mode);
-  56:controller/utils/comms.c **** void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size);
-  57:controller/utils/comms.c **** static void transmit_ok_response();
-  58:controller/utils/comms.c **** bool process_plain_command(uint8_t *cmd, uint16_t size);
-  59:controller/utils/comms.c **** void process_command(uint8_t *cmd, uint16_t size);
+  31:controller/utils/comms.c ****  * - CRC32: Calculated over Size+Payload (EXCLUDING the CRC itself)
+  32:controller/utils/comms.c ****  * - All multi-byte fields use BIG-ENDIAN byte order
+  33:controller/utils/comms.c ****  * - Minimum packet size: 7 bytes (2+1+0+4 for empty response)
+  34:controller/utils/comms.c ****  * For every packet sent to the Megasquirt, there will be a response packet, so the sender can vali
+  35:controller/utils/comms.c **** reception. The sender MUST act on the response code and MUST check the CRC32.
+  36:controller/utils/comms.c ****  ******************************************************************************/
+  37:controller/utils/comms.c **** // ==================== Global Variables ====================
+  38:controller/utils/comms.c **** osMessageQueueId_t usb_rx_queue;
+  39:controller/utils/comms.c **** runtime_data runtime_values;
+  40:controller/utils/comms.c **** calibration_page calibration_values;
+  41:controller/utils/comms.c **** 
+  42:controller/utils/comms.c **** usb_rx_packet_t rx_packet;
+  43:controller/utils/comms.c **** /**
+  44:controller/utils/comms.c ****  * See 'blockingFactor' in .ini
+  45:controller/utils/comms.c ****  */
+  46:controller/utils/comms.c **** static uint8_t tx_buffer[TS_BLOCKING_FACTOR + 30];
+  47:controller/utils/comms.c **** 
+  48:controller/utils/comms.c **** 
+  49:controller/utils/comms.c **** /* Function delcearations  */
+  50:controller/utils/comms.c **** /**
+  51:controller/utils/comms.c ****  * @note size can be zero to transmit an empty packet
+  52:controller/utils/comms.c ****  */
+  53:controller/utils/comms.c **** void send_response(uint8_t *data, size_t size, comms_response_format_t mode);
+  54:controller/utils/comms.c **** void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size);
+  55:controller/utils/comms.c **** static void transmit_ok_response();
+  56:controller/utils/comms.c **** bool process_plain_command(uint8_t *cmd, uint16_t size);
+  57:controller/utils/comms.c **** void process_command(uint8_t *cmd, uint16_t size);
+  58:controller/utils/comms.c **** 
+  59:controller/utils/comms.c **** 
   60:controller/utils/comms.c **** 
-  61:controller/utils/comms.c **** 
+  61:controller/utils/comms.c **** /* Function definations */
   62:controller/utils/comms.c **** 
-  63:controller/utils/comms.c **** /* Function definations */
-  64:controller/utils/comms.c **** 
-  65:controller/utils/comms.c **** void send_response(uint8_t *data, size_t size, comms_response_format_t mode)
-  66:controller/utils/comms.c **** {
-  67:controller/utils/comms.c **** 
-  68:controller/utils/comms.c ****     if (mode == TS_CRC)
-  69:controller/utils/comms.c ****     {
-  70:controller/utils/comms.c ****         transmit_crc_packet(TS_RESPONSE_OK, data, size);
-  71:controller/utils/comms.c ****     }
-  72:controller/utils/comms.c ****     else
-  73:controller/utils/comms.c ****     {
-  74:controller/utils/comms.c ****         if (size > 0)
-  75:controller/utils/comms.c ****         {
-  76:controller/utils/comms.c ****             CDC_Transmit_FS(data, size);
-  77:controller/utils/comms.c ****         }
-  78:controller/utils/comms.c ****     }
-  79:controller/utils/comms.c ****     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-  80:controller/utils/comms.c **** }
-  81:controller/utils/comms.c **** 
-  82:controller/utils/comms.c **** void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
-  83:controller/utils/comms.c **** {
-  30              		.loc 1 83 1 view -0
-  31              		.cfi_startproc
+  63:controller/utils/comms.c **** void send_response(uint8_t *data, size_t size, comms_response_format_t mode)
+  64:controller/utils/comms.c **** {
+  65:controller/utils/comms.c **** 
+  66:controller/utils/comms.c ****     if (mode == TS_CRC)
+  67:controller/utils/comms.c ****     {
+  68:controller/utils/comms.c ****         transmit_crc_packet(TS_RESPONSE_OK, data, size);
+  69:controller/utils/comms.c ****     }
+  70:controller/utils/comms.c ****     else
+  71:controller/utils/comms.c ****     {
+  72:controller/utils/comms.c ****         if (size > 0)
+  73:controller/utils/comms.c ****         {
+  74:controller/utils/comms.c **** 			memcpy(tx_buffer, data, size);
+  75:controller/utils/comms.c ****             CDC_Transmit_FS(tx_buffer, size);
+  76:controller/utils/comms.c ****         }
+  77:controller/utils/comms.c ****     }
+  78:controller/utils/comms.c **** 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+  79:controller/utils/comms.c **** }
+  80:controller/utils/comms.c **** 
+  81:controller/utils/comms.c **** void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
+  82:controller/utils/comms.c **** {
+  83:controller/utils/comms.c **** 
+  84:controller/utils/comms.c **** 	/* We first calculate the prefix */
+  85:controller/utils/comms.c ****     uint16_t packet_size = 0;
+  86:controller/utils/comms.c **** 	packet_size += 2; // prefix
+  87:controller/utils/comms.c **** 	packet_size += 1; // flag
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 3
+
+
+  88:controller/utils/comms.c **** 	packet_size += 4; // CRC
+  89:controller/utils/comms.c **** 	packet_size += size; // payload
+  90:controller/utils/comms.c **** 
+  91:controller/utils/comms.c **** 	/* Converte the size to big endian */
+  92:controller/utils/comms.c **** 	uint16_t prefix = 0;
+  93:controller/utils/comms.c **** 	prefix = swap_endian_uint16(sizeof(flag) + size);
+  94:controller/utils/comms.c **** 
+  95:controller/utils/comms.c **** 	/* Now we calculate the CRC, over the flag and payload */
+  96:controller/utils/comms.c **** 	uint32_t crc = 0;
+  97:controller/utils/comms.c **** 	crc = crc32_inc(0, (void*)&flag, 1); // flag
+  98:controller/utils/comms.c **** 	crc = crc32_inc(crc, buf, size); // payload
+  99:controller/utils/comms.c **** 
+ 100:controller/utils/comms.c **** 	/* Converte the crc to big endian */
+ 101:controller/utils/comms.c **** 	uint32_t suffix = 0;
+ 102:controller/utils/comms.c **** 	suffix = swap_endian_uint32(crc);
+ 103:controller/utils/comms.c **** 
+ 104:controller/utils/comms.c **** 	/* Form the packet in the transmit buffer */
+ 105:controller/utils/comms.c **** 	size_t tx_buffer_index = 0;
+ 106:controller/utils/comms.c **** 	memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
+ 107:controller/utils/comms.c **** 	tx_buffer_index += sizeof(prefix);
+ 108:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, &flag, sizeof(flag)); // flag to buffer 
+ 109:controller/utils/comms.c **** 	tx_buffer_index += sizeof(flag);
+ 110:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, buf, size); // payload to buffer
+ 111:controller/utils/comms.c **** 	tx_buffer_index += size;
+ 112:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
+ 113:controller/utils/comms.c **** 	tx_buffer_index += sizeof(suffix);
+ 114:controller/utils/comms.c **** 	
+ 115:controller/utils/comms.c **** 	/* Finally transmit over USB */
+ 116:controller/utils/comms.c **** 
+ 117:controller/utils/comms.c **** 	CDC_Transmit_FS(tx_buffer, packet_size);
+ 118:controller/utils/comms.c **** }
+ 119:controller/utils/comms.c **** 
+ 120:controller/utils/comms.c **** 
+ 121:controller/utils/comms.c **** static void transmit_ok_response()
+ 122:controller/utils/comms.c **** {
+ 123:controller/utils/comms.c ****     send_response(NULL, 0, TS_CRC);
+ 124:controller/utils/comms.c **** }
+ 125:controller/utils/comms.c **** 
+ 126:controller/utils/comms.c **** // ==================== Initialization ====================
+ 127:controller/utils/comms.c **** void comms_init(void)
+ 128:controller/utils/comms.c **** {
+ 129:controller/utils/comms.c ****     usb_rx_queue = osMessageQueueNew(16, sizeof(usb_rx_packet_t), NULL);
+ 130:controller/utils/comms.c **** 
+ 131:controller/utils/comms.c ****     const osMutexAttr_t mutex_attrs = {
+ 132:controller/utils/comms.c ****         .name = "comms_mutex",
+ 133:controller/utils/comms.c ****         .attr_bits = osMutexRecursive | osMutexPrioInherit,
+ 134:controller/utils/comms.c ****     };
+ 135:controller/utils/comms.c **** 
+ 136:controller/utils/comms.c ****     const osThreadAttr_t comms_task_attrs = {
+ 137:controller/utils/comms.c ****         .name = "comms_task",
+ 138:controller/utils/comms.c ****         .stack_size = 1024 * 4,
+ 139:controller/utils/comms.c ****         .priority = osPriorityNormal,
+ 140:controller/utils/comms.c ****     };
+ 141:controller/utils/comms.c ****     osThreadNew(comms_task, NULL, &comms_task_attrs);
+ 142:controller/utils/comms.c **** 
+ 143:controller/utils/comms.c **** 	const osThreadAttr_t runtime_update_task_attrs = {
+ 144:controller/utils/comms.c **** 		.name = "update_task",
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 4
+
+
+ 145:controller/utils/comms.c **** 		.stack_size = 1024,
+ 146:controller/utils/comms.c **** 		.priority = osPriorityNormal,
+ 147:controller/utils/comms.c **** 	};
+ 148:controller/utils/comms.c **** 	osThreadNew(runtime_update_task, NULL, &runtime_update_task_attrs);
+ 149:controller/utils/comms.c **** }
+ 150:controller/utils/comms.c **** 
+ 151:controller/utils/comms.c **** // ==================== Communication Task ====================
+ 152:controller/utils/comms.c **** void comms_task(void *argument)
+ 153:controller/utils/comms.c **** {
+ 154:controller/utils/comms.c ****     
+ 155:controller/utils/comms.c ****     for (;;)
+ 156:controller/utils/comms.c ****     {
+ 157:controller/utils/comms.c ****         if (osMessageQueueGet(usb_rx_queue, &rx_packet, NULL, osWaitForever) == osOK)
+ 158:controller/utils/comms.c ****         {
+ 159:controller/utils/comms.c ****             process_command(rx_packet.data, rx_packet.len);
+ 160:controller/utils/comms.c ****         }
+ 161:controller/utils/comms.c ****     }
+ 162:controller/utils/comms.c **** }
+ 163:controller/utils/comms.c **** 
+ 164:controller/utils/comms.c **** // ==================== Command Processing ====================
+ 165:controller/utils/comms.c **** bool process_plain_command(uint8_t *cmd, uint16_t size)
+ 166:controller/utils/comms.c **** {
+ 167:controller/utils/comms.c ****     uint8_t first_byte = cmd[0];
+ 168:controller/utils/comms.c **** 	switch (first_byte)
+ 169:controller/utils/comms.c **** 	{
+ 170:controller/utils/comms.c **** 	case TS_COMMAND_F:
+ 171:controller/utils/comms.c **** 	#ifndef TS_USE_OLD_PROTOCOL
+ 172:controller/utils/comms.c **** 		send_response((uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
+ 173:controller/utils/comms.c **** 		return true;
+ 174:controller/utils/comms.c **** 	#endif
+ 175:controller/utils/comms.c **** 		break;
+ 176:controller/utils/comms.c **** 	case TS_HELLO_COMMAND:
+ 177:controller/utils/comms.c **** 		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+ 178:controller/utils/comms.c **** 		return true;
+ 179:controller/utils/comms.c **** 		break;
+ 180:controller/utils/comms.c **** 	case TS_QUERY_COMMAND:
+ 181:controller/utils/comms.c **** 		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+ 182:controller/utils/comms.c **** 		return true;
+ 183:controller/utils/comms.c **** 		break;
+ 184:controller/utils/comms.c **** 	case TS_TEST_COMMS_COMMAND:
+ 185:controller/utils/comms.c **** 		send_response((uint8_t *)0xFF, 1, TS_PLAIN);
+ 186:controller/utils/comms.c **** 		return true;
+ 187:controller/utils/comms.c **** 		break;
+ 188:controller/utils/comms.c **** 	case TS_CAN_ID_COMMAND:
+ 189:controller/utils/comms.c **** 
+ 190:controller/utils/comms.c **** 		send_response((uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
+ 191:controller/utils/comms.c **** 		return true;
+ 192:controller/utils/comms.c **** 		break;
+ 193:controller/utils/comms.c **** 
+ 194:controller/utils/comms.c **** 	default:
+ 195:controller/utils/comms.c **** 		break;
+ 196:controller/utils/comms.c **** 	}
+ 197:controller/utils/comms.c **** 		// This wasn't a valid command
+ 198:controller/utils/comms.c **** 		return false;
+ 199:controller/utils/comms.c **** 	
+ 200:controller/utils/comms.c **** }
+ 201:controller/utils/comms.c **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 5
+
+
+ 202:controller/utils/comms.c **** void process_command(uint8_t *cmd, uint16_t size)
+ 203:controller/utils/comms.c **** {
+ 204:controller/utils/comms.c ****     if (process_plain_command(cmd, size))
+ 205:controller/utils/comms.c ****     {
+ 206:controller/utils/comms.c ****         return;
+ 207:controller/utils/comms.c ****     }
+ 208:controller/utils/comms.c **** 	uint16_t packet_size = 0;
+ 209:controller/utils/comms.c **** 	uint32_t packet_crc = 0;
+ 210:controller/utils/comms.c **** 	uint32_t calculated_packet_crc = 0;
+ 211:controller/utils/comms.c **** 	bool is_packet_valid = false;
+ 212:controller/utils/comms.c **** 	if (size > 5)
+ 213:controller/utils/comms.c **** 	{
+ 214:controller/utils/comms.c **** 		packet_size = swap_endian_uint16(*(uint16_t*)cmd);
+ 215:controller/utils/comms.c **** 		packet_crc = swap_endian_uint32(*(uint32_t*)cmd[size - 1 - TS_PACKET_CRC_SIZE]);
+ 216:controller/utils/comms.c **** 		calculated_packet_crc = crc32_inc(0, (void*)(cmd + TS_PACKET_PREFIX_SIZE), size - TS_PACKET_PREFI
+ 217:controller/utils/comms.c **** 
+ 218:controller/utils/comms.c **** 	}
+ 219:controller/utils/comms.c **** 	if (calculated_packet_crc == packet_crc)
+ 220:controller/utils/comms.c **** 	{
+ 221:controller/utils/comms.c **** 		is_packet_valid = true;
+ 222:controller/utils/comms.c **** 	}
+ 223:controller/utils/comms.c **** 	
+ 224:controller/utils/comms.c **** 	uint8_t command = cmd[2];
+ 225:controller/utils/comms.c **** 
+ 226:controller/utils/comms.c **** 	switch (command)
+ 227:controller/utils/comms.c **** 	{
+ 228:controller/utils/comms.c **** 	case TS_TEST_COMMS_COMMAND:
+ 229:controller/utils/comms.c **** 		send_response((uint8_t *)0xFF, 1, TS_CRC);
+ 230:controller/utils/comms.c **** 		return;
+ 231:controller/utils/comms.c **** 		break;
+ 232:controller/utils/comms.c **** 
+ 233:controller/utils/comms.c **** 	case TS_COMMAND_F:
+ 234:controller/utils/comms.c **** 	#ifndef TS_USE_OLD_PROTOCOL
+ 235:controller/utils/comms.c **** 		send_response((uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL)  - 1, TS_CRC);
+ 236:controller/utils/comms.c **** 	#endif
+ 237:controller/utils/comms.c **** 		return;
+ 238:controller/utils/comms.c **** 		break;
+ 239:controller/utils/comms.c **** 
+ 240:controller/utils/comms.c **** 	case TS_CAN_ID_COMMAND:
+ 241:controller/utils/comms.c **** 		send_response((uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
+ 242:controller/utils/comms.c **** 		return;
+ 243:controller/utils/comms.c **** 		break;
+ 244:controller/utils/comms.c **** 
+ 245:controller/utils/comms.c **** 	case TS_QUERY_COMMAND:
+ 246:controller/utils/comms.c **** 		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
+ 247:controller/utils/comms.c **** 		return;
+ 248:controller/utils/comms.c **** 		break;
+ 249:controller/utils/comms.c **** 
+ 250:controller/utils/comms.c **** 	case TS_HELLO_COMMAND:
+ 251:controller/utils/comms.c **** 		send_response((uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
+ 252:controller/utils/comms.c **** 		return;
+ 253:controller/utils/comms.c **** 		break;
+ 254:controller/utils/comms.c **** 	case TS_SERIAL_INFO_COMMAND:
+ 255:controller/utils/comms.c **** 		uint8_t response[5];
+ 256:controller/utils/comms.c **** 		response[0] = 2; // serial version
+ 257:controller/utils/comms.c **** 		*(uint16_t*)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
+ 258:controller/utils/comms.c **** 		*(uint16_t*)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 6
+
+
+ 259:controller/utils/comms.c **** 		send_response((uint8_t*)response, sizeof(response), TS_CRC);
+ 260:controller/utils/comms.c **** 		return;
+ 261:controller/utils/comms.c **** 		break;
+ 262:controller/utils/comms.c **** 
+ 263:controller/utils/comms.c **** 	case TS_OUTPUT_COMMAND:
+ 264:controller/utils/comms.c **** 		send_response((uint8_t*)&runtime_values, sizeof(runtime_values), TS_CRC);
+ 265:controller/utils/comms.c **** 		return;
+ 266:controller/utils/comms.c **** 		break;
+ 267:controller/utils/comms.c **** 	case TS_READ_COMMAND:
+ 268:controller/utils/comms.c **** 		send_response((uint8_t*)&calibration_values.data, sizeof(calibration_values.data), TS_CRC);
+ 269:controller/utils/comms.c **** 		return;
+ 270:controller/utils/comms.c **** 		break;
+ 271:controller/utils/comms.c **** 	case TS_CRC_CHECK_COMMAND:
+ 272:controller/utils/comms.c **** 		uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
+ 273:controller/utils/comms.c **** 		send_response((uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
+ 274:controller/utils/comms.c **** 		return;
+ 275:controller/utils/comms.c **** 		break;
+ 276:controller/utils/comms.c **** 	default:
+ 277:controller/utils/comms.c **** 		break;
+ 278:controller/utils/comms.c **** 	}
+ 279:controller/utils/comms.c **** 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+ 280:controller/utils/comms.c **** 
+ 281:controller/utils/comms.c **** 	
+ 282:controller/utils/comms.c **** #if FALSE
+ 283:controller/utils/comms.c ****  	uint8_t secondByte;
+ 284:controller/utils/comms.c **** 	/* second byte should be received within minimal delay */
+ 285:controller/utils/comms.c **** 	received = tsChannel->readTimeout(&secondByte, 1, TS_COMMUNICATION_TIMEOUT_SHORT);
+ 286:controller/utils/comms.c **** 	if (received != 1) {
+ 287:controller/utils/comms.c **** 		tunerStudioError(tsChannel, "TS: ERROR: no second byte");
+ 288:controller/utils/comms.c **** 		tsChannel->in_sync = false;
+ 289:controller/utils/comms.c **** 		return -1;
+ 290:controller/utils/comms.c **** 	}
+ 291:controller/utils/comms.c **** 
+ 292:controller/utils/comms.c **** 	uint16_t incomingPacketSize = firstByte << 8 | secondByte;
+ 293:controller/utils/comms.c **** 	size_t expectedSize = incomingPacketSize + TS_PACKET_TAIL_SIZE;
+ 294:controller/utils/comms.c **** 
+ 295:controller/utils/comms.c **** 	if ((incomingPacketSize == 0) || (expectedSize > sizeof(tsChannel->scratchBuffer))) {
+ 296:controller/utils/comms.c **** 		if (tsChannel->in_sync) {
+ 297:controller/utils/comms.c **** 			efiPrintf("process_ts: channel=%s invalid size: %d", tsChannel->name, incomingPacketSize);
+ 298:controller/utils/comms.c **** 			tunerStudioError(tsChannel, "process_ts: ERROR: packet size");
+ 299:controller/utils/comms.c **** 			/* send error only if previously we were in sync */
+ 300:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_OUT_OF_RANGE, "invalid size");
+ 301:controller/utils/comms.c **** 		}
+ 302:controller/utils/comms.c **** 		tsChannel->in_sync = false;
+ 303:controller/utils/comms.c **** 		return -1;
+ 304:controller/utils/comms.c **** 	}
+ 305:controller/utils/comms.c **** 
+ 306:controller/utils/comms.c **** 	char command;
+ 307:controller/utils/comms.c **** 	if (tsChannel->in_sync) {
+ 308:controller/utils/comms.c **** 		/* we are in sync state, packet size should be correct so lets receive full packet and then check
+ 309:controller/utils/comms.c **** 		 * otherwise (if abort reception in middle of packet) it will break synchronization and cause err
+ 310:controller/utils/comms.c **** 		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer), expectedSize, TS_COMMUNIC
+ 311:controller/utils/comms.c **** 		command = tsChannel->scratchBuffer[0];
+ 312:controller/utils/comms.c **** 
+ 313:controller/utils/comms.c **** 		if (received != expectedSize) {
+ 314:controller/utils/comms.c **** 			/* print and send error as we were in sync */
+ 315:controller/utils/comms.c **** 			efiPrintf("Got only %d bytes while expecting %d for command 0x%02x", received,
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 7
+
+
+ 316:controller/utils/comms.c **** 					expectedSize, command);
+ 317:controller/utils/comms.c **** 			tunerStudioError(tsChannel, "ERROR: not enough bytes in stream");
+ 318:controller/utils/comms.c **** 			// MS serial protocol spec: There was a timeout before all data was received. (25ms per characte
+ 319:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_UNDERRUN, "underrun");
+ 320:controller/utils/comms.c **** 			tsChannel->in_sync = false;
+ 321:controller/utils/comms.c **** 			return -1;
+ 322:controller/utils/comms.c **** 		}
+ 323:controller/utils/comms.c **** 
+ 324:controller/utils/comms.c **** 		if (!isKnownCommand(command)) {
+ 325:controller/utils/comms.c **** 			/* print and send error as we were in sync */
+ 326:controller/utils/comms.c **** 			efiPrintf("unexpected command %x", command);
+ 327:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_UNRECOGNIZED_COMMAND, "unknown");
+ 328:controller/utils/comms.c **** 			tsChannel->in_sync = false;
+ 329:controller/utils/comms.c **** 			return -1;
+ 330:controller/utils/comms.c **** 		}
+ 331:controller/utils/comms.c **** 	} else {
+ 332:controller/utils/comms.c **** 		/* receive only command byte to check if it is supported */
+ 333:controller/utils/comms.c **** 		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer), 1, TS_COMMUNICATION_TIMEO
+ 334:controller/utils/comms.c **** 		command = tsChannel->scratchBuffer[0];
+ 335:controller/utils/comms.c **** 
+ 336:controller/utils/comms.c **** 		if (!isKnownCommand(command)) {
+ 337:controller/utils/comms.c **** 			/* do not report any error as we are not in sync */
+ 338:controller/utils/comms.c **** 			return -1;
+ 339:controller/utils/comms.c **** 		}
+ 340:controller/utils/comms.c **** 
+ 341:controller/utils/comms.c **** 		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer) + 1, expectedSize - 1, TS_
+ 342:controller/utils/comms.c **** 		if (received != expectedSize - 1) {
+ 343:controller/utils/comms.c **** 			/* do not report any error as we are not in sync */
+ 344:controller/utils/comms.c **** 			return -1;
+ 345:controller/utils/comms.c **** 		}
+ 346:controller/utils/comms.c **** 	}
+ 347:controller/utils/comms.c **** 
+ 348:controller/utils/comms.c **** #if EFI_SIMULATOR
+ 349:controller/utils/comms.c **** 	logMsg("command %c\r\n", command);
+ 350:controller/utils/comms.c **** #endif
+ 351:controller/utils/comms.c **** 
+ 352:controller/utils/comms.c **** 	uint32_t expectedCrc = *(uint32_t*) (tsChannel->scratchBuffer + incomingPacketSize);
+ 353:controller/utils/comms.c **** 
+ 354:controller/utils/comms.c **** 	expectedCrc = SWAP_UINT32(expectedCrc);
+ 355:controller/utils/comms.c **** 
+ 356:controller/utils/comms.c **** 	uint32_t actualCrc = crc32(tsChannel->scratchBuffer, incomingPacketSize);
+ 357:controller/utils/comms.c **** 	if (actualCrc != expectedCrc) {
+ 358:controller/utils/comms.c **** 		/* send error only if previously we were in sync */
+ 359:controller/utils/comms.c **** 		if (tsChannel->in_sync) {
+ 360:controller/utils/comms.c **** 			efiPrintf("TunerStudio: command %c actual CRC %x/expected %x", tsChannel->scratchBuffer[0],
+ 361:controller/utils/comms.c **** 					(unsigned int)actualCrc, (unsigned int)expectedCrc);
+ 362:controller/utils/comms.c **** 			tunerStudioError(tsChannel, "ERROR: CRC issue");
+ 363:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_CRC_FAILURE, "crc_issue");
+ 364:controller/utils/comms.c **** 			tsChannel->in_sync = false;
+ 365:controller/utils/comms.c **** 		}
+ 366:controller/utils/comms.c **** 		return -1;
+ 367:controller/utils/comms.c **** 	}
+ 368:controller/utils/comms.c **** 
+ 369:controller/utils/comms.c **** 	/* we were able to receive known command with correct crc and size! */
+ 370:controller/utils/comms.c **** 	tsChannel->in_sync = true;
+ 371:controller/utils/comms.c **** 
+ 372:controller/utils/comms.c **** 	int success = tsInstance.handleCrcCommand(tsChannel, tsChannel->scratchBuffer, incomingPacketSize)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 8
+
+
+ 373:controller/utils/comms.c **** 
+ 374:controller/utils/comms.c **** 	if (!success) {
+ 375:controller/utils/comms.c **** 		efiPrintf("got unexpected TunerStudio command %x:%c", command, command);
+ 376:controller/utils/comms.c **** 		return -1;
+ 377:controller/utils/comms.c **** 	}
+ 378:controller/utils/comms.c **** 
+ 379:controller/utils/comms.c **** 	return 0;
+ 380:controller/utils/comms.c **** #endif
+ 381:controller/utils/comms.c **** }
+ 382:controller/utils/comms.c **** 
+ 383:controller/utils/comms.c **** // ==================== Runtime Update Task ====================
+ 384:controller/utils/comms.c **** void runtime_update_task(void *argument)
+ 385:controller/utils/comms.c **** {
+  29              		.loc 1 385 1 view -0
+  30              		.cfi_startproc
+  31              		@ Volatile: function does not return.
   32              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 3
-
-
   33              		@ frame_needed = 0, uses_anonymous_args = 0
-  34              		.loc 1 83 1 is_stmt 0 view .LVU1
-  35 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
-  36              		.cfi_def_cfa_offset 32
-  37              		.cfi_offset 4, -32
-  38              		.cfi_offset 5, -28
-  39              		.cfi_offset 6, -24
-  40              		.cfi_offset 7, -20
-  41              		.cfi_offset 8, -16
-  42              		.cfi_offset 9, -12
-  43              		.cfi_offset 10, -8
-  44              		.cfi_offset 14, -4
-  45 0004 0646     		mov	r6, r0
-  46 0006 1546     		mov	r5, r2
-  84:controller/utils/comms.c ****     /* Determine the size first */
-  85:controller/utils/comms.c ****     if (!buf || buf == NULL)
-  47              		.loc 1 85 5 is_stmt 1 view .LVU2
-  48              		.loc 1 85 8 is_stmt 0 view .LVU3
-  49 0008 8846     		mov	r8, r1
-  50 000a 71B3     		cbz	r1, .L5
-  51              	.L2:
-  52              	.LVL1:
-  86:controller/utils/comms.c ****     {
-  87:controller/utils/comms.c ****         size = 0;
-  88:controller/utils/comms.c ****     }
-  89:controller/utils/comms.c **** 	/* We first calculate the prefix */
-  90:controller/utils/comms.c ****     uint16_t packet_size = 0;
-  53              		.loc 1 90 5 is_stmt 1 view .LVU4
-  91:controller/utils/comms.c **** 	packet_size += 2; // prefix
-  54              		.loc 1 91 2 view .LVU5
-  92:controller/utils/comms.c **** 	packet_size += 1; // flag
-  55              		.loc 1 92 2 view .LVU6
-  93:controller/utils/comms.c **** 	packet_size += 4; // CRC
-  56              		.loc 1 93 2 view .LVU7
-  94:controller/utils/comms.c **** 	packet_size += size; // payload
-  57              		.loc 1 94 2 view .LVU8
-  58              		.loc 1 94 14 is_stmt 0 view .LVU9
-  59 000c EF1D     		adds	r7, r5, #7
-  60 000e 1FFA87F9 		uxth	r9, r7
-  61              	.LVL2:
-  95:controller/utils/comms.c **** 
-  96:controller/utils/comms.c **** 	/* Converte the size to big endian */
-  97:controller/utils/comms.c **** 	uint16_t prefix = 0;
-  62              		.loc 1 97 2 is_stmt 1 view .LVU10
-  98:controller/utils/comms.c **** 	prefix = swap_endian_uint16(packet_size);
-  63              		.loc 1 98 2 view .LVU11
-  64              	.LBB6:
-  65              	.LBI6:
-  66              		.file 2 "controller/utils/utils.h"
+  34              	.LVL0:
+  35              		.loc 1 385 1 is_stmt 0 view .LVU1
+  36 0000 08B5     		push	{r3, lr}
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 3, -8
+  39              		.cfi_offset 14, -4
+  40              	.LVL1:
+  41              	.L2:
+ 386:controller/utils/comms.c **** 	for (;;)
+  42              		.loc 1 386 2 is_stmt 1 view .LVU2
+ 387:controller/utils/comms.c **** 	{
+ 388:controller/utils/comms.c **** 
+ 389:controller/utils/comms.c **** 		// Replace with actual sensor readings
+ 390:controller/utils/comms.c **** 		runtime_values.rpm = engine.rpm;
+  43              		.loc 1 390 3 view .LVU3
+  44              		.loc 1 390 30 is_stmt 0 view .LVU4
+  45 0002 0B4A     		ldr	r2, .L4
+  46 0004 D168     		ldr	r1, [r2, #12]	@ float
+  47              		.loc 1 390 22 view .LVU5
+  48 0006 0B4B     		ldr	r3, .L4+4
+  49 0008 1960     		str	r1, [r3]	@ float
+ 391:controller/utils/comms.c **** 		runtime_values.map = engine.map;
+  50              		.loc 1 391 3 is_stmt 1 view .LVU6
+  51              		.loc 1 391 30 is_stmt 0 view .LVU7
+  52 000a 116D     		ldr	r1, [r2, #80]	@ float
+  53              		.loc 1 391 22 view .LVU8
+  54 000c 5960     		str	r1, [r3, #4]	@ float
+ 392:controller/utils/comms.c **** 		runtime_values.tps = engine.tps1;
+  55              		.loc 1 392 3 is_stmt 1 view .LVU9
+  56              		.loc 1 392 30 is_stmt 0 view .LVU10
+  57 000e D16C     		ldr	r1, [r2, #76]	@ float
+  58              		.loc 1 392 22 view .LVU11
+  59 0010 9960     		str	r1, [r3, #8]	@ float
+ 393:controller/utils/comms.c **** 		runtime_values.lambda = 10;
+  60              		.loc 1 393 3 is_stmt 1 view .LVU12
+  61              		.loc 1 393 25 is_stmt 0 view .LVU13
+  62 0012 0949     		ldr	r1, .L4+8
+  63 0014 D960     		str	r1, [r3, #12]	@ float
+ 394:controller/utils/comms.c **** 		runtime_values.advance = engine.ignition_advance;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 9
+
+
+  64              		.loc 1 394 3 is_stmt 1 view .LVU14
+  65              		.loc 1 394 34 is_stmt 0 view .LVU15
+  66 0016 9069     		ldr	r0, [r2, #24]	@ float
+  67              		.loc 1 394 26 view .LVU16
+  68 0018 1861     		str	r0, [r3, #16]	@ float
+ 395:controller/utils/comms.c **** 		runtime_values.dwell = configuration.ignition_dwell;
+  69              		.loc 1 395 3 is_stmt 1 view .LVU17
+  70              		.loc 1 395 39 is_stmt 0 view .LVU18
+  71 001a 0848     		ldr	r0, .L4+12
+  72 001c C069     		ldr	r0, [r0, #28]	@ float
+  73              		.loc 1 395 24 view .LVU19
+  74 001e 5861     		str	r0, [r3, #20]	@ float
+ 396:controller/utils/comms.c **** 		runtime_values.vbatt = 10;
+  75              		.loc 1 396 3 is_stmt 1 view .LVU20
+  76              		.loc 1 396 24 is_stmt 0 view .LVU21
+  77 0020 9961     		str	r1, [r3, #24]	@ float
+ 397:controller/utils/comms.c **** 		runtime_values.clt = engine.clt;
+  78              		.loc 1 397 3 is_stmt 1 view .LVU22
+  79              		.loc 1 397 30 is_stmt 0 view .LVU23
+  80 0022 526D     		ldr	r2, [r2, #84]	@ float
+  81              		.loc 1 397 22 view .LVU24
+  82 0024 DA61     		str	r2, [r3, #28]	@ float
+ 398:controller/utils/comms.c **** 		osDelay(10);
+  83              		.loc 1 398 3 is_stmt 1 discriminator 1 view .LVU25
+  84 0026 0A20     		movs	r0, #10
+  85 0028 FFF7FEFF 		bl	osDelay
+  86              	.LVL2:
+ 386:controller/utils/comms.c **** 	{
+  87              		.loc 1 386 2 view .LVU26
+  88 002c E9E7     		b	.L2
+  89              	.L5:
+  90 002e 00BF     		.align	2
+  91              	.L4:
+  92 0030 00000000 		.word	engine
+  93 0034 00000000 		.word	runtime_values
+  94 0038 00002041 		.word	1092616192
+  95 003c 00000000 		.word	configuration
+  96              		.cfi_endproc
+  97              	.LFE237:
+  99              		.section	.text.transmit_crc_packet,"ax",%progbits
+ 100              		.align	1
+ 101              		.global	transmit_crc_packet
+ 102              		.syntax unified
+ 103              		.thumb
+ 104              		.thumb_func
+ 106              	transmit_crc_packet:
+ 107              	.LVL3:
+ 108              	.LFB231:
+  82:controller/utils/comms.c **** 
+ 109              		.loc 1 82 1 view -0
+ 110              		.cfi_startproc
+ 111              		@ args = 0, pretend = 0, frame = 8
+ 112              		@ frame_needed = 0, uses_anonymous_args = 0
+  82:controller/utils/comms.c **** 
+ 113              		.loc 1 82 1 is_stmt 0 view .LVU28
+ 114 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 115              		.cfi_def_cfa_offset 28
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 10
+
+
+ 116              		.cfi_offset 4, -28
+ 117              		.cfi_offset 5, -24
+ 118              		.cfi_offset 6, -20
+ 119              		.cfi_offset 7, -16
+ 120              		.cfi_offset 8, -12
+ 121              		.cfi_offset 9, -8
+ 122              		.cfi_offset 14, -4
+ 123 0004 83B0     		sub	sp, sp, #12
+ 124              		.cfi_def_cfa_offset 40
+ 125 0006 0F46     		mov	r7, r1
+ 126 0008 1546     		mov	r5, r2
+ 127 000a 8DF80700 		strb	r0, [sp, #7]
+  85:controller/utils/comms.c **** 	packet_size += 2; // prefix
+ 128              		.loc 1 85 5 is_stmt 1 view .LVU29
+ 129              	.LVL4:
+  86:controller/utils/comms.c **** 	packet_size += 1; // flag
+ 130              		.loc 1 86 2 view .LVU30
+  87:controller/utils/comms.c **** 	packet_size += 4; // CRC
+ 131              		.loc 1 87 2 view .LVU31
+  88:controller/utils/comms.c **** 	packet_size += size; // payload
+ 132              		.loc 1 88 2 view .LVU32
+  89:controller/utils/comms.c **** 
+ 133              		.loc 1 89 2 view .LVU33
+  89:controller/utils/comms.c **** 
+ 134              		.loc 1 89 14 is_stmt 0 view .LVU34
+ 135 000e 96B2     		uxth	r6, r2
+ 136 0010 06F10708 		add	r8, r6, #7
+ 137 0014 1FFA88F8 		uxth	r8, r8
+ 138              	.LVL5:
+  92:controller/utils/comms.c **** 	prefix = swap_endian_uint16(sizeof(flag) + size);
+ 139              		.loc 1 92 2 is_stmt 1 view .LVU35
+  93:controller/utils/comms.c **** 
+ 140              		.loc 1 93 2 view .LVU36
+  93:controller/utils/comms.c **** 
+ 141              		.loc 1 93 11 is_stmt 0 view .LVU37
+ 142 0018 0136     		adds	r6, r6, #1
+ 143              	.LVL6:
+ 144              	.LBB15:
+ 145              	.LBI15:
+ 146              		.file 2 "controller/utils/utils.h"
    1:controller/utils/utils.h **** /**
    2:controller/utils/utils.h ****  * @file utils.h
    3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
@@ -178,9 +589,6 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 1
    6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
    7:controller/utils/utils.h ****  * 
    8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 4
-
-
    9:controller/utils/utils.h ****  */
   10:controller/utils/utils.h **** #ifndef UTILS_H
   11:controller/utils/utils.h **** #define UTILS_H
@@ -190,6 +598,9 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 1
   15:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
   16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
   17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 11
+
+
   18:controller/utils/utils.h **** 
   19:controller/utils/utils.h **** /**
   20:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
@@ -235,1290 +646,1074 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 1
   60:controller/utils/utils.h **** 
   61:controller/utils/utils.h **** // http://en.wikipedia.org/wiki/Endianness
   62:controller/utils/utils.h **** inline uint16_t swap_endian_uint16(uint16_t x)
-  67              		.loc 2 62 17 view .LVU12
-  68              	.LBB7:
+ 147              		.loc 2 62 17 is_stmt 1 view .LVU38
+ 148              	.LBB16:
   63:controller/utils/utils.h **** {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 5
-
-
   64:controller/utils/utils.h **** 	return ((x << 8) | (x >> 8));
-  69              		.loc 2 64 2 view .LVU13
-  70              		.loc 2 64 19 is_stmt 0 view .LVU14
-  71 0012 7FBA     		rev16	r7, r7
-  72              	.LVL3:
-  73              		.loc 2 64 19 view .LVU15
-  74              	.LBE7:
-  75              	.LBE6:
-  99:controller/utils/comms.c **** 
- 100:controller/utils/comms.c **** 	/* Now we calculate the CRC, over the flag and payload */
- 101:controller/utils/comms.c **** 	uint32_t crc = 0;
-  76              		.loc 1 101 2 is_stmt 1 view .LVU16
- 102:controller/utils/comms.c **** 	crc += crc32_inc(0, (void*)flag, 1); // flag
-  77              		.loc 1 102 2 view .LVU17
-  78              		.loc 1 102 9 is_stmt 0 view .LVU18
-  79 0014 0122     		movs	r2, #1
-  80 0016 3146     		mov	r1, r6
-  81              	.LVL4:
-  82              		.loc 1 102 9 view .LVU19
-  83 0018 0020     		movs	r0, #0
-  84              	.LVL5:
-  85              		.loc 1 102 9 view .LVU20
-  86 001a FFF7FEFF 		bl	crc32_inc
-  87              	.LVL6:
-  88 001e 0446     		mov	r4, r0
-  89              	.LVL7:
- 103:controller/utils/comms.c **** 	crc += crc32_inc(crc, buf, size); // payload
-  90              		.loc 1 103 2 is_stmt 1 view .LVU21
-  91              		.loc 1 103 9 is_stmt 0 view .LVU22
-  92 0020 2A46     		mov	r2, r5
-  93 0022 4146     		mov	r1, r8
-  94 0024 FFF7FEFF 		bl	crc32_inc
-  95              	.LVL8:
-  96              		.loc 1 103 6 discriminator 1 view .LVU23
-  97 0028 2044     		add	r0, r0, r4
-  98              	.LVL9:
- 104:controller/utils/comms.c **** 
- 105:controller/utils/comms.c **** 	/* Converte the crc to big endian */
- 106:controller/utils/comms.c **** 	uint32_t suffix = 0;
-  99              		.loc 1 106 2 is_stmt 1 view .LVU24
- 107:controller/utils/comms.c **** 	suffix = swap_endian_uint32(crc);
- 100              		.loc 1 107 2 view .LVU25
- 101              	.LBB8:
- 102              	.LBI8:
+ 149              		.loc 2 64 2 view .LVU39
+ 150              		.loc 2 64 19 is_stmt 0 view .LVU40
+ 151 001a 76BA     		rev16	r6, r6
+ 152              	.LVL7:
+ 153              		.loc 2 64 19 view .LVU41
+ 154              	.LBE16:
+ 155              	.LBE15:
+  96:controller/utils/comms.c **** 	crc = crc32_inc(0, (void*)&flag, 1); // flag
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 12
+
+
+ 156              		.loc 1 96 2 is_stmt 1 view .LVU42
+  97:controller/utils/comms.c **** 	crc = crc32_inc(crc, buf, size); // payload
+ 157              		.loc 1 97 2 view .LVU43
+  97:controller/utils/comms.c **** 	crc = crc32_inc(crc, buf, size); // payload
+ 158              		.loc 1 97 8 is_stmt 0 view .LVU44
+ 159 001c 0122     		movs	r2, #1
+ 160              	.LVL8:
+  97:controller/utils/comms.c **** 	crc = crc32_inc(crc, buf, size); // payload
+ 161              		.loc 1 97 8 view .LVU45
+ 162 001e 0DF10701 		add	r1, sp, #7
+ 163              	.LVL9:
+  97:controller/utils/comms.c **** 	crc = crc32_inc(crc, buf, size); // payload
+ 164              		.loc 1 97 8 view .LVU46
+ 165 0022 0020     		movs	r0, #0
+ 166              	.LVL10:
+  97:controller/utils/comms.c **** 	crc = crc32_inc(crc, buf, size); // payload
+ 167              		.loc 1 97 8 view .LVU47
+ 168 0024 FFF7FEFF 		bl	crc32_inc
+ 169              	.LVL11:
+  98:controller/utils/comms.c **** 
+ 170              		.loc 1 98 2 is_stmt 1 view .LVU48
+  98:controller/utils/comms.c **** 
+ 171              		.loc 1 98 8 is_stmt 0 view .LVU49
+ 172 0028 2A46     		mov	r2, r5
+ 173 002a 3946     		mov	r1, r7
+ 174 002c FFF7FEFF 		bl	crc32_inc
+ 175              	.LVL12:
+ 101:controller/utils/comms.c **** 	suffix = swap_endian_uint32(crc);
+ 176              		.loc 1 101 2 is_stmt 1 view .LVU50
+ 102:controller/utils/comms.c **** 
+ 177              		.loc 1 102 2 view .LVU51
+ 178              	.LBB17:
+ 179              	.LBI17:
   65:controller/utils/utils.h **** }
   66:controller/utils/utils.h **** inline uint32_t swap_endian_uint32(uint32_t x)
- 103              		.loc 2 66 17 view .LVU26
- 104              	.LBB9:
+ 180              		.loc 2 66 17 view .LVU52
+ 181              	.LBB18:
   67:controller/utils/utils.h **** {
   68:controller/utils/utils.h **** 	return (((x >> 24) & 0x000000ff) | ((x <<  8) & 0x00ff0000) |
- 105              		.loc 2 68 2 view .LVU27
- 106              		.loc 2 68 41 is_stmt 0 view .LVU28
- 107 002a 0402     		lsls	r4, r0, #8
- 108              		.loc 2 68 48 view .LVU29
- 109 002c 04F47F04 		and	r4, r4, #16711680
- 110              		.loc 2 68 35 view .LVU30
- 111 0030 44EA1064 		orr	r4, r4, r0, lsr #24
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 6
-
-
+ 182              		.loc 2 68 2 view .LVU53
+ 183              		.loc 2 68 41 is_stmt 0 view .LVU54
+ 184 0030 0402     		lsls	r4, r0, #8
+ 185              		.loc 2 68 48 view .LVU55
+ 186 0032 04F47F04 		and	r4, r4, #16711680
+ 187              		.loc 2 68 35 view .LVU56
+ 188 0036 44EA1064 		orr	r4, r4, r0, lsr #24
   69:controller/utils/utils.h **** 			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
- 112              		.loc 2 69 8 view .LVU31
- 113 0034 030A     		lsrs	r3, r0, #8
- 114              		.loc 2 69 15 view .LVU32
- 115 0036 03F47F43 		and	r3, r3, #65280
+ 189              		.loc 2 69 8 view .LVU57
+ 190 003a 030A     		lsrs	r3, r0, #8
+ 191              		.loc 2 69 15 view .LVU58
+ 192 003c 03F47F43 		and	r3, r3, #65280
   68:controller/utils/utils.h **** 			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
- 116              		.loc 2 68 62 view .LVU33
- 117 003a 1C43     		orrs	r4, r4, r3
- 118              		.loc 2 69 29 view .LVU34
- 119 003c 44EA0064 		orr	r4, r4, r0, lsl #24
- 120              	.LVL10:
- 121              		.loc 2 69 29 view .LVU35
- 122              	.LBE9:
- 123              	.LBE8:
- 108:controller/utils/comms.c **** 
- 109:controller/utils/comms.c **** 	
- 110:controller/utils/comms.c **** 	/* Form the packet in the transmit buffer */
- 111:controller/utils/comms.c **** 	size_t tx_buffer_index = 0;
- 124              		.loc 1 111 2 is_stmt 1 view .LVU36
- 112:controller/utils/comms.c **** 	memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
- 125              		.loc 1 112 2 view .LVU37
- 126 0040 DFF82CA0 		ldr	r10, .L6
- 127 0044 AAF80070 		strh	r7, [r10]	@ movhi
- 113:controller/utils/comms.c **** 	tx_buffer_index += sizeof(prefix);
- 128              		.loc 1 113 2 view .LVU38
- 129              	.LVL11:
- 114:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, &flag, sizeof(flag)); // flag to buffer 
- 130              		.loc 1 114 2 view .LVU39
- 131 0048 8AF80260 		strb	r6, [r10, #2]
- 115:controller/utils/comms.c **** 	tx_buffer_index += sizeof(flag);
- 132              		.loc 1 115 2 view .LVU40
- 133              	.LVL12:
- 116:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, buf, size); // payload to buffer
- 134              		.loc 1 116 2 view .LVU41
- 135 004c 2A46     		mov	r2, r5
- 136 004e 4146     		mov	r1, r8
- 137 0050 0AF10300 		add	r0, r10, #3
- 138              	.LVL13:
- 139              		.loc 1 116 2 is_stmt 0 view .LVU42
- 140 0054 FFF7FEFF 		bl	memcpy
- 141              	.LVL14:
- 117:controller/utils/comms.c **** 	tx_buffer_index += size;
- 142              		.loc 1 117 2 is_stmt 1 view .LVU43
- 143              		.loc 1 117 18 is_stmt 0 view .LVU44
- 144 0058 0335     		adds	r5, r5, #3
- 145              	.LVL15:
- 118:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
- 146              		.loc 1 118 2 is_stmt 1 view .LVU45
- 147 005a 4AF80540 		str	r4, [r10, r5]	@ unaligned
- 119:controller/utils/comms.c **** 	tx_buffer_index += sizeof(suffix);
- 148              		.loc 1 119 2 view .LVU46
- 149              	.LVL16:
- 120:controller/utils/comms.c **** 	
- 121:controller/utils/comms.c **** 	/* Finally transmit over USB */
- 122:controller/utils/comms.c **** 	CDC_Transmit_FS(tx_buffer, packet_size);
- 150              		.loc 1 122 2 view .LVU47
- 151 005e 4946     		mov	r1, r9
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 7
+ 193              		.loc 2 68 62 view .LVU59
+ 194 0040 1C43     		orrs	r4, r4, r3
+ 195              		.loc 2 69 29 view .LVU60
+ 196 0042 44EA0064 		orr	r4, r4, r0, lsl #24
+ 197              	.LVL13:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 13
 
 
- 152 0060 5046     		mov	r0, r10
- 153 0062 FFF7FEFF 		bl	CDC_Transmit_FS
- 154              	.LVL17:
- 123:controller/utils/comms.c **** }
- 155              		.loc 1 123 1 is_stmt 0 view .LVU48
- 156 0066 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
- 157              	.LVL18:
- 158              	.L5:
-  87:controller/utils/comms.c ****     }
- 159              		.loc 1 87 14 view .LVU49
- 160 006a 0025     		movs	r5, #0
- 161 006c CEE7     		b	.L2
- 162              	.L7:
- 163 006e 00BF     		.align	2
- 164              	.L6:
- 165 0070 00000000 		.word	tx_buffer
- 166              		.cfi_endproc
- 167              	.LFE231:
- 169              		.section	.text.send_response,"ax",%progbits
- 170              		.align	1
- 171              		.global	send_response
- 172              		.syntax unified
- 173              		.thumb
- 174              		.thumb_func
- 176              	send_response:
- 177              	.LVL19:
- 178              	.LFB230:
-  66:controller/utils/comms.c **** 
- 179              		.loc 1 66 1 is_stmt 1 view -0
- 180              		.cfi_startproc
- 181              		@ args = 0, pretend = 0, frame = 0
- 182              		@ frame_needed = 0, uses_anonymous_args = 0
-  66:controller/utils/comms.c **** 
- 183              		.loc 1 66 1 is_stmt 0 view .LVU51
- 184 0000 08B5     		push	{r3, lr}
- 185              		.cfi_def_cfa_offset 8
- 186              		.cfi_offset 3, -8
- 187              		.cfi_offset 14, -4
-  68:controller/utils/comms.c ****     {
- 188              		.loc 1 68 5 is_stmt 1 view .LVU52
-  68:controller/utils/comms.c ****     {
- 189              		.loc 1 68 8 is_stmt 0 view .LVU53
- 190 0002 012A     		cmp	r2, #1
- 191 0004 06D0     		beq	.L12
-  74:controller/utils/comms.c ****         {
- 192              		.loc 1 74 9 is_stmt 1 view .LVU54
-  74:controller/utils/comms.c ****         {
- 193              		.loc 1 74 12 is_stmt 0 view .LVU55
- 194 0006 59B9     		cbnz	r1, .L13
- 195              	.LVL20:
- 196              	.L10:
-  79:controller/utils/comms.c **** }
- 197              		.loc 1 79 5 is_stmt 1 view .LVU56
- 198 0008 4FF40051 		mov	r1, #8192
- 199 000c 0648     		ldr	r0, .L14
- 200 000e FFF7FEFF 		bl	HAL_GPIO_TogglePin
- 201              	.LVL21:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 8
+ 198              		.loc 2 69 29 view .LVU61
+ 199              	.LBE18:
+ 200              	.LBE17:
+ 105:controller/utils/comms.c **** 	memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
+ 201              		.loc 1 105 2 is_stmt 1 view .LVU62
+ 106:controller/utils/comms.c **** 	tx_buffer_index += sizeof(prefix);
+ 202              		.loc 1 106 2 view .LVU63
+ 203 0046 DFF83090 		ldr	r9, .L8
+ 204 004a A9F80060 		strh	r6, [r9]	@ movhi
+ 107:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, &flag, sizeof(flag)); // flag to buffer 
+ 205              		.loc 1 107 2 view .LVU64
+ 206              	.LVL14:
+ 108:controller/utils/comms.c **** 	tx_buffer_index += sizeof(flag);
+ 207              		.loc 1 108 2 view .LVU65
+ 208 004e 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+ 209 0052 89F80230 		strb	r3, [r9, #2]
+ 109:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, buf, size); // payload to buffer
+ 210              		.loc 1 109 2 view .LVU66
+ 211              	.LVL15:
+ 110:controller/utils/comms.c **** 	tx_buffer_index += size;
+ 212              		.loc 1 110 2 view .LVU67
+ 213 0056 2A46     		mov	r2, r5
+ 214 0058 3946     		mov	r1, r7
+ 215 005a 09F10300 		add	r0, r9, #3
+ 216              	.LVL16:
+ 110:controller/utils/comms.c **** 	tx_buffer_index += size;
+ 217              		.loc 1 110 2 is_stmt 0 view .LVU68
+ 218 005e FFF7FEFF 		bl	memcpy
+ 219              	.LVL17:
+ 111:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
+ 220              		.loc 1 111 2 is_stmt 1 view .LVU69
+ 111:controller/utils/comms.c **** 	memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
+ 221              		.loc 1 111 18 is_stmt 0 view .LVU70
+ 222 0062 0335     		adds	r5, r5, #3
+ 223              	.LVL18:
+ 112:controller/utils/comms.c **** 	tx_buffer_index += sizeof(suffix);
+ 224              		.loc 1 112 2 is_stmt 1 view .LVU71
+ 225 0064 49F80540 		str	r4, [r9, r5]	@ unaligned
+ 113:controller/utils/comms.c **** 	
+ 226              		.loc 1 113 2 view .LVU72
+ 227              	.LVL19:
+ 117:controller/utils/comms.c **** }
+ 228              		.loc 1 117 2 view .LVU73
+ 229 0068 4146     		mov	r1, r8
+ 230 006a 4846     		mov	r0, r9
+ 231 006c FFF7FEFF 		bl	CDC_Transmit_FS
+ 232              	.LVL20:
+ 118:controller/utils/comms.c **** 
+ 233              		.loc 1 118 1 is_stmt 0 view .LVU74
+ 234 0070 03B0     		add	sp, sp, #12
+ 235              		.cfi_def_cfa_offset 28
+ 236              		@ sp needed
+ 237 0072 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 238              	.LVL21:
+ 239              	.L9:
+ 118:controller/utils/comms.c **** 
+ 240              		.loc 1 118 1 view .LVU75
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 14
 
 
-  80:controller/utils/comms.c **** 
- 202              		.loc 1 80 1 is_stmt 0 view .LVU57
- 203 0012 08BD     		pop	{r3, pc}
- 204              	.LVL22:
- 205              	.L12:
-  70:controller/utils/comms.c ****     }
- 206              		.loc 1 70 9 is_stmt 1 view .LVU58
- 207 0014 0A46     		mov	r2, r1
- 208              	.LVL23:
-  70:controller/utils/comms.c ****     }
- 209              		.loc 1 70 9 is_stmt 0 view .LVU59
- 210 0016 0146     		mov	r1, r0
- 211              	.LVL24:
-  70:controller/utils/comms.c ****     }
- 212              		.loc 1 70 9 view .LVU60
- 213 0018 0020     		movs	r0, #0
- 214              	.LVL25:
-  70:controller/utils/comms.c ****     }
- 215              		.loc 1 70 9 view .LVU61
- 216 001a FFF7FEFF 		bl	transmit_crc_packet
- 217              	.LVL26:
-  70:controller/utils/comms.c ****     }
- 218              		.loc 1 70 9 view .LVU62
- 219 001e F3E7     		b	.L10
- 220              	.LVL27:
- 221              	.L13:
-  76:controller/utils/comms.c ****         }
- 222              		.loc 1 76 13 is_stmt 1 view .LVU63
- 223 0020 89B2     		uxth	r1, r1
- 224              	.LVL28:
-  76:controller/utils/comms.c ****         }
- 225              		.loc 1 76 13 is_stmt 0 view .LVU64
- 226 0022 FFF7FEFF 		bl	CDC_Transmit_FS
- 227              	.LVL29:
-  76:controller/utils/comms.c ****         }
- 228              		.loc 1 76 13 view .LVU65
- 229 0026 EFE7     		b	.L10
- 230              	.L15:
- 231              		.align	2
- 232              	.L14:
- 233 0028 00080240 		.word	1073874944
- 234              		.cfi_endproc
- 235              	.LFE230:
- 237              		.section	.rodata.comms_init.str1.4,"aMS",%progbits,1
- 238              		.align	2
- 239              	.LC0:
- 240 0000 636F6D6D 		.ascii	"comms_mutex\000"
- 240      735F6D75 
- 240      74657800 
- 241              		.align	2
- 242              	.LC1:
- 243 000c 636F6D6D 		.ascii	"comms_task\000"
- 243      735F7461 
- 243      736B00
- 244              		.section	.text.comms_init,"ax",%progbits
- 245              		.align	1
- 246              		.global	comms_init
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 9
+ 241 0076 00BF     		.align	2
+ 242              	.L8:
+ 243 0078 00000000 		.word	tx_buffer
+ 244              		.cfi_endproc
+ 245              	.LFE231:
+ 247              		.section	.text.send_response,"ax",%progbits
+ 248              		.align	1
+ 249              		.global	send_response
+ 250              		.syntax unified
+ 251              		.thumb
+ 252              		.thumb_func
+ 254              	send_response:
+ 255              	.LVL22:
+ 256              	.LFB230:
+  64:controller/utils/comms.c **** 
+ 257              		.loc 1 64 1 is_stmt 1 view -0
+ 258              		.cfi_startproc
+ 259              		@ args = 0, pretend = 0, frame = 0
+ 260              		@ frame_needed = 0, uses_anonymous_args = 0
+  64:controller/utils/comms.c **** 
+ 261              		.loc 1 64 1 is_stmt 0 view .LVU77
+ 262 0000 38B5     		push	{r3, r4, r5, lr}
+ 263              		.cfi_def_cfa_offset 16
+ 264              		.cfi_offset 3, -16
+ 265              		.cfi_offset 4, -12
+ 266              		.cfi_offset 5, -8
+ 267              		.cfi_offset 14, -4
+ 268 0002 0C46     		mov	r4, r1
+  66:controller/utils/comms.c ****     {
+ 269              		.loc 1 66 5 is_stmt 1 view .LVU78
+  66:controller/utils/comms.c ****     {
+ 270              		.loc 1 66 8 is_stmt 0 view .LVU79
+ 271 0004 012A     		cmp	r2, #1
+ 272 0006 07D0     		beq	.L14
+  72:controller/utils/comms.c ****         {
+ 273              		.loc 1 72 9 is_stmt 1 view .LVU80
+  72:controller/utils/comms.c ****         {
+ 274              		.loc 1 72 12 is_stmt 0 view .LVU81
+ 275 0008 61B9     		cbnz	r1, .L15
+ 276              	.LVL23:
+ 277              	.L12:
+  78:controller/utils/comms.c **** }
+ 278              		.loc 1 78 2 is_stmt 1 view .LVU82
+ 279 000a 0122     		movs	r2, #1
+ 280 000c 4FF40051 		mov	r1, #8192
+ 281 0010 0A48     		ldr	r0, .L16
+ 282 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 283              	.LVL24:
+  79:controller/utils/comms.c **** 
+ 284              		.loc 1 79 1 is_stmt 0 view .LVU83
+ 285 0016 38BD     		pop	{r3, r4, r5, pc}
+ 286              	.LVL25:
+ 287              	.L14:
+  68:controller/utils/comms.c ****     }
+ 288              		.loc 1 68 9 is_stmt 1 view .LVU84
+ 289 0018 0A46     		mov	r2, r1
+ 290              	.LVL26:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 15
 
 
- 247              		.syntax unified
- 248              		.thumb
- 249              		.thumb_func
- 251              	comms_init:
- 252              	.LFB233:
- 124:controller/utils/comms.c **** 
- 125:controller/utils/comms.c **** 
- 126:controller/utils/comms.c **** static void transmit_ok_response()
- 127:controller/utils/comms.c **** {
- 128:controller/utils/comms.c ****     send_response(NULL, 0, TS_CRC);
- 129:controller/utils/comms.c **** }
- 130:controller/utils/comms.c **** 
- 131:controller/utils/comms.c **** // ==================== Initialization ====================
- 132:controller/utils/comms.c **** void comms_init(void)
- 133:controller/utils/comms.c **** {
- 253              		.loc 1 133 1 is_stmt 1 view -0
- 254              		.cfi_startproc
- 255              		@ args = 0, pretend = 0, frame = 56
- 256              		@ frame_needed = 0, uses_anonymous_args = 0
- 257 0000 10B5     		push	{r4, lr}
- 258              		.cfi_def_cfa_offset 8
- 259              		.cfi_offset 4, -8
- 260              		.cfi_offset 14, -4
- 261 0002 8EB0     		sub	sp, sp, #56
- 262              		.cfi_def_cfa_offset 64
- 134:controller/utils/comms.c ****     usb_rx_queue = osMessageQueueNew(16, sizeof(usb_rx_packet_t), NULL);
- 263              		.loc 1 134 5 view .LVU67
- 264              		.loc 1 134 20 is_stmt 0 view .LVU68
- 265 0004 0022     		movs	r2, #0
- 266 0006 4221     		movs	r1, #66
- 267 0008 1020     		movs	r0, #16
- 268 000a FFF7FEFF 		bl	osMessageQueueNew
- 269              	.LVL30:
- 270              		.loc 1 134 18 discriminator 1 view .LVU69
- 271 000e 1D4B     		ldr	r3, .L20
- 272 0010 1860     		str	r0, [r3]
- 135:controller/utils/comms.c **** 
- 136:controller/utils/comms.c ****     const osMutexAttr_t mutex_attrs = {
- 273              		.loc 1 136 5 is_stmt 1 view .LVU70
- 274              		.loc 1 136 25 is_stmt 0 view .LVU71
- 275 0012 0AAC     		add	r4, sp, #40
- 276 0014 0023     		movs	r3, #0
- 277 0016 0A93     		str	r3, [sp, #40]
- 278 0018 0B93     		str	r3, [sp, #44]
- 279 001a 0C93     		str	r3, [sp, #48]
- 280 001c 0D93     		str	r3, [sp, #52]
- 281 001e 1A4B     		ldr	r3, .L20+4
- 282 0020 0A93     		str	r3, [sp, #40]
- 283 0022 0323     		movs	r3, #3
- 284 0024 0B93     		str	r3, [sp, #44]
- 137:controller/utils/comms.c ****         .name = "comms_mutex",
- 138:controller/utils/comms.c ****         .attr_bits = osMutexRecursive | osMutexPrioInherit,
- 139:controller/utils/comms.c ****     };
- 140:controller/utils/comms.c ****     runtime_mutex = osMutexNew(&mutex_attrs);
- 285              		.loc 1 140 5 is_stmt 1 view .LVU72
- 286              		.loc 1 140 21 is_stmt 0 view .LVU73
- 287 0026 2046     		mov	r0, r4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 10
-
-
- 288 0028 FFF7FEFF 		bl	osMutexNew
- 289              	.LVL31:
- 290              		.loc 1 140 19 discriminator 1 view .LVU74
- 291 002c 174B     		ldr	r3, .L20+8
- 292 002e 1860     		str	r0, [r3]
- 141:controller/utils/comms.c ****     page_mutex = osMutexNew(&mutex_attrs);
- 293              		.loc 1 141 5 is_stmt 1 view .LVU75
- 294              		.loc 1 141 18 is_stmt 0 view .LVU76
- 295 0030 2046     		mov	r0, r4
- 296 0032 FFF7FEFF 		bl	osMutexNew
- 297              	.LVL32:
- 298              		.loc 1 141 16 discriminator 1 view .LVU77
- 299 0036 164B     		ldr	r3, .L20+12
- 300 0038 1860     		str	r0, [r3]
- 142:controller/utils/comms.c **** 
- 143:controller/utils/comms.c ****     if (osMutexAcquire(page_mutex, osWaitForever) == osOK)
- 301              		.loc 1 143 5 is_stmt 1 view .LVU78
- 302              		.loc 1 143 9 is_stmt 0 view .LVU79
- 303 003a 4FF0FF31 		mov	r1, #-1
- 304 003e FFF7FEFF 		bl	osMutexAcquire
- 305              	.LVL33:
- 306              		.loc 1 143 8 discriminator 1 view .LVU80
- 307 0042 98B1     		cbz	r0, .L19
- 308              	.L17:
- 144:controller/utils/comms.c ****     {
- 145:controller/utils/comms.c ****         memcpy(cal_page.data, (void *)cal_page.start_address, PAGE_SIZE);
- 146:controller/utils/comms.c ****         osMutexRelease(page_mutex);
- 147:controller/utils/comms.c ****     }
- 148:controller/utils/comms.c **** 
- 149:controller/utils/comms.c ****     const osThreadAttr_t comms_task_attrs = {
- 309              		.loc 1 149 5 is_stmt 1 view .LVU81
- 310              		.loc 1 149 26 is_stmt 0 view .LVU82
- 311 0044 01AC     		add	r4, sp, #4
- 312 0046 2422     		movs	r2, #36
- 313 0048 0021     		movs	r1, #0
- 314 004a 2046     		mov	r0, r4
- 315 004c FFF7FEFF 		bl	memset
+  68:controller/utils/comms.c ****     }
+ 291              		.loc 1 68 9 is_stmt 0 view .LVU85
+ 292 001a 0146     		mov	r1, r0
+ 293              	.LVL27:
+  68:controller/utils/comms.c ****     }
+ 294              		.loc 1 68 9 view .LVU86
+ 295 001c 0020     		movs	r0, #0
+ 296              	.LVL28:
+  68:controller/utils/comms.c ****     }
+ 297              		.loc 1 68 9 view .LVU87
+ 298 001e FFF7FEFF 		bl	transmit_crc_packet
+ 299              	.LVL29:
+  68:controller/utils/comms.c ****     }
+ 300              		.loc 1 68 9 view .LVU88
+ 301 0022 F2E7     		b	.L12
+ 302              	.LVL30:
+ 303              	.L15:
+  74:controller/utils/comms.c ****             CDC_Transmit_FS(tx_buffer, size);
+ 304              		.loc 1 74 4 is_stmt 1 view .LVU89
+ 305 0024 064D     		ldr	r5, .L16+4
+ 306 0026 0A46     		mov	r2, r1
+ 307              	.LVL31:
+  74:controller/utils/comms.c ****             CDC_Transmit_FS(tx_buffer, size);
+ 308              		.loc 1 74 4 is_stmt 0 view .LVU90
+ 309 0028 0146     		mov	r1, r0
+ 310              	.LVL32:
+  74:controller/utils/comms.c ****             CDC_Transmit_FS(tx_buffer, size);
+ 311              		.loc 1 74 4 view .LVU91
+ 312 002a 2846     		mov	r0, r5
+ 313              	.LVL33:
+  74:controller/utils/comms.c ****             CDC_Transmit_FS(tx_buffer, size);
+ 314              		.loc 1 74 4 view .LVU92
+ 315 002c FFF7FEFF 		bl	memcpy
  316              	.LVL34:
- 317 0050 104B     		ldr	r3, .L20+16
- 318 0052 0193     		str	r3, [sp, #4]
- 319 0054 4FF48053 		mov	r3, #4096
- 320 0058 0693     		str	r3, [sp, #24]
- 321 005a 1823     		movs	r3, #24
- 322 005c 0793     		str	r3, [sp, #28]
- 150:controller/utils/comms.c ****         .name = "comms_task",
- 151:controller/utils/comms.c ****         .stack_size = 1024 * 4,
- 152:controller/utils/comms.c ****         .priority = osPriorityNormal,
- 153:controller/utils/comms.c ****     };
- 154:controller/utils/comms.c ****     osThreadNew(comms_task, NULL, &comms_task_attrs);
- 323              		.loc 1 154 5 is_stmt 1 view .LVU83
- 324 005e 2246     		mov	r2, r4
- 325 0060 0021     		movs	r1, #0
- 326 0062 0D48     		ldr	r0, .L20+20
- 327 0064 FFF7FEFF 		bl	osThreadNew
- 328              	.LVL35:
- 155:controller/utils/comms.c **** }
- 329              		.loc 1 155 1 is_stmt 0 view .LVU84
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 11
+  75:controller/utils/comms.c ****         }
+ 317              		.loc 1 75 13 is_stmt 1 view .LVU93
+ 318 0030 A1B2     		uxth	r1, r4
+ 319 0032 2846     		mov	r0, r5
+ 320 0034 FFF7FEFF 		bl	CDC_Transmit_FS
+ 321              	.LVL35:
+ 322 0038 E7E7     		b	.L12
+ 323              	.L17:
+ 324 003a 00BF     		.align	2
+ 325              	.L16:
+ 326 003c 00080240 		.word	1073874944
+ 327 0040 00000000 		.word	tx_buffer
+ 328              		.cfi_endproc
+ 329              	.LFE230:
+ 331              		.section	.rodata.comms_init.str1.4,"aMS",%progbits,1
+ 332              		.align	2
+ 333              	.LC0:
+ 334 0000 636F6D6D 		.ascii	"comms_task\000"
+ 334      735F7461 
+ 334      736B00
+ 335 000b 00       		.align	2
+ 336              	.LC1:
+ 337 000c 75706461 		.ascii	"update_task\000"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 16
 
 
- 330 0068 0EB0     		add	sp, sp, #56
- 331              		.cfi_remember_state
- 332              		.cfi_def_cfa_offset 8
- 333              		@ sp needed
- 334 006a 10BD     		pop	{r4, pc}
- 335              	.L19:
- 336              		.cfi_restore_state
- 145:controller/utils/comms.c ****         osMutexRelease(page_mutex);
- 337              		.loc 1 145 9 is_stmt 1 view .LVU85
- 145:controller/utils/comms.c ****         osMutexRelease(page_mutex);
- 338              		.loc 1 145 47 is_stmt 0 view .LVU86
- 339 006c 0B48     		ldr	r0, .L20+24
- 145:controller/utils/comms.c ****         osMutexRelease(page_mutex);
- 340              		.loc 1 145 9 view .LVU87
- 341 006e 4FF48062 		mov	r2, #1024
- 342 0072 50F8051B 		ldr	r1, [r0], #5
- 343 0076 FFF7FEFF 		bl	memcpy
- 344              	.LVL36:
- 146:controller/utils/comms.c ****     }
- 345              		.loc 1 146 9 is_stmt 1 view .LVU88
- 346 007a 054B     		ldr	r3, .L20+12
- 347 007c 1868     		ldr	r0, [r3]
- 348 007e FFF7FEFF 		bl	osMutexRelease
- 349              	.LVL37:
- 350 0082 DFE7     		b	.L17
- 351              	.L21:
- 352              		.align	2
- 353              	.L20:
- 354 0084 00000000 		.word	usb_rx_queue
- 355 0088 00000000 		.word	.LC0
- 356 008c 00000000 		.word	runtime_mutex
- 357 0090 00000000 		.word	page_mutex
- 358 0094 0C000000 		.word	.LC1
- 359 0098 00000000 		.word	comms_task
- 360 009c 00000000 		.word	cal_page
- 361              		.cfi_endproc
- 362              	.LFE233:
- 364              		.section	.rodata.process_plain_command.str1.4,"aMS",%progbits,1
- 365              		.align	2
- 366              	.LC2:
- 367 0000 30303200 		.ascii	"002\000"
- 368              		.align	2
- 369              	.LC3:
- 370 0004 536D6172 		.ascii	"Smart Gen Controller\000"
- 370      74204765 
- 370      6E20436F 
- 370      6E74726F 
- 370      6C6C6572 
- 371              		.section	.text.process_plain_command,"ax",%progbits
- 372              		.align	1
- 373              		.global	process_plain_command
- 374              		.syntax unified
- 375              		.thumb
- 376              		.thumb_func
- 378              	process_plain_command:
- 379              	.LVL38:
- 380              	.LFB235:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 12
+ 337      74655F74 
+ 337      61736B00 
+ 338              		.section	.text.comms_init,"ax",%progbits
+ 339              		.align	1
+ 340              		.global	comms_init
+ 341              		.syntax unified
+ 342              		.thumb
+ 343              		.thumb_func
+ 345              	comms_init:
+ 346              	.LFB233:
+ 128:controller/utils/comms.c ****     usb_rx_queue = osMessageQueueNew(16, sizeof(usb_rx_packet_t), NULL);
+ 347              		.loc 1 128 1 view -0
+ 348              		.cfi_startproc
+ 349              		@ args = 0, pretend = 0, frame = 72
+ 350              		@ frame_needed = 0, uses_anonymous_args = 0
+ 351 0000 70B5     		push	{r4, r5, r6, lr}
+ 352              		.cfi_def_cfa_offset 16
+ 353              		.cfi_offset 4, -16
+ 354              		.cfi_offset 5, -12
+ 355              		.cfi_offset 6, -8
+ 356              		.cfi_offset 14, -4
+ 357 0002 92B0     		sub	sp, sp, #72
+ 358              		.cfi_def_cfa_offset 88
+ 129:controller/utils/comms.c **** 
+ 359              		.loc 1 129 5 view .LVU95
+ 129:controller/utils/comms.c **** 
+ 360              		.loc 1 129 20 is_stmt 0 view .LVU96
+ 361 0004 0022     		movs	r2, #0
+ 362 0006 4221     		movs	r1, #66
+ 363 0008 1020     		movs	r0, #16
+ 364 000a FFF7FEFF 		bl	osMessageQueueNew
+ 365              	.LVL36:
+ 129:controller/utils/comms.c **** 
+ 366              		.loc 1 129 18 discriminator 1 view .LVU97
+ 367 000e 134B     		ldr	r3, .L20
+ 368 0010 1860     		str	r0, [r3]
+ 131:controller/utils/comms.c ****         .name = "comms_mutex",
+ 369              		.loc 1 131 5 is_stmt 1 view .LVU98
+ 136:controller/utils/comms.c ****         .name = "comms_task",
+ 370              		.loc 1 136 5 view .LVU99
+ 136:controller/utils/comms.c ****         .name = "comms_task",
+ 371              		.loc 1 136 26 is_stmt 0 view .LVU100
+ 372 0012 09AC     		add	r4, sp, #36
+ 373 0014 2426     		movs	r6, #36
+ 374 0016 3246     		mov	r2, r6
+ 375 0018 0021     		movs	r1, #0
+ 376 001a 2046     		mov	r0, r4
+ 377 001c FFF7FEFF 		bl	memset
+ 378              	.LVL37:
+ 379 0020 0F4B     		ldr	r3, .L20+4
+ 380 0022 0993     		str	r3, [sp, #36]
+ 381 0024 4FF48053 		mov	r3, #4096
+ 382 0028 0E93     		str	r3, [sp, #56]
+ 383 002a 1825     		movs	r5, #24
+ 384 002c 0F95     		str	r5, [sp, #60]
+ 141:controller/utils/comms.c **** 
+ 385              		.loc 1 141 5 is_stmt 1 view .LVU101
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 17
 
 
- 156:controller/utils/comms.c **** 
- 157:controller/utils/comms.c **** // ==================== Communication Task ====================
- 158:controller/utils/comms.c **** void comms_task(void *argument)
- 159:controller/utils/comms.c **** {
- 160:controller/utils/comms.c ****     
- 161:controller/utils/comms.c ****     for (;;)
- 162:controller/utils/comms.c ****     {
- 163:controller/utils/comms.c ****         if (osMessageQueueGet(usb_rx_queue, &rx_packet, NULL, osWaitForever) == osOK)
- 164:controller/utils/comms.c ****         {
- 165:controller/utils/comms.c ****             process_command(rx_packet.data, rx_packet.len);
- 166:controller/utils/comms.c ****         }
- 167:controller/utils/comms.c ****     }
- 168:controller/utils/comms.c **** }
- 169:controller/utils/comms.c **** 
- 170:controller/utils/comms.c **** // ==================== Command Processing ====================
- 171:controller/utils/comms.c **** bool process_plain_command(uint8_t *cmd, uint16_t size)
- 172:controller/utils/comms.c **** {
- 381              		.loc 1 172 1 view -0
- 382              		.cfi_startproc
- 383              		@ args = 0, pretend = 0, frame = 8
- 384              		@ frame_needed = 0, uses_anonymous_args = 0
- 385              		.loc 1 172 1 is_stmt 0 view .LVU90
- 386 0000 00B5     		push	{lr}
- 387              		.cfi_def_cfa_offset 4
- 388              		.cfi_offset 14, -4
- 389 0002 83B0     		sub	sp, sp, #12
- 390              		.cfi_def_cfa_offset 16
- 173:controller/utils/comms.c ****     uint8_t first_byte = cmd[0];
- 391              		.loc 1 173 5 is_stmt 1 view .LVU91
- 392              		.loc 1 173 13 is_stmt 0 view .LVU92
- 393 0004 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
- 394              	.LVL39:
- 174:controller/utils/comms.c ****     // Bail fast if guaranteed not to be a plain command
- 175:controller/utils/comms.c **** 	switch (first_byte)
- 395              		.loc 1 175 2 is_stmt 1 view .LVU93
- 396 0006 463B     		subs	r3, r3, #70
- 397 0008 1D2B     		cmp	r3, #29
- 398 000a 3CD8     		bhi	.L23
- 399 000c DFE803F0 		tbb	[pc, r3]
- 400              	.L25:
- 401 0010 0F       		.byte	(.L29-.L25)/2
- 402 0011 3B       		.byte	(.L23-.L25)/2
- 403 0012 3B       		.byte	(.L23-.L25)/2
- 404 0013 32       		.byte	(.L28-.L25)/2
- 405 0014 3B       		.byte	(.L23-.L25)/2
- 406 0015 3B       		.byte	(.L23-.L25)/2
- 407 0016 3B       		.byte	(.L23-.L25)/2
- 408 0017 3B       		.byte	(.L23-.L25)/2
- 409 0018 3B       		.byte	(.L23-.L25)/2
- 410 0019 3B       		.byte	(.L23-.L25)/2
- 411 001a 3B       		.byte	(.L23-.L25)/2
- 412 001b 1C       		.byte	(.L27-.L25)/2
- 413 001c 3B       		.byte	(.L23-.L25)/2
- 414 001d 16       		.byte	(.L26-.L25)/2
- 415 001e 3B       		.byte	(.L23-.L25)/2
- 416 001f 3B       		.byte	(.L23-.L25)/2
- 417 0020 3B       		.byte	(.L23-.L25)/2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 13
+ 386 002e 2246     		mov	r2, r4
+ 387 0030 0021     		movs	r1, #0
+ 388 0032 0C48     		ldr	r0, .L20+8
+ 389 0034 FFF7FEFF 		bl	osThreadNew
+ 390              	.LVL38:
+ 143:controller/utils/comms.c **** 		.name = "update_task",
+ 391              		.loc 1 143 2 view .LVU102
+ 143:controller/utils/comms.c **** 		.name = "update_task",
+ 392              		.loc 1 143 23 is_stmt 0 view .LVU103
+ 393 0038 3246     		mov	r2, r6
+ 394 003a 0021     		movs	r1, #0
+ 395 003c 6846     		mov	r0, sp
+ 396 003e FFF7FEFF 		bl	memset
+ 397              	.LVL39:
+ 398 0042 094B     		ldr	r3, .L20+12
+ 399 0044 0093     		str	r3, [sp]
+ 400 0046 4FF48063 		mov	r3, #1024
+ 401 004a 0593     		str	r3, [sp, #20]
+ 402 004c 0695     		str	r5, [sp, #24]
+ 148:controller/utils/comms.c **** }
+ 403              		.loc 1 148 2 is_stmt 1 view .LVU104
+ 404 004e 6A46     		mov	r2, sp
+ 405 0050 0021     		movs	r1, #0
+ 406 0052 0648     		ldr	r0, .L20+16
+ 407 0054 FFF7FEFF 		bl	osThreadNew
+ 408              	.LVL40:
+ 149:controller/utils/comms.c **** 
+ 409              		.loc 1 149 1 is_stmt 0 view .LVU105
+ 410 0058 12B0     		add	sp, sp, #72
+ 411              		.cfi_def_cfa_offset 16
+ 412              		@ sp needed
+ 413 005a 70BD     		pop	{r4, r5, r6, pc}
+ 414              	.L21:
+ 415              		.align	2
+ 416              	.L20:
+ 417 005c 00000000 		.word	usb_rx_queue
+ 418 0060 00000000 		.word	.LC0
+ 419 0064 00000000 		.word	comms_task
+ 420 0068 0C000000 		.word	.LC1
+ 421 006c 00000000 		.word	runtime_update_task
+ 422              		.cfi_endproc
+ 423              	.LFE233:
+ 425              		.section	.rodata.process_plain_command.str1.4,"aMS",%progbits,1
+ 426              		.align	2
+ 427              	.LC2:
+ 428 0000 30303200 		.ascii	"002\000"
+ 429              		.align	2
+ 430              	.LC3:
+ 431 0004 4A696D53 		.ascii	"JimStim dev.2025.07\000"
+ 431      74696D20 
+ 431      6465762E 
+ 431      32303235 
+ 431      2E303700 
+ 432              		.section	.text.process_plain_command,"ax",%progbits
+ 433              		.align	1
+ 434              		.global	process_plain_command
+ 435              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 18
 
 
- 418 0021 3B       		.byte	(.L23-.L25)/2
- 419 0022 3B       		.byte	(.L23-.L25)/2
- 420 0023 3B       		.byte	(.L23-.L25)/2
- 421 0024 3B       		.byte	(.L23-.L25)/2
- 422 0025 3B       		.byte	(.L23-.L25)/2
- 423 0026 3B       		.byte	(.L23-.L25)/2
- 424 0027 3B       		.byte	(.L23-.L25)/2
- 425 0028 3B       		.byte	(.L23-.L25)/2
- 426 0029 3B       		.byte	(.L23-.L25)/2
- 427 002a 3B       		.byte	(.L23-.L25)/2
- 428 002b 3B       		.byte	(.L23-.L25)/2
- 429 002c 3B       		.byte	(.L23-.L25)/2
- 430 002d 22       		.byte	(.L24-.L25)/2
- 431              		.p2align 1
- 432              	.L29:
- 433              	.LBB10:
- 176:controller/utils/comms.c **** 	{
- 177:controller/utils/comms.c **** 	case TS_COMMAND_F:
- 178:controller/utils/comms.c **** 		send_response((uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
- 434              		.loc 1 178 3 view .LVU94
- 435 002e 0022     		movs	r2, #0
- 436 0030 0321     		movs	r1, #3
- 437              	.LVL40:
- 438              		.loc 1 178 3 is_stmt 0 view .LVU95
- 439 0032 1748     		ldr	r0, .L33
+ 436              		.thumb
+ 437              		.thumb_func
+ 439              	process_plain_command:
  440              	.LVL41:
- 441              		.loc 1 178 3 view .LVU96
- 442 0034 FFF7FEFF 		bl	send_response
- 443              	.LVL42:
- 179:controller/utils/comms.c **** 		return true;
- 444              		.loc 1 179 3 is_stmt 1 view .LVU97
- 445              	.L30:
- 446              		.loc 1 179 10 is_stmt 0 discriminator 1 view .LVU98
- 447 0038 0120     		movs	r0, #1
- 448 003a 25E0     		b	.L31
- 449              	.LVL43:
- 450              	.L26:
- 180:controller/utils/comms.c **** 		break;
- 451              		.loc 1 180 3 is_stmt 1 view .LVU99
- 181:controller/utils/comms.c **** 	case TS_HELLO_COMMAND:
- 182:controller/utils/comms.c **** 		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
- 452              		.loc 1 182 3 view .LVU100
- 453 003c 0022     		movs	r2, #0
- 454 003e 1421     		movs	r1, #20
- 455              	.LVL44:
- 456              		.loc 1 182 3 is_stmt 0 view .LVU101
- 457 0040 1448     		ldr	r0, .L33+4
- 458              	.LVL45:
- 459              		.loc 1 182 3 view .LVU102
- 460 0042 FFF7FEFF 		bl	send_response
- 461              	.LVL46:
- 183:controller/utils/comms.c **** 		return true;
- 462              		.loc 1 183 3 is_stmt 1 view .LVU103
- 463              		.loc 1 183 10 is_stmt 0 view .LVU104
- 464 0046 F7E7     		b	.L30
- 465              	.LVL47:
- 466              	.L27:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 14
+ 441              	.LFB235:
+ 166:controller/utils/comms.c ****     uint8_t first_byte = cmd[0];
+ 442              		.loc 1 166 1 is_stmt 1 view -0
+ 443              		.cfi_startproc
+ 444              		@ args = 0, pretend = 0, frame = 0
+ 445              		@ frame_needed = 0, uses_anonymous_args = 0
+ 166:controller/utils/comms.c ****     uint8_t first_byte = cmd[0];
+ 446              		.loc 1 166 1 is_stmt 0 view .LVU107
+ 447 0000 08B5     		push	{r3, lr}
+ 448              		.cfi_def_cfa_offset 8
+ 449              		.cfi_offset 3, -8
+ 450              		.cfi_offset 14, -4
+ 167:controller/utils/comms.c **** 	switch (first_byte)
+ 451              		.loc 1 167 5 is_stmt 1 view .LVU108
+ 167:controller/utils/comms.c **** 	switch (first_byte)
+ 452              		.loc 1 167 13 is_stmt 0 view .LVU109
+ 453 0002 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 454              	.LVL42:
+ 168:controller/utils/comms.c **** 	{
+ 455              		.loc 1 168 2 is_stmt 1 view .LVU110
+ 456 0004 433B     		subs	r3, r3, #67
+ 457 0006 102B     		cmp	r3, #16
+ 458 0008 2DD8     		bhi	.L30
+ 459 000a DFE803F0 		tbb	[pc, r3]
+ 460              	.L25:
+ 461 000e 1E       		.byte	(.L29-.L25)/2
+ 462 000f 2C       		.byte	(.L30-.L25)/2
+ 463 0010 2C       		.byte	(.L30-.L25)/2
+ 464 0011 09       		.byte	(.L28-.L25)/2
+ 465 0012 2C       		.byte	(.L30-.L25)/2
+ 466 0013 2C       		.byte	(.L30-.L25)/2
+ 467 0014 25       		.byte	(.L27-.L25)/2
+ 468 0015 2C       		.byte	(.L30-.L25)/2
+ 469 0016 2C       		.byte	(.L30-.L25)/2
+ 470 0017 2C       		.byte	(.L30-.L25)/2
+ 471 0018 2C       		.byte	(.L30-.L25)/2
+ 472 0019 2C       		.byte	(.L30-.L25)/2
+ 473 001a 2C       		.byte	(.L30-.L25)/2
+ 474 001b 2C       		.byte	(.L30-.L25)/2
+ 475 001c 17       		.byte	(.L26-.L25)/2
+ 476 001d 2C       		.byte	(.L30-.L25)/2
+ 477 001e 10       		.byte	(.L24-.L25)/2
+ 478 001f 00       		.p2align 1
+ 479              	.L28:
+ 172:controller/utils/comms.c **** 		return true;
+ 480              		.loc 1 172 3 view .LVU111
+ 481 0020 0022     		movs	r2, #0
+ 482 0022 0321     		movs	r1, #3
+ 483              	.LVL43:
+ 172:controller/utils/comms.c **** 		return true;
+ 484              		.loc 1 172 3 is_stmt 0 view .LVU112
+ 485 0024 1148     		ldr	r0, .L32
+ 486              	.LVL44:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 19
 
 
- 184:controller/utils/comms.c **** 		break;
- 467              		.loc 1 184 3 is_stmt 1 view .LVU105
- 185:controller/utils/comms.c **** 	case TS_QUERY_COMMAND:
- 186:controller/utils/comms.c **** 		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
- 468              		.loc 1 186 3 view .LVU106
- 469 0048 0022     		movs	r2, #0
- 470 004a 1421     		movs	r1, #20
- 471              	.LVL48:
- 472              		.loc 1 186 3 is_stmt 0 view .LVU107
- 473 004c 1148     		ldr	r0, .L33+4
- 474              	.LVL49:
- 475              		.loc 1 186 3 view .LVU108
- 476 004e FFF7FEFF 		bl	send_response
- 477              	.LVL50:
- 187:controller/utils/comms.c **** 		return true;
- 478              		.loc 1 187 3 is_stmt 1 view .LVU109
- 479              		.loc 1 187 10 is_stmt 0 view .LVU110
- 480 0052 F1E7     		b	.L30
- 481              	.LVL51:
- 482              	.L24:
- 188:controller/utils/comms.c **** 		break;
- 483              		.loc 1 188 3 is_stmt 1 view .LVU111
- 189:controller/utils/comms.c **** 	case TS_TEST_COMMS_COMMAND:
- 190:controller/utils/comms.c **** 		uint16_t seconds_running = (uint16_t)(get_time_ms() / 1000U);
- 484              		.loc 1 190 3 view .LVU112
- 485              		.loc 1 190 41 is_stmt 0 view .LVU113
- 486 0054 FFF7FEFF 		bl	get_time_ms
- 487              	.LVL52:
- 488              		.loc 1 190 55 discriminator 1 view .LVU114
- 489 0058 0F4B     		ldr	r3, .L33+8
- 490 005a A3FB0023 		umull	r2, r3, r3, r0
- 491              		.loc 1 190 30 discriminator 1 view .LVU115
- 492 005e C3F38F13 		ubfx	r3, r3, #6, #16
- 493              		.loc 1 190 12 discriminator 1 view .LVU116
- 494 0062 ADF80630 		strh	r3, [sp, #6]	@ movhi
- 191:controller/utils/comms.c **** 		send_response((uint8_t*)&seconds_running, sizeof(seconds_running), TS_PLAIN);
- 495              		.loc 1 191 3 is_stmt 1 view .LVU117
- 496 0066 0022     		movs	r2, #0
- 497 0068 0221     		movs	r1, #2
- 498 006a 0DF10600 		add	r0, sp, #6
- 499 006e FFF7FEFF 		bl	send_response
- 500              	.LVL53:
- 192:controller/utils/comms.c **** 		return true;
- 501              		.loc 1 192 3 view .LVU118
- 502              		.loc 1 192 10 is_stmt 0 view .LVU119
- 503 0072 E1E7     		b	.L30
- 504              	.LVL54:
- 505              	.L28:
- 193:controller/utils/comms.c **** 		break;
- 506              		.loc 1 193 3 is_stmt 1 view .LVU120
- 194:controller/utils/comms.c **** 	case TS_CAN_ID_COMMAND:
- 195:controller/utils/comms.c **** 		uint8_t id = TS_CAN_ID;
- 507              		.loc 1 195 3 view .LVU121
- 508              		.loc 1 195 11 is_stmt 0 view .LVU122
- 509 0074 0022     		movs	r2, #0
- 510 0076 8DF80620 		strb	r2, [sp, #6]
- 511              	.LVL55:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 15
+ 172:controller/utils/comms.c **** 		return true;
+ 487              		.loc 1 172 3 view .LVU113
+ 488 0026 FFF7FEFF 		bl	send_response
+ 489              	.LVL45:
+ 173:controller/utils/comms.c **** 	#endif
+ 490              		.loc 1 173 3 is_stmt 1 view .LVU114
+ 173:controller/utils/comms.c **** 	#endif
+ 491              		.loc 1 173 10 is_stmt 0 view .LVU115
+ 492 002a 0120     		movs	r0, #1
+ 493 002c 1CE0     		b	.L23
+ 494              	.LVL46:
+ 495              	.L24:
+ 175:controller/utils/comms.c **** 	case TS_HELLO_COMMAND:
+ 496              		.loc 1 175 3 is_stmt 1 view .LVU116
+ 177:controller/utils/comms.c **** 		return true;
+ 497              		.loc 1 177 3 view .LVU117
+ 498 002e 0022     		movs	r2, #0
+ 499 0030 1321     		movs	r1, #19
+ 500              	.LVL47:
+ 177:controller/utils/comms.c **** 		return true;
+ 501              		.loc 1 177 3 is_stmt 0 view .LVU118
+ 502 0032 0F48     		ldr	r0, .L32+4
+ 503              	.LVL48:
+ 177:controller/utils/comms.c **** 		return true;
+ 504              		.loc 1 177 3 view .LVU119
+ 505 0034 FFF7FEFF 		bl	send_response
+ 506              	.LVL49:
+ 178:controller/utils/comms.c **** 		break;
+ 507              		.loc 1 178 3 is_stmt 1 view .LVU120
+ 178:controller/utils/comms.c **** 		break;
+ 508              		.loc 1 178 10 is_stmt 0 view .LVU121
+ 509 0038 0120     		movs	r0, #1
+ 510 003a 15E0     		b	.L23
+ 511              	.LVL50:
+ 512              	.L26:
+ 179:controller/utils/comms.c **** 	case TS_QUERY_COMMAND:
+ 513              		.loc 1 179 3 is_stmt 1 view .LVU122
+ 181:controller/utils/comms.c **** 		return true;
+ 514              		.loc 1 181 3 view .LVU123
+ 515 003c 0022     		movs	r2, #0
+ 516 003e 1321     		movs	r1, #19
+ 517              	.LVL51:
+ 181:controller/utils/comms.c **** 		return true;
+ 518              		.loc 1 181 3 is_stmt 0 view .LVU124
+ 519 0040 0B48     		ldr	r0, .L32+4
+ 520              	.LVL52:
+ 181:controller/utils/comms.c **** 		return true;
+ 521              		.loc 1 181 3 view .LVU125
+ 522 0042 FFF7FEFF 		bl	send_response
+ 523              	.LVL53:
+ 182:controller/utils/comms.c **** 		break;
+ 524              		.loc 1 182 3 is_stmt 1 view .LVU126
+ 182:controller/utils/comms.c **** 		break;
+ 525              		.loc 1 182 10 is_stmt 0 view .LVU127
+ 526 0046 0120     		movs	r0, #1
+ 527 0048 0EE0     		b	.L23
+ 528              	.LVL54:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 20
 
 
- 196:controller/utils/comms.c **** 		send_response((uint8_t*)&id, sizeof(id), TS_PLAIN);
- 512              		.loc 1 196 3 is_stmt 1 view .LVU123
- 513 007a 0121     		movs	r1, #1
- 514              	.LVL56:
- 515              		.loc 1 196 3 is_stmt 0 view .LVU124
- 516 007c 0DF10600 		add	r0, sp, #6
- 517              	.LVL57:
- 518              		.loc 1 196 3 view .LVU125
- 519 0080 FFF7FEFF 		bl	send_response
- 520              	.LVL58:
- 197:controller/utils/comms.c **** 		return true;
- 521              		.loc 1 197 3 is_stmt 1 view .LVU126
- 522              		.loc 1 197 10 is_stmt 0 view .LVU127
- 523 0084 D8E7     		b	.L30
- 524              	.LVL59:
- 525              	.L23:
- 198:controller/utils/comms.c **** 		break;
- 526              		.loc 1 198 3 is_stmt 1 view .LVU128
- 199:controller/utils/comms.c **** 	
- 200:controller/utils/comms.c **** 	default:
- 201:controller/utils/comms.c **** 		break;
- 527              		.loc 1 201 3 view .LVU129
- 528              	.LBE10:
- 202:controller/utils/comms.c **** 	}
- 203:controller/utils/comms.c **** 		// This wasn't a valid command
- 204:controller/utils/comms.c **** 		return false;
- 529              		.loc 1 204 3 view .LVU130
- 530              		.loc 1 204 10 is_stmt 0 view .LVU131
- 531 0086 0020     		movs	r0, #0
- 532              	.LVL60:
- 533              	.L31:
- 205:controller/utils/comms.c **** 	
- 206:controller/utils/comms.c **** }
- 534              		.loc 1 206 1 view .LVU132
- 535 0088 03B0     		add	sp, sp, #12
- 536              		.cfi_def_cfa_offset 4
- 537              		@ sp needed
- 538 008a 5DF804FB 		ldr	pc, [sp], #4
- 539              	.L34:
- 540 008e 00BF     		.align	2
- 541              	.L33:
- 542 0090 00000000 		.word	.LC2
- 543 0094 04000000 		.word	.LC3
- 544 0098 D34D6210 		.word	274877907
- 545              		.cfi_endproc
- 546              	.LFE235:
- 548              		.section	.text.process_command,"ax",%progbits
- 549              		.align	1
- 550              		.global	process_command
- 551              		.syntax unified
- 552              		.thumb
- 553              		.thumb_func
- 555              	process_command:
- 556              	.LVL61:
- 557              	.LFB236:
- 207:controller/utils/comms.c **** 
- 208:controller/utils/comms.c **** void process_command(uint8_t *cmd, uint16_t size)
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 16
+ 529              	.L29:
+ 183:controller/utils/comms.c **** 	case TS_TEST_COMMS_COMMAND:
+ 530              		.loc 1 183 3 is_stmt 1 view .LVU128
+ 185:controller/utils/comms.c **** 		return true;
+ 531              		.loc 1 185 3 view .LVU129
+ 532 004a 0022     		movs	r2, #0
+ 533 004c 0121     		movs	r1, #1
+ 534              	.LVL55:
+ 185:controller/utils/comms.c **** 		return true;
+ 535              		.loc 1 185 3 is_stmt 0 view .LVU130
+ 536 004e FF20     		movs	r0, #255
+ 537              	.LVL56:
+ 185:controller/utils/comms.c **** 		return true;
+ 538              		.loc 1 185 3 view .LVU131
+ 539 0050 FFF7FEFF 		bl	send_response
+ 540              	.LVL57:
+ 186:controller/utils/comms.c **** 		break;
+ 541              		.loc 1 186 3 is_stmt 1 view .LVU132
+ 186:controller/utils/comms.c **** 		break;
+ 542              		.loc 1 186 10 is_stmt 0 view .LVU133
+ 543 0054 0120     		movs	r0, #1
+ 544 0056 07E0     		b	.L23
+ 545              	.LVL58:
+ 546              	.L27:
+ 187:controller/utils/comms.c **** 	case TS_CAN_ID_COMMAND:
+ 547              		.loc 1 187 3 is_stmt 1 view .LVU134
+ 190:controller/utils/comms.c **** 		return true;
+ 548              		.loc 1 190 3 view .LVU135
+ 549 0058 0022     		movs	r2, #0
+ 550 005a 1146     		mov	r1, r2
+ 551              	.LVL59:
+ 190:controller/utils/comms.c **** 		return true;
+ 552              		.loc 1 190 3 is_stmt 0 view .LVU136
+ 553 005c 1046     		mov	r0, r2
+ 554              	.LVL60:
+ 190:controller/utils/comms.c **** 		return true;
+ 555              		.loc 1 190 3 view .LVU137
+ 556 005e FFF7FEFF 		bl	send_response
+ 557              	.LVL61:
+ 191:controller/utils/comms.c **** 		break;
+ 558              		.loc 1 191 3 is_stmt 1 view .LVU138
+ 191:controller/utils/comms.c **** 		break;
+ 559              		.loc 1 191 10 is_stmt 0 view .LVU139
+ 560 0062 0120     		movs	r0, #1
+ 561 0064 00E0     		b	.L23
+ 562              	.LVL62:
+ 563              	.L30:
+ 168:controller/utils/comms.c **** 	{
+ 564              		.loc 1 168 2 view .LVU140
+ 565 0066 0020     		movs	r0, #0
+ 566              	.LVL63:
+ 567              	.L23:
+ 200:controller/utils/comms.c **** 
+ 568              		.loc 1 200 1 view .LVU141
+ 569 0068 08BD     		pop	{r3, pc}
+ 570              	.L33:
+ 571 006a 00BF     		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 21
 
 
- 209:controller/utils/comms.c **** {
- 558              		.loc 1 209 1 is_stmt 1 view -0
- 559              		.cfi_startproc
- 560              		@ args = 0, pretend = 0, frame = 8
- 561              		@ frame_needed = 0, uses_anonymous_args = 0
- 562              		.loc 1 209 1 is_stmt 0 view .LVU134
- 563 0000 10B5     		push	{r4, lr}
- 564              		.cfi_def_cfa_offset 8
- 565              		.cfi_offset 4, -8
- 566              		.cfi_offset 14, -4
- 567 0002 82B0     		sub	sp, sp, #8
- 568              		.cfi_def_cfa_offset 16
- 569 0004 0446     		mov	r4, r0
- 210:controller/utils/comms.c ****     if (process_plain_command(cmd, size))
- 570              		.loc 1 210 5 is_stmt 1 view .LVU135
- 571              		.loc 1 210 9 is_stmt 0 view .LVU136
- 572 0006 FFF7FEFF 		bl	process_plain_command
- 573              	.LVL62:
- 574              		.loc 1 210 8 discriminator 1 view .LVU137
- 575 000a 40BB     		cbnz	r0, .L35
- 211:controller/utils/comms.c ****     {
- 212:controller/utils/comms.c ****         return;
- 213:controller/utils/comms.c ****     }
- 214:controller/utils/comms.c **** 	uint8_t command = cmd[2];
- 576              		.loc 1 214 2 is_stmt 1 view .LVU138
- 577              		.loc 1 214 10 is_stmt 0 view .LVU139
- 578 000c A378     		ldrb	r3, [r4, #2]	@ zero_extendqisi2
- 579              	.LVL63:
- 215:controller/utils/comms.c **** 
- 216:controller/utils/comms.c **** 	switch (command)
- 580              		.loc 1 216 2 is_stmt 1 view .LVU140
- 581 000e 463B     		subs	r3, r3, #70
- 582 0010 1D2B     		cmp	r3, #29
- 583 0012 1FD8     		bhi	.L37
- 584 0014 DFE803F0 		tbb	[pc, r3]
- 585              	.L39:
- 586 0018 25       		.byte	(.L43-.L39)/2
- 587 0019 1E       		.byte	(.L37-.L39)/2
- 588 001a 1E       		.byte	(.L37-.L39)/2
- 589 001b 2B       		.byte	(.L42-.L39)/2
- 590 001c 1E       		.byte	(.L37-.L39)/2
- 591 001d 1E       		.byte	(.L37-.L39)/2
- 592 001e 1E       		.byte	(.L37-.L39)/2
- 593 001f 1E       		.byte	(.L37-.L39)/2
- 594 0020 1E       		.byte	(.L37-.L39)/2
- 595 0021 1E       		.byte	(.L37-.L39)/2
- 596 0022 1E       		.byte	(.L37-.L39)/2
- 597 0023 35       		.byte	(.L41-.L39)/2
- 598 0024 1E       		.byte	(.L37-.L39)/2
- 599 0025 3B       		.byte	(.L40-.L39)/2
- 600 0026 1E       		.byte	(.L37-.L39)/2
- 601 0027 1E       		.byte	(.L37-.L39)/2
- 602 0028 1E       		.byte	(.L37-.L39)/2
- 603 0029 1E       		.byte	(.L37-.L39)/2
- 604 002a 1E       		.byte	(.L37-.L39)/2
- 605 002b 1E       		.byte	(.L37-.L39)/2
- 606 002c 1E       		.byte	(.L37-.L39)/2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 17
+ 572              	.L32:
+ 573 006c 00000000 		.word	.LC2
+ 574 0070 04000000 		.word	.LC3
+ 575              		.cfi_endproc
+ 576              	.LFE235:
+ 578              		.section	.text.process_command,"ax",%progbits
+ 579              		.align	1
+ 580              		.global	process_command
+ 581              		.syntax unified
+ 582              		.thumb
+ 583              		.thumb_func
+ 585              	process_command:
+ 586              	.LVL64:
+ 587              	.LFB236:
+ 203:controller/utils/comms.c ****     if (process_plain_command(cmd, size))
+ 588              		.loc 1 203 1 is_stmt 1 view -0
+ 589              		.cfi_startproc
+ 590              		@ args = 0, pretend = 0, frame = 8
+ 591              		@ frame_needed = 0, uses_anonymous_args = 0
+ 203:controller/utils/comms.c ****     if (process_plain_command(cmd, size))
+ 592              		.loc 1 203 1 is_stmt 0 view .LVU143
+ 593 0000 30B5     		push	{r4, r5, lr}
+ 594              		.cfi_def_cfa_offset 12
+ 595              		.cfi_offset 4, -12
+ 596              		.cfi_offset 5, -8
+ 597              		.cfi_offset 14, -4
+ 598 0002 83B0     		sub	sp, sp, #12
+ 599              		.cfi_def_cfa_offset 24
+ 600 0004 0446     		mov	r4, r0
+ 601 0006 0D46     		mov	r5, r1
+ 204:controller/utils/comms.c ****     {
+ 602              		.loc 1 204 5 is_stmt 1 view .LVU144
+ 204:controller/utils/comms.c ****     {
+ 603              		.loc 1 204 9 is_stmt 0 view .LVU145
+ 604 0008 FFF7FEFF 		bl	process_plain_command
+ 605              	.LVL65:
+ 204:controller/utils/comms.c ****     {
+ 606              		.loc 1 204 8 discriminator 1 view .LVU146
+ 607 000c 0028     		cmp	r0, #0
+ 608 000e 6CD1     		bne	.L34
+ 208:controller/utils/comms.c **** 	uint32_t packet_crc = 0;
+ 609              		.loc 1 208 2 is_stmt 1 view .LVU147
+ 610              	.LVL66:
+ 209:controller/utils/comms.c **** 	uint32_t calculated_packet_crc = 0;
+ 611              		.loc 1 209 2 view .LVU148
+ 210:controller/utils/comms.c **** 	bool is_packet_valid = false;
+ 612              		.loc 1 210 2 view .LVU149
+ 211:controller/utils/comms.c **** 	if (size > 5)
+ 613              		.loc 1 211 2 view .LVU150
+ 212:controller/utils/comms.c **** 	{
+ 614              		.loc 1 212 2 view .LVU151
+ 212:controller/utils/comms.c **** 	{
+ 615              		.loc 1 212 5 is_stmt 0 view .LVU152
+ 616 0010 052D     		cmp	r5, #5
+ 617 0012 1AD8     		bhi	.L50
+ 618              	.LVL67:
+ 619              	.L36:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 22
 
 
- 607 002d 1E       		.byte	(.L37-.L39)/2
- 608 002e 1E       		.byte	(.L37-.L39)/2
- 609 002f 1E       		.byte	(.L37-.L39)/2
- 610 0030 1E       		.byte	(.L37-.L39)/2
- 611 0031 1E       		.byte	(.L37-.L39)/2
- 612 0032 1E       		.byte	(.L37-.L39)/2
- 613 0033 1E       		.byte	(.L37-.L39)/2
- 614 0034 1E       		.byte	(.L37-.L39)/2
- 615 0035 0F       		.byte	(.L38-.L39)/2
- 616              		.p2align 1
- 617              	.L38:
- 618              	.LBB11:
- 217:controller/utils/comms.c **** 	{
- 218:controller/utils/comms.c **** 	case TS_TEST_COMMS_COMMAND:
- 219:controller/utils/comms.c **** 		uint16_t seconds_running = (uint16_t)(get_time_ms() / 1000U);
- 619              		.loc 1 219 3 view .LVU141
- 620              		.loc 1 219 41 is_stmt 0 view .LVU142
- 621 0036 FFF7FEFF 		bl	get_time_ms
- 622              	.LVL64:
- 623              		.loc 1 219 55 discriminator 1 view .LVU143
- 624 003a 184B     		ldr	r3, .L46
- 625 003c A3FB0023 		umull	r2, r3, r3, r0
- 626              		.loc 1 219 30 discriminator 1 view .LVU144
- 627 0040 C3F38F13 		ubfx	r3, r3, #6, #16
- 628              		.loc 1 219 12 discriminator 1 view .LVU145
- 629 0044 ADF80630 		strh	r3, [sp, #6]	@ movhi
- 220:controller/utils/comms.c **** 		send_response((uint8_t*)&seconds_running, sizeof(seconds_running), TS_CRC);
- 630              		.loc 1 220 3 is_stmt 1 view .LVU146
- 631 0048 0122     		movs	r2, #1
- 632 004a 0221     		movs	r1, #2
- 633 004c 0DF10600 		add	r0, sp, #6
- 634 0050 FFF7FEFF 		bl	send_response
- 635              	.LVL65:
- 221:controller/utils/comms.c **** 		break;
- 636              		.loc 1 221 3 view .LVU147
- 637              	.L37:
- 638              	.LBE11:
- 222:controller/utils/comms.c **** 
- 223:controller/utils/comms.c **** 	case TS_COMMAND_F:
- 224:controller/utils/comms.c **** 		send_response((uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_CRC);
- 225:controller/utils/comms.c **** 		break;
- 226:controller/utils/comms.c **** 
- 227:controller/utils/comms.c **** 	case TS_CAN_ID_COMMAND:
- 228:controller/utils/comms.c **** 		uint8_t id = TS_CAN_ID;
- 229:controller/utils/comms.c **** 		send_response((uint8_t *)&id, sizeof(id), TS_CRC);
+ 219:controller/utils/comms.c **** 	{
+ 620              		.loc 1 219 2 is_stmt 1 view .LVU153
+ 221:controller/utils/comms.c **** 	}
+ 621              		.loc 1 221 3 view .LVU154
+ 224:controller/utils/comms.c **** 
+ 622              		.loc 1 224 2 view .LVU155
+ 224:controller/utils/comms.c **** 
+ 623              		.loc 1 224 10 is_stmt 0 view .LVU156
+ 624 0014 A378     		ldrb	r3, [r4, #2]	@ zero_extendqisi2
+ 625              	.LVL68:
+ 226:controller/utils/comms.c **** 	{
+ 626              		.loc 1 226 2 is_stmt 1 view .LVU157
+ 627 0016 433B     		subs	r3, r3, #67
+ 628 0018 282B     		cmp	r3, #40
+ 629 001a 61D8     		bhi	.L37
+ 630 001c DFE803F0 		tbb	[pc, r3]
+ 631              	.L39:
+ 632 0020 1A       		.byte	(.L47-.L39)/2
+ 633 0021 60       		.byte	(.L37-.L39)/2
+ 634 0022 60       		.byte	(.L37-.L39)/2
+ 635 0023 20       		.byte	(.L46-.L39)/2
+ 636 0024 60       		.byte	(.L37-.L39)/2
+ 637 0025 60       		.byte	(.L37-.L39)/2
+ 638 0026 26       		.byte	(.L45-.L39)/2
+ 639 0027 60       		.byte	(.L37-.L39)/2
+ 640 0028 60       		.byte	(.L37-.L39)/2
+ 641 0029 60       		.byte	(.L37-.L39)/2
+ 642 002a 60       		.byte	(.L37-.L39)/2
+ 643 002b 60       		.byte	(.L37-.L39)/2
+ 644 002c 46       		.byte	(.L44-.L39)/2
+ 645 002d 60       		.byte	(.L37-.L39)/2
+ 646 002e 2C       		.byte	(.L43-.L39)/2
+ 647 002f 4C       		.byte	(.L42-.L39)/2
+ 648 0030 32       		.byte	(.L41-.L39)/2
+ 649 0031 60       		.byte	(.L37-.L39)/2
+ 650 0032 60       		.byte	(.L37-.L39)/2
+ 651 0033 60       		.byte	(.L37-.L39)/2
+ 652 0034 60       		.byte	(.L37-.L39)/2
+ 653 0035 60       		.byte	(.L37-.L39)/2
+ 654 0036 60       		.byte	(.L37-.L39)/2
+ 655 0037 60       		.byte	(.L37-.L39)/2
+ 656 0038 60       		.byte	(.L37-.L39)/2
+ 657 0039 60       		.byte	(.L37-.L39)/2
+ 658 003a 60       		.byte	(.L37-.L39)/2
+ 659 003b 60       		.byte	(.L37-.L39)/2
+ 660 003c 60       		.byte	(.L37-.L39)/2
+ 661 003d 60       		.byte	(.L37-.L39)/2
+ 662 003e 60       		.byte	(.L37-.L39)/2
+ 663 003f 60       		.byte	(.L37-.L39)/2
+ 664 0040 60       		.byte	(.L37-.L39)/2
+ 665 0041 60       		.byte	(.L37-.L39)/2
+ 666 0042 60       		.byte	(.L37-.L39)/2
+ 667 0043 38       		.byte	(.L40-.L39)/2
+ 668 0044 60       		.byte	(.L37-.L39)/2
+ 669 0045 60       		.byte	(.L37-.L39)/2
+ 670 0046 60       		.byte	(.L37-.L39)/2
+ 671 0047 60       		.byte	(.L37-.L39)/2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 23
+
+
+ 672 0048 53       		.byte	(.L38-.L39)/2
+ 673              	.LVL69:
+ 674 0049 00       		.p2align 1
+ 675              	.L50:
+ 214:controller/utils/comms.c **** 		packet_crc = swap_endian_uint32(*(uint32_t*)cmd[size - 1 - TS_PACKET_CRC_SIZE]);
+ 676              		.loc 1 214 3 view .LVU158
+ 215:controller/utils/comms.c **** 		calculated_packet_crc = crc32_inc(0, (void*)(cmd + TS_PACKET_PREFIX_SIZE), size - TS_PACKET_PREFI
+ 677              		.loc 1 215 3 view .LVU159
+ 216:controller/utils/comms.c **** 
+ 678              		.loc 1 216 3 view .LVU160
+ 216:controller/utils/comms.c **** 
+ 679              		.loc 1 216 27 is_stmt 0 view .LVU161
+ 680 004a AA1F     		subs	r2, r5, #6
+ 681 004c A11C     		adds	r1, r4, #2
+ 682 004e FFF7FEFF 		bl	crc32_inc
+ 683              	.LVL70:
+ 216:controller/utils/comms.c **** 
+ 684              		.loc 1 216 27 view .LVU162
+ 685 0052 DFE7     		b	.L36
+ 686              	.LVL71:
+ 687              	.L47:
+ 688              	.LBB19:
+ 229:controller/utils/comms.c **** 		return;
+ 689              		.loc 1 229 3 is_stmt 1 view .LVU163
+ 690 0054 0122     		movs	r2, #1
+ 691 0056 1146     		mov	r1, r2
+ 692 0058 FF20     		movs	r0, #255
+ 693 005a FFF7FEFF 		bl	send_response
+ 694              	.LVL72:
  230:controller/utils/comms.c **** 		break;
- 231:controller/utils/comms.c **** 	case TS_QUERY_COMMAND:
- 232:controller/utils/comms.c **** 		send_response((uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
- 233:controller/utils/comms.c **** 
- 234:controller/utils/comms.c **** 		break;
- 235:controller/utils/comms.c **** 	case TS_HELLO_COMMAND:
- 236:controller/utils/comms.c **** 		send_response((uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
- 237:controller/utils/comms.c **** 
- 238:controller/utils/comms.c **** 		break;
- 239:controller/utils/comms.c **** 
- 240:controller/utils/comms.c **** 	default:
- 241:controller/utils/comms.c **** 		break;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 18
-
-
- 242:controller/utils/comms.c **** 	}
- 243:controller/utils/comms.c **** 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
- 639              		.loc 1 243 2 view .LVU148
- 640 0054 4FF40051 		mov	r1, #8192
- 641 0058 1148     		ldr	r0, .L46+4
- 642 005a FFF7FEFF 		bl	HAL_GPIO_TogglePin
- 643              	.LVL66:
- 644              	.L35:
- 244:controller/utils/comms.c **** #if FALSE
- 245:controller/utils/comms.c ****  	uint8_t secondByte;
- 246:controller/utils/comms.c **** 	/* second byte should be received within minimal delay */
- 247:controller/utils/comms.c **** 	received = tsChannel->readTimeout(&secondByte, 1, TS_COMMUNICATION_TIMEOUT_SHORT);
- 248:controller/utils/comms.c **** 	if (received != 1) {
- 249:controller/utils/comms.c **** 		tunerStudioError(tsChannel, "TS: ERROR: no second byte");
- 250:controller/utils/comms.c **** 		tsChannel->in_sync = false;
- 251:controller/utils/comms.c **** 		return -1;
- 252:controller/utils/comms.c **** 	}
- 253:controller/utils/comms.c **** 
- 254:controller/utils/comms.c **** 	uint16_t incomingPacketSize = firstByte << 8 | secondByte;
- 255:controller/utils/comms.c **** 	size_t expectedSize = incomingPacketSize + TS_PACKET_TAIL_SIZE;
- 256:controller/utils/comms.c **** 
- 257:controller/utils/comms.c **** 	if ((incomingPacketSize == 0) || (expectedSize > sizeof(tsChannel->scratchBuffer))) {
- 258:controller/utils/comms.c **** 		if (tsChannel->in_sync) {
- 259:controller/utils/comms.c **** 			efiPrintf("process_ts: channel=%s invalid size: %d", tsChannel->name, incomingPacketSize);
- 260:controller/utils/comms.c **** 			tunerStudioError(tsChannel, "process_ts: ERROR: packet size");
- 261:controller/utils/comms.c **** 			/* send error only if previously we were in sync */
- 262:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_OUT_OF_RANGE, "invalid size");
- 263:controller/utils/comms.c **** 		}
- 264:controller/utils/comms.c **** 		tsChannel->in_sync = false;
- 265:controller/utils/comms.c **** 		return -1;
- 266:controller/utils/comms.c **** 	}
- 267:controller/utils/comms.c **** 
- 268:controller/utils/comms.c **** 	char command;
- 269:controller/utils/comms.c **** 	if (tsChannel->in_sync) {
- 270:controller/utils/comms.c **** 		/* we are in sync state, packet size should be correct so lets receive full packet and then check
- 271:controller/utils/comms.c **** 		 * otherwise (if abort reception in middle of packet) it will break synchronization and cause err
- 272:controller/utils/comms.c **** 		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer), expectedSize, TS_COMMUNIC
- 273:controller/utils/comms.c **** 		command = tsChannel->scratchBuffer[0];
- 274:controller/utils/comms.c **** 
- 275:controller/utils/comms.c **** 		if (received != expectedSize) {
- 276:controller/utils/comms.c **** 			/* print and send error as we were in sync */
- 277:controller/utils/comms.c **** 			efiPrintf("Got only %d bytes while expecting %d for command 0x%02x", received,
- 278:controller/utils/comms.c **** 					expectedSize, command);
- 279:controller/utils/comms.c **** 			tunerStudioError(tsChannel, "ERROR: not enough bytes in stream");
- 280:controller/utils/comms.c **** 			// MS serial protocol spec: There was a timeout before all data was received. (25ms per characte
- 281:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_UNDERRUN, "underrun");
- 282:controller/utils/comms.c **** 			tsChannel->in_sync = false;
- 283:controller/utils/comms.c **** 			return -1;
- 284:controller/utils/comms.c **** 		}
- 285:controller/utils/comms.c **** 
- 286:controller/utils/comms.c **** 		if (!isKnownCommand(command)) {
- 287:controller/utils/comms.c **** 			/* print and send error as we were in sync */
- 288:controller/utils/comms.c **** 			efiPrintf("unexpected command %x", command);
- 289:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_UNRECOGNIZED_COMMAND, "unknown");
- 290:controller/utils/comms.c **** 			tsChannel->in_sync = false;
- 291:controller/utils/comms.c **** 			return -1;
- 292:controller/utils/comms.c **** 		}
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 19
-
-
- 293:controller/utils/comms.c **** 	} else {
- 294:controller/utils/comms.c **** 		/* receive only command byte to check if it is supported */
- 295:controller/utils/comms.c **** 		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer), 1, TS_COMMUNICATION_TIMEO
- 296:controller/utils/comms.c **** 		command = tsChannel->scratchBuffer[0];
- 297:controller/utils/comms.c **** 
- 298:controller/utils/comms.c **** 		if (!isKnownCommand(command)) {
- 299:controller/utils/comms.c **** 			/* do not report any error as we are not in sync */
- 300:controller/utils/comms.c **** 			return -1;
- 301:controller/utils/comms.c **** 		}
- 302:controller/utils/comms.c **** 
- 303:controller/utils/comms.c **** 		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer) + 1, expectedSize - 1, TS_
- 304:controller/utils/comms.c **** 		if (received != expectedSize - 1) {
- 305:controller/utils/comms.c **** 			/* do not report any error as we are not in sync */
- 306:controller/utils/comms.c **** 			return -1;
- 307:controller/utils/comms.c **** 		}
- 308:controller/utils/comms.c **** 	}
- 309:controller/utils/comms.c **** 
- 310:controller/utils/comms.c **** #if EFI_SIMULATOR
- 311:controller/utils/comms.c **** 	logMsg("command %c\r\n", command);
- 312:controller/utils/comms.c **** #endif
- 313:controller/utils/comms.c **** 
- 314:controller/utils/comms.c **** 	uint32_t expectedCrc = *(uint32_t*) (tsChannel->scratchBuffer + incomingPacketSize);
- 315:controller/utils/comms.c **** 
- 316:controller/utils/comms.c **** 	expectedCrc = SWAP_UINT32(expectedCrc);
- 317:controller/utils/comms.c **** 
- 318:controller/utils/comms.c **** 	uint32_t actualCrc = crc32(tsChannel->scratchBuffer, incomingPacketSize);
- 319:controller/utils/comms.c **** 	if (actualCrc != expectedCrc) {
- 320:controller/utils/comms.c **** 		/* send error only if previously we were in sync */
- 321:controller/utils/comms.c **** 		if (tsChannel->in_sync) {
- 322:controller/utils/comms.c **** 			efiPrintf("TunerStudio: command %c actual CRC %x/expected %x", tsChannel->scratchBuffer[0],
- 323:controller/utils/comms.c **** 					(unsigned int)actualCrc, (unsigned int)expectedCrc);
- 324:controller/utils/comms.c **** 			tunerStudioError(tsChannel, "ERROR: CRC issue");
- 325:controller/utils/comms.c **** 			sendErrorCode(tsChannel, TS_RESPONSE_CRC_FAILURE, "crc_issue");
- 326:controller/utils/comms.c **** 			tsChannel->in_sync = false;
- 327:controller/utils/comms.c **** 		}
- 328:controller/utils/comms.c **** 		return -1;
- 329:controller/utils/comms.c **** 	}
- 330:controller/utils/comms.c **** 
- 331:controller/utils/comms.c **** 	/* we were able to receive known command with correct crc and size! */
- 332:controller/utils/comms.c **** 	tsChannel->in_sync = true;
- 333:controller/utils/comms.c **** 
- 334:controller/utils/comms.c **** 	int success = tsInstance.handleCrcCommand(tsChannel, tsChannel->scratchBuffer, incomingPacketSize)
- 335:controller/utils/comms.c **** 
- 336:controller/utils/comms.c **** 	if (!success) {
- 337:controller/utils/comms.c **** 		efiPrintf("got unexpected TunerStudio command %x:%c", command, command);
- 338:controller/utils/comms.c **** 		return -1;
- 339:controller/utils/comms.c **** 	}
- 340:controller/utils/comms.c **** 
- 341:controller/utils/comms.c **** 	return 0;
- 342:controller/utils/comms.c **** #endif
- 343:controller/utils/comms.c **** }
- 645              		.loc 1 343 1 is_stmt 0 view .LVU149
- 646 005e 02B0     		add	sp, sp, #8
- 647              		.cfi_remember_state
- 648              		.cfi_def_cfa_offset 8
- 649              		@ sp needed
- 650 0060 10BD     		pop	{r4, pc}
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 20
-
-
- 651              	.LVL67:
- 652              	.L43:
- 653              		.cfi_restore_state
- 654              	.LBB12:
- 224:controller/utils/comms.c **** 		break;
- 655              		.loc 1 224 3 is_stmt 1 view .LVU150
- 656 0062 0122     		movs	r2, #1
- 657 0064 0321     		movs	r1, #3
- 658 0066 0F48     		ldr	r0, .L46+8
- 659 0068 FFF7FEFF 		bl	send_response
- 660              	.LVL68:
- 225:controller/utils/comms.c **** 
- 661              		.loc 1 225 3 view .LVU151
- 662 006c F2E7     		b	.L37
- 663              	.LVL69:
- 664              	.L42:
- 228:controller/utils/comms.c **** 		send_response((uint8_t *)&id, sizeof(id), TS_CRC);
- 665              		.loc 1 228 3 view .LVU152
- 228:controller/utils/comms.c **** 		send_response((uint8_t *)&id, sizeof(id), TS_CRC);
- 666              		.loc 1 228 11 is_stmt 0 view .LVU153
- 667 006e 0023     		movs	r3, #0
- 668 0070 8DF80630 		strb	r3, [sp, #6]
- 669              	.LVL70:
- 229:controller/utils/comms.c **** 		break;
- 670              		.loc 1 229 3 is_stmt 1 view .LVU154
- 671 0074 0122     		movs	r2, #1
- 672 0076 1146     		mov	r1, r2
- 673 0078 0DF10600 		add	r0, sp, #6
- 674 007c FFF7FEFF 		bl	send_response
- 675              	.LVL71:
- 230:controller/utils/comms.c **** 	case TS_QUERY_COMMAND:
- 676              		.loc 1 230 3 view .LVU155
- 677 0080 E8E7     		b	.L37
- 678              	.LVL72:
- 679              	.L41:
- 232:controller/utils/comms.c **** 
- 680              		.loc 1 232 3 view .LVU156
- 681 0082 0122     		movs	r2, #1
- 682 0084 1421     		movs	r1, #20
- 683 0086 0848     		ldr	r0, .L46+12
- 684 0088 FFF7FEFF 		bl	send_response
- 685              	.LVL73:
- 234:controller/utils/comms.c **** 	case TS_HELLO_COMMAND:
- 686              		.loc 1 234 3 view .LVU157
- 687 008c E2E7     		b	.L37
- 688              	.LVL74:
- 689              	.L40:
- 236:controller/utils/comms.c **** 
- 690              		.loc 1 236 3 view .LVU158
- 691 008e 0122     		movs	r2, #1
- 692 0090 1421     		movs	r1, #20
- 693 0092 0548     		ldr	r0, .L46+12
- 694 0094 FFF7FEFF 		bl	send_response
- 695              	.LVL75:
+ 695              		.loc 1 230 3 view .LVU164
+ 696 005e 44E0     		b	.L34
+ 697              	.LVL73:
+ 698              	.L46:
+ 231:controller/utils/comms.c **** 
+ 699              		.loc 1 231 3 view .LVU165
+ 235:controller/utils/comms.c **** 	#endif
+ 700              		.loc 1 235 3 view .LVU166
+ 701 0060 0122     		movs	r2, #1
+ 702 0062 0321     		movs	r1, #3
+ 703 0064 2248     		ldr	r0, .L51
+ 704 0066 FFF7FEFF 		bl	send_response
+ 705              	.LVL74:
+ 237:controller/utils/comms.c **** 		break;
+ 706              		.loc 1 237 3 view .LVU167
+ 707 006a 3EE0     		b	.L34
+ 708              	.LVL75:
+ 709              	.L45:
  238:controller/utils/comms.c **** 
- 696              		.loc 1 238 3 view .LVU159
- 697 0098 DCE7     		b	.L37
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 21
+ 710              		.loc 1 238 3 view .LVU168
+ 241:controller/utils/comms.c **** 		return;
+ 711              		.loc 1 241 3 view .LVU169
+ 712 006c 0122     		movs	r2, #1
+ 713 006e 1146     		mov	r1, r2
+ 714 0070 0020     		movs	r0, #0
+ 715 0072 FFF7FEFF 		bl	send_response
+ 716              	.LVL76:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 24
 
 
- 698              	.L47:
- 699 009a 00BF     		.align	2
- 700              	.L46:
- 701 009c D34D6210 		.word	274877907
- 702 00a0 00080240 		.word	1073874944
- 703 00a4 00000000 		.word	.LC2
- 704 00a8 04000000 		.word	.LC3
- 705              	.LBE12:
- 706              		.cfi_endproc
- 707              	.LFE236:
- 709              		.section	.text.comms_task,"ax",%progbits
- 710              		.align	1
- 711              		.global	comms_task
- 712              		.syntax unified
- 713              		.thumb
- 714              		.thumb_func
- 716              	comms_task:
- 717              	.LFB234:
- 159:controller/utils/comms.c ****     
- 718              		.loc 1 159 1 view -0
- 719              		.cfi_startproc
- 720              		@ Volatile: function does not return.
- 721              		@ args = 0, pretend = 0, frame = 0
- 722              		@ frame_needed = 0, uses_anonymous_args = 0
- 723              	.LVL76:
- 159:controller/utils/comms.c ****     
- 724              		.loc 1 159 1 is_stmt 0 view .LVU161
- 725 0000 08B5     		push	{r3, lr}
- 726              		.cfi_def_cfa_offset 8
- 727              		.cfi_offset 3, -8
- 728              		.cfi_offset 14, -4
- 729              	.LVL77:
- 730              	.L49:
- 161:controller/utils/comms.c ****     {
- 731              		.loc 1 161 5 is_stmt 1 view .LVU162
- 163:controller/utils/comms.c ****         {
- 732              		.loc 1 163 9 view .LVU163
- 163:controller/utils/comms.c ****         {
- 733              		.loc 1 163 13 is_stmt 0 view .LVU164
- 734 0002 4FF0FF33 		mov	r3, #-1
- 735 0006 0022     		movs	r2, #0
- 736 0008 0649     		ldr	r1, .L52
- 737 000a 0748     		ldr	r0, .L52+4
- 738 000c 0068     		ldr	r0, [r0]
- 739 000e FFF7FEFF 		bl	osMessageQueueGet
- 740              	.LVL78:
- 163:controller/utils/comms.c ****         {
- 741              		.loc 1 163 12 discriminator 1 view .LVU165
- 742 0012 0028     		cmp	r0, #0
- 743 0014 F5D1     		bne	.L49
- 165:controller/utils/comms.c ****         }
- 744              		.loc 1 165 13 is_stmt 1 view .LVU166
- 745 0016 0348     		ldr	r0, .L52
- 746 0018 B0F84010 		ldrh	r1, [r0, #64]
- 747 001c FFF7FEFF 		bl	process_command
- 748              	.LVL79:
- 749 0020 EFE7     		b	.L49
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 22
+ 242:controller/utils/comms.c **** 		break;
+ 717              		.loc 1 242 3 view .LVU170
+ 718 0076 38E0     		b	.L34
+ 719              	.LVL77:
+ 720              	.L43:
+ 243:controller/utils/comms.c **** 
+ 721              		.loc 1 243 3 view .LVU171
+ 246:controller/utils/comms.c **** 		return;
+ 722              		.loc 1 246 3 view .LVU172
+ 723 0078 0122     		movs	r2, #1
+ 724 007a 1321     		movs	r1, #19
+ 725 007c 1D48     		ldr	r0, .L51+4
+ 726 007e FFF7FEFF 		bl	send_response
+ 727              	.LVL78:
+ 247:controller/utils/comms.c **** 		break;
+ 728              		.loc 1 247 3 view .LVU173
+ 729 0082 32E0     		b	.L34
+ 730              	.LVL79:
+ 731              	.L41:
+ 248:controller/utils/comms.c **** 
+ 732              		.loc 1 248 3 view .LVU174
+ 251:controller/utils/comms.c **** 		return;
+ 733              		.loc 1 251 3 view .LVU175
+ 734 0084 0122     		movs	r2, #1
+ 735 0086 1421     		movs	r1, #20
+ 736 0088 1A48     		ldr	r0, .L51+4
+ 737 008a FFF7FEFF 		bl	send_response
+ 738              	.LVL80:
+ 252:controller/utils/comms.c **** 		break;
+ 739              		.loc 1 252 3 view .LVU176
+ 740 008e 2CE0     		b	.L34
+ 741              	.LVL81:
+ 742              	.L40:
+ 253:controller/utils/comms.c **** 	case TS_SERIAL_INFO_COMMAND:
+ 743              		.loc 1 253 3 view .LVU177
+ 255:controller/utils/comms.c **** 		response[0] = 2; // serial version
+ 744              		.loc 1 255 3 view .LVU178
+ 256:controller/utils/comms.c **** 		*(uint16_t*)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
+ 745              		.loc 1 256 3 view .LVU179
+ 256:controller/utils/comms.c **** 		*(uint16_t*)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
+ 746              		.loc 1 256 15 is_stmt 0 view .LVU180
+ 747 0090 0223     		movs	r3, #2
+ 748 0092 8DF80030 		strb	r3, [sp]
+ 749              	.LVL82:
+ 257:controller/utils/comms.c **** 		*(uint16_t*)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
+ 750              		.loc 1 257 3 is_stmt 1 view .LVU181
+ 257:controller/utils/comms.c **** 		*(uint16_t*)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
+ 751              		.loc 1 257 28 is_stmt 0 discriminator 1 view .LVU182
+ 752 0096 0423     		movs	r3, #4
+ 753 0098 ADF80130 		strh	r3, [sp, #1]	@ unaligned
+ 258:controller/utils/comms.c **** 		send_response((uint8_t*)response, sizeof(response), TS_CRC);
+ 754              		.loc 1 258 3 is_stmt 1 view .LVU183
+ 258:controller/utils/comms.c **** 		send_response((uint8_t*)response, sizeof(response), TS_CRC);
+ 755              		.loc 1 258 28 is_stmt 0 discriminator 1 view .LVU184
+ 756 009c ADF80330 		strh	r3, [sp, #3]	@ unaligned
+ 259:controller/utils/comms.c **** 		return;
+ 757              		.loc 1 259 3 is_stmt 1 view .LVU185
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 25
 
 
- 750              	.L53:
- 751 0022 00BF     		.align	2
- 752              	.L52:
- 753 0024 00000000 		.word	rx_packet
- 754 0028 00000000 		.word	usb_rx_queue
- 755              		.cfi_endproc
- 756              	.LFE234:
- 758              		.section	.text.runtime_update_task,"ax",%progbits
- 759              		.align	1
- 760              		.global	runtime_update_task
- 761              		.syntax unified
- 762              		.thumb
- 763              		.thumb_func
- 765              	runtime_update_task:
- 766              	.LFB237:
- 344:controller/utils/comms.c **** 
- 345:controller/utils/comms.c **** // ==================== Runtime Update Task ====================
- 346:controller/utils/comms.c **** void runtime_update_task(void *argument)
- 347:controller/utils/comms.c **** {
- 767              		.loc 1 347 1 view -0
- 768              		.cfi_startproc
- 769              		@ Volatile: function does not return.
- 770              		@ args = 0, pretend = 0, frame = 0
- 771              		@ frame_needed = 0, uses_anonymous_args = 0
- 772              	.LVL80:
- 773              		.loc 1 347 1 is_stmt 0 view .LVU168
- 774 0000 08B5     		push	{r3, lr}
- 775              		.cfi_def_cfa_offset 8
- 776              		.cfi_offset 3, -8
- 777              		.cfi_offset 14, -4
- 778 0002 1BE0     		b	.L56
- 779              	.LVL81:
- 780              	.L58:
- 348:controller/utils/comms.c ****     for (;;)
- 349:controller/utils/comms.c ****     {
- 350:controller/utils/comms.c ****         if (osMutexAcquire(runtime_mutex, osWaitForever) == osOK)
- 351:controller/utils/comms.c ****         {
- 352:controller/utils/comms.c ****             // Replace with actual sensor readings
- 353:controller/utils/comms.c ****             runtime_values.rpm = 1;
- 781              		.loc 1 353 13 is_stmt 1 view .LVU169
- 782              		.loc 1 353 32 is_stmt 0 view .LVU170
- 783 0004 124B     		ldr	r3, .L59
- 784 0006 4FF07E52 		mov	r2, #1065353216
- 785 000a 1A60     		str	r2, [r3]	@ float
- 354:controller/utils/comms.c ****             runtime_values.map = 2;
- 786              		.loc 1 354 13 is_stmt 1 view .LVU171
- 787              		.loc 1 354 32 is_stmt 0 view .LVU172
- 788 000c 4FF08042 		mov	r2, #1073741824
- 789 0010 5A60     		str	r2, [r3, #4]	@ float
- 355:controller/utils/comms.c ****             runtime_values.tps = 3;
- 790              		.loc 1 355 13 is_stmt 1 view .LVU173
- 791              		.loc 1 355 32 is_stmt 0 view .LVU174
- 792 0012 104A     		ldr	r2, .L59+4
- 793 0014 9A60     		str	r2, [r3, #8]	@ float
- 356:controller/utils/comms.c ****             runtime_values.lambda = 4;
- 794              		.loc 1 356 13 is_stmt 1 view .LVU175
- 795              		.loc 1 356 35 is_stmt 0 view .LVU176
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 23
+ 758 00a0 0122     		movs	r2, #1
+ 759 00a2 0521     		movs	r1, #5
+ 760 00a4 6846     		mov	r0, sp
+ 761 00a6 FFF7FEFF 		bl	send_response
+ 762              	.LVL83:
+ 260:controller/utils/comms.c **** 		break;
+ 763              		.loc 1 260 3 view .LVU186
+ 764 00aa 1EE0     		b	.L34
+ 765              	.LVL84:
+ 766              	.L44:
+ 261:controller/utils/comms.c **** 
+ 767              		.loc 1 261 3 view .LVU187
+ 264:controller/utils/comms.c **** 		return;
+ 768              		.loc 1 264 3 view .LVU188
+ 769 00ac 0122     		movs	r2, #1
+ 770 00ae 2021     		movs	r1, #32
+ 771 00b0 1148     		ldr	r0, .L51+8
+ 772 00b2 FFF7FEFF 		bl	send_response
+ 773              	.LVL85:
+ 265:controller/utils/comms.c **** 		break;
+ 774              		.loc 1 265 3 view .LVU189
+ 775 00b6 18E0     		b	.L34
+ 776              	.LVL86:
+ 777              	.L42:
+ 266:controller/utils/comms.c **** 	case TS_READ_COMMAND:
+ 778              		.loc 1 266 3 view .LVU190
+ 268:controller/utils/comms.c **** 		return;
+ 779              		.loc 1 268 3 view .LVU191
+ 780 00b8 0122     		movs	r2, #1
+ 781 00ba 4FF48061 		mov	r1, #1024
+ 782 00be 0F48     		ldr	r0, .L51+12
+ 783 00c0 FFF7FEFF 		bl	send_response
+ 784              	.LVL87:
+ 269:controller/utils/comms.c **** 		break;
+ 785              		.loc 1 269 3 view .LVU192
+ 786 00c4 11E0     		b	.L34
+ 787              	.LVL88:
+ 788              	.L38:
+ 270:controller/utils/comms.c **** 	case TS_CRC_CHECK_COMMAND:
+ 789              		.loc 1 270 3 view .LVU193
+ 272:controller/utils/comms.c **** 		send_response((uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
+ 790              		.loc 1 272 3 view .LVU194
+ 272:controller/utils/comms.c **** 		send_response((uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
+ 791              		.loc 1 272 23 is_stmt 0 view .LVU195
+ 792 00c6 4FF48062 		mov	r2, #1024
+ 793 00ca 0C49     		ldr	r1, .L51+12
+ 794 00cc 0020     		movs	r0, #0
+ 795 00ce FFF7FEFF 		bl	crc32_inc
+ 796              	.LVL89:
+ 272:controller/utils/comms.c **** 		send_response((uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
+ 797              		.loc 1 272 12 discriminator 1 view .LVU196
+ 798 00d2 0090     		str	r0, [sp]
+ 273:controller/utils/comms.c **** 		return;
+ 799              		.loc 1 273 3 is_stmt 1 view .LVU197
+ 800 00d4 0122     		movs	r2, #1
+ 801 00d6 0421     		movs	r1, #4
+ 802 00d8 6846     		mov	r0, sp
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 26
 
 
- 796 0016 4FF08142 		mov	r2, #1082130432
- 797 001a DA60     		str	r2, [r3, #12]	@ float
- 357:controller/utils/comms.c ****             runtime_values.advance = 5;
- 798              		.loc 1 357 13 is_stmt 1 view .LVU177
- 799              		.loc 1 357 36 is_stmt 0 view .LVU178
- 800 001c 0E4A     		ldr	r2, .L59+8
- 801 001e 1A61     		str	r2, [r3, #16]	@ float
- 358:controller/utils/comms.c ****             runtime_values.dwell = 6;
- 802              		.loc 1 358 13 is_stmt 1 view .LVU179
- 803              		.loc 1 358 34 is_stmt 0 view .LVU180
- 804 0020 0E4A     		ldr	r2, .L59+12
- 805 0022 5A61     		str	r2, [r3, #20]	@ float
- 359:controller/utils/comms.c ****             runtime_values.vbatt = 7;
- 806              		.loc 1 359 13 is_stmt 1 view .LVU181
- 807              		.loc 1 359 34 is_stmt 0 view .LVU182
- 808 0024 0E4A     		ldr	r2, .L59+16
- 809 0026 9A61     		str	r2, [r3, #24]	@ float
- 360:controller/utils/comms.c ****             runtime_values.clt = 8;
- 810              		.loc 1 360 13 is_stmt 1 view .LVU183
- 811              		.loc 1 360 32 is_stmt 0 view .LVU184
- 812 0028 4FF08242 		mov	r2, #1090519040
- 813 002c DA61     		str	r2, [r3, #28]	@ float
- 361:controller/utils/comms.c ****             osMutexRelease(runtime_mutex);
- 814              		.loc 1 361 13 is_stmt 1 view .LVU185
- 815 002e 0D4B     		ldr	r3, .L59+20
- 816 0030 1868     		ldr	r0, [r3]
- 817 0032 FFF7FEFF 		bl	osMutexRelease
- 818              	.LVL82:
- 819              	.L55:
- 362:controller/utils/comms.c ****         }
- 363:controller/utils/comms.c ****         osDelay(20);
- 820              		.loc 1 363 9 view .LVU186
- 821 0036 1420     		movs	r0, #20
- 822 0038 FFF7FEFF 		bl	osDelay
- 823              	.LVL83:
- 348:controller/utils/comms.c ****     {
- 824              		.loc 1 348 5 view .LVU187
- 825              	.L56:
- 348:controller/utils/comms.c ****     {
- 826              		.loc 1 348 5 view .LVU188
- 350:controller/utils/comms.c ****         {
- 827              		.loc 1 350 9 view .LVU189
- 350:controller/utils/comms.c ****         {
- 828              		.loc 1 350 13 is_stmt 0 view .LVU190
- 829 003c 4FF0FF31 		mov	r1, #-1
- 830 0040 084B     		ldr	r3, .L59+20
- 831 0042 1868     		ldr	r0, [r3]
- 832 0044 FFF7FEFF 		bl	osMutexAcquire
- 833              	.LVL84:
- 350:controller/utils/comms.c ****         {
- 834              		.loc 1 350 12 discriminator 1 view .LVU191
- 835 0048 0028     		cmp	r0, #0
- 836 004a DBD0     		beq	.L58
- 837 004c F3E7     		b	.L55
- 838              	.L60:
- 839 004e 00BF     		.align	2
- 840              	.L59:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 24
+ 803 00da FFF7FEFF 		bl	send_response
+ 804              	.LVL90:
+ 274:controller/utils/comms.c **** 		break;
+ 805              		.loc 1 274 3 view .LVU198
+ 806 00de 04E0     		b	.L34
+ 807              	.LVL91:
+ 808              	.L37:
+ 275:controller/utils/comms.c **** 	default:
+ 809              		.loc 1 275 3 view .LVU199
+ 277:controller/utils/comms.c **** 	}
+ 810              		.loc 1 277 3 view .LVU200
+ 811              	.LBE19:
+ 279:controller/utils/comms.c **** 
+ 812              		.loc 1 279 2 view .LVU201
+ 813 00e0 4FF40051 		mov	r1, #8192
+ 814 00e4 0648     		ldr	r0, .L51+16
+ 815 00e6 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 816              	.LVL92:
+ 817              	.L34:
+ 381:controller/utils/comms.c **** 
+ 818              		.loc 1 381 1 is_stmt 0 view .LVU202
+ 819 00ea 03B0     		add	sp, sp, #12
+ 820              		.cfi_def_cfa_offset 12
+ 821              		@ sp needed
+ 822 00ec 30BD     		pop	{r4, r5, pc}
+ 823              	.LVL93:
+ 824              	.L52:
+ 381:controller/utils/comms.c **** 
+ 825              		.loc 1 381 1 view .LVU203
+ 826 00ee 00BF     		.align	2
+ 827              	.L51:
+ 828 00f0 00000000 		.word	.LC2
+ 829 00f4 04000000 		.word	.LC3
+ 830 00f8 00000000 		.word	runtime_values
+ 831 00fc 00000000 		.word	calibration_values
+ 832 0100 00080240 		.word	1073874944
+ 833              		.cfi_endproc
+ 834              	.LFE236:
+ 836              		.section	.text.comms_task,"ax",%progbits
+ 837              		.align	1
+ 838              		.global	comms_task
+ 839              		.syntax unified
+ 840              		.thumb
+ 841              		.thumb_func
+ 843              	comms_task:
+ 844              	.LFB234:
+ 153:controller/utils/comms.c ****     
+ 845              		.loc 1 153 1 is_stmt 1 view -0
+ 846              		.cfi_startproc
+ 847              		@ Volatile: function does not return.
+ 848              		@ args = 0, pretend = 0, frame = 0
+ 849              		@ frame_needed = 0, uses_anonymous_args = 0
+ 850              	.LVL94:
+ 153:controller/utils/comms.c ****     
+ 851              		.loc 1 153 1 is_stmt 0 view .LVU205
+ 852 0000 08B5     		push	{r3, lr}
+ 853              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 27
 
 
- 841 0050 00000000 		.word	runtime_values
- 842 0054 00004040 		.word	1077936128
- 843 0058 0000A040 		.word	1084227584
- 844 005c 0000C040 		.word	1086324736
- 845 0060 0000E040 		.word	1088421888
- 846 0064 00000000 		.word	runtime_mutex
- 847              		.cfi_endproc
- 848              	.LFE237:
- 850              		.section	.bss.tx_buffer,"aw",%nobits
- 851              		.align	2
- 854              	tx_buffer:
- 855 0000 00000000 		.space	1054
- 855      00000000 
- 855      00000000 
- 855      00000000 
- 855      00000000 
- 856              		.global	rx_packet
- 857              		.section	.bss.rx_packet,"aw",%nobits
- 858              		.align	2
- 861              	rx_packet:
- 862 0000 00000000 		.space	66
- 862      00000000 
- 862      00000000 
- 862      00000000 
- 862      00000000 
- 863              		.global	page_mutex
- 864              		.section	.bss.page_mutex,"aw",%nobits
- 865              		.align	2
- 868              	page_mutex:
- 869 0000 00000000 		.space	4
- 870              		.global	runtime_mutex
- 871              		.section	.bss.runtime_mutex,"aw",%nobits
- 872              		.align	2
- 875              	runtime_mutex:
- 876 0000 00000000 		.space	4
- 877              		.global	runtime_values
- 878              		.section	.bss.runtime_values,"aw",%nobits
- 879              		.align	2
- 882              	runtime_values:
- 883 0000 00000000 		.space	32
- 883      00000000 
- 883      00000000 
- 883      00000000 
- 883      00000000 
- 884              		.global	cal_page
- 885              		.section	.data.cal_page,"aw"
+ 854              		.cfi_offset 3, -8
+ 855              		.cfi_offset 14, -4
+ 856              	.LVL95:
+ 857              	.L54:
+ 155:controller/utils/comms.c ****     {
+ 858              		.loc 1 155 5 is_stmt 1 view .LVU206
+ 157:controller/utils/comms.c ****         {
+ 859              		.loc 1 157 9 view .LVU207
+ 157:controller/utils/comms.c ****         {
+ 860              		.loc 1 157 13 is_stmt 0 view .LVU208
+ 861 0002 4FF0FF33 		mov	r3, #-1
+ 862 0006 0022     		movs	r2, #0
+ 863 0008 0649     		ldr	r1, .L57
+ 864 000a 0748     		ldr	r0, .L57+4
+ 865 000c 0068     		ldr	r0, [r0]
+ 866 000e FFF7FEFF 		bl	osMessageQueueGet
+ 867              	.LVL96:
+ 157:controller/utils/comms.c ****         {
+ 868              		.loc 1 157 12 discriminator 1 view .LVU209
+ 869 0012 0028     		cmp	r0, #0
+ 870 0014 F5D1     		bne	.L54
+ 159:controller/utils/comms.c ****         }
+ 871              		.loc 1 159 13 is_stmt 1 view .LVU210
+ 872 0016 0348     		ldr	r0, .L57
+ 873 0018 B0F84010 		ldrh	r1, [r0, #64]
+ 874 001c FFF7FEFF 		bl	process_command
+ 875              	.LVL97:
+ 876 0020 EFE7     		b	.L54
+ 877              	.L58:
+ 878 0022 00BF     		.align	2
+ 879              	.L57:
+ 880 0024 00000000 		.word	rx_packet
+ 881 0028 00000000 		.word	usb_rx_queue
+ 882              		.cfi_endproc
+ 883              	.LFE234:
+ 885              		.section	.bss.tx_buffer,"aw",%nobits
  886              		.align	2
- 889              	cal_page:
- 890 0000 00800008 		.word	134250496
- 891 0004 00       		.byte	0
- 892 0005 00000000 		.space	1027
- 892      00000000 
- 892      00000000 
- 892      00000000 
- 892      00000000 
- 893              		.global	usb_rx_queue
- 894              		.section	.bss.usb_rx_queue,"aw",%nobits
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 25
+ 889              	tx_buffer:
+ 890 0000 00000000 		.space	1054
+ 890      00000000 
+ 890      00000000 
+ 890      00000000 
+ 890      00000000 
+ 891              		.global	rx_packet
+ 892              		.section	.bss.rx_packet,"aw",%nobits
+ 893              		.align	2
+ 896              	rx_packet:
+ 897 0000 00000000 		.space	66
+ 897      00000000 
+ 897      00000000 
+ 897      00000000 
+ 897      00000000 
+ 898              		.global	calibration_values
+ 899              		.section	.bss.calibration_values,"aw",%nobits
+ 900              		.align	2
+ 903              	calibration_values:
+ 904 0000 00000000 		.space	1024
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 28
 
 
- 895              		.align	2
- 898              	usb_rx_queue:
- 899 0000 00000000 		.space	4
- 900              		.text
- 901              	.Letext0:
- 902              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 903              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 904              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 905              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 906              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 907              		.file 8 "controller/utils/comms.h"
- 908              		.file 9 "controller/types.h"
- 909              		.file 10 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev
- 910              		.file 11 "USB_DEVICE/App/usbd_cdc_if.h"
- 911              		.file 12 "<built-in>"
- 912              		.file 13 "controller/utils/timing.h"
- 913              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 26
+ 904      00000000 
+ 904      00000000 
+ 904      00000000 
+ 904      00000000 
+ 905              		.global	runtime_values
+ 906              		.section	.bss.runtime_values,"aw",%nobits
+ 907              		.align	2
+ 910              	runtime_values:
+ 911 0000 00000000 		.space	32
+ 911      00000000 
+ 911      00000000 
+ 911      00000000 
+ 911      00000000 
+ 912              		.global	usb_rx_queue
+ 913              		.section	.bss.usb_rx_queue,"aw",%nobits
+ 914              		.align	2
+ 917              	usb_rx_queue:
+ 918 0000 00000000 		.space	4
+ 919              		.text
+ 920              	.Letext0:
+ 921              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 922              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 923              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 924              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 925              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 926              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 927              		.file 9 "controller/utils/comms.h"
+ 928              		.file 10 "controller/types.h"
+ 929              		.file 11 "controller/engine_cycle/trigger.h"
+ 930              		.file 12 "controller/tables.h"
+ 931              		.file 13 "controller/IO/analog_inputs.h"
+ 932              		.file 14 "controller/IO/sensors.h"
+ 933              		.file 15 "controller/utils/pid.h"
+ 934              		.file 16 "controller/algorithm/governer.h"
+ 935              		.file 17 "controller/controller.h"
+ 936              		.file 18 "USB_DEVICE/App/usbd_cdc_if.h"
+ 937              		.file 19 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev
+ 938              		.file 20 "<built-in>"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s 			page 29
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 comms.c
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:21     .text.transmit_crc_packet:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:27     .text.transmit_crc_packet:00000000 transmit_crc_packet
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:165    .text.transmit_crc_packet:00000070 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:854    .bss.tx_buffer:00000000 tx_buffer
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:170    .text.send_response:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:176    .text.send_response:00000000 send_response
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:233    .text.send_response:00000028 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:238    .rodata.comms_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:245    .text.comms_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:251    .text.comms_init:00000000 comms_init
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:354    .text.comms_init:00000084 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:898    .bss.usb_rx_queue:00000000 usb_rx_queue
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:875    .bss.runtime_mutex:00000000 runtime_mutex
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:868    .bss.page_mutex:00000000 page_mutex
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:716    .text.comms_task:00000000 comms_task
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:889    .data.cal_page:00000000 cal_page
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:365    .rodata.process_plain_command.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:372    .text.process_plain_command:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:378    .text.process_plain_command:00000000 process_plain_command
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:401    .text.process_plain_command:00000010 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:431    .text.process_plain_command:0000002e $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:542    .text.process_plain_command:00000090 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:549    .text.process_command:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:555    .text.process_command:00000000 process_command
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:586    .text.process_command:00000018 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:616    .text.process_command:00000036 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:701    .text.process_command:0000009c $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:710    .text.comms_task:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:753    .text.comms_task:00000024 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:861    .bss.rx_packet:00000000 rx_packet
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:759    .text.runtime_update_task:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:765    .text.runtime_update_task:00000000 runtime_update_task
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:841    .text.runtime_update_task:00000050 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:882    .bss.runtime_values:00000000 runtime_values
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:851    .bss.tx_buffer:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:858    .bss.rx_packet:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:865    .bss.page_mutex:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:872    .bss.runtime_mutex:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:879    .bss.runtime_values:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:886    .data.cal_page:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s:895    .bss.usb_rx_queue:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:21     .text.runtime_update_task:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:27     .text.runtime_update_task:00000000 runtime_update_task
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:92     .text.runtime_update_task:00000030 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:910    .bss.runtime_values:00000000 runtime_values
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:100    .text.transmit_crc_packet:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:106    .text.transmit_crc_packet:00000000 transmit_crc_packet
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:243    .text.transmit_crc_packet:00000078 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:889    .bss.tx_buffer:00000000 tx_buffer
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:248    .text.send_response:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:254    .text.send_response:00000000 send_response
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:326    .text.send_response:0000003c $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:332    .rodata.comms_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:339    .text.comms_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:345    .text.comms_init:00000000 comms_init
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:417    .text.comms_init:0000005c $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:917    .bss.usb_rx_queue:00000000 usb_rx_queue
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:843    .text.comms_task:00000000 comms_task
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:426    .rodata.process_plain_command.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:433    .text.process_plain_command:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:439    .text.process_plain_command:00000000 process_plain_command
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:461    .text.process_plain_command:0000000e $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:573    .text.process_plain_command:0000006c $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:579    .text.process_command:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:585    .text.process_command:00000000 process_command
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:632    .text.process_command:00000020 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:828    .text.process_command:000000f0 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:903    .bss.calibration_values:00000000 calibration_values
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:837    .text.comms_task:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:880    .text.comms_task:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:896    .bss.rx_packet:00000000 rx_packet
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:886    .bss.tx_buffer:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:893    .bss.rx_packet:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:900    .bss.calibration_values:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:907    .bss.runtime_values:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:914    .bss.usb_rx_queue:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:478    .text.process_plain_command:0000001f $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:478    .text.process_plain_command:00000020 $t
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:674    .text.process_command:00000049 $d
+C:\Users\alireza\AppData\Local\Temp\ccR6bXck.s:674    .text.process_command:0000004a $t
 
 UNDEFINED SYMBOLS
+osDelay
+engine
+configuration
 crc32_inc
 memcpy
 CDC_Transmit_FS
-HAL_GPIO_TogglePin
+HAL_GPIO_WritePin
 osMessageQueueNew
-osMutexNew
-osMutexAcquire
 memset
 osThreadNew
-osMutexRelease
-get_time_ms
+HAL_GPIO_TogglePin
 osMessageQueueGet
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS2uAfJ.s 			page 27
-
-
-osDelay

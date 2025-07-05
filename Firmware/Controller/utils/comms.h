@@ -15,15 +15,19 @@
 // ==================== Configuration ====================
 #define PAGE_SIZE 1024
 
-#define BLOCKING_FACTOR 1024 // same blocking factor defined in the .ini file
-
+#define TS_BLOCKING_FACTOR 1024 // same blocking factor defined in the .ini file
+#define TS_TABLE_BLOCKING_FACTOR 1024 
+//#define TS_USE_OLD_PROTOCOL
 // ==================== Status Codes ====================
-#define TS_PACKET_HEADER_SIZE	3
-#define TS_PACKET_TAIL_SIZE		4
+#define TS_PACKET_PREFIX_SIZE   2
+#define TS_PACKET_FLAG_SIZE     1
+#define TS_PACKET_CRC_SIZE      4
 
-#define TS_CAN_ID 0
+#define TS_PROTOCOL "002"
+#define TS_CAN_ID (uint8_t)0
 #define TS_CAN_ID_COMMAND 'I'
-#define TS_SIGNATURE "Smart Gen Controller"
+#define TS_SIGNATURE "JimStim dev.2025.07"
+#define TS_SERIAL_INFO_COMMAND 'f'
 #define TS_SIMULATE_CAN '>'
 #define TS_SIMULATE_CAN_char >
 #define TS_SINGLE_WRITE_COMMAND 'W'
@@ -83,7 +87,7 @@
 #define TS_CRC_CHECK_COMMAND 'k'
 #define TS_CRC_CHECK_COMMAND_char k
 #define TS_EXECUTE 'E'
-#define TS_TEST_COMMS_COMMAND 'c'
+#define TS_TEST_COMMS_COMMAND 'C'
 #define TS_EXECUTE_char E
 #define TS_FILE_VERSION 20250101
 #define TS_FILE_VERSION_OFFSET 124
@@ -115,7 +119,6 @@
 #define TS_PERF_TRACE_BEGIN_char _
 #define TS_PERF_TRACE_GET_BUFFER 'b'
 #define TS_PERF_TRACE_GET_BUFFER_char b
-#define TS_PROTOCOL "002"
 #define TS_QUERY_BOOTLOADER 'L'
 #define TS_QUERY_BOOTLOADER_char L
 #define TS_QUERY_BOOTLOADER_NONE 0
@@ -142,14 +145,13 @@ typedef enum
     TS_CRC = 1
 } comms_response_format_t;
 
-typedef struct {
-    uint32_t start_address;
-    uint8_t modified;
+typedef struct
+{
     uint8_t data[PAGE_SIZE];
 } calibration_page;
 
-// rusEFI-compatible realtime data structure
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     float rpm;
     float map;
     float tps;
@@ -179,7 +181,7 @@ extern osMutexId_t runtime_mutex;
 extern osMutexId_t page_mutex;
 
 // ==================== Function Prototypes ====================
-void comms_init(void);
+void comms_init();
 void comms_task(void *argument);
 void process_command(uint8_t *cmd, uint16_t len);
 void write_calibration_page(void);

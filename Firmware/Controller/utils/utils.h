@@ -68,6 +68,9 @@ inline uint32_t swap_endian_uint32(uint32_t x)
 	return (((x >> 24) & 0x000000ff) | ((x <<  8) & 0x00ff0000) |
 			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
 }
+
+void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
+
 #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
 #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
 

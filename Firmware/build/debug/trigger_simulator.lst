@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
   45 0008 034B     		ldr	r3, .L2+8
   46 000a 1A60     		str	r2, [r3]
   12:controller/utils/trigger_simulator.c **** }
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 2
 
 
   47              		.loc 1 12 1 view .LVU7
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
    5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
    6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
    7:controller/utils/utils.h ****  * 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 3
 
 
    8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
   62:controller/utils/utils.h **** inline uint16_t swap_endian_uint16(uint16_t x)
   63:controller/utils/utils.h **** {
   64:controller/utils/utils.h **** 	return ((x << 8) | (x >> 8));
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 4
 
 
   65:controller/utils/utils.h **** }
@@ -187,40 +187,43 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
   68:controller/utils/utils.h **** 	return (((x >> 24) & 0x000000ff) | ((x <<  8) & 0x00ff0000) |
   69:controller/utils/utils.h **** 			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
   70:controller/utils/utils.h **** }
-  71:controller/utils/utils.h **** #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
-  72:controller/utils/utils.h **** #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
+  71:controller/utils/utils.h **** 
+  72:controller/utils/utils.h **** void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
   73:controller/utils/utils.h **** 
-  74:controller/utils/utils.h **** /**
-  75:controller/utils/utils.h ****  * @brief Function to calculate the microseconds it takes for the engine to turn one degree.
-  76:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
-  77:controller/utils/utils.h ****  */
-  78:controller/utils/utils.h **** static inline time_us_t microseconds_per_degree(rpm_t rpm)
-  89              		.loc 2 78 25 view .LVU14
+  74:controller/utils/utils.h **** #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
+  75:controller/utils/utils.h **** #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
+  76:controller/utils/utils.h **** 
+  77:controller/utils/utils.h **** /**
+  78:controller/utils/utils.h ****  * @brief Function to calculate the microseconds it takes for the engine to turn one degree.
+  79:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
+  80:controller/utils/utils.h ****  */
+  81:controller/utils/utils.h **** static inline time_us_t microseconds_per_degree(rpm_t rpm)
+  89              		.loc 2 81 25 view .LVU14
   90              	.LBB5:
-  79:controller/utils/utils.h **** {
-  80:controller/utils/utils.h ****     if (rpm == 0)
-  91              		.loc 2 80 5 view .LVU15
-  92              		.loc 2 80 8 is_stmt 0 view .LVU16
+  82:controller/utils/utils.h **** {
+  83:controller/utils/utils.h ****     if (rpm == 0)
+  91              		.loc 2 83 5 view .LVU15
+  92              		.loc 2 83 8 is_stmt 0 view .LVU16
   93 000a B5EE400A 		vcmp.f32	s0, #0
   94 000e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
   95 0012 30D0     		beq	.L9
-  81:controller/utils/utils.h ****     {
-  82:controller/utils/utils.h ****         return 0;
-  83:controller/utils/utils.h ****     }
-  84:controller/utils/utils.h ****     return (time_us_t) 60.0f * 1e6f / (rpm * 360.0f);
-  96              		.loc 2 84 5 is_stmt 1 view .LVU17
-  97              		.loc 2 84 44 is_stmt 0 view .LVU18
+  84:controller/utils/utils.h ****     {
+  85:controller/utils/utils.h ****         return 0;
+  86:controller/utils/utils.h ****     }
+  87:controller/utils/utils.h ****     return (time_us_t) 60.0f * 1e6f / (rpm * 360.0f);
+  96              		.loc 2 87 5 is_stmt 1 view .LVU17
+  97              		.loc 2 87 44 is_stmt 0 view .LVU18
   98 0014 DFED1C7A 		vldr.32	s15, .L14+4
   99 0018 20EE270A 		vmul.f32	s0, s0, s15
  100              	.LVL3:
- 101              		.loc 2 84 37 view .LVU19
+ 101              		.loc 2 87 37 view .LVU19
  102 001c 9FED1B7A 		vldr.32	s14, .L14+8
  103 0020 C7EE007A 		vdiv.f32	s15, s14, s0
  104 0024 FCEEE77A 		vcvt.u32.f32	s15, s15
  105 0028 17EE904A 		vmov	r4, s15	@ int
  106              	.L6:
  107              	.LVL4:
- 108              		.loc 2 84 37 view .LVU20
+ 108              		.loc 2 87 37 view .LVU20
  109              	.LBE5:
  110              	.LBE4:
  111              		.loc 1 21 61 discriminator 1 view .LVU21
@@ -235,12 +238,12 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
   22:controller/utils/trigger_simulator.c **** 
   23:controller/utils/trigger_simulator.c ****     time_us_t current_time = get_time_us();
  120              		.loc 1 23 5 is_stmt 1 view .LVU24
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 5
+
+
  121              		.loc 1 23 30 is_stmt 0 view .LVU25
  122 003c FFF7FEFF 		bl	get_time_us
  123              	.LVL6:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 5
-
-
   24:controller/utils/trigger_simulator.c ****     static time_us_t prev_time = 0;
  124              		.loc 1 24 5 is_stmt 1 view .LVU26
   25:controller/utils/trigger_simulator.c **** 
@@ -295,12 +298,12 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
  154              		.loc 1 44 29 is_stmt 0 view .LVU38
  155 0060 0D4B     		ldr	r3, .L14+20
  156 0062 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 6
+
+
  157              		.loc 1 44 49 view .LVU39
  158 0064 0A4B     		ldr	r3, .L14+12
  159 0066 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 6
-
-
  160 0068 013B     		subs	r3, r3, #1
  161              		.loc 1 44 8 view .LVU40
  162 006a 9A42     		cmp	r2, r3
@@ -327,14 +330,14 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
  173              	.L9:
  174              	.LBB7:
  175              	.LBB6:
-  82:controller/utils/utils.h ****     }
- 176              		.loc 2 82 16 view .LVU44
+  85:controller/utils/utils.h ****     }
+ 176              		.loc 2 85 16 view .LVU44
  177 0076 0024     		movs	r4, #0
  178 0078 D8E7     		b	.L6
  179              	.LVL9:
  180              	.L8:
-  82:controller/utils/utils.h ****     }
- 181              		.loc 2 82 16 view .LVU45
+  85:controller/utils/utils.h ****     }
+ 181              		.loc 2 85 16 view .LVU45
  182              	.LBE6:
  183              	.LBE7:
   50:controller/utils/trigger_simulator.c ****     }
@@ -355,12 +358,12 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
  196 0082 7047     		bx	lr
  197              	.L15:
  198              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 7
+
+
  199              	.L14:
  200 0084 00000000 		.word	wheel_callback
  201 0088 0000B443 		.word	1135869952
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 7
-
-
  202 008c C0E1644C 		.word	1281679808
  203 0090 00000000 		.word	wheel_full_teeth
  204 0094 00000000 		.word	prev_time.1
@@ -394,27 +397,27 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 1
  243              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
  244              		.file 5 "controller/types.h"
  245              		.file 6 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s 			page 8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 trigger_simulator.c
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:21     .text.trigger_simulator_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:27     .text.trigger_simulator_init:00000000 trigger_simulator_init
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:52     .text.trigger_simulator_init:00000010 $d
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:238    .bss.wheel_full_teeth:00000000 wheel_full_teeth
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:232    .bss.wheel_missing_teeth:00000000 wheel_missing_teeth
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:226    .bss.wheel_callback:00000000 wheel_callback
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:59     .text.trigger_simulator_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:65     .text.trigger_simulator_update:00000000 trigger_simulator_update
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:200    .text.trigger_simulator_update:00000084 $d
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:219    .bss.prev_time.1:00000000 prev_time.1
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:213    .bss.current_tooth_index.0:00000000 current_tooth_index.0
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:214    .bss.current_tooth_index.0:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:216    .bss.prev_time.1:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:223    .bss.wheel_callback:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:233    .bss.wheel_missing_teeth:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccR5Wsng.s:239    .bss.wheel_full_teeth:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:21     .text.trigger_simulator_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:27     .text.trigger_simulator_init:00000000 trigger_simulator_init
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:52     .text.trigger_simulator_init:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:238    .bss.wheel_full_teeth:00000000 wheel_full_teeth
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:232    .bss.wheel_missing_teeth:00000000 wheel_missing_teeth
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:226    .bss.wheel_callback:00000000 wheel_callback
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:59     .text.trigger_simulator_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:65     .text.trigger_simulator_update:00000000 trigger_simulator_update
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:200    .text.trigger_simulator_update:00000084 $d
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:219    .bss.prev_time.1:00000000 prev_time.1
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:213    .bss.current_tooth_index.0:00000000 current_tooth_index.0
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:214    .bss.current_tooth_index.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:216    .bss.prev_time.1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:223    .bss.wheel_callback:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:233    .bss.wheel_missing_teeth:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:239    .bss.wheel_full_teeth:00000000 $d
 
 UNDEFINED SYMBOLS
 get_time_us

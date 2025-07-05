@@ -56,3 +56,9 @@ uint32_t crc32_inc(uint32_t in_crc32, const void *buf,
     }
     return (crc32 ^ 0xFFFFFFFF);
 }
+
+void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        dst[i] = src[size - 1 - i];
+    }
+}
