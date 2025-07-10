@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
   41              		.loc 1 9 1 is_stmt 0 view .LVU1
   42 0000 10B5     		push	{r4, lr}
   43              		.cfi_def_cfa_offset 8
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 2
 
 
   44              		.cfi_offset 4, -8
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
   83 0022 07EE102A 		vmov	s14, r2	@ int
   84 0026 F8EE476A 		vcvt.f32.u32	s13, s14
   85              		.loc 1 24 98 view .LVU20
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 3
 
 
   86 002a 6388     		ldrh	r3, [r4, #2]
@@ -147,73 +147,75 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
   16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
   17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
   18:controller/utils/utils.h **** 
-  19:controller/utils/utils.h **** /**
-  20:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
-  21:controller/utils/utils.h ****  * 
-  22:controller/utils/utils.h ****  * @param x The value to map.
-  23:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  24:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  25:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  26:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  27:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  28:controller/utils/utils.h ****  */
-  29:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
-  30:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
-  31:controller/utils/utils.h **** 
-  32:controller/utils/utils.h **** 
-  33:controller/utils/utils.h **** /**
-  34:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
-  35:controller/utils/utils.h ****  * 
-  36:controller/utils/utils.h ****  * @param x The value to map.
-  37:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  38:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  39:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  40:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  41:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  42:controller/utils/utils.h ****  */
-  43:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
-  44:controller/utils/utils.h **** {
-  45:controller/utils/utils.h ****     if (in_max == in_min)
-  46:controller/utils/utils.h ****     {
-  47:controller/utils/utils.h ****         return 0; // Avoid division by zero
-  48:controller/utils/utils.h ****     }
-  49:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 4
+  19:controller/utils/utils.h **** void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** /**
+  22:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
+  23:controller/utils/utils.h ****  * 
+  24:controller/utils/utils.h ****  * @param x The value to map.
+  25:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  26:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  27:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  28:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  29:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  30:controller/utils/utils.h ****  */
+  31:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
+  32:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
+  33:controller/utils/utils.h **** 
+  34:controller/utils/utils.h **** 
+  35:controller/utils/utils.h **** /**
+  36:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
+  37:controller/utils/utils.h ****  * 
+  38:controller/utils/utils.h ****  * @param x The value to map.
+  39:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  40:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  41:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  42:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  43:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  44:controller/utils/utils.h ****  */
+  45:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
+  46:controller/utils/utils.h **** {
+  47:controller/utils/utils.h ****     if (in_max == in_min)
+  48:controller/utils/utils.h ****     {
+  49:controller/utils/utils.h ****         return 0; // Avoid division by zero
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 4
 
 
-  50:controller/utils/utils.h **** }
-  51:controller/utils/utils.h **** 
-  52:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
-  94              		.loc 2 52 21 is_stmt 1 view .LVU22
+  50:controller/utils/utils.h ****     }
+  51:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+  52:controller/utils/utils.h **** }
+  53:controller/utils/utils.h **** 
+  54:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+  94              		.loc 2 54 21 is_stmt 1 view .LVU22
   95              	.LBB9:
-  53:controller/utils/utils.h **** {
-  54:controller/utils/utils.h ****     if (in_max == in_min)
-  96              		.loc 2 54 5 view .LVU23
-  97              		.loc 2 54 8 is_stmt 0 view .LVU24
+  55:controller/utils/utils.h **** {
+  56:controller/utils/utils.h ****     if (in_max == in_min)
+  96              		.loc 2 56 5 view .LVU23
+  97              		.loc 2 56 8 is_stmt 0 view .LVU24
   98 0034 9A42     		cmp	r2, r3
   99 0036 45D0     		beq	.L9
-  55:controller/utils/utils.h ****     {
-  56:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
-  57:controller/utils/utils.h ****     }
-  58:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
- 100              		.loc 2 58 5 is_stmt 1 view .LVU25
- 101              		.loc 2 58 15 is_stmt 0 view .LVU26
+  57:controller/utils/utils.h ****     {
+  58:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
+  59:controller/utils/utils.h ****     }
+  60:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+ 100              		.loc 2 60 5 is_stmt 1 view .LVU25
+ 101              		.loc 2 60 15 is_stmt 0 view .LVU26
  102 0038 77EEE67A 		vsub.f32	s15, s15, s13
  103              	.LVL7:
- 104              		.loc 2 58 25 view .LVU27
+ 104              		.loc 2 60 25 view .LVU27
  105 003c 9FED266A 		vldr.32	s12, .L17
  106 0040 67EE867A 		vmul.f32	s15, s15, s12
- 107              		.loc 2 58 57 view .LVU28
+ 107              		.loc 2 60 57 view .LVU28
  108 0044 37EE667A 		vsub.f32	s14, s14, s13
  109              	.LVL8:
- 110              		.loc 2 58 47 view .LVU29
+ 110              		.loc 2 60 47 view .LVU29
  111 0048 87EE870A 		vdiv.f32	s0, s15, s14
- 112              		.loc 2 58 67 view .LVU30
+ 112              		.loc 2 60 67 view .LVU30
  113 004c DFED237A 		vldr.32	s15, .L17+4
  114 0050 30EE270A 		vadd.f32	s0, s0, s15
  115              	.LVL9:
  116              	.L7:
- 117              		.loc 2 58 67 view .LVU31
+ 117              		.loc 2 60 67 view .LVU31
  118              	.LBE9:
  119              	.LBE8:
   25:controller/IO/sensors.c ****     }
@@ -236,11 +238,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  131 006a 01DD     		ble	.L1
  132              		.loc 1 30 14 discriminator 4 view .LVU35
  133 006c B0EE670A 		vmov.f32	s0, s15
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 5
+
+
  134              	.LVL11:
  135              	.L1:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 5
-
-
   31:controller/IO/sensors.c ****     return result;
   32:controller/IO/sensors.c **** }
  136              		.loc 1 32 1 view .LVU36
@@ -296,45 +298,45 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  173              		.loc 1 28 95 view .LVU49
  174 0098 2388     		ldrh	r3, [r4]
   28:controller/IO/sensors.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 6
+
+
  175              		.loc 1 28 18 view .LVU50
  176 009a 07EE103A 		vmov	s14, r3	@ int
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 6
-
-
  177 009e B8EE477A 		vcvt.f32.u32	s14, s14
  178              	.LVL20:
  179              	.LBB10:
  180              	.LBI10:
-  52:controller/utils/utils.h **** {
- 181              		.loc 2 52 21 is_stmt 1 view .LVU51
+  54:controller/utils/utils.h **** {
+ 181              		.loc 2 54 21 is_stmt 1 view .LVU51
  182              	.LBB11:
-  54:controller/utils/utils.h ****     {
- 183              		.loc 2 54 5 view .LVU52
-  54:controller/utils/utils.h ****     {
- 184              		.loc 2 54 8 is_stmt 0 view .LVU53
+  56:controller/utils/utils.h ****     {
+ 183              		.loc 2 56 5 view .LVU52
+  56:controller/utils/utils.h ****     {
+ 184              		.loc 2 56 8 is_stmt 0 view .LVU53
  185 00a2 9A42     		cmp	r2, r3
  186 00a4 11D0     		beq	.L10
- 187              		.loc 2 58 5 is_stmt 1 view .LVU54
- 188              		.loc 2 58 15 is_stmt 0 view .LVU55
+ 187              		.loc 2 60 5 is_stmt 1 view .LVU54
+ 188              		.loc 2 60 15 is_stmt 0 view .LVU55
  189 00a6 77EEE67A 		vsub.f32	s15, s15, s13
  190              	.LVL21:
- 191              		.loc 2 58 25 view .LVU56
+ 191              		.loc 2 60 25 view .LVU56
  192 00aa 9FED0B6A 		vldr.32	s12, .L17
  193 00ae 67EE867A 		vmul.f32	s15, s15, s12
- 194              		.loc 2 58 57 view .LVU57
+ 194              		.loc 2 60 57 view .LVU57
  195 00b2 37EE667A 		vsub.f32	s14, s14, s13
  196              	.LVL22:
- 197              		.loc 2 58 47 view .LVU58
+ 197              		.loc 2 60 47 view .LVU58
  198 00b6 87EE870A 		vdiv.f32	s0, s15, s14
- 199              		.loc 2 58 67 view .LVU59
+ 199              		.loc 2 60 67 view .LVU59
  200 00ba DFED087A 		vldr.32	s15, .L17+4
  201 00be 30EE270A 		vadd.f32	s0, s0, s15
  202              	.LVL23:
- 203              		.loc 2 58 67 view .LVU60
+ 203              		.loc 2 60 67 view .LVU60
  204 00c2 C7E7     		b	.L7
  205              	.LVL24:
  206              	.L9:
- 207              		.loc 2 58 67 view .LVU61
+ 207              		.loc 2 60 67 view .LVU61
  208              	.LBE11:
  209              	.LBE10:
   24:controller/IO/sensors.c ****     }
@@ -356,11 +358,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
   30:controller/IO/sensors.c ****     return result;
  223              		.loc 1 30 14 discriminator 1 view .LVU65
  224 00d4 CCE7     		b	.L1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 7
+
+
  225              	.L18:
  226 00d6 00BF     		.align	2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 7
-
-
  227              	.L17:
  228 00d8 0000C842 		.word	1120403456
  229 00dc 00000000 		.word	0
@@ -416,11 +418,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
   40:controller/IO/sensors.c ****     }
   41:controller/IO/sensors.c ****     switch (type)
  266              		.loc 1 41 5 is_stmt 1 view .LVU70
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 8
+
+
  267 0006 79B1     		cbz	r1, .L22
  268 0008 0129     		cmp	r1, #1
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 8
-
-
  269 000a 15D1     		bne	.L23
   42:controller/IO/sensors.c ****     {
   43:controller/IO/sensors.c ****     case SENSOR_MAP_TYPE_BOSCH_816:
@@ -476,11 +478,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  291              		.loc 1 71 1 view .LVU80
  292 001e 10BD     		pop	{r4, pc}
  293              	.LVL31:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 9
+
+
  294              	.L26:
   38:controller/IO/sensors.c ****         return;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 9
-
-
  295              		.loc 1 38 9 is_stmt 1 view .LVU81
  296 0020 0848     		ldr	r0, .L27+4
  297              	.LVL32:
@@ -536,11 +538,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  335              	.LFE231:
  337              		.section	.rodata.sensor_map_get.str1.4,"aMS",%progbits,1
  338              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 10
+
+
  339              	.LC7:
  340 0000 6D617020 		.ascii	"map sensor no init!\000"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 10
-
-
  340      73656E73 
  340      6F72206E 
  340      6F20696E 
@@ -596,11 +598,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
   83:controller/IO/sensors.c ****     raw_adc_value = analog_inputs_get_data(map_sensor->analog_channel);
  375              		.loc 1 83 5 view .LVU101
  376              		.loc 1 83 21 is_stmt 0 view .LVU102
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 11
+
+
  377 000e 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
  378 0010 FFF7FEFF 		bl	analog_inputs_get_data
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 11
-
-
  379              	.LVL38:
  380 0014 07EE900A 		vmov	s15, r0	@ int
  381              	.LVL39:
@@ -628,39 +630,39 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  399              	.LVL41:
  400              	.LBB12:
  401              	.LBI12:
-  52:controller/utils/utils.h **** {
- 402              		.loc 2 52 21 is_stmt 1 view .LVU110
+  54:controller/utils/utils.h **** {
+ 402              		.loc 2 54 21 is_stmt 1 view .LVU110
  403              	.LBB13:
-  54:controller/utils/utils.h ****     {
- 404              		.loc 2 54 5 view .LVU111
-  54:controller/utils/utils.h ****     {
- 405              		.loc 2 54 8 is_stmt 0 view .LVU112
+  56:controller/utils/utils.h ****     {
+ 404              		.loc 2 56 5 view .LVU111
+  56:controller/utils/utils.h ****     {
+ 405              		.loc 2 56 8 is_stmt 0 view .LVU112
  406 0034 9A42     		cmp	r2, r3
  407 0036 20D0     		beq	.L35
- 408              		.loc 2 58 5 is_stmt 1 view .LVU113
- 409              		.loc 2 58 15 is_stmt 0 view .LVU114
+ 408              		.loc 2 60 5 is_stmt 1 view .LVU113
+ 409              		.loc 2 60 15 is_stmt 0 view .LVU114
  410 0038 77EEE67A 		vsub.f32	s15, s15, s13
  411              	.LVL42:
- 412              		.loc 2 58 25 view .LVU115
+ 412              		.loc 2 60 25 view .LVU115
  413 003c 9FED146A 		vldr.32	s12, .L40+4
  414 0040 67EE867A 		vmul.f32	s15, s15, s12
- 415              		.loc 2 58 57 view .LVU116
+ 415              		.loc 2 60 57 view .LVU116
  416 0044 37EE667A 		vsub.f32	s14, s14, s13
  417              	.LVL43:
- 418              		.loc 2 58 47 view .LVU117
+ 418              		.loc 2 60 47 view .LVU117
  419 0048 87EE870A 		vdiv.f32	s0, s15, s14
- 420              		.loc 2 58 67 view .LVU118
+ 420              		.loc 2 60 67 view .LVU118
  421 004c DFED117A 		vldr.32	s15, .L40+8
  422 0050 30EE270A 		vadd.f32	s0, s0, s15
  423              	.LVL44:
- 424              		.loc 2 58 67 view .LVU119
+ 424              		.loc 2 60 67 view .LVU119
  425              	.LBE13:
  426              	.LBE12:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 12
+
+
   88:controller/IO/sensors.c **** 
   89:controller/IO/sensors.c ****     if (IS_IN_RANGE(result, (pressure_t)0, FIRMWARE_LIMIT_MAX_MAP))
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 12
-
-
  427              		.loc 1 89 5 is_stmt 1 view .LVU120
  428              		.loc 1 89 8 is_stmt 0 view .LVU121
  429 0054 B4EEE70A 		vcmpe.f32	s0, s15
@@ -699,14 +701,14 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  453              	.L35:
  454              	.LBB15:
  455              	.LBB14:
-  56:controller/utils/utils.h ****     }
- 456              		.loc 2 56 16 view .LVU127
+  58:controller/utils/utils.h ****     }
+ 456              		.loc 2 58 16 view .LVU127
  457 007a 9FED060A 		vldr.32	s0, .L40+8
  458 007e EEE7     		b	.L32
  459              	.LVL49:
  460              	.L39:
-  56:controller/utils/utils.h ****     }
- 461              		.loc 2 56 16 view .LVU128
+  58:controller/utils/utils.h ****     }
+ 461              		.loc 2 58 16 view .LVU128
  462              	.LBE14:
  463              	.LBE15:
   91:controller/IO/sensors.c ****         return SENSOR_MAP_FAIL_SAFE;
@@ -716,11 +718,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  467              	.LVL50:
   92:controller/IO/sensors.c ****     }
  468              		.loc 1 92 9 view .LVU130
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 13
+
+
   92:controller/IO/sensors.c ****     }
  469              		.loc 1 92 16 is_stmt 0 view .LVU131
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 13
-
-
  470 0086 9FED030A 		vldr.32	s0, .L40+8
  471 008a EFE7     		b	.L29
  472              	.L41:
@@ -776,11 +778,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  516              	.LBB16:
  100:controller/IO/sensors.c ****     {
  101:controller/IO/sensors.c ****         case SENSOR_IAT_TYPE_BOSCH_816:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 14
+
+
  102:controller/IO/sensors.c ****             resistor_init(&sensor->resistor, 10000, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_IAT_PIN);
  517              		.loc 1 102 13 view .LVU135
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 14
-
-
  518 000c 0522     		movs	r2, #5
  519 000e 0021     		movs	r1, #0
  520              	.LVL52:
@@ -836,11 +838,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  123:controller/IO/sensors.c ****                 .tempC_2 = 25.0f,
  124:controller/IO/sensors.c ****                 .tempC_3 = 90.0f
  125:controller/IO/sensors.c ****             };
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 15
+
+
  126:controller/IO/sensors.c ****             thermistor_init(sensor, genric_5k);
  127:controller/IO/sensors.c ****             sensor_iat = sensor;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 15
-
-
  128:controller/IO/sensors.c ****             break;
  129:controller/IO/sensors.c ****     default:
  130:controller/IO/sensors.c ****         log_error("iat sensor type not configured!");
@@ -896,11 +898,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  128:controller/IO/sensors.c ****     default:
  589              		.loc 1 128 13 is_stmt 1 view .LVU152
  590 007c E0E7     		b	.L42
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 16
+
+
  591              	.LVL59:
  592              	.L44:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 16
-
-
  130:controller/IO/sensors.c ****         break;
  593              		.loc 1 130 9 view .LVU153
  594 007e 0748     		ldr	r0, .L47+20
@@ -956,11 +958,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  633              		@ args = 0, pretend = 0, frame = 0
  634              		@ frame_needed = 0, uses_anonymous_args = 0
  635 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 17
+
+
  636              		.cfi_def_cfa_offset 8
  637              		.cfi_offset 3, -8
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 17
-
-
  638              		.cfi_offset 14, -4
  137:controller/IO/sensors.c ****     if (sensor_iat == NULL)
  639              		.loc 1 137 5 view .LVU158
@@ -1016,11 +1018,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  674              	.L52:
  145:controller/IO/sensors.c ****         return SENSOR_IAT_FAIL_SAFE;
  675              		.loc 1 145 9 is_stmt 1 view .LVU170
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 18
+
+
  676 0036 0848     		ldr	r0, .L57+20
  677 0038 FFF7FEFF 		bl	log_error
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 18
-
-
  678              	.LVL66:
  146:controller/IO/sensors.c ****     }
  679              		.loc 1 146 9 view .LVU171
@@ -1076,11 +1078,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  719              		.cfi_offset 4, -16
  720              		.cfi_offset 5, -12
  721              		.cfi_offset 6, -8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 19
+
+
  722              		.cfi_offset 14, -4
  723 0002 8AB0     		sub	sp, sp, #40
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 19
-
-
  724              		.cfi_def_cfa_offset 56
  153:controller/IO/sensors.c ****     if (sensor == NULL)
  725              		.loc 1 153 5 is_stmt 1 view .LVU175
@@ -1136,11 +1138,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  756 0038 2046     		mov	r0, r4
  757 003a FFF7FEFF 		bl	thermistor_init
  758              	.LVL70:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 20
+
+
  173:controller/IO/sensors.c ****         sensor_clt = sensor;
  759              		.loc 1 173 9 view .LVU183
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 20
-
-
  760              		.loc 1 173 20 is_stmt 0 view .LVU184
  761 003e 164B     		ldr	r3, .L67+8
  762 0040 1C60     		str	r4, [r3]
@@ -1196,11 +1198,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  788              		.loc 1 176 9 view .LVU191
  789 004e 0622     		movs	r2, #6
  790 0050 0021     		movs	r1, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 21
+
+
  791              	.LVL76:
  176:controller/IO/sensors.c ****         thermistor_conf_t genric_5k =
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 21
-
-
  792              		.loc 1 176 9 is_stmt 0 view .LVU192
  793 0052 9FED130A 		vldr.32	s0, .L67+16
  794 0056 FFF7FEFF 		bl	resistor_init
@@ -1256,11 +1258,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  835 009c 00000000 		.word	.LC12
  836 00a0 00E09245 		.word	1167253504
  837 00a4 18000000 		.word	.LANCHOR0+24
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 22
+
+
  838 00a8 14000000 		.word	.LC13
  839              	.LBE19:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 22
-
-
  840              		.cfi_endproc
  841              	.LFE235:
  843              		.section	.rodata.sensor_clt_get.str1.4,"aMS",%progbits,1
@@ -1316,11 +1318,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  880              		.loc 1 203 9 discriminator 1 view .LVU210
  881 001a DFED0C7A 		vldr.32	s15, .L77+8
  882 001e B4EEE70A 		vcmpe.f32	s0, s15
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 23
+
+
  883 0022 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
  884 0026 06D8     		bhi	.L72
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 23
-
-
  885              	.LVL83:
  886              	.L69:
  204:controller/IO/sensors.c ****     {
@@ -1376,11 +1378,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  922      6C6C00
  923              		.section	.text.sensor_ops_init,"ax",%progbits
  924              		.align	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 24
+
+
  925              		.global	sensor_ops_init
  926              		.syntax unified
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 24
-
-
  927              		.thumb
  928              		.thumb_func
  930              	sensor_ops_init:
@@ -1436,11 +1438,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  215:controller/IO/sensors.c ****         return;
  967              		.loc 1 215 9 is_stmt 1 view .LVU231
  968 0018 0248     		ldr	r0, .L84+4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 25
+
+
  969              	.LVL90:
  215:controller/IO/sensors.c ****         return;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 25
-
-
  970              		.loc 1 215 9 is_stmt 0 view .LVU232
  971 001a FFF7FEFF 		bl	log_error
  972              	.LVL91:
@@ -1496,11 +1498,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  1009              		.loc 1 236 5 is_stmt 1 view .LVU241
  1010              		.loc 1 236 26 is_stmt 0 view .LVU242
  1011 0008 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 26
+
+
  1012 000a FFF7FEFF 		bl	analog_inputs_get_data
  1013              	.LVL92:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 26
-
-
  237:controller/IO/sensors.c ****     bool current_state = adc_value > sensor_ops->adc_value_threshold;
  1014              		.loc 1 237 5 is_stmt 1 view .LVU243
  1015              		.loc 1 237 48 is_stmt 0 view .LVU244
@@ -1556,11 +1558,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  1054 003a 5B88     		ldrh	r3, [r3, #2]
  1055              		.loc 1 248 8 view .LVU258
  1056 003c 9842     		cmp	r0, r3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 27
+
+
  1057 003e 01D3     		bcc	.L90
  249:controller/IO/sensors.c ****     {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 27
-
-
  250:controller/IO/sensors.c ****         /* Debounce period passed, accept new state */
  251:controller/IO/sensors.c ****         debounced_state = current_state;
  1058              		.loc 1 251 9 is_stmt 1 view .LVU259
@@ -1616,11 +1618,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  1108              		.align	2
  1111              	sensor_ops:
  1112 0000 00000000 		.space	4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 28
+
+
  1113              		.section	.bss.sensor_clt,"aw",%nobits
  1114              		.align	2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 28
-
-
  1117              	sensor_clt:
  1118 0000 00000000 		.space	4
  1119              		.section	.bss.sensor_iat,"aw",%nobits
@@ -1666,67 +1668,67 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 1
  1163              		.file 9 "controller/IO/sensors.h"
  1164              		.file 10 "controller/utils/error_handling.h"
  1165              		.file 11 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 29
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 29
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sensors.c
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:21     .rodata.sensor_tps_get.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:28     .text.sensor_tps_get:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:34     .text.sensor_tps_get:00000000 sensor_tps_get
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:228    .text.sensor_tps_get:000000d8 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:237    .rodata.sensor_map_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:244    .text.sensor_map_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:250    .text.sensor_map_init:00000000 sensor_map_init
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:331    .text.sensor_map_init:00000040 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1129   .bss.map_sensor:00000000 map_sensor
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:338    .rodata.sensor_map_get.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:345    .text.sensor_map_get:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:351    .text.sensor_map_get:00000000 sensor_map_get
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:475    .text.sensor_map_get:0000008c $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:485    .rodata.sensor_iat_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:489    .text.sensor_iat_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:495    .text.sensor_iat_init:00000000 sensor_iat_init
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:606    .text.sensor_iat_init:00000088 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1123   .bss.sensor_iat:00000000 sensor_iat
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:616    .rodata.sensor_iat_get.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:623    .text.sensor_iat_get:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:629    .text.sensor_iat_get:00000000 sensor_iat_get
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:686    .text.sensor_iat_get:00000044 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:696    .rodata.sensor_clt_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:703    .text.sensor_clt_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:709    .text.sensor_clt_init:00000000 sensor_clt_init
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:832    .text.sensor_clt_init:00000090 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1117   .bss.sensor_clt:00000000 sensor_clt
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:844    .rodata.sensor_clt_get.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:848    .text.sensor_clt_get:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:854    .text.sensor_clt_get:00000000 sensor_clt_get
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:911    .text.sensor_clt_get:00000044 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:920    .rodata.sensor_ops_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:924    .text.sensor_ops_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:930    .text.sensor_ops_init:00000000 sensor_ops_init
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:978    .text.sensor_ops_init:00000020 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1111   .bss.sensor_ops:00000000 sensor_ops
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:984    .text.sensor_ops_get:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:990    .text.sensor_ops_get:00000000 sensor_ops_get
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1083   .text.sensor_ops_get:00000054 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1105   .bss.last_state.2:00000000 last_state.2
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1100   .bss.last_change_time.1:00000000 last_change_time.1
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1094   .bss.debounced_state.0:00000000 debounced_state.0
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1095   .bss.debounced_state.0:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1097   .bss.last_change_time.1:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1106   .bss.last_state.2:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1108   .bss.sensor_ops:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1114   .bss.sensor_clt:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1120   .bss.sensor_iat:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1126   .bss.map_sensor:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s:1132   .rodata:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:21     .rodata.sensor_tps_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:28     .text.sensor_tps_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:34     .text.sensor_tps_get:00000000 sensor_tps_get
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:228    .text.sensor_tps_get:000000d8 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:237    .rodata.sensor_map_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:244    .text.sensor_map_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:250    .text.sensor_map_init:00000000 sensor_map_init
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:331    .text.sensor_map_init:00000040 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1129   .bss.map_sensor:00000000 map_sensor
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:338    .rodata.sensor_map_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:345    .text.sensor_map_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:351    .text.sensor_map_get:00000000 sensor_map_get
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:475    .text.sensor_map_get:0000008c $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:485    .rodata.sensor_iat_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:489    .text.sensor_iat_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:495    .text.sensor_iat_init:00000000 sensor_iat_init
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:606    .text.sensor_iat_init:00000088 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1123   .bss.sensor_iat:00000000 sensor_iat
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:616    .rodata.sensor_iat_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:623    .text.sensor_iat_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:629    .text.sensor_iat_get:00000000 sensor_iat_get
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:686    .text.sensor_iat_get:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:696    .rodata.sensor_clt_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:703    .text.sensor_clt_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:709    .text.sensor_clt_init:00000000 sensor_clt_init
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:832    .text.sensor_clt_init:00000090 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1117   .bss.sensor_clt:00000000 sensor_clt
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:844    .rodata.sensor_clt_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:848    .text.sensor_clt_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:854    .text.sensor_clt_get:00000000 sensor_clt_get
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:911    .text.sensor_clt_get:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:920    .rodata.sensor_ops_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:924    .text.sensor_ops_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:930    .text.sensor_ops_init:00000000 sensor_ops_init
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:978    .text.sensor_ops_init:00000020 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1111   .bss.sensor_ops:00000000 sensor_ops
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:984    .text.sensor_ops_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:990    .text.sensor_ops_get:00000000 sensor_ops_get
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1083   .text.sensor_ops_get:00000054 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1105   .bss.last_state.2:00000000 last_state.2
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1100   .bss.last_change_time.1:00000000 last_change_time.1
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1094   .bss.debounced_state.0:00000000 debounced_state.0
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1095   .bss.debounced_state.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1097   .bss.last_change_time.1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1106   .bss.last_state.2:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1108   .bss.sensor_ops:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1114   .bss.sensor_clt:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1120   .bss.sensor_iat:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1126   .bss.map_sensor:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s:1132   .rodata:00000000 $d
 
 UNDEFINED SYMBOLS
 analog_inputs_get_data
 log_error
 resistor_init
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccNExReQ.s 			page 30
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccFGpWHn.s 			page 30
 
 
 thermistor_init

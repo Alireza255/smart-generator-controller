@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
   28:controller/IO/analog_inputs.c ****         log_error("Analog input init failed! adc handle is null.");
   29:controller/IO/analog_inputs.c ****         return;
   30:controller/IO/analog_inputs.c ****     }
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 2
 
 
   31:controller/IO/analog_inputs.c ****     
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
   52 0012 00BF     		.align	2
   53              	.L4:
   54 0014 00000000 		.word	hadc
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 3
 
 
   55 0018 00000000 		.word	analog_data
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
  103              		.loc 1 26 8 is_stmt 0 view .LVU11
  104 0002 58B1     		cbz	r0, .L11
   32:controller/IO/analog_inputs.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 4
 
 
  105              		.loc 1 32 5 is_stmt 1 view .LVU12
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
  152              	analog_inputs_start_conversion_injected:
  153              	.LFB233:
   62:controller/IO/analog_inputs.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 5
 
 
   63:controller/IO/analog_inputs.c **** void analog_inputs_start_conversion_injected()
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
  188              		.loc 1 80 8 is_stmt 0 view .LVU27
  189 0002 0C28     		cmp	r0, #12
  190 0004 02D8     		bhi	.L21
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 6
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 6
 
 
  191              	.LBB4:
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
  230 002e F2D9     		bls	.L18
  231              	.LBE5:
   89:controller/IO/analog_inputs.c ****     }
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 7
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 7
 
 
   90:controller/IO/analog_inputs.c ****     
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
  278 000a F8EE677A 		vcvt.f32.u32	s15, s15
  279              	.LVL20:
  280              	.LBB6:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 8
 
 
  281              	.LBI6:
@@ -441,62 +441,64 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
   16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
   17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
   18:controller/utils/utils.h **** 
-  19:controller/utils/utils.h **** /**
-  20:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
-  21:controller/utils/utils.h ****  * 
-  22:controller/utils/utils.h ****  * @param x The value to map.
-  23:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  24:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  25:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  26:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  27:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  28:controller/utils/utils.h ****  */
-  29:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
-  30:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
-  31:controller/utils/utils.h **** 
-  32:controller/utils/utils.h **** 
-  33:controller/utils/utils.h **** /**
-  34:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
-  35:controller/utils/utils.h ****  * 
-  36:controller/utils/utils.h ****  * @param x The value to map.
-  37:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  38:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  39:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  40:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  41:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  42:controller/utils/utils.h ****  */
-  43:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
-  44:controller/utils/utils.h **** {
-  45:controller/utils/utils.h ****     if (in_max == in_min)
-  46:controller/utils/utils.h ****     {
-  47:controller/utils/utils.h ****         return 0; // Avoid division by zero
-  48:controller/utils/utils.h ****     }
-  49:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-  50:controller/utils/utils.h **** }
-  51:controller/utils/utils.h **** 
-  52:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
- 283              		.loc 2 52 21 is_stmt 1 view .LVU53
+  19:controller/utils/utils.h **** void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** /**
+  22:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
+  23:controller/utils/utils.h ****  * 
+  24:controller/utils/utils.h ****  * @param x The value to map.
+  25:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  26:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  27:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  28:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  29:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  30:controller/utils/utils.h ****  */
+  31:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
+  32:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
+  33:controller/utils/utils.h **** 
+  34:controller/utils/utils.h **** 
+  35:controller/utils/utils.h **** /**
+  36:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
+  37:controller/utils/utils.h ****  * 
+  38:controller/utils/utils.h ****  * @param x The value to map.
+  39:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  40:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  41:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  42:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  43:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  44:controller/utils/utils.h ****  */
+  45:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
+  46:controller/utils/utils.h **** {
+  47:controller/utils/utils.h ****     if (in_max == in_min)
+  48:controller/utils/utils.h ****     {
+  49:controller/utils/utils.h ****         return 0; // Avoid division by zero
+  50:controller/utils/utils.h ****     }
+  51:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+  52:controller/utils/utils.h **** }
+  53:controller/utils/utils.h **** 
+  54:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+ 283              		.loc 2 54 21 is_stmt 1 view .LVU53
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 9
+
+
  284              	.LBB7:
-  53:controller/utils/utils.h **** {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 9
-
-
-  54:controller/utils/utils.h ****     if (in_max == in_min)
- 285              		.loc 2 54 5 view .LVU54
-  55:controller/utils/utils.h ****     {
-  56:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
-  57:controller/utils/utils.h ****     }
-  58:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
- 286              		.loc 2 58 5 view .LVU55
- 287              		.loc 2 58 25 is_stmt 0 view .LVU56
+  55:controller/utils/utils.h **** {
+  56:controller/utils/utils.h ****     if (in_max == in_min)
+ 285              		.loc 2 56 5 view .LVU54
+  57:controller/utils/utils.h ****     {
+  58:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
+  59:controller/utils/utils.h ****     }
+  60:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+ 286              		.loc 2 60 5 view .LVU55
+ 287              		.loc 2 60 25 is_stmt 0 view .LVU56
  288 000e 9FED067A 		vldr.32	s14, .L26
  289 0012 67EE877A 		vmul.f32	s15, s15, s14
  290              	.LVL21:
- 291              		.loc 2 58 47 view .LVU57
+ 291              		.loc 2 60 47 view .LVU57
  292 0016 9FED057A 		vldr.32	s14, .L26+4
  293 001a 87EE870A 		vdiv.f32	s0, s15, s14
  294              	.LVL22:
- 295              		.loc 2 58 47 view .LVU58
+ 295              		.loc 2 60 47 view .LVU58
  296              	.LBE7:
  297              	.LBE6:
  100:controller/IO/analog_inputs.c ****     return v;
@@ -536,43 +538,43 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 1
  331              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
  332              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
  333              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 10
+
+
  334              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
  335              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 10
-
-
  336              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
  337              		.file 11 "controller/types.h"
  338              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
  339              		.file 13 "controller/IO/analog_inputs.h"
  340              		.file 14 "controller/utils/error_handling.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s 			page 11
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s 			page 11
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 analog_inputs.c
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:21     .text.analog_inputs_start_conversion:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:27     .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:54     .text.analog_inputs_start_conversion:00000014 $d
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:325    .bss.hadc:00000000 hadc
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:318    .bss.analog_data:00000000 analog_data
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:60     .text.HAL_ADC_ConvCpltCallback:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:66     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:80     .rodata.analog_inputs_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:84     .text.analog_inputs_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:90     .text.analog_inputs_init:00000000 analog_inputs_init
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:139    .text.analog_inputs_init:00000024 $d
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:146    .text.analog_inputs_start_conversion_injected:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:152    .text.analog_inputs_start_conversion_injected:00000000 analog_inputs_start_conversion_injected
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:165    .rodata.analog_inputs_get_data.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:169    .text.analog_inputs_get_data:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:175    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:242    .text.analog_inputs_get_data:00000038 $d
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:248    .text.analog_inputs_get_voltage:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:254    .text.analog_inputs_get_voltage:00000000 analog_inputs_get_voltage
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:308    .text.analog_inputs_get_voltage:00000028 $d
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:315    .bss.analog_data:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc09gaDc.s:322    .bss.hadc:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:21     .text.analog_inputs_start_conversion:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:27     .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:54     .text.analog_inputs_start_conversion:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:325    .bss.hadc:00000000 hadc
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:318    .bss.analog_data:00000000 analog_data
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:60     .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:66     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:80     .rodata.analog_inputs_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:84     .text.analog_inputs_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:90     .text.analog_inputs_init:00000000 analog_inputs_init
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:139    .text.analog_inputs_init:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:146    .text.analog_inputs_start_conversion_injected:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:152    .text.analog_inputs_start_conversion_injected:00000000 analog_inputs_start_conversion_injected
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:165    .rodata.analog_inputs_get_data.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:169    .text.analog_inputs_get_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:175    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:242    .text.analog_inputs_get_data:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:248    .text.analog_inputs_get_voltage:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:254    .text.analog_inputs_get_voltage:00000000 analog_inputs_get_voltage
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:308    .text.analog_inputs_get_voltage:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:315    .bss.analog_data:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cciDVlpM.s:322    .bss.hadc:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_ADC_Start_DMA

@@ -113,7 +113,9 @@ typedef struct
 
 } configuration_t;
 
+
 extern configuration_t configuration;
+
 
 void controller_init_with_defaults();
 

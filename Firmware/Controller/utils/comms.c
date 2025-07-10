@@ -36,14 +36,14 @@ reception. The sender MUST act on the response code and MUST check the CRC32.
  ******************************************************************************/
 // ==================== Global Variables ====================
 osMessageQueueId_t usb_rx_queue;
-runtime_data runtime_values;
+output_channels_t output_channels;
 calibration_page calibration_values;
 
 usb_rx_packet_t rx_packet;
 /**
  * See 'blockingFactor' in .ini
  */
-static uint8_t tx_buffer[TS_BLOCKING_FACTOR + 30];
+static uint8_t tx_rx_buffer[TS_BLOCKING_FACTOR + 30];
 
 
 /* Function delcearations  */
@@ -55,8 +55,8 @@ void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size);
 static void transmit_ok_response();
 bool process_plain_command(uint8_t *cmd, uint16_t size);
 void process_command(uint8_t *cmd, uint16_t size);
-
-
+void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count);
+void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count);
 
 /* Function definations */
 
@@ -71,8 +71,8 @@ void send_response(uint8_t *data, size_t size, comms_response_format_t mode)
     {
         if (size > 0)
         {
-			memcpy(tx_buffer, data, size);
-            CDC_Transmit_FS(tx_buffer, size);
+			memcpy(tx_rx_buffer, data, size);
+            CDC_Transmit_FS(tx_rx_buffer, size);
         }
     }
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
@@ -102,19 +102,19 @@ void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
 	suffix = swap_endian_uint32(crc);
 
 	/* Form the packet in the transmit buffer */
-	size_t tx_buffer_index = 0;
-	memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
-	tx_buffer_index += sizeof(prefix);
-	memcpy(tx_buffer + tx_buffer_index, &flag, sizeof(flag)); // flag to buffer 
-	tx_buffer_index += sizeof(flag);
-	memcpy(tx_buffer + tx_buffer_index, buf, size); // payload to buffer
-	tx_buffer_index += size;
-	memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
-	tx_buffer_index += sizeof(suffix);
+	size_t tx_rx_buffer_index = 0;
+	memcpy(tx_rx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
+	tx_rx_buffer_index += sizeof(prefix);
+	memcpy(tx_rx_buffer + tx_rx_buffer_index, &flag, sizeof(flag)); // flag to buffer
+	tx_rx_buffer_index += sizeof(flag);
+	memcpy(tx_rx_buffer + tx_rx_buffer_index, buf, size); // payload to buffer
+	tx_rx_buffer_index += size;
+	memcpy(tx_rx_buffer + tx_rx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
+	tx_rx_buffer_index += sizeof(suffix);
 	
 	/* Finally transmit over USB */
 
-	CDC_Transmit_FS(tx_buffer, packet_size);
+	CDC_Transmit_FS(tx_rx_buffer, packet_size);
 }
 
 
@@ -261,11 +261,14 @@ void process_command(uint8_t *cmd, uint16_t size)
 		break;
 
 	case TS_OUTPUT_COMMAND:
-		send_response((uint8_t*)&runtime_values, sizeof(runtime_values), TS_CRC);
+		send_response((uint8_t*)&output_channels, sizeof(output_channels), TS_CRC);
 		return;
 		break;
 	case TS_READ_COMMAND:
-		send_response((uint8_t*)&calibration_values.data, sizeof(calibration_values.data), TS_CRC);
+		uint16_t page = 0;
+		uint16_t offset = *(uint16_t*)&cmd[3];
+		uint16_t size = *(uint16_t*)&cmd[5];
+		handle_page_read_command(page, offset, size);
 		return;
 		break;
 	case TS_CRC_CHECK_COMMAND:
@@ -273,111 +276,66 @@ void process_command(uint8_t *cmd, uint16_t size)
 		send_response((uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
 		return;
 		break;
+
+	case TS_CHUNK_WRITE_COMMAND:
+	{
+		uint16_t page = 0;
+		uint16_t offset = *(uint16_t*)&cmd[3];
+		uint16_t size = *(uint16_t*)&cmd[5];
+		memcpy(calibration_values.data, cmd + 6, size);
+		return;
+		break;
+	}
+	case TS_SINGLE_WRITE_COMMAND:
+	{
+		uint16_t page = 0;
+		uint16_t offset = *(uint16_t*)&cmd[3];
+		uint16_t size = *(uint16_t*)&cmd[5];
+		memcpy(calibration_values.data, cmd + 6, size);
+		return;
+		break;
+	}
+
+	
 	default:
 		break;
 	}
 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 
 	
-#if FALSE
- 	uint8_t secondByte;
-	/* second byte should be received within minimal delay */
-	received = tsChannel->readTimeout(&secondByte, 1, TS_COMMUNICATION_TIMEOUT_SHORT);
-	if (received != 1) {
-		tunerStudioError(tsChannel, "TS: ERROR: no second byte");
-		tsChannel->in_sync = false;
-		return -1;
+}
+void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count)
+{
+	if (page > 1)
+	{
+		return;
 	}
-
-	uint16_t incomingPacketSize = firstByte << 8 | secondByte;
-	size_t expectedSize = incomingPacketSize + TS_PACKET_TAIL_SIZE;
-
-	if ((incomingPacketSize == 0) || (expectedSize > sizeof(tsChannel->scratchBuffer))) {
-		if (tsChannel->in_sync) {
-			efiPrintf("process_ts: channel=%s invalid size: %d", tsChannel->name, incomingPacketSize);
-			tunerStudioError(tsChannel, "process_ts: ERROR: packet size");
-			/* send error only if previously we were in sync */
-			sendErrorCode(tsChannel, TS_RESPONSE_OUT_OF_RANGE, "invalid size");
-		}
-		tsChannel->in_sync = false;
-		return -1;
+	if ((offset + count) > TS_PAGE_SIZE)
+	{
+		return;
 	}
+	
+	send_response((uint8_t*)&calibration_values.data + offset, count, TS_CRC);
+}
 
-	char command;
-	if (tsChannel->in_sync) {
-		/* we are in sync state, packet size should be correct so lets receive full packet and then check if command is supported
-		 * otherwise (if abort reception in middle of packet) it will break synchronization and cause error on next packet */
-		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer), expectedSize, TS_COMMUNICATION_TIMEOUT);
-		command = tsChannel->scratchBuffer[0];
-
-		if (received != expectedSize) {
-			/* print and send error as we were in sync */
-			efiPrintf("Got only %d bytes while expecting %d for command 0x%02x", received,
-					expectedSize, command);
-			tunerStudioError(tsChannel, "ERROR: not enough bytes in stream");
-			// MS serial protocol spec: There was a timeout before all data was received. (25ms per character.)
-			sendErrorCode(tsChannel, TS_RESPONSE_UNDERRUN, "underrun");
-			tsChannel->in_sync = false;
-			return -1;
-		}
-
-		if (!isKnownCommand(command)) {
-			/* print and send error as we were in sync */
-			efiPrintf("unexpected command %x", command);
-			sendErrorCode(tsChannel, TS_RESPONSE_UNRECOGNIZED_COMMAND, "unknown");
-			tsChannel->in_sync = false;
-			return -1;
-		}
-	} else {
-		/* receive only command byte to check if it is supported */
-		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer), 1, TS_COMMUNICATION_TIMEOUT_SHORT);
-		command = tsChannel->scratchBuffer[0];
-
-		if (!isKnownCommand(command)) {
-			/* do not report any error as we are not in sync */
-			return -1;
-		}
-
-		received = tsChannel->readTimeout((uint8_t*)(tsChannel->scratchBuffer) + 1, expectedSize - 1, TS_COMMUNICATION_TIMEOUT);
-		if (received != expectedSize - 1) {
-			/* do not report any error as we are not in sync */
-			return -1;
-		}
+void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count)
+{
+	if (page > 1)
+	{
+		return;
 	}
-
-#if EFI_SIMULATOR
-	logMsg("command %c\r\n", command);
-#endif
-
-	uint32_t expectedCrc = *(uint32_t*) (tsChannel->scratchBuffer + incomingPacketSize);
-
-	expectedCrc = SWAP_UINT32(expectedCrc);
-
-	uint32_t actualCrc = crc32(tsChannel->scratchBuffer, incomingPacketSize);
-	if (actualCrc != expectedCrc) {
-		/* send error only if previously we were in sync */
-		if (tsChannel->in_sync) {
-			efiPrintf("TunerStudio: command %c actual CRC %x/expected %x", tsChannel->scratchBuffer[0],
-					(unsigned int)actualCrc, (unsigned int)expectedCrc);
-			tunerStudioError(tsChannel, "ERROR: CRC issue");
-			sendErrorCode(tsChannel, TS_RESPONSE_CRC_FAILURE, "crc_issue");
-			tsChannel->in_sync = false;
-		}
-		return -1;
+	if ((offset + count) > TS_PAGE_SIZE)
+	{
+		return;
 	}
+	
+}
 
-	/* we were able to receive known command with correct crc and size! */
-	tsChannel->in_sync = true;
 
-	int success = tsInstance.handleCrcCommand(tsChannel, tsChannel->scratchBuffer, incomingPacketSize);
-
-	if (!success) {
-		efiPrintf("got unexpected TunerStudio command %x:%c", command, command);
-		return -1;
-	}
-
-	return 0;
-#endif
+void comms_write_status_flag(status_flags_t flag, bool state)
+{
+	uint8_t index = flag;
+	change_bit_uint32(&output_channels.status, index, state);
 }
 
 // ==================== Runtime Update Task ====================
@@ -385,16 +343,20 @@ void runtime_update_task(void *argument)
 {
 	for (;;)
 	{
-
+		output_channels.sync_loss_count = engine.trigger.sync_loss_counter;
+		change_bit_uint32(&output_channels.status, STATUS_TRIGGER_SYNCED, engine.trigger.sync_status == TS_FULLY_SYNCED);
+		change_bit_uint32(&output_channels.status, STATUS_TRIGGER_ERROR, engine.trigger.sync_loss_counter > 1000);
+		change_bit_uint32(&output_channels.status, STATUS_CRANKING, engine.spinning_state == SS_CRANKING);
+		change_bit_uint32(&output_channels.status, STATUS_RUNNING, engine.spinning_state == SS_RUNNING);
 		// Replace with actual sensor readings
-		runtime_values.rpm = engine.rpm;
-		runtime_values.map = engine.map;
-		runtime_values.tps = engine.tps1;
-		runtime_values.lambda = 10;
-		runtime_values.advance = engine.ignition_advance;
-		runtime_values.dwell = configuration.ignition_dwell;
-		runtime_values.vbatt = 10;
-		runtime_values.clt = engine.clt;
+		output_channels.rpm = engine.rpm;
+		output_channels.map = engine.map;
+		output_channels.tps = engine.tps1;
+		output_channels.lambda = 1;
+		output_channels.advance = engine.ignition_advance;
+		output_channels.dwell = configuration.ignition_dwell;
+		output_channels.vbatt = 10;
+		output_channels.clt = engine.clt;
 		osDelay(10);
 	}
 }

@@ -13,7 +13,7 @@
  */
 
 // ==================== Configuration ====================
-#define PAGE_SIZE 1024
+#define TS_PAGE_SIZE 2360
 
 #define TS_BLOCKING_FACTOR 1024 // same blocking factor defined in the .ini file
 #define TS_TABLE_BLOCKING_FACTOR 1024 
@@ -30,9 +30,10 @@
 #define TS_SERIAL_INFO_COMMAND 'f'
 #define TS_SIMULATE_CAN '>'
 #define TS_SIMULATE_CAN_char >
-#define TS_SINGLE_WRITE_COMMAND 'W'
-#define TS_SINGLE_WRITE_COMMAND_char W
+#define TS_SINGLE_WRITE_COMMAND 'w'
+#define TS_CHUNK_WRITE_COMMAND 'W'
 #define TS_TEST_COMMAND 't'
+#define TS_BURN_COMMAND 'B'
 #define TS_TEST_COMMAND_char t
 #define TS_TOTAL_OUTPUT_SIZE 1800
 #define TS_TRIGGER_SCOPE_CHANNEL_1_NAME "Channel 1"
@@ -41,10 +42,7 @@
 #define TS_TRIGGER_SCOPE_ENABLE 4
 #define TS_TRIGGER_SCOPE_READ 6
 #define TS_BLOCK_READ_TIMEOUT 3000
-#define TS_BURN_COMMAND 'B'
-#define TS_BURN_COMMAND_char B
-#define TS_CHUNK_WRITE_COMMAND 'C'
-#define TS_CHUNK_WRITE_COMMAND_char C
+
 #define ts_cic_idle false
 #define ts_command_e_TS_BENCH_CATEGORY 22
 #define ts_command_e_TS_BOARD_ACTION 29
@@ -125,8 +123,8 @@
 #define TS_QUERY_BOOTLOADER_OPENBLT 1
 #define TS_QUERY_COMMAND 'Q'
 #define TS_QUERY_COMMAND_char Q
-#define TS_READ_COMMAND 'R'
-#define TS_READ_COMMAND_char R
+#define TS_READ_COMMAND 'r'
+#define TS_READ_COMMAND_char r
 #define TS_RESPONSE_BURN_OK 4
 #define TS_RESPONSE_CRC_FAILURE 0x82
 #define TS_RESPONSE_FRAMING_ERROR 0x8D
@@ -147,11 +145,48 @@ typedef enum
 
 typedef struct
 {
-    uint8_t data[PAGE_SIZE];
+    uint8_t data[TS_PAGE_SIZE];
 } calibration_page;
+
+typedef enum
+{
+    STATUS_CRITICAL_ERROR = 0,
+    STATUS_CHECK_ENGINE = 1,
+    STATUS_WARNING = 2,
+    STATUS_NEED_BURN = 3,
+    STATUS_MAIN_RELAY_ON = 4,
+    STATUS_GAS_SOLENOID_ON = 5,
+    STATUS_FUEL_PUMP_ON = 6,
+    STATUS_O2_HEATER_ON = 7,
+    STATUS_TPS1_ERROR = 8,
+    STATUS_TPS2_ERROR = 9,
+    STATUS_MAP_ERROR = 10,
+    STATUS_CLT_ERROR = 11,
+    STATUS_IAT_ERROR = 12,
+    STATUS_TRIGGER_ERROR = 13,
+    STATUS_IGNITION_ERROR = 14,
+    STATUS_INJECTOR_ERROR = 15,
+    STATUS_REV_LIMIT_IGNITION = 16,
+    STATUS_REV_LIMIT_ETB = 17,
+    STATUS_ETB1_OK = 18,
+    STATUS_ETB2_OK = 19,
+    STATUS_FAN1_ON = 20,
+    STATUS_FAN2_ON = 21,
+    STATUS_FUEL_PRESSURE_LOW_GAS = 22,
+    STATUS_FUEL_PRESSURE_LOW_PETROL = 23,
+    STATUS_CRANKING = 24,
+    STATUS_RUNNING = 25,
+    STATUS_TRIGGER_SYNCED = 26,
+    STATUS_RESERVED1 = 27,
+    STATUS_RESERVED2 = 28,
+    STATUS_RESERVED3 = 29,
+    STATUS_RESERVED4 = 30,
+    STATUS_RESERVED5 = 31
+} status_flags_t;
 
 typedef struct __attribute__((packed))
 {
+    uint32_t status;
     float rpm;
     float map;
     float tps;
@@ -160,7 +195,26 @@ typedef struct __attribute__((packed))
     float dwell;
     float vbatt;
     float clt;
-} runtime_data;
+    uint16_t sync_loss_count;
+    float iat;
+    float ego_correction;
+    float warmup_enrichment;
+    float acceleration_enrichment;
+    float gamma_enrichment;
+    float ve1;
+    float ve2;
+    float lambda_target;
+    uint16_t tps_adc_value;
+    float injector_pulse_width;
+    float gas_valve_position;
+    float target_rpm;
+    float fuel_pressure_gas;
+    float fuel_pressure_petrol;
+    uint8_t spark_per_ignition_event_count;
+    float fuel_load_gas;
+    float fuel_load_petrol;
+
+} output_channels_t;
 
 // ==================== USB CDC Configuration ====================
 #define USB_RX_QUEUE_SIZE    10  // Number of packets to buffer
@@ -176,7 +230,7 @@ extern osMessageQueueId_t usb_rx_queue;
 
 // ==================== Global Variables ====================
 extern calibration_page cal_page;
-extern runtime_data runtime_values;
+extern output_channels_t output_channels;
 extern osMutexId_t runtime_mutex;
 extern osMutexId_t page_mutex;
 
@@ -189,4 +243,5 @@ void read_calibration_data(uint16_t offset, uint16_t len);
 void write_calibration_data(uint16_t offset, uint8_t *data, uint16_t len);
 void runtime_update_task(void *argument);
 
+void comms_write_status_flag(status_flags_t flag, bool state);
 #endif // COMMS_H

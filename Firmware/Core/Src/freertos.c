@@ -266,7 +266,7 @@ void controller_init_task(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(100);
+    osDelay(1);
     static float rpm = 0;
     static float load = 0;
     rpm += 10;  // Simulate RPM increase
@@ -276,6 +276,8 @@ void controller_init_task(void *argument)
       rpm = -1000;
     }
     table_value = table_2d_get_value(&test_table, rpm, load);
+
+    
   }
   /* USER CODE END controller_init_task */
 }

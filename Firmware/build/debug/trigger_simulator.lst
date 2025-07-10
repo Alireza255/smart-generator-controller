@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
   45 0008 034B     		ldr	r3, .L2+8
   46 000a 1A60     		str	r2, [r3]
   12:controller/utils/trigger_simulator.c **** }
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 2
 
 
   47              		.loc 1 12 1 view .LVU7
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
    5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
    6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
    7:controller/utils/utils.h ****  * 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 3
 
 
    8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
@@ -132,98 +132,100 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
   16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
   17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
   18:controller/utils/utils.h **** 
-  19:controller/utils/utils.h **** /**
-  20:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
-  21:controller/utils/utils.h ****  * 
-  22:controller/utils/utils.h ****  * @param x The value to map.
-  23:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  24:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  25:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  26:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  27:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  28:controller/utils/utils.h ****  */
-  29:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
-  30:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
-  31:controller/utils/utils.h **** 
-  32:controller/utils/utils.h **** 
-  33:controller/utils/utils.h **** /**
-  34:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
-  35:controller/utils/utils.h ****  * 
-  36:controller/utils/utils.h ****  * @param x The value to map.
-  37:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  38:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  39:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  40:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  41:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  42:controller/utils/utils.h ****  */
-  43:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
-  44:controller/utils/utils.h **** {
-  45:controller/utils/utils.h ****     if (in_max == in_min)
-  46:controller/utils/utils.h ****     {
-  47:controller/utils/utils.h ****         return 0; // Avoid division by zero
-  48:controller/utils/utils.h ****     }
-  49:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-  50:controller/utils/utils.h **** }
-  51:controller/utils/utils.h **** 
-  52:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
-  53:controller/utils/utils.h **** {
-  54:controller/utils/utils.h ****     if (in_max == in_min)
-  55:controller/utils/utils.h ****     {
-  56:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
-  57:controller/utils/utils.h ****     }
-  58:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-  59:controller/utils/utils.h **** }
-  60:controller/utils/utils.h **** 
-  61:controller/utils/utils.h **** // http://en.wikipedia.org/wiki/Endianness
-  62:controller/utils/utils.h **** inline uint16_t swap_endian_uint16(uint16_t x)
-  63:controller/utils/utils.h **** {
-  64:controller/utils/utils.h **** 	return ((x << 8) | (x >> 8));
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 4
+  19:controller/utils/utils.h **** void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** /**
+  22:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
+  23:controller/utils/utils.h ****  * 
+  24:controller/utils/utils.h ****  * @param x The value to map.
+  25:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  26:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  27:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  28:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  29:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  30:controller/utils/utils.h ****  */
+  31:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
+  32:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
+  33:controller/utils/utils.h **** 
+  34:controller/utils/utils.h **** 
+  35:controller/utils/utils.h **** /**
+  36:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
+  37:controller/utils/utils.h ****  * 
+  38:controller/utils/utils.h ****  * @param x The value to map.
+  39:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  40:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  41:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  42:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  43:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  44:controller/utils/utils.h ****  */
+  45:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
+  46:controller/utils/utils.h **** {
+  47:controller/utils/utils.h ****     if (in_max == in_min)
+  48:controller/utils/utils.h ****     {
+  49:controller/utils/utils.h ****         return 0; // Avoid division by zero
+  50:controller/utils/utils.h ****     }
+  51:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+  52:controller/utils/utils.h **** }
+  53:controller/utils/utils.h **** 
+  54:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+  55:controller/utils/utils.h **** {
+  56:controller/utils/utils.h ****     if (in_max == in_min)
+  57:controller/utils/utils.h ****     {
+  58:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
+  59:controller/utils/utils.h ****     }
+  60:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  61:controller/utils/utils.h **** }
+  62:controller/utils/utils.h **** 
+  63:controller/utils/utils.h **** // http://en.wikipedia.org/wiki/Endianness
+  64:controller/utils/utils.h **** inline uint16_t swap_endian_uint16(uint16_t x)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 4
 
 
-  65:controller/utils/utils.h **** }
-  66:controller/utils/utils.h **** inline uint32_t swap_endian_uint32(uint32_t x)
-  67:controller/utils/utils.h **** {
-  68:controller/utils/utils.h **** 	return (((x >> 24) & 0x000000ff) | ((x <<  8) & 0x00ff0000) |
-  69:controller/utils/utils.h **** 			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
-  70:controller/utils/utils.h **** }
-  71:controller/utils/utils.h **** 
-  72:controller/utils/utils.h **** void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
+  65:controller/utils/utils.h **** {
+  66:controller/utils/utils.h **** 	return ((x << 8) | (x >> 8));
+  67:controller/utils/utils.h **** }
+  68:controller/utils/utils.h **** inline uint32_t swap_endian_uint32(uint32_t x)
+  69:controller/utils/utils.h **** {
+  70:controller/utils/utils.h **** 	return (((x >> 24) & 0x000000ff) | ((x <<  8) & 0x00ff0000) |
+  71:controller/utils/utils.h **** 			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
+  72:controller/utils/utils.h **** }
   73:controller/utils/utils.h **** 
-  74:controller/utils/utils.h **** #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
-  75:controller/utils/utils.h **** #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
-  76:controller/utils/utils.h **** 
-  77:controller/utils/utils.h **** /**
-  78:controller/utils/utils.h ****  * @brief Function to calculate the microseconds it takes for the engine to turn one degree.
-  79:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
-  80:controller/utils/utils.h ****  */
-  81:controller/utils/utils.h **** static inline time_us_t microseconds_per_degree(rpm_t rpm)
-  89              		.loc 2 81 25 view .LVU14
+  74:controller/utils/utils.h **** void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
+  75:controller/utils/utils.h **** 
+  76:controller/utils/utils.h **** #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
+  77:controller/utils/utils.h **** #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
+  78:controller/utils/utils.h **** 
+  79:controller/utils/utils.h **** /**
+  80:controller/utils/utils.h ****  * @brief Function to calculate the microseconds it takes for the engine to turn one degree.
+  81:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
+  82:controller/utils/utils.h ****  */
+  83:controller/utils/utils.h **** static inline time_us_t microseconds_per_degree(rpm_t rpm)
+  89              		.loc 2 83 25 view .LVU14
   90              	.LBB5:
-  82:controller/utils/utils.h **** {
-  83:controller/utils/utils.h ****     if (rpm == 0)
-  91              		.loc 2 83 5 view .LVU15
-  92              		.loc 2 83 8 is_stmt 0 view .LVU16
+  84:controller/utils/utils.h **** {
+  85:controller/utils/utils.h ****     if (rpm == 0)
+  91              		.loc 2 85 5 view .LVU15
+  92              		.loc 2 85 8 is_stmt 0 view .LVU16
   93 000a B5EE400A 		vcmp.f32	s0, #0
   94 000e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
   95 0012 30D0     		beq	.L9
-  84:controller/utils/utils.h ****     {
-  85:controller/utils/utils.h ****         return 0;
-  86:controller/utils/utils.h ****     }
-  87:controller/utils/utils.h ****     return (time_us_t) 60.0f * 1e6f / (rpm * 360.0f);
-  96              		.loc 2 87 5 is_stmt 1 view .LVU17
-  97              		.loc 2 87 44 is_stmt 0 view .LVU18
+  86:controller/utils/utils.h ****     {
+  87:controller/utils/utils.h ****         return 0;
+  88:controller/utils/utils.h ****     }
+  89:controller/utils/utils.h ****     return (time_us_t) 60.0f * 1e6f / (rpm * 360.0f);
+  96              		.loc 2 89 5 is_stmt 1 view .LVU17
+  97              		.loc 2 89 44 is_stmt 0 view .LVU18
   98 0014 DFED1C7A 		vldr.32	s15, .L14+4
   99 0018 20EE270A 		vmul.f32	s0, s0, s15
  100              	.LVL3:
- 101              		.loc 2 87 37 view .LVU19
+ 101              		.loc 2 89 37 view .LVU19
  102 001c 9FED1B7A 		vldr.32	s14, .L14+8
  103 0020 C7EE007A 		vdiv.f32	s15, s14, s0
  104 0024 FCEEE77A 		vcvt.u32.f32	s15, s15
  105 0028 17EE904A 		vmov	r4, s15	@ int
  106              	.L6:
  107              	.LVL4:
- 108              		.loc 2 87 37 view .LVU20
+ 108              		.loc 2 89 37 view .LVU20
  109              	.LBE5:
  110              	.LBE4:
  111              		.loc 1 21 61 discriminator 1 view .LVU21
@@ -236,11 +238,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
  118 0038 B4FBF3F4 		udiv	r4, r4, r3
  119              	.LVL5:
   22:controller/utils/trigger_simulator.c **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 5
+
+
   23:controller/utils/trigger_simulator.c ****     time_us_t current_time = get_time_us();
  120              		.loc 1 23 5 is_stmt 1 view .LVU24
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 5
-
-
  121              		.loc 1 23 30 is_stmt 0 view .LVU25
  122 003c FFF7FEFF 		bl	get_time_us
  123              	.LVL6:
@@ -296,11 +298,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
   44:controller/utils/trigger_simulator.c ****     if (current_tooth_index < (wheel_full_teeth - 1))
  153              		.loc 1 44 5 view .LVU37
  154              		.loc 1 44 29 is_stmt 0 view .LVU38
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 6
+
+
  155 0060 0D4B     		ldr	r3, .L14+20
  156 0062 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 6
-
-
  157              		.loc 1 44 49 view .LVU39
  158 0064 0A4B     		ldr	r3, .L14+12
  159 0066 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
@@ -330,14 +332,14 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
  173              	.L9:
  174              	.LBB7:
  175              	.LBB6:
-  85:controller/utils/utils.h ****     }
- 176              		.loc 2 85 16 view .LVU44
+  87:controller/utils/utils.h ****     }
+ 176              		.loc 2 87 16 view .LVU44
  177 0076 0024     		movs	r4, #0
  178 0078 D8E7     		b	.L6
  179              	.LVL9:
  180              	.L8:
-  85:controller/utils/utils.h ****     }
- 181              		.loc 2 85 16 view .LVU45
+  87:controller/utils/utils.h ****     }
+ 181              		.loc 2 87 16 view .LVU45
  182              	.LBE6:
  183              	.LBE7:
   50:controller/utils/trigger_simulator.c ****     }
@@ -356,11 +358,11 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
   50:controller/utils/trigger_simulator.c ****     }
  195              		.loc 1 50 29 view .LVU48
  196 0082 7047     		bx	lr
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 7
+
+
  197              	.L15:
  198              		.align	2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 7
-
-
  199              	.L14:
  200 0084 00000000 		.word	wheel_callback
  201 0088 0000B443 		.word	1135869952
@@ -397,27 +399,27 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 1
  243              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
  244              		.file 5 "controller/types.h"
  245              		.file 6 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLFb907.s 			page 8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 trigger_simulator.c
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:21     .text.trigger_simulator_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:27     .text.trigger_simulator_init:00000000 trigger_simulator_init
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:52     .text.trigger_simulator_init:00000010 $d
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:238    .bss.wheel_full_teeth:00000000 wheel_full_teeth
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:232    .bss.wheel_missing_teeth:00000000 wheel_missing_teeth
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:226    .bss.wheel_callback:00000000 wheel_callback
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:59     .text.trigger_simulator_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:65     .text.trigger_simulator_update:00000000 trigger_simulator_update
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:200    .text.trigger_simulator_update:00000084 $d
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:219    .bss.prev_time.1:00000000 prev_time.1
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:213    .bss.current_tooth_index.0:00000000 current_tooth_index.0
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:214    .bss.current_tooth_index.0:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:216    .bss.prev_time.1:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:223    .bss.wheel_callback:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:233    .bss.wheel_missing_teeth:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccLFb907.s:239    .bss.wheel_full_teeth:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:21     .text.trigger_simulator_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:27     .text.trigger_simulator_init:00000000 trigger_simulator_init
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:52     .text.trigger_simulator_init:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:238    .bss.wheel_full_teeth:00000000 wheel_full_teeth
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:232    .bss.wheel_missing_teeth:00000000 wheel_missing_teeth
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:226    .bss.wheel_callback:00000000 wheel_callback
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:59     .text.trigger_simulator_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:65     .text.trigger_simulator_update:00000000 trigger_simulator_update
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:200    .text.trigger_simulator_update:00000084 $d
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:219    .bss.prev_time.1:00000000 prev_time.1
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:213    .bss.current_tooth_index.0:00000000 current_tooth_index.0
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:214    .bss.current_tooth_index.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:216    .bss.prev_time.1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:223    .bss.wheel_callback:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:233    .bss.wheel_missing_teeth:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccjJQmFC.s:239    .bss.wheel_full_teeth:00000000 $d
 
 UNDEFINED SYMBOLS
 get_time_us

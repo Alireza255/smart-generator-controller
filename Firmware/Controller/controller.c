@@ -3,6 +3,7 @@
 configuration_t configuration = {0};
 engine_t engine = {0};
 
+void controller_test_task(void *arg);
 
 sensor_tps_t tps1 = {
       .analog_channel = ANALOG_INPUT_ETB1_SENSE1,
@@ -112,6 +113,14 @@ void controller_init_with_defaults()
     
 
     comms_init();
+
+    
+    const osThreadAttr_t controller_test_attr = {
+        .name = "test_task",
+        .stack_size = 1024,
+        .priority = osPriorityNormal,
+    };
+    osThreadNew(controller_test_task, NULL, &controller_test_attr);
 }
 
 void controller_load_configuration()
@@ -127,5 +136,31 @@ void controller_update_stats(void *arg)
 {
   // this must not run before the controller is initialized
   engine.tps1 = sensor_tps_get(&tps1);
+
+}
+
+void controller_test_task(void *arg)
+{
+  for (;;)
+  {
+    
+    percent_t etb_test_target_pos = 20;
+    const percent_t etb_test_min = 0;
+    const percent_t etb_test_max = 95;
+    const percent_t etb_test_resolution = 0.02;
+    const float_time_ms_t etb_test_period = 10000;
+    time_ms_t etb_update_period = etb_test_period / ((float)2 * (etb_test_max - etb_test_min)) * etb_test_resolution;
+    for (etb_test_target_pos = 20; etb_test_target_pos < 80; etb_test_target_pos += etb_test_resolution)
+    {
+      osDelay((uint32_t)etb_update_period);
+      electronic_throttle_set(&etb1, etb_test_target_pos);
+    }
+    for (etb_test_target_pos = 80; etb_test_target_pos > 20; etb_test_target_pos -= etb_test_resolution)
+    {
+      osDelay((uint32_t)etb_update_period);
+      electronic_throttle_set(&etb1, etb_test_target_pos);
+    }
+  }
+  
 
 }

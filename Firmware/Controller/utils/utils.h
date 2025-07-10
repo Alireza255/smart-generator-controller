@@ -16,6 +16,8 @@
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
 
+void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
+
 /**
  * @brief Maps a value from one range to another.
  * 

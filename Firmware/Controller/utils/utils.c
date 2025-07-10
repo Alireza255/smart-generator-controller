@@ -62,3 +62,24 @@ void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size) {
         dst[i] = src[size - 1 - i];
     }
 }
+
+void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state)
+{
+    if (var == NULL)
+    {
+        return;
+    }
+    // Check if bit_index is within valid range (0-31)
+    if (bit_index > 31)
+    {
+        return;
+    }
+    if (state)
+    {
+        *var |= (1UL << bit_index); // Set bit
+    }
+    else
+    {
+        *var &= ~(1UL << bit_index); // Reset bit
+    }
+}
