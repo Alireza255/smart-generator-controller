@@ -95,7 +95,10 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
-static usb_rx_packet_t isr_packet;  // Reusable packet for ISR
+extern uint8_t rx_buffer[TS_BLOCKING_FACTOR + 30];  // Make it visible here
+static uint32_t rx_offset = 0;  // Tracks position in buffer
+extern usb_rx_packet_t rx_packet;
+
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -261,17 +264,28 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   */
 static int8_t CDC_Receive_FS(uint8_t *Buf, uint32_t *Len) {
     /* USER CODE BEGIN 6 */
-    // Copy data to packet structure
-    isr_packet.len = (*Len > USB_MAX_PACKET_SIZE) ? USB_MAX_PACKET_SIZE : *Len;
-    memcpy(isr_packet.data, Buf, isr_packet.len);
-    
-    // Send to queue from ISR (non-blocking)
-    osMessageQueuePut(usb_rx_queue, &isr_packet, 0, 0);
+    // Prevent overflow
+    if ((rx_offset + *Len) > sizeof(rx_buffer)) {
+        rx_offset = 0;  // recover safely
+    }
 
-    // Re-arm USB reception
-    USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+    // Copy into rx_buffer
+    memcpy(&rx_buffer[rx_offset], Buf, *Len);
+    rx_offset += *Len;
+
+    // Short packet means end of message
+    if (*Len < CDC_DATA_FS_MAX_PACKET_SIZE) {
+        usb_packet_ptr_t packet = {
+            .data = rx_buffer,
+            .len = rx_offset
+        };
+
+        osMessageQueuePut(usb_rx_queue, &packet, 0, 0);
+        rx_offset = 0;  // ready for next message
+    }
+
+    USBD_CDC_SetRxBuffer(&hUsbDeviceFS, Buf);
     USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-    
     return USBD_OK;
     /* USER CODE END 6 */
 }

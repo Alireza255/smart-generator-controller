@@ -225,6 +225,11 @@ typedef struct {
     uint16_t len;
 } usb_rx_packet_t;
 
+typedef struct {
+    uint8_t *data;
+    uint32_t len;
+} usb_packet_ptr_t;
+
 extern osMessageQueueId_t usb_rx_queue;
 
 

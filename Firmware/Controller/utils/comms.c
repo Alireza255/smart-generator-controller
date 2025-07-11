@@ -43,16 +43,15 @@ usb_rx_packet_t rx_packet;
 /**
  * See 'blockingFactor' in .ini
  */
-static uint8_t tx_rx_buffer[TS_BLOCKING_FACTOR + 30];
-
+uint8_t tx_buffer[TS_BLOCKING_FACTOR + 30];
+uint8_t rx_buffer[TS_BLOCKING_FACTOR + 30];
 
 /* Function delcearations  */
 /**
  * @note size can be zero to transmit an empty packet
  */
-void send_response(uint8_t *data, size_t size, comms_response_format_t mode);
+void send_response(uint8_t flag, uint8_t *data, size_t size, comms_response_format_t mode);
 void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size);
-static void transmit_ok_response();
 bool process_plain_command(uint8_t *cmd, uint16_t size);
 void process_command(uint8_t *cmd, uint16_t size);
 void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count);
@@ -60,19 +59,19 @@ void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count);
 
 /* Function definations */
 
-void send_response(uint8_t *data, size_t size, comms_response_format_t mode)
+void send_response(uint8_t flag, uint8_t *data, size_t size, comms_response_format_t mode)
 {
 
     if (mode == TS_CRC)
     {
-        transmit_crc_packet(TS_RESPONSE_OK, data, size);
+        transmit_crc_packet(flag, data, size);
     }
     else
     {
         if (size > 0)
         {
-			memcpy(tx_rx_buffer, data, size);
-            CDC_Transmit_FS(tx_rx_buffer, size);
+			memcpy(tx_buffer, data, size);
+            CDC_Transmit_FS(tx_buffer, size);
         }
     }
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
@@ -102,36 +101,29 @@ void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
 	suffix = swap_endian_uint32(crc);
 
 	/* Form the packet in the transmit buffer */
-	size_t tx_rx_buffer_index = 0;
-	memcpy(tx_rx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
-	tx_rx_buffer_index += sizeof(prefix);
-	memcpy(tx_rx_buffer + tx_rx_buffer_index, &flag, sizeof(flag)); // flag to buffer
-	tx_rx_buffer_index += sizeof(flag);
-	memcpy(tx_rx_buffer + tx_rx_buffer_index, buf, size); // payload to buffer
-	tx_rx_buffer_index += size;
-	memcpy(tx_rx_buffer + tx_rx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
-	tx_rx_buffer_index += sizeof(suffix);
-	
+	size_t tx_buffer_index = 0;
+	memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
+	tx_buffer_index += sizeof(prefix);
+	memcpy(tx_buffer + tx_buffer_index, &flag, sizeof(flag)); // flag to buffer
+	tx_buffer_index += sizeof(flag);
+	memcpy(tx_buffer + tx_buffer_index, buf, size); // payload to buffer
+	tx_buffer_index += size;
+	memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
+	tx_buffer_index += sizeof(suffix);
+
 	/* Finally transmit over USB */
 
-	CDC_Transmit_FS(tx_rx_buffer, packet_size);
+	CDC_Transmit_FS(tx_buffer, packet_size);
 }
 
 
-static void transmit_ok_response()
-{
-    send_response(NULL, 0, TS_CRC);
-}
 
 // ==================== Initialization ====================
 void comms_init(void)
 {
-    usb_rx_queue = osMessageQueueNew(16, sizeof(usb_rx_packet_t), NULL);
+	usb_rx_queue = osMessageQueueNew(10, sizeof(usb_packet_ptr_t), NULL);
 
-    const osMutexAttr_t mutex_attrs = {
-        .name = "comms_mutex",
-        .attr_bits = osMutexRecursive | osMutexPrioInherit,
-    };
+
 
     const osThreadAttr_t comms_task_attrs = {
         .name = "comms_task",
@@ -151,12 +143,12 @@ void comms_init(void)
 // ==================== Communication Task ====================
 void comms_task(void *argument)
 {
-    
+    usb_packet_ptr_t packet;
     for (;;)
     {
-        if (osMessageQueueGet(usb_rx_queue, &rx_packet, NULL, osWaitForever) == osOK)
+        if (osMessageQueueGet(usb_rx_queue, &packet, NULL, osWaitForever) == osOK)
         {
-            process_command(rx_packet.data, rx_packet.len);
+            process_command(packet.data, packet.len);
         }
     }
 }
@@ -169,25 +161,25 @@ bool process_plain_command(uint8_t *cmd, uint16_t size)
 	{
 	case TS_COMMAND_F:
 	#ifndef TS_USE_OLD_PROTOCOL
-		send_response((uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
+		send_response(0, (uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
 		return true;
 	#endif
 		break;
 	case TS_HELLO_COMMAND:
-		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+		send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
 		return true;
 		break;
 	case TS_QUERY_COMMAND:
-		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+		send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
 		return true;
 		break;
 	case TS_TEST_COMMS_COMMAND:
-		send_response((uint8_t *)0xFF, 1, TS_PLAIN);
+		send_response(0, (uint8_t *)0xFF, 1, TS_PLAIN);
 		return true;
 		break;
 	case TS_CAN_ID_COMMAND:
 
-		send_response((uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
+		send_response(0, (uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
 		return true;
 		break;
 
@@ -226,29 +218,29 @@ void process_command(uint8_t *cmd, uint16_t size)
 	switch (command)
 	{
 	case TS_TEST_COMMS_COMMAND:
-		send_response((uint8_t *)0xFF, 1, TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t *)0xFF, 1, TS_CRC);
 		return;
 		break;
 
 	case TS_COMMAND_F:
 	#ifndef TS_USE_OLD_PROTOCOL
-		send_response((uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL)  - 1, TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL)  - 1, TS_CRC);
 	#endif
 		return;
 		break;
 
 	case TS_CAN_ID_COMMAND:
-		send_response((uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
 		return;
 		break;
 
 	case TS_QUERY_COMMAND:
-		send_response((uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
 		return;
 		break;
 
 	case TS_HELLO_COMMAND:
-		send_response((uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
 		return;
 		break;
 	case TS_SERIAL_INFO_COMMAND:
@@ -256,12 +248,12 @@ void process_command(uint8_t *cmd, uint16_t size)
 		response[0] = 2; // serial version
 		*(uint16_t*)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
 		*(uint16_t*)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
-		send_response((uint8_t*)response, sizeof(response), TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t*)response, sizeof(response), TS_CRC);
 		return;
 		break;
 
 	case TS_OUTPUT_COMMAND:
-		send_response((uint8_t*)&output_channels, sizeof(output_channels), TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t*)&output_channels, sizeof(output_channels), TS_CRC);
 		return;
 		break;
 	case TS_READ_COMMAND:
@@ -273,7 +265,7 @@ void process_command(uint8_t *cmd, uint16_t size)
 		break;
 	case TS_CRC_CHECK_COMMAND:
 		uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
-		send_response((uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
+		send_response(TS_RESPONSE_OK, (uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
 		return;
 		break;
 
@@ -282,7 +274,8 @@ void process_command(uint8_t *cmd, uint16_t size)
 		uint16_t page = 0;
 		uint16_t offset = *(uint16_t*)&cmd[3];
 		uint16_t size = *(uint16_t*)&cmd[5];
-		memcpy(calibration_values.data, cmd + 6, size);
+		memcpy(calibration_values.data + offset, &cmd[7], size);
+		send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
 		return;
 		break;
 	}
@@ -291,12 +284,20 @@ void process_command(uint8_t *cmd, uint16_t size)
 		uint16_t page = 0;
 		uint16_t offset = *(uint16_t*)&cmd[3];
 		uint16_t size = *(uint16_t*)&cmd[5];
-		memcpy(calibration_values.data, cmd + 6, size);
+		memcpy(calibration_values.data + offset, &cmd[7], size);
+		send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
 		return;
 		break;
 	}
 
-	
+	case TS_BURN_COMMAND:
+
+
+		// handle burn command and if it was ok, then send ok status
+
+		send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
+		return;
+		break;
 	default:
 		break;
 	}
@@ -315,7 +316,7 @@ void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count)
 		return;
 	}
 	
-	send_response((uint8_t*)&calibration_values.data + offset, count, TS_CRC);
+	send_response(TS_RESPONSE_OK, (uint8_t*)&calibration_values.data + offset, count, TS_CRC);
 }
 
 void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count)
