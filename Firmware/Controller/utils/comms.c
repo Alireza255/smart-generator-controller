@@ -52,8 +52,8 @@ uint8_t rx_buffer[TS_BLOCKING_FACTOR + 30];
  */
 void send_response(uint8_t flag, uint8_t *data, size_t size, comms_response_format_t mode);
 void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size);
-bool process_plain_command(uint8_t *cmd, uint16_t size);
-void process_command(uint8_t *cmd, uint16_t size);
+bool process_plain_command(uint8_t *request, uint16_t size);
+void process_command(uint8_t *request, uint16_t size);
 void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count);
 void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count);
 
@@ -154,157 +154,151 @@ void comms_task(void *argument)
 }
 
 // ==================== Command Processing ====================
-bool process_plain_command(uint8_t *cmd, uint16_t size)
+bool process_plain_command(uint8_t *request, uint16_t size)
 {
-    uint8_t first_byte = cmd[0];
-	switch (first_byte)
-	{
-	case TS_COMMAND_F:
-	#ifndef TS_USE_OLD_PROTOCOL
-		send_response(0, (uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
-		return true;
-	#endif
-		break;
-	case TS_HELLO_COMMAND:
-		send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
-		return true;
-		break;
-	case TS_QUERY_COMMAND:
-		send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
-		return true;
-		break;
-	case TS_TEST_COMMS_COMMAND:
-		send_response(0, (uint8_t *)0xFF, 1, TS_PLAIN);
-		return true;
-		break;
-	case TS_CAN_ID_COMMAND:
+    uint8_t first_byte = request[0];
+    switch (first_byte)
+    {
+    case TS_COMMAND_F:
+    #ifndef TS_USE_OLD_PROTOCOL
+        send_response(0, (uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
+        return true;
+    #endif
+        break;
+    case TS_HELLO_COMMAND:
+        send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+        return true;
+        break;
+    case TS_QUERY_COMMAND:
+        send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+        return true;
+        break;
+    case TS_TEST_COMMS_COMMAND:
+        send_response(0, (uint8_t *)0xFF, 1, TS_PLAIN);
+        return true;
+        break;
+    case TS_CAN_ID_COMMAND:
+        send_response(0, (uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
+        return true;
+        break;
 
-		send_response(0, (uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
-		return true;
-		break;
-
-	default:
-		break;
-	}
-		// This wasn't a valid command
-		return false;
-	
+    default:
+        break;
+    }
+        // This wasn't a valid command
+        return false;
+    
 }
 
-void process_command(uint8_t *cmd, uint16_t size)
+void process_command(uint8_t *request, uint16_t size)
 {
-    if (process_plain_command(cmd, size))
+    if (process_plain_command(request, size))
     {
         return;
     }
-	uint16_t packet_size = 0;
-	uint32_t packet_crc = 0;
-	uint32_t calculated_packet_crc = 0;
-	bool is_packet_valid = false;
-	if (size > 5)
-	{
-		packet_size = swap_endian_uint16(*(uint16_t*)cmd);
-		packet_crc = swap_endian_uint32(*(uint32_t*)cmd[size - 1 - TS_PACKET_CRC_SIZE]);
-		calculated_packet_crc = crc32_inc(0, (void*)(cmd + TS_PACKET_PREFIX_SIZE), size - TS_PACKET_PREFIX_SIZE - TS_PACKET_CRC_SIZE );
+    uint16_t packet_size = 0;
+    uint32_t packet_crc = 0;
+    uint32_t calculated_packet_crc = 0;
+    bool is_packet_valid = false;
+    if (size > 5)
+    {
+        packet_size = swap_endian_uint16(*(uint16_t *)request);
+        packet_crc = swap_endian_uint32(*(uint32_t *)request[size - 1 - TS_PACKET_CRC_SIZE]);
+        calculated_packet_crc = crc32_inc(0, (void *)(request + TS_PACKET_PREFIX_SIZE), size - TS_PACKET_PREFIX_SIZE - TS_PACKET_CRC_SIZE);
+    }
+    if (calculated_packet_crc == packet_crc)
+    {
+        is_packet_valid = true;
+    }
 
-	}
-	if (calculated_packet_crc == packet_crc)
-	{
-		is_packet_valid = true;
-	}
-	
-	uint8_t command = cmd[2];
+    uint8_t command = request[2];
 
-	switch (command)
-	{
-	case TS_TEST_COMMS_COMMAND:
-		send_response(TS_RESPONSE_OK, (uint8_t *)0xFF, 1, TS_CRC);
-		return;
-		break;
+    switch (command)
+    {
+    case TS_TEST_COMMS_COMMAND:
+        send_response(TS_RESPONSE_OK, (uint8_t *)0xFF, 1, TS_CRC);
+        return;
+        break;
 
-	case TS_COMMAND_F:
-	#ifndef TS_USE_OLD_PROTOCOL
-		send_response(TS_RESPONSE_OK, (uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL)  - 1, TS_CRC);
-	#endif
-		return;
-		break;
+    case TS_COMMAND_F:
+#ifndef TS_USE_OLD_PROTOCOL
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_CRC);
+#endif
+        return;
+        break;
 
-	case TS_CAN_ID_COMMAND:
-		send_response(TS_RESPONSE_OK, (uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
-		return;
-		break;
+    case TS_CAN_ID_COMMAND:
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
+        return;
+        break;
 
-	case TS_QUERY_COMMAND:
-		send_response(TS_RESPONSE_OK, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
-		return;
-		break;
+    case TS_QUERY_COMMAND:
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
+        return;
+        break;
 
-	case TS_HELLO_COMMAND:
-		send_response(TS_RESPONSE_OK, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
-		return;
-		break;
-	case TS_SERIAL_INFO_COMMAND:
-		uint8_t response[5];
-		response[0] = 2; // serial version
-		*(uint16_t*)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
-		*(uint16_t*)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
-		send_response(TS_RESPONSE_OK, (uint8_t*)response, sizeof(response), TS_CRC);
-		return;
-		break;
+    case TS_HELLO_COMMAND:
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
+        return;
+        break;
+    case TS_SERIAL_INFO_COMMAND:
+        uint8_t response[5];
+        response[0] = 2; // serial version
+        *(uint16_t *)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
+        *(uint16_t *)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
+        send_response(TS_RESPONSE_OK, (uint8_t *)response, sizeof(response), TS_CRC);
+        return;
+        break;
 
-	case TS_OUTPUT_COMMAND:
-		send_response(TS_RESPONSE_OK, (uint8_t*)&output_channels, sizeof(output_channels), TS_CRC);
-		return;
-		break;
-	case TS_READ_COMMAND:
-		uint16_t page = 0;
-		uint16_t offset = *(uint16_t*)&cmd[3];
-		uint16_t size = *(uint16_t*)&cmd[5];
-		handle_page_read_command(page, offset, size);
-		return;
-		break;
-	case TS_CRC_CHECK_COMMAND:
-		uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
-		send_response(TS_RESPONSE_OK, (uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
-		return;
-		break;
+    case TS_OUTPUT_COMMAND:
+        send_response(TS_RESPONSE_OK, (uint8_t *)&output_channels, sizeof(output_channels), TS_CRC);
+        return;
+        break;
+    case TS_READ_COMMAND:
+        uint16_t page = 0;
+        uint16_t offset = *(uint16_t *)&request[3];
+        uint16_t size = *(uint16_t *)&request[5];
+        handle_page_read_command(page, offset, size);
+        return;
+        break;
+    case TS_CRC_CHECK_COMMAND:
+        uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
+        send_response(TS_RESPONSE_OK, (uint8_t *)&page_crc, sizeof(page_crc), TS_CRC);
+        return;
+        break;
 
-	case TS_CHUNK_WRITE_COMMAND:
-	{
-		uint16_t page = 0;
-		uint16_t offset = *(uint16_t*)&cmd[3];
-		uint16_t size = *(uint16_t*)&cmd[5];
-		memcpy(calibration_values.data + offset, &cmd[7], size);
-		send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
-		return;
-		break;
-	}
-	case TS_SINGLE_WRITE_COMMAND:
-	{
-		uint16_t page = 0;
-		uint16_t offset = *(uint16_t*)&cmd[3];
-		uint16_t size = *(uint16_t*)&cmd[5];
-		memcpy(calibration_values.data + offset, &cmd[7], size);
-		send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
-		return;
-		break;
-	}
+    case TS_CHUNK_WRITE_COMMAND:
+    {
+        uint16_t page = 0;
+        uint16_t offset = *(uint16_t *)&request[3];
+        uint16_t size = *(uint16_t *)&request[5];
+        memcpy(calibration_values.data + offset, &request[7], size);
+        send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
+        return;
+        break;
+    }
+    case TS_SINGLE_WRITE_COMMAND:
+    {
+        uint16_t page = 0;
+        uint16_t offset = *(uint16_t *)&request[3];
+        uint16_t size = *(uint16_t *)&request[5];
+        memcpy(calibration_values.data + offset, &request[7], size);
+        send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
+        return;
+        break;
+    }
 
-	case TS_BURN_COMMAND:
-
-
-		// handle burn command and if it was ok, then send ok status
-
-		send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
-		return;
-		break;
-	default:
-		break;
-	}
-	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-
-	
+    case TS_BURN_COMMAND:
+        // handle burn command and if it was ok, then send ok status
+        send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
+        return;
+        break;
+    default:
+        break;
+    }
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
+
 void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count)
 {
 	if (page > 1)

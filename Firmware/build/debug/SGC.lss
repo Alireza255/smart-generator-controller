@@ -29,9 +29,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .comment      00000039  00000000  00000000  0000e1c4  2**0
                   CONTENTS, READONLY
- 13 .debug_info   0003a692  00000000  00000000  0000e1fd  2**0
+ 13 .debug_info   0003a693  00000000  00000000  0000e1fd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00008d4c  00000000  00000000  0004888f  2**0
+ 14 .debug_abbrev 00008d4b  00000000  00000000  00048890  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_loclists 0001a95c  00000000  00000000  000515db  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -2651,9 +2651,9 @@ inline uint32_t swap_endian_uint32(uint32_t x)
 0800148c <process_plain_command>:
 {
  800148c:	b508      	push	{r3, lr}
-    uint8_t first_byte = cmd[0];
+    uint8_t first_byte = request[0];
  800148e:	7803      	ldrb	r3, [r0, #0]
-	switch (first_byte)
+    switch (first_byte)
  8001490:	3b43      	subs	r3, #67	@ 0x43
  8001492:	2b10      	cmp	r3, #16
  8001494:	d832      	bhi.n	80014fc <process_plain_command+0x70>
@@ -2665,52 +2665,52 @@ inline uint32_t swap_endian_uint32(uint32_t x)
  80014a8:	3119      	.short	0x3119
  80014aa:	11          	.byte	0x11
  80014ab:	00          	.byte	0x00
-		send_response(0, (uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
+        send_response(0, (uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
  80014ac:	2300      	movs	r3, #0
  80014ae:	2203      	movs	r2, #3
  80014b0:	4913      	ldr	r1, [pc, #76]	@ (8001500 <process_plain_command+0x74>)
  80014b2:	4618      	mov	r0, r3
  80014b4:	f7ff ff96 	bl	80013e4 <send_response>
-		return true;
+        return true;
  80014b8:	2001      	movs	r0, #1
  80014ba:	e020      	b.n	80014fe <process_plain_command+0x72>
-		send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+        send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
  80014bc:	2300      	movs	r3, #0
  80014be:	2213      	movs	r2, #19
  80014c0:	4910      	ldr	r1, [pc, #64]	@ (8001504 <process_plain_command+0x78>)
  80014c2:	4618      	mov	r0, r3
  80014c4:	f7ff ff8e 	bl	80013e4 <send_response>
-		return true;
+        return true;
  80014c8:	2001      	movs	r0, #1
  80014ca:	e018      	b.n	80014fe <process_plain_command+0x72>
-		send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+        send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
  80014cc:	2300      	movs	r3, #0
  80014ce:	2213      	movs	r2, #19
  80014d0:	490c      	ldr	r1, [pc, #48]	@ (8001504 <process_plain_command+0x78>)
  80014d2:	4618      	mov	r0, r3
  80014d4:	f7ff ff86 	bl	80013e4 <send_response>
-		return true;
+        return true;
  80014d8:	2001      	movs	r0, #1
  80014da:	e010      	b.n	80014fe <process_plain_command+0x72>
-		send_response(0, (uint8_t *)0xFF, 1, TS_PLAIN);
+        send_response(0, (uint8_t *)0xFF, 1, TS_PLAIN);
  80014dc:	2300      	movs	r3, #0
  80014de:	2201      	movs	r2, #1
  80014e0:	21ff      	movs	r1, #255	@ 0xff
  80014e2:	4618      	mov	r0, r3
  80014e4:	f7ff ff7e 	bl	80013e4 <send_response>
-		return true;
+        return true;
  80014e8:	2001      	movs	r0, #1
  80014ea:	e008      	b.n	80014fe <process_plain_command+0x72>
-		send_response(0, (uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
+        send_response(0, (uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
  80014ec:	2300      	movs	r3, #0
  80014ee:	461a      	mov	r2, r3
  80014f0:	4619      	mov	r1, r3
  80014f2:	4618      	mov	r0, r3
  80014f4:	f7ff ff76 	bl	80013e4 <send_response>
-		return true;
+        return true;
  80014f8:	2001      	movs	r0, #1
  80014fa:	e000      	b.n	80014fe <process_plain_command+0x72>
-	switch (first_byte)
+    switch (first_byte)
  80014fc:	2000      	movs	r0, #0
 }
  80014fe:	bd08      	pop	{r3, pc}
@@ -2747,16 +2747,16 @@ inline uint32_t swap_endian_uint32(uint32_t x)
  8001532:	b083      	sub	sp, #12
  8001534:	4605      	mov	r5, r0
  8001536:	460c      	mov	r4, r1
-    if (process_plain_command(cmd, size))
+    if (process_plain_command(request, size))
  8001538:	f7ff ffa8 	bl	800148c <process_plain_command>
  800153c:	2800      	cmp	r0, #0
  800153e:	f040 80a4 	bne.w	800168a <process_command+0x15a>
-	if (size > 5)
+    if (size > 5)
  8001542:	2c05      	cmp	r4, #5
  8001544:	d821      	bhi.n	800158a <process_command+0x5a>
-	uint8_t command = cmd[2];
+    uint8_t command = request[2];
  8001546:	78ab      	ldrb	r3, [r5, #2]
-	switch (command)
+    switch (command)
  8001548:	3b42      	subs	r3, #66	@ 0x42
  800154a:	2b35      	cmp	r3, #53	@ 0x35
  800154c:	f200 8098 	bhi.w	8001680 <process_command+0x150>
@@ -2775,137 +2775,137 @@ inline uint32_t swap_endian_uint32(uint32_t x)
  8001580:	96969696 	.word	0x96969696
  8001584:	96969659 	.word	0x96969659
  8001588:	7f96      	.short	0x7f96
-		calculated_packet_crc = crc32_inc(0, (void*)(cmd + TS_PACKET_PREFIX_SIZE), size - TS_PACKET_PREFIX_SIZE - TS_PACKET_CRC_SIZE );
+        calculated_packet_crc = crc32_inc(0, (void *)(request + TS_PACKET_PREFIX_SIZE), size - TS_PACKET_PREFIX_SIZE - TS_PACKET_CRC_SIZE);
  800158a:	1fa2      	subs	r2, r4, #6
  800158c:	1ca9      	adds	r1, r5, #2
  800158e:	f009 f9d5 	bl	800a93c <crc32_inc>
  8001592:	e7d8      	b.n	8001546 <process_command+0x16>
-		send_response(TS_RESPONSE_OK, (uint8_t *)0xFF, 1, TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)0xFF, 1, TS_CRC);
  8001594:	2301      	movs	r3, #1
  8001596:	461a      	mov	r2, r3
  8001598:	21ff      	movs	r1, #255	@ 0xff
  800159a:	2000      	movs	r0, #0
  800159c:	f7ff ff22 	bl	80013e4 <send_response>
-		return;
+        return;
  80015a0:	e073      	b.n	800168a <process_command+0x15a>
-		send_response(TS_RESPONSE_OK, (uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL)  - 1, TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_CRC);
  80015a2:	2301      	movs	r3, #1
  80015a4:	2203      	movs	r2, #3
  80015a6:	493a      	ldr	r1, [pc, #232]	@ (8001690 <process_command+0x160>)
  80015a8:	2000      	movs	r0, #0
  80015aa:	f7ff ff1b 	bl	80013e4 <send_response>
-		return;
+        return;
  80015ae:	e06c      	b.n	800168a <process_command+0x15a>
-		send_response(TS_RESPONSE_OK, (uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID), TS_CRC);
  80015b0:	2301      	movs	r3, #1
  80015b2:	461a      	mov	r2, r3
  80015b4:	2100      	movs	r1, #0
  80015b6:	4608      	mov	r0, r1
  80015b8:	f7ff ff14 	bl	80013e4 <send_response>
-		return;
+        return;
  80015bc:	e065      	b.n	800168a <process_command+0x15a>
-		send_response(TS_RESPONSE_OK, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_CRC);
  80015be:	2301      	movs	r3, #1
  80015c0:	2213      	movs	r2, #19
  80015c2:	4934      	ldr	r1, [pc, #208]	@ (8001694 <process_command+0x164>)
  80015c4:	2000      	movs	r0, #0
  80015c6:	f7ff ff0d 	bl	80013e4 <send_response>
-		return;
+        return;
  80015ca:	e05e      	b.n	800168a <process_command+0x15a>
-		send_response(TS_RESPONSE_OK, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE), TS_CRC);
  80015cc:	2301      	movs	r3, #1
  80015ce:	2214      	movs	r2, #20
  80015d0:	4930      	ldr	r1, [pc, #192]	@ (8001694 <process_command+0x164>)
  80015d2:	2000      	movs	r0, #0
  80015d4:	f7ff ff06 	bl	80013e4 <send_response>
-		return;
+        return;
  80015d8:	e057      	b.n	800168a <process_command+0x15a>
-		response[0] = 2; // serial version
+        response[0] = 2; // serial version
  80015da:	2302      	movs	r3, #2
  80015dc:	f88d 3000 	strb.w	r3, [sp]
-		*(uint16_t*)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
+        *(uint16_t *)&response[1] = swap_endian_uint16(TS_TABLE_BLOCKING_FACTOR);
  80015e0:	2304      	movs	r3, #4
  80015e2:	f8ad 3001 	strh.w	r3, [sp, #1]
-		*(uint16_t*)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
+        *(uint16_t *)&response[3] = swap_endian_uint16(TS_BLOCKING_FACTOR);
  80015e6:	f8ad 3003 	strh.w	r3, [sp, #3]
-		send_response(TS_RESPONSE_OK, (uint8_t*)response, sizeof(response), TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)response, sizeof(response), TS_CRC);
  80015ea:	2301      	movs	r3, #1
  80015ec:	2205      	movs	r2, #5
  80015ee:	4669      	mov	r1, sp
  80015f0:	2000      	movs	r0, #0
  80015f2:	f7ff fef7 	bl	80013e4 <send_response>
-		return;
+        return;
  80015f6:	e048      	b.n	800168a <process_command+0x15a>
-		send_response(TS_RESPONSE_OK, (uint8_t*)&output_channels, sizeof(output_channels), TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)&output_channels, sizeof(output_channels), TS_CRC);
  80015f8:	2301      	movs	r3, #1
  80015fa:	2265      	movs	r2, #101	@ 0x65
  80015fc:	4926      	ldr	r1, [pc, #152]	@ (8001698 <process_command+0x168>)
  80015fe:	2000      	movs	r0, #0
  8001600:	f7ff fef0 	bl	80013e4 <send_response>
-		return;
+        return;
  8001604:	e041      	b.n	800168a <process_command+0x15a>
-		handle_page_read_command(page, offset, size);
+        handle_page_read_command(page, offset, size);
  8001606:	f8b5 2005 	ldrh.w	r2, [r5, #5]
  800160a:	f8b5 1003 	ldrh.w	r1, [r5, #3]
  800160e:	2000      	movs	r0, #0
  8001610:	f7ff ff7a 	bl	8001508 <handle_page_read_command>
-		return;
+        return;
  8001614:	e039      	b.n	800168a <process_command+0x15a>
-		uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
+        uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
  8001616:	f640 1238 	movw	r2, #2360	@ 0x938
  800161a:	4920      	ldr	r1, [pc, #128]	@ (800169c <process_command+0x16c>)
  800161c:	2000      	movs	r0, #0
  800161e:	f009 f98d 	bl	800a93c <crc32_inc>
  8001622:	9000      	str	r0, [sp, #0]
-		send_response(TS_RESPONSE_OK, (uint8_t*)&page_crc, sizeof(page_crc), TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)&page_crc, sizeof(page_crc), TS_CRC);
  8001624:	2301      	movs	r3, #1
  8001626:	2204      	movs	r2, #4
  8001628:	4669      	mov	r1, sp
  800162a:	2000      	movs	r0, #0
  800162c:	f7ff feda 	bl	80013e4 <send_response>
-		return;
+        return;
  8001630:	e02b      	b.n	800168a <process_command+0x15a>
-		uint16_t offset = *(uint16_t*)&cmd[3];
+        uint16_t offset = *(uint16_t *)&request[3];
  8001632:	f8b5 3003 	ldrh.w	r3, [r5, #3]
-		memcpy(calibration_values.data + offset, &cmd[7], size);
+        memcpy(calibration_values.data + offset, &request[7], size);
  8001636:	f8b5 2005 	ldrh.w	r2, [r5, #5]
  800163a:	1de9      	adds	r1, r5, #7
  800163c:	4817      	ldr	r0, [pc, #92]	@ (800169c <process_command+0x16c>)
  800163e:	4418      	add	r0, r3
  8001640:	f009 fa40 	bl	800aac4 <memcpy>
-		send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
+        send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
  8001644:	2301      	movs	r3, #1
  8001646:	2200      	movs	r2, #0
  8001648:	4611      	mov	r1, r2
  800164a:	4610      	mov	r0, r2
  800164c:	f7ff feca 	bl	80013e4 <send_response>
-		return;
+        return;
  8001650:	e01b      	b.n	800168a <process_command+0x15a>
-		uint16_t offset = *(uint16_t*)&cmd[3];
+        uint16_t offset = *(uint16_t *)&request[3];
  8001652:	f8b5 3003 	ldrh.w	r3, [r5, #3]
-		memcpy(calibration_values.data + offset, &cmd[7], size);
+        memcpy(calibration_values.data + offset, &request[7], size);
  8001656:	f8b5 2005 	ldrh.w	r2, [r5, #5]
  800165a:	1de9      	adds	r1, r5, #7
  800165c:	480f      	ldr	r0, [pc, #60]	@ (800169c <process_command+0x16c>)
  800165e:	4418      	add	r0, r3
  8001660:	f009 fa30 	bl	800aac4 <memcpy>
-		send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
+        send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
  8001664:	2301      	movs	r3, #1
  8001666:	2200      	movs	r2, #0
  8001668:	4611      	mov	r1, r2
  800166a:	4610      	mov	r0, r2
  800166c:	f7ff feba 	bl	80013e4 <send_response>
-		return;
+        return;
  8001670:	e00b      	b.n	800168a <process_command+0x15a>
-		send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
+        send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
  8001672:	2301      	movs	r3, #1
  8001674:	2200      	movs	r2, #0
  8001676:	4611      	mov	r1, r2
  8001678:	2004      	movs	r0, #4
  800167a:	f7ff feb3 	bl	80013e4 <send_response>
-		return;
+        return;
  800167e:	e004      	b.n	800168a <process_command+0x15a>
-	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
  8001680:	f44f 5100 	mov.w	r1, #8192	@ 0x2000
  8001684:	4806      	ldr	r0, [pc, #24]	@ (80016a0 <process_command+0x170>)
  8001686:	f003 fa50 	bl	8004b2a <HAL_GPIO_TogglePin>
