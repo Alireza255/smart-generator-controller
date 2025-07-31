@@ -22,6 +22,7 @@
 #include "adc.h"
 #include "crc.h"
 #include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usb_device.h"
 #include "gpio.h"
@@ -113,6 +114,7 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_CRC_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
    
   /* USER CODE END 2 */

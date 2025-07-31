@@ -95,6 +95,9 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
+extern uint8_t rx_buffer[TS_BLOCKING_FACTOR + 30];  // Make it visible here
+static uint32_t rx_offset = 0;  // Tracks position in buffer
+extern usb_rx_packet_t rx_packet;
 
 /* USER CODE END PRIVATE_VARIABLES */
 
@@ -259,26 +262,32 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   * @param  Len: Number of data received (in bytes)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
-static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
-{
-  /* USER CODE BEGIN 6 */
-  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
-  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-      // Prepare the packet to send to the FreeRTOS task
-    usb_rx_packet_t rx_packet;
-    if (*Len > 0 && *Len <= USB_RX_PACKET_MAX_SIZE) {
-        memcpy(rx_packet.data, Buf, *Len); // Copy data from USB buffer
-        rx_packet.len = *Len;
-
-        // Put the packet into the message queue.
-        // Use '0' for the timeout because this is an ISR. We don't want to block.
-        // If the queue is full, the packet will be dropped, which for this basic
-        // handshake is acceptable for now. For a full system, you'd handle this.
-        osMessageQueuePut(usb_rx_queue_handle, &rx_packet, 5, 0);
-
+static int8_t CDC_Receive_FS(uint8_t *Buf, uint32_t *Len) {
+    /* USER CODE BEGIN 6 */
+    // Prevent overflow
+    if ((rx_offset + *Len) > sizeof(rx_buffer)) {
+        rx_offset = 0;  // recover safely
     }
-  return (USBD_OK);
-  /* USER CODE END 6 */
+
+    // Copy into rx_buffer
+    memcpy(&rx_buffer[rx_offset], Buf, *Len);
+    rx_offset += *Len;
+
+    // Short packet means end of message
+    if (*Len < CDC_DATA_FS_MAX_PACKET_SIZE) {
+        usb_packet_ptr_t packet = {
+            .data = rx_buffer,
+            .len = rx_offset
+        };
+
+        osMessageQueuePut(usb_rx_queue, &packet, 0, 0);
+        rx_offset = 0;  // ready for next message
+    }
+
+    USBD_CDC_SetRxBuffer(&hUsbDeviceFS, Buf);
+    USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+    return USBD_OK;
+    /* USER CODE END 6 */
 }
 
 /**

@@ -22,6 +22,9 @@ void dc_motor_init(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_c
     motor->timer = timer;
     motor->timer_channel_output_1 = timer_channel_output_1;
     motor->timer_channel_output_2 = timer_channel_output_2;
+	motor->timer_channel_output_3 = 0;
+    motor->timer_channel_output_4 = 0;
+	
 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
 	motor->status = MOTOR_STATE_NORMAL;
 
@@ -38,7 +41,42 @@ void dc_motor_init(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_c
 	motor->current_duty_cycle = 0;
 }
 
+void dc_motor_init_simple_Hbridge(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, uint32_t timer_channel_output_3, uint32_t timer_channel_output_4, pwm_freq_t frequency)
+{
+    if (motor == NULL || timer == NULL)
+    {
+        return;
+        /**
+         * @todo throw an error
+         */
+    }
 
+    motor->timer = timer;
+    motor->timer_channel_output_1 = timer_channel_output_1;
+    motor->timer_channel_output_2 = timer_channel_output_2;
+	motor->timer_channel_output_3 = timer_channel_output_3;
+    motor->timer_channel_output_4 = timer_channel_output_4;
+	motor->current_direction = MOTOR_DIRECTION_FORWARD;
+	motor->status = MOTOR_STATE_NORMAL;
+
+	/**
+	 * Enable the timer using HAL
+	 */
+	HAL_TIM_Base_Start((TIM_HandleTypeDef *)motor->timer);
+	dc_motor_set_timer_freq(motor, frequency);
+	// Set initial duty cycle to 0 for both channels
+	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
+	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+	
+	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
+	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3);
+	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4);
+
+	motor->current_duty_cycle = 0;
+}
 /**
  * @brief sets the pwm duty cycle of the motor
  * @param timer pointer to timer handle - the timer connected to the motor
@@ -65,16 +103,29 @@ void dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycl
 	switch (dir)
 	{
 	case MOTOR_DIRECTION_FORWARD:
-		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_value);
+		// Check to see if we are using a simple H bridge
+		if (motor->timer_channel_output_3 != 0 && motor->timer_channel_output_4 != 0)
+		{
+			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TIM_GET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer));
+		}
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_value);
 		break;
 	case MOTOR_DIRECTION_REVERSE:
+		if (motor->timer_channel_output_3 != 0 && motor->timer_channel_output_4 != 0)
+		{
+			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TIM_GET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer));
+		}
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_value);
 		break;
 	default:
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
 		/**
 		 * @todo throw an error
 		 */

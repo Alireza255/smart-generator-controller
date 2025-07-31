@@ -5,7 +5,7 @@
 
 #include "timing.h"
 #include "types.h"
-#include "eeprom.h"
+#include "comms.h"
 #include "trigger.h"
 #include "dc_motors.h"
 #include "tables.h"
@@ -22,6 +22,7 @@
 #include "comms.h"
 <<<<<<< Updated upstream
 #include "fan_control.h"
+//#include "eeprom.h"
 
 typedef struct
 {
@@ -47,6 +48,7 @@ typedef struct
 
     osEventFlagsId_t flags;
 
+    percent_t tps1;
     pressure_t map;
     temperature_t clt;
     temperature_t iat;
@@ -115,7 +117,9 @@ typedef struct
 
 } configuration_t;
 
+
 extern configuration_t configuration;
+
 
 void controller_init_with_defaults();
 =======
@@ -128,5 +132,7 @@ void controller_init(osEventFlagsId_t engine_event_flags);
 void controller_load_configuration();
 
 void controller_save_configuration();
+
+void controller_update_stats(void *arg);
 
 #endif // CONTROLLER_H

@@ -16,6 +16,8 @@
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
 
+void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
+
 /**
  * @brief Maps a value from one range to another.
  * 
@@ -58,7 +60,18 @@ static inline float mapf(float x, float in_min, float in_max, float out_min, flo
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+// http://en.wikipedia.org/wiki/Endianness
+inline uint16_t swap_endian_uint16(uint16_t x)
+{
+	return ((x << 8) | (x >> 8));
+}
+inline uint32_t swap_endian_uint32(uint32_t x)
+{
+	return (((x >> 24) & 0x000000ff) | ((x <<  8) & 0x00ff0000) |
+			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
+}
 
+void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
 
 #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
 #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
@@ -89,5 +102,23 @@ static inline angle_t degrees_per_microsecond(rpm_t rpm)
     return (angle_t)(rpm * 360.0f) / (60.0f * 1e6f);
 }
 
+/*----------------------------------------------------------------------------*\
+ *  NAME:
+ *     Crc32_ComputeBuf() - computes the CRC-32 value of a memory buffer
+ *  DESCRIPTION:
+ *     Computes or accumulates the CRC-32 value for a memory buffer.
+ *     The 'inCrc32' gives a previously accumulated CRC-32 value to allow
+ *     a CRC to be generated for multiple sequential buffer-fuls of data.
+ *     The 'inCrc32' for the first buffer must be zero.
+ *  ARGUMENTS:
+ *     inCrc32 - accumulated CRC-32 value, must be 0 on first call
+ *     buf     - buffer to compute CRC-32 value for
+ *     bufLen  - number of bytes in buffer
+ *  RETURNS:
+ *     crc32 - computed CRC-32 value
+ *  ERRORS:
+ *     (no errors are possible)
+\*----------------------------------------------------------------------------*/
+uint32_t crc32_inc(uint32_t in_crc32, const void *buf, size_t size);
 
 #endif // UTILS_H

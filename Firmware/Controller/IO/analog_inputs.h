@@ -7,12 +7,20 @@
 #include "cmsis_os2.h"
 
 /**
+ * @brief Analog inputs measurement and (optional) filtering
+ * Here i have decided to use an intresting tactic to deal with noise issues.
+ * It works by sampling the analog inputs not just once every 1mS but many times more.
+ * This is only possible due to the amazing power of stm32 microcontrollers, specifically,
+ * their fast ADC and DMA which can do the conversion and transfer the results to the memory
+ * without the involvment of the CPU.
+ */
+/**
  * @note it is very important that this matches the stm32cubemx configuration
  */
 #define ANALOG_INPUTS_MAX 13
-#define ANALOG_INPUTS_ADC_BITS 12 // or 24 bits
 #define ADC_MAX_VALUE 4095
 #define ADC_REF_VOLTAGE 3.3f
+#define ANALOG_INPUTS_NUMBER_OF_SAMPLES 8
 
 /**
  * @enum analog_input_adc_channel_mapping_e
@@ -56,26 +64,6 @@ typedef enum
 
 
 /**
- * @brief Structure representing the configuration and state of analog inputs.
- * 
- * This structure is used to manage the ADC (Analog-to-Digital Converter) 
- * hardware and store the sampled values for multiple analog input channels.
- */
-typedef struct
-{
-    /**
-     * @brief Array to store raw ADC values for each analog input channel.
-     * 
-     * The size of the array is determined by the macro `ANALOG_INPUTS_MAX`.
-     */
-    #if ANALOG_INPUTS_ADC_BITS == 12
-    uint16_t raw_values[ANALOG_INPUTS_MAX];
-    #elif ANALOG_INPUTS_ADC_BITS == 24
-    uint32_t raw_values[ANALOG_INPUTS_MAX];
-    #endif
-} analog_inputs_t;
-
-/**
  * @brief Initializes the analog inputs module.
  * 
  * This function sets up the ADC peripheral and prepares the analog inputs
@@ -106,11 +94,8 @@ void analog_inputs_start_conversion();
  *                    This index corresponds to the specific channel of the ADC.
  * @return The digital value of the specified analog input.
  */
-#if ANALOG_INPUTS_ADC_BITS == 12
 uint16_t analog_inputs_get_data(analog_input_channel_t input_index);
-#elif ANALOG_INPUTS_ADC_BITS == 24
-uint32_t analog_inputs_get_data(analog_input_channel_t input_index);
-#endif
+
 
 voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index);
 

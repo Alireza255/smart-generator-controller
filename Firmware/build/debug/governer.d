@@ -28,6 +28,8 @@ build/debug/governer.o: controller/algorithm/governer.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
@@ -48,12 +50,11 @@ build/debug/governer.o: controller/algorithm/governer.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/IO/thermistor.h controller/constants.h controller/types.h \
  controller/utils/timing.h controller/controller.h \
- controller/eeprom/eeprom.h controller/engine_cycle/trigger.h \
+ controller/utils/comms.h controller/engine_cycle/trigger.h \
  controller/actuators/dc_motors.h controller/tables.h \
  controller/constants.h controller/engine_cycle/ignition.h \
  controller/IO/thermistor.h Core/Inc/adc.h \
- controller/algorithm/governer.h controller/utils/comms.h \
- controller/actuators/fan_control.h
+ controller/algorithm/governer.h controller/actuators/fan_control.h
 controller/algorithm/governer.h:
 controller/actuators/electronic_throttle.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
@@ -86,6 +87,8 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_crc.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:
+Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
@@ -116,7 +119,7 @@ controller/constants.h:
 controller/types.h:
 controller/utils/timing.h:
 controller/controller.h:
-controller/eeprom/eeprom.h:
+controller/utils/comms.h:
 controller/engine_cycle/trigger.h:
 controller/actuators/dc_motors.h:
 controller/tables.h:
@@ -125,5 +128,4 @@ controller/engine_cycle/ignition.h:
 controller/IO/thermistor.h:
 Core/Inc/adc.h:
 controller/algorithm/governer.h:
-controller/utils/comms.h:
 controller/actuators/fan_control.h:

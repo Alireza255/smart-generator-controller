@@ -33,7 +33,6 @@ typedef struct
     bool initialized;
     trigger_sync_status_t sync_status;
     uint16_t sync_loss_counter;
-
     time_us_t _trigger_filter_time_us;
     time_us_t _tooth_time_us[3]; // the higher the index, the older the sample. 0 is the current tooth time
     time_us_t _current_tooth_gap_us;

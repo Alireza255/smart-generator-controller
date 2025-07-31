@@ -27,11 +27,7 @@ percent_t sensor_tps_get(sensor_tps_t *sensor)
     {
         result = mapf((float)raw_data, (float)sensor->closed_throttle_adc_value, (float)sensor->wide_open_throttle_adc_value, (float)0, (float)100);
     }
-    if (!IS_IN_RANGE(result, (percent_t)0, (percent_t)100))
-    {
-        return SENSOR_TPS_FAIL_SAFE;
-        log_error("tps out of range!");
-    }
+    result = CLAMP(result, (percent_t)0, (percent_t)100);
     return result;
 }
 
@@ -117,7 +113,7 @@ void sensor_iat_init(thermistor_t *sensor, sensor_iat_type_t type)
             sensor_iat = sensor;
             break;
         case SENSOR_IAT_TYPE_TEST:
-            resistor_init(&sensor->resistor, 10000, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_IAT_PIN);
+            resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_IAT_PIN);
             thermistor_conf_t genric_5k =
             {
                 .resistance_1 = 22.263e3f,
@@ -177,7 +173,7 @@ void sensor_clt_init(thermistor_t *sensor, sensor_clt_type_t type)
         sensor_clt = sensor;
         break;
     case SENSOR_CLT_TYPE_TEST:
-        resistor_init(&sensor->resistor, 10000, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_CLT_PIN);
+        resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_CLT_PIN);
         thermistor_conf_t genric_5k =
         {
             .resistance_1 = 22.263e3f,

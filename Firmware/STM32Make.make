@@ -80,6 +80,7 @@ Core/Src/crc.c \
 Core/Src/dma.c \
 Core/Src/freertos.c \
 Core/Src/gpio.c \
+Core/Src/i2c.c \
 Core/Src/main.c \
 Core/Src/stm32f4xx_hal_msp.c \
 Core/Src/stm32f4xx_hal_timebase_tim.c \
@@ -100,6 +101,8 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
@@ -142,7 +145,6 @@ controller/actuators/fan_control.c \
 controller/algorithm/fuel/fuel_math.c \
 controller/algorithm/governer.c \
 controller/controller.c \
-controller/eeprom/eeprom.c \
 controller/engine_cycle/ignition.c \
 controller/engine_cycle/trigger.c \
 controller/tables.c \
@@ -150,7 +152,8 @@ controller/utils/comms.c \
 controller/utils/error_handling.c \
 controller/utils/pid.c \
 controller/utils/timing.c \
-controller/utils/trigger_simulator.c
+controller/utils/trigger_simulator.c \
+controller/utils/utils.c
 
 
 CXX_SOURCES = \
@@ -260,7 +263,6 @@ C_INCLUDES =  \
 -Icontroller/actuators \
 -Icontroller/algorithm \
 -Icontroller/algorithm/fuel \
--Icontroller/eeprom \
 -Icontroller/engine_cycle \
 -Icontroller/utils
 

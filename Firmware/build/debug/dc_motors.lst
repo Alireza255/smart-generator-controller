@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -28,7 +28,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 1
   25              		.thumb_func
   27              	dc_motor_set:
   28              	.LVL0:
-  29              	.LFB221:
+  29              	.LFB222:
    1:controller/actuators/dc_motors.c **** #include "dc_motors.h"
    2:controller/actuators/dc_motors.c **** 
    3:controller/actuators/dc_motors.c **** /**
@@ -53,45 +53,86 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 1
   22:controller/actuators/dc_motors.c ****     motor->timer = timer;
   23:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
   24:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
-  25:controller/actuators/dc_motors.c **** 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
-  26:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
-  27:controller/actuators/dc_motors.c **** 
-  28:controller/actuators/dc_motors.c **** 	/**
-  29:controller/actuators/dc_motors.c **** 	 * Enable the timer using HAL
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 2
+  25:controller/actuators/dc_motors.c **** 	motor->timer_channel_output_3 = 0;
+  26:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = 0;
+  27:controller/actuators/dc_motors.c **** 	
+  28:controller/actuators/dc_motors.c **** 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
+  29:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 2
 
 
-  30:controller/actuators/dc_motors.c **** 	 */
-  31:controller/actuators/dc_motors.c **** 	HAL_TIM_Base_Start((TIM_HandleTypeDef *)motor->timer);
-  32:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
-  33:controller/actuators/dc_motors.c **** 	// Set initial duty cycle to 0 for both channels
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
-  35:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
-  36:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
-  37:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
-  38:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
-  39:controller/actuators/dc_motors.c **** }
-  40:controller/actuators/dc_motors.c **** 
-  41:controller/actuators/dc_motors.c **** 
-  42:controller/actuators/dc_motors.c **** /**
-  43:controller/actuators/dc_motors.c ****  * @brief sets the pwm duty cycle of the motor
-  44:controller/actuators/dc_motors.c ****  * @param timer pointer to timer handle - the timer connected to the motor
-  45:controller/actuators/dc_motors.c ****  * @param dir the desired direction of the motor
-  46:controller/actuators/dc_motors.c ****  * @param duty_cycle a number between 0 and 255 not a percentage
-  47:controller/actuators/dc_motors.c ****  */
-  48:controller/actuators/dc_motors.c **** void dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycle)
-  49:controller/actuators/dc_motors.c **** {
-  30              		.loc 1 49 1 view -0
+  30:controller/actuators/dc_motors.c **** 
+  31:controller/actuators/dc_motors.c **** 	/**
+  32:controller/actuators/dc_motors.c **** 	 * Enable the timer using HAL
+  33:controller/actuators/dc_motors.c **** 	 */
+  34:controller/actuators/dc_motors.c **** 	HAL_TIM_Base_Start((TIM_HandleTypeDef *)motor->timer);
+  35:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
+  36:controller/actuators/dc_motors.c **** 	// Set initial duty cycle to 0 for both channels
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
+  38:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+  39:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+  40:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
+  41:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+  42:controller/actuators/dc_motors.c **** }
+  43:controller/actuators/dc_motors.c **** 
+  44:controller/actuators/dc_motors.c **** void dc_motor_init_simple_Hbridge(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_chann
+  45:controller/actuators/dc_motors.c **** {
+  46:controller/actuators/dc_motors.c ****     if (motor == NULL || timer == NULL)
+  47:controller/actuators/dc_motors.c ****     {
+  48:controller/actuators/dc_motors.c ****         return;
+  49:controller/actuators/dc_motors.c ****         /**
+  50:controller/actuators/dc_motors.c ****          * @todo throw an error
+  51:controller/actuators/dc_motors.c ****          */
+  52:controller/actuators/dc_motors.c ****     }
+  53:controller/actuators/dc_motors.c **** 
+  54:controller/actuators/dc_motors.c ****     motor->timer = timer;
+  55:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
+  56:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
+  57:controller/actuators/dc_motors.c **** 	motor->timer_channel_output_3 = timer_channel_output_3;
+  58:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = timer_channel_output_4;
+  59:controller/actuators/dc_motors.c **** 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
+  60:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
+  61:controller/actuators/dc_motors.c **** 
+  62:controller/actuators/dc_motors.c **** 	/**
+  63:controller/actuators/dc_motors.c **** 	 * Enable the timer using HAL
+  64:controller/actuators/dc_motors.c **** 	 */
+  65:controller/actuators/dc_motors.c **** 	HAL_TIM_Base_Start((TIM_HandleTypeDef *)motor->timer);
+  66:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
+  67:controller/actuators/dc_motors.c **** 	// Set initial duty cycle to 0 for both channels
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+  71:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+  72:controller/actuators/dc_motors.c **** 	
+  73:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+  74:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
+  75:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3);
+  76:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4);
+  77:controller/actuators/dc_motors.c **** 
+  78:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+  79:controller/actuators/dc_motors.c **** }
+  80:controller/actuators/dc_motors.c **** /**
+  81:controller/actuators/dc_motors.c ****  * @brief sets the pwm duty cycle of the motor
+  82:controller/actuators/dc_motors.c ****  * @param timer pointer to timer handle - the timer connected to the motor
+  83:controller/actuators/dc_motors.c ****  * @param dir the desired direction of the motor
+  84:controller/actuators/dc_motors.c ****  * @param duty_cycle a number between 0 and 255 not a percentage
+  85:controller/actuators/dc_motors.c ****  */
+  86:controller/actuators/dc_motors.c **** void dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycle)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 3
+
+
+  87:controller/actuators/dc_motors.c **** {
+  30              		.loc 1 87 1 view -0
   31              		.cfi_startproc
   32              		@ args = 0, pretend = 0, frame = 0
   33              		@ frame_needed = 0, uses_anonymous_args = 0
-  50:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
-  34              		.loc 1 50 2 view .LVU1
-  35              		.loc 1 50 5 is_stmt 0 view .LVU2
+  88:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
+  34              		.loc 1 88 2 view .LVU1
+  35              		.loc 1 88 5 is_stmt 0 view .LVU2
   36 0000 0028     		cmp	r0, #0
-  37 0002 00F09B80 		beq	.L30
-  49:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
-  38              		.loc 1 49 1 view .LVU3
+  37 0002 00F03881 		beq	.L52
+  87:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
+  38              		.loc 1 87 1 view .LVU3
   39 0006 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
   40              		.cfi_def_cfa_offset 32
   41              		.cfi_offset 3, -32
@@ -105,1072 +146,1705 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 1
   49 000a 0D46     		mov	r5, r1
   50 000c 1646     		mov	r6, r2
   51 000e 0446     		mov	r4, r0
-  52              		.loc 1 50 28 discriminator 1 view .LVU4
+  52              		.loc 1 88 28 discriminator 1 view .LVU4
   53 0010 0768     		ldr	r7, [r0]
-  54              		.loc 1 50 20 discriminator 1 view .LVU5
+  54              		.loc 1 88 20 discriminator 1 view .LVU5
   55 0012 002F     		cmp	r7, #0
-  56 0014 2DD0     		beq	.L1
-  51:controller/actuators/dc_motors.c **** 	{
-  52:controller/actuators/dc_motors.c **** 		return;
-  53:controller/actuators/dc_motors.c **** 		/**
-  54:controller/actuators/dc_motors.c **** 		 * @todo throw an error
-  55:controller/actuators/dc_motors.c **** 		 */
-  56:controller/actuators/dc_motors.c **** 	}
-  57:controller/actuators/dc_motors.c **** 
-  58:controller/actuators/dc_motors.c **** 	if (duty_cycle < 0 || duty_cycle > 255)
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 3
-
-
-  57              		.loc 1 58 2 is_stmt 1 view .LVU6
-  59:controller/actuators/dc_motors.c **** 	{
-  60:controller/actuators/dc_motors.c **** 		return;
-  61:controller/actuators/dc_motors.c **** 	}
-  62:controller/actuators/dc_motors.c **** 	// Map duty cycle (0-255) to timer compare value
-  63:controller/actuators/dc_motors.c **** 	uint32_t compare_value = (uint32_t)((duty_cycle / 255.0) * __HAL_TIM_GET_AUTORELOAD((TIM_HandleTyp
-  58              		.loc 1 63 2 view .LVU7
-  59              		.loc 1 63 50 is_stmt 0 view .LVU8
+  56 0014 52D0     		beq	.L1
+  89:controller/actuators/dc_motors.c **** 	{
+  90:controller/actuators/dc_motors.c **** 		return;
+  91:controller/actuators/dc_motors.c **** 		/**
+  92:controller/actuators/dc_motors.c **** 		 * @todo throw an error
+  93:controller/actuators/dc_motors.c **** 		 */
+  94:controller/actuators/dc_motors.c **** 	}
+  95:controller/actuators/dc_motors.c **** 
+  96:controller/actuators/dc_motors.c **** 	if (duty_cycle < 0 || duty_cycle > 255)
+  57              		.loc 1 96 2 is_stmt 1 view .LVU6
+  97:controller/actuators/dc_motors.c **** 	{
+  98:controller/actuators/dc_motors.c **** 		return;
+  99:controller/actuators/dc_motors.c **** 	}
+ 100:controller/actuators/dc_motors.c **** 	// Map duty cycle (0-255) to timer compare value
+ 101:controller/actuators/dc_motors.c **** 	uint32_t compare_value = (uint32_t)((duty_cycle / 255.0) * __HAL_TIM_GET_AUTORELOAD((TIM_HandleTyp
+  58              		.loc 1 101 2 view .LVU7
+  59              		.loc 1 101 50 is_stmt 0 view .LVU8
   60 0016 1046     		mov	r0, r2
   61              	.LVL1:
-  62              		.loc 1 63 50 view .LVU9
+  62              		.loc 1 101 50 view .LVU9
   63 0018 FFF7FEFF 		bl	__aeabi_i2d
   64              	.LVL2:
-  65              		.loc 1 63 50 view .LVU10
-  66 001c 48A3     		adr	r3, .L45
+  65              		.loc 1 101 50 view .LVU10
+  66 001c 96A3     		adr	r3, .L79
   67 001e D3E90023 		ldrd	r2, [r3]
   68 0022 FFF7FEFF 		bl	__aeabi_ddiv
   69              	.LVL3:
   70 0026 8046     		mov	r8, r0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 4
+
+
   71 0028 8946     		mov	r9, r1
-  72              		.loc 1 63 61 view .LVU11
+  72              		.loc 1 101 61 view .LVU11
   73 002a 3F68     		ldr	r7, [r7]
   74 002c F86A     		ldr	r0, [r7, #44]
-  75              		.loc 1 63 59 view .LVU12
+  75              		.loc 1 101 59 view .LVU12
   76 002e FFF7FEFF 		bl	__aeabi_ui2d
   77              	.LVL4:
   78 0032 4246     		mov	r2, r8
   79 0034 4B46     		mov	r3, r9
   80 0036 FFF7FEFF 		bl	__aeabi_dmul
   81              	.LVL5:
-  82              		.loc 1 63 11 view .LVU13
+  82              		.loc 1 101 11 view .LVU13
   83 003a FFF7FEFF 		bl	__aeabi_d2uiz
   84              	.LVL6:
-  64:controller/actuators/dc_motors.c **** 	
-  65:controller/actuators/dc_motors.c **** 	switch (dir)
-  85              		.loc 1 65 2 is_stmt 1 view .LVU14
-  86 003e 6DB1     		cbz	r5, .L3
+ 102:controller/actuators/dc_motors.c **** 	
+ 103:controller/actuators/dc_motors.c **** 	switch (dir)
+  85              		.loc 1 103 2 is_stmt 1 view .LVU14
+  86 003e FDB1     		cbz	r5, .L3
   87 0040 012D     		cmp	r5, #1
-  88 0042 35D0     		beq	.L4
-  66:controller/actuators/dc_motors.c **** 	{
-  67:controller/actuators/dc_motors.c **** 	case MOTOR_DIRECTION_FORWARD:
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
-  69:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
-  70:controller/actuators/dc_motors.c **** 		break;
-  71:controller/actuators/dc_motors.c **** 	case MOTOR_DIRECTION_REVERSE:
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
-  73:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
-  74:controller/actuators/dc_motors.c **** 		break;
-  75:controller/actuators/dc_motors.c **** 	default:
-  76:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
-  89              		.loc 1 76 3 view .LVU15
+  88 0042 79D0     		beq	.L4
+ 104:controller/actuators/dc_motors.c **** 	{
+ 105:controller/actuators/dc_motors.c **** 	case MOTOR_DIRECTION_FORWARD:
+ 106:controller/actuators/dc_motors.c **** 		// Check to see if we are using a simple H bridge
+ 107:controller/actuators/dc_motors.c **** 		if (motor->timer_channel_output_3 != 0 && motor->timer_channel_output_4 != 0)
+ 108:controller/actuators/dc_motors.c **** 		{
+ 109:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 110:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TI
+ 111:controller/actuators/dc_motors.c **** 		}
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 113:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 114:controller/actuators/dc_motors.c **** 		break;
+ 115:controller/actuators/dc_motors.c **** 	case MOTOR_DIRECTION_REVERSE:
+ 116:controller/actuators/dc_motors.c **** 		if (motor->timer_channel_output_3 != 0 && motor->timer_channel_output_4 != 0)
+ 117:controller/actuators/dc_motors.c **** 		{
+ 118:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 119:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TI
+ 120:controller/actuators/dc_motors.c **** 		}
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
+ 122:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 123:controller/actuators/dc_motors.c **** 		break;
+ 124:controller/actuators/dc_motors.c **** 	default:
+ 125:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
+  89              		.loc 1 125 3 view .LVU15
   90 0044 6368     		ldr	r3, [r4, #4]
   91 0046 002B     		cmp	r3, #0
-  92 0048 58D1     		bne	.L21
-  93              		.loc 1 76 3 is_stmt 0 discriminator 1 view .LVU16
-  94 004a 7B63     		str	r3, [r7, #52]
-  95              	.L22:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 4
+  92 0048 40F0CF80 		bne	.L35
+  93              		.loc 1 125 3 is_stmt 0 discriminator 1 view .LVU16
+  94 004c 7B63     		str	r3, [r7, #52]
+  95              	.L36:
+ 126:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+  96              		.loc 1 126 3 is_stmt 1 view .LVU17
+  97 004e A368     		ldr	r3, [r4, #8]
+  98 0050 002B     		cmp	r3, #0
+  99 0052 40F0D780 		bne	.L39
+ 100              		.loc 1 126 3 is_stmt 0 discriminator 1 view .LVU18
+ 101 0056 2368     		ldr	r3, [r4]
+ 102 0058 1B68     		ldr	r3, [r3]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 5
 
 
-  77:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
-  96              		.loc 1 77 3 is_stmt 1 view .LVU17
-  97 004c A368     		ldr	r3, [r4, #8]
-  98 004e 002B     		cmp	r3, #0
-  99 0050 61D1     		bne	.L25
- 100              		.loc 1 77 3 is_stmt 0 discriminator 1 view .LVU18
- 101 0052 2368     		ldr	r3, [r4]
- 102 0054 1B68     		ldr	r3, [r3]
- 103 0056 0022     		movs	r2, #0
- 104 0058 5A63     		str	r2, [r3, #52]
- 105 005a 08E0     		b	.L11
- 106              	.L3:
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 107              		.loc 1 68 3 is_stmt 1 view .LVU19
- 108 005c 6368     		ldr	r3, [r4, #4]
- 109 005e 53B9     		cbnz	r3, .L6
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 110              		.loc 1 68 3 is_stmt 0 discriminator 1 view .LVU20
- 111 0060 7863     		str	r0, [r7, #52]
- 112              	.L7:
-  69:controller/actuators/dc_motors.c **** 		break;
- 113              		.loc 1 69 3 is_stmt 1 view .LVU21
- 114 0062 A368     		ldr	r3, [r4, #8]
- 115 0064 8BB9     		cbnz	r3, .L10
-  69:controller/actuators/dc_motors.c **** 		break;
- 116              		.loc 1 69 3 is_stmt 0 discriminator 1 view .LVU22
- 117 0066 2368     		ldr	r3, [r4]
- 118 0068 1B68     		ldr	r3, [r3]
- 119 006a 0022     		movs	r2, #0
- 120 006c 5A63     		str	r2, [r3, #52]
- 121              	.L11:
-  78:controller/actuators/dc_motors.c **** 		/**
-  79:controller/actuators/dc_motors.c **** 		 * @todo throw an error
-  80:controller/actuators/dc_motors.c **** 		 */
-  81:controller/actuators/dc_motors.c **** 		break;
-  82:controller/actuators/dc_motors.c **** 	}
-  83:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = duty_cycle;
- 122              		.loc 1 83 2 is_stmt 1 view .LVU23
- 123              		.loc 1 83 28 is_stmt 0 view .LVU24
- 124 006e 6673     		strb	r6, [r4, #13]
-  84:controller/actuators/dc_motors.c **** 	motor->current_direction = dir;
- 125              		.loc 1 84 2 is_stmt 1 view .LVU25
- 126              		.loc 1 84 27 is_stmt 0 view .LVU26
- 127 0070 2573     		strb	r5, [r4, #12]
- 128              	.LVL7:
- 129              	.L1:
-  85:controller/actuators/dc_motors.c **** }
- 130              		.loc 1 85 1 view .LVU27
- 131 0072 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
- 132              	.LVL8:
- 133              	.L6:
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 134              		.loc 1 68 3 discriminator 2 view .LVU28
- 135 0076 042B     		cmp	r3, #4
- 136 0078 03D0     		beq	.L33
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 137              		.loc 1 68 3 discriminator 4 view .LVU29
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 5
+ 103 005a 0022     		movs	r2, #0
+ 104 005c 5A63     		str	r2, [r3, #52]
+ 105              	.L40:
+ 127:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 106              		.loc 1 127 3 is_stmt 1 view .LVU19
+ 107 005e E368     		ldr	r3, [r4, #12]
+ 108 0060 002B     		cmp	r3, #0
+ 109 0062 40F0E280 		bne	.L43
+ 110              		.loc 1 127 3 is_stmt 0 discriminator 1 view .LVU20
+ 111 0066 2368     		ldr	r3, [r4]
+ 112 0068 1B68     		ldr	r3, [r3]
+ 113 006a 0022     		movs	r2, #0
+ 114 006c 5A63     		str	r2, [r3, #52]
+ 115              	.L44:
+ 128:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 116              		.loc 1 128 3 is_stmt 1 view .LVU21
+ 117 006e 2369     		ldr	r3, [r4, #16]
+ 118 0070 002B     		cmp	r3, #0
+ 119 0072 40F0ED80 		bne	.L47
+ 120              		.loc 1 128 3 is_stmt 0 discriminator 1 view .LVU22
+ 121 0076 2368     		ldr	r3, [r4]
+ 122 0078 1B68     		ldr	r3, [r3]
+ 123 007a 0022     		movs	r2, #0
+ 124 007c 5A63     		str	r2, [r3, #52]
+ 125 007e 1BE0     		b	.L18
+ 126              	.L3:
+ 107:controller/actuators/dc_motors.c **** 		{
+ 127              		.loc 1 107 3 is_stmt 1 view .LVU23
+ 107:controller/actuators/dc_motors.c **** 		{
+ 128              		.loc 1 107 12 is_stmt 0 view .LVU24
+ 129 0080 E368     		ldr	r3, [r4, #12]
+ 107:controller/actuators/dc_motors.c **** 		{
+ 130              		.loc 1 107 6 view .LVU25
+ 131 0082 6BB1     		cbz	r3, .L6
+ 107:controller/actuators/dc_motors.c **** 		{
+ 132              		.loc 1 107 50 discriminator 1 view .LVU26
+ 133 0084 2269     		ldr	r2, [r4, #16]
+ 107:controller/actuators/dc_motors.c **** 		{
+ 134              		.loc 1 107 42 discriminator 1 view .LVU27
+ 135 0086 5AB1     		cbz	r2, .L6
+ 109:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TI
+ 136              		.loc 1 109 4 is_stmt 1 view .LVU28
+ 109:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TI
+ 137              		.loc 1 109 4 is_stmt 0 discriminator 2 view .LVU29
+ 138 0088 042B     		cmp	r3, #4
+ 139 008a 19D0     		beq	.L55
+ 109:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TI
+ 140              		.loc 1 109 4 discriminator 4 view .LVU30
+ 141 008c 082B     		cmp	r3, #8
+ 142 008e 1AD0     		beq	.L56
+ 109:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TI
+ 143              		.loc 1 109 4 discriminator 7 view .LVU31
+ 144 0090 0023     		movs	r3, #0
+ 145 0092 3B64     		str	r3, [r7, #64]
+ 146              	.L8:
+ 110:controller/actuators/dc_motors.c **** 		}
+ 147              		.loc 1 110 4 is_stmt 1 view .LVU32
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 6
 
 
- 138 007a 082B     		cmp	r3, #8
- 139 007c 03D0     		beq	.L34
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 140              		.loc 1 68 3 discriminator 7 view .LVU30
- 141 007e 3864     		str	r0, [r7, #64]
- 142 0080 EFE7     		b	.L7
- 143              	.L33:
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 144              		.loc 1 68 3 discriminator 3 view .LVU31
- 145 0082 B863     		str	r0, [r7, #56]
- 146 0084 EDE7     		b	.L7
- 147              	.L34:
-  68:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 148              		.loc 1 68 3 discriminator 6 view .LVU32
- 149 0086 F863     		str	r0, [r7, #60]
- 150 0088 EBE7     		b	.L7
- 151              	.L10:
-  69:controller/actuators/dc_motors.c **** 		break;
- 152              		.loc 1 69 3 discriminator 2 view .LVU33
- 153 008a 042B     		cmp	r3, #4
- 154 008c 06D0     		beq	.L35
-  69:controller/actuators/dc_motors.c **** 		break;
- 155              		.loc 1 69 3 discriminator 4 view .LVU34
- 156 008e 082B     		cmp	r3, #8
- 157 0090 09D0     		beq	.L36
-  69:controller/actuators/dc_motors.c **** 		break;
- 158              		.loc 1 69 3 discriminator 7 view .LVU35
- 159 0092 2368     		ldr	r3, [r4]
- 160 0094 1B68     		ldr	r3, [r3]
- 161 0096 0022     		movs	r2, #0
- 162 0098 1A64     		str	r2, [r3, #64]
- 163 009a E8E7     		b	.L11
- 164              	.L35:
-  69:controller/actuators/dc_motors.c **** 		break;
- 165              		.loc 1 69 3 discriminator 3 view .LVU36
- 166 009c 2368     		ldr	r3, [r4]
- 167 009e 1B68     		ldr	r3, [r3]
- 168 00a0 0022     		movs	r2, #0
- 169 00a2 9A63     		str	r2, [r3, #56]
- 170 00a4 E3E7     		b	.L11
- 171              	.L36:
-  69:controller/actuators/dc_motors.c **** 		break;
- 172              		.loc 1 69 3 discriminator 6 view .LVU37
- 173 00a6 2368     		ldr	r3, [r4]
- 174 00a8 1B68     		ldr	r3, [r3]
- 175 00aa 0022     		movs	r2, #0
- 176 00ac DA63     		str	r2, [r3, #60]
- 177 00ae DEE7     		b	.L11
- 178              	.L4:
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
- 179              		.loc 1 72 3 is_stmt 1 view .LVU38
- 180 00b0 6368     		ldr	r3, [r4, #4]
- 181 00b2 33B9     		cbnz	r3, .L14
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
- 182              		.loc 1 72 3 is_stmt 0 discriminator 1 view .LVU39
- 183 00b4 7B63     		str	r3, [r7, #52]
- 184              	.L15:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 6
+ 148 0094 2369     		ldr	r3, [r4, #16]
+ 149 0096 CBB9     		cbnz	r3, .L10
+ 110:controller/actuators/dc_motors.c **** 		}
+ 150              		.loc 1 110 4 is_stmt 0 discriminator 1 view .LVU33
+ 151 0098 2368     		ldr	r3, [r4]
+ 152 009a 1B68     		ldr	r3, [r3]
+ 153 009c DA6A     		ldr	r2, [r3, #44]
+ 154 009e 5A63     		str	r2, [r3, #52]
+ 155              	.L6:
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 156              		.loc 1 112 3 is_stmt 1 view .LVU34
+ 157 00a0 A368     		ldr	r3, [r4, #8]
+ 158 00a2 33BB     		cbnz	r3, .L13
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 159              		.loc 1 112 3 is_stmt 0 discriminator 1 view .LVU35
+ 160 00a4 2368     		ldr	r3, [r4]
+ 161 00a6 1B68     		ldr	r3, [r3]
+ 162 00a8 0022     		movs	r2, #0
+ 163 00aa 5A63     		str	r2, [r3, #52]
+ 164              	.L14:
+ 113:controller/actuators/dc_motors.c **** 		break;
+ 165              		.loc 1 113 3 is_stmt 1 view .LVU36
+ 166 00ac 6368     		ldr	r3, [r4, #4]
+ 167 00ae 002B     		cmp	r3, #0
+ 168 00b0 32D1     		bne	.L17
+ 113:controller/actuators/dc_motors.c **** 		break;
+ 169              		.loc 1 113 3 is_stmt 0 discriminator 1 view .LVU37
+ 170 00b2 2368     		ldr	r3, [r4]
+ 171 00b4 1B68     		ldr	r3, [r3]
+ 172 00b6 5863     		str	r0, [r3, #52]
+ 173              	.L18:
+ 129:controller/actuators/dc_motors.c **** 		/**
+ 130:controller/actuators/dc_motors.c **** 		 * @todo throw an error
+ 131:controller/actuators/dc_motors.c **** 		 */
+ 132:controller/actuators/dc_motors.c **** 		break;
+ 133:controller/actuators/dc_motors.c **** 	}
+ 134:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = duty_cycle;
+ 174              		.loc 1 134 2 is_stmt 1 view .LVU38
+ 175              		.loc 1 134 28 is_stmt 0 view .LVU39
+ 176 00b8 6675     		strb	r6, [r4, #21]
+ 135:controller/actuators/dc_motors.c **** 	motor->current_direction = dir;
+ 177              		.loc 1 135 2 is_stmt 1 view .LVU40
+ 178              		.loc 1 135 27 is_stmt 0 view .LVU41
+ 179 00ba 2575     		strb	r5, [r4, #20]
+ 180              	.LVL7:
+ 181              	.L1:
+ 136:controller/actuators/dc_motors.c **** }
+ 182              		.loc 1 136 1 view .LVU42
+ 183 00bc BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 184              	.LVL8:
+ 185              	.L55:
+ 109:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TI
+ 186              		.loc 1 109 4 discriminator 3 view .LVU43
+ 187 00c0 0023     		movs	r3, #0
+ 188 00c2 BB63     		str	r3, [r7, #56]
+ 189 00c4 E6E7     		b	.L8
+ 190              	.L56:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 7
 
 
-  73:controller/actuators/dc_motors.c **** 		break;
- 185              		.loc 1 73 3 is_stmt 1 view .LVU40
- 186 00b6 A368     		ldr	r3, [r4, #8]
- 187 00b8 83B9     		cbnz	r3, .L18
-  73:controller/actuators/dc_motors.c **** 		break;
- 188              		.loc 1 73 3 is_stmt 0 discriminator 1 view .LVU41
- 189 00ba 2368     		ldr	r3, [r4]
- 190 00bc 1B68     		ldr	r3, [r3]
- 191 00be 5863     		str	r0, [r3, #52]
- 192 00c0 D5E7     		b	.L11
- 193              	.L14:
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
- 194              		.loc 1 72 3 discriminator 2 view .LVU42
- 195 00c2 042B     		cmp	r3, #4
- 196 00c4 04D0     		beq	.L37
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
- 197              		.loc 1 72 3 discriminator 4 view .LVU43
- 198 00c6 082B     		cmp	r3, #8
- 199 00c8 05D0     		beq	.L38
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
- 200              		.loc 1 72 3 discriminator 7 view .LVU44
- 201 00ca 0023     		movs	r3, #0
- 202 00cc 3B64     		str	r3, [r7, #64]
- 203 00ce F2E7     		b	.L15
- 204              	.L37:
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
- 205              		.loc 1 72 3 discriminator 3 view .LVU45
- 206 00d0 0023     		movs	r3, #0
- 207 00d2 BB63     		str	r3, [r7, #56]
- 208 00d4 EFE7     		b	.L15
- 209              	.L38:
-  72:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
- 210              		.loc 1 72 3 discriminator 6 view .LVU46
- 211 00d6 0023     		movs	r3, #0
- 212 00d8 FB63     		str	r3, [r7, #60]
- 213 00da ECE7     		b	.L15
- 214              	.L18:
-  73:controller/actuators/dc_motors.c **** 		break;
- 215              		.loc 1 73 3 discriminator 2 view .LVU47
- 216 00dc 042B     		cmp	r3, #4
- 217 00de 05D0     		beq	.L39
-  73:controller/actuators/dc_motors.c **** 		break;
- 218              		.loc 1 73 3 discriminator 4 view .LVU48
- 219 00e0 082B     		cmp	r3, #8
- 220 00e2 07D0     		beq	.L40
-  73:controller/actuators/dc_motors.c **** 		break;
- 221              		.loc 1 73 3 discriminator 7 view .LVU49
- 222 00e4 2368     		ldr	r3, [r4]
- 223 00e6 1B68     		ldr	r3, [r3]
- 224 00e8 1864     		str	r0, [r3, #64]
- 225 00ea C0E7     		b	.L11
- 226              	.L39:
-  73:controller/actuators/dc_motors.c **** 		break;
- 227              		.loc 1 73 3 discriminator 3 view .LVU50
- 228 00ec 2368     		ldr	r3, [r4]
- 229 00ee 1B68     		ldr	r3, [r3]
- 230 00f0 9863     		str	r0, [r3, #56]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 7
+ 109:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, __HAL_TI
+ 191              		.loc 1 109 4 discriminator 6 view .LVU44
+ 192 00c6 0023     		movs	r3, #0
+ 193 00c8 FB63     		str	r3, [r7, #60]
+ 194 00ca E3E7     		b	.L8
+ 195              	.L10:
+ 110:controller/actuators/dc_motors.c **** 		}
+ 196              		.loc 1 110 4 discriminator 2 view .LVU45
+ 197 00cc 042B     		cmp	r3, #4
+ 198 00ce 06D0     		beq	.L57
+ 110:controller/actuators/dc_motors.c **** 		}
+ 199              		.loc 1 110 4 discriminator 4 view .LVU46
+ 200 00d0 082B     		cmp	r3, #8
+ 201 00d2 09D0     		beq	.L58
+ 110:controller/actuators/dc_motors.c **** 		}
+ 202              		.loc 1 110 4 discriminator 7 view .LVU47
+ 203 00d4 2368     		ldr	r3, [r4]
+ 204 00d6 1B68     		ldr	r3, [r3]
+ 205 00d8 DA6A     		ldr	r2, [r3, #44]
+ 206 00da 1A64     		str	r2, [r3, #64]
+ 207 00dc E0E7     		b	.L6
+ 208              	.L57:
+ 110:controller/actuators/dc_motors.c **** 		}
+ 209              		.loc 1 110 4 discriminator 3 view .LVU48
+ 210 00de 2368     		ldr	r3, [r4]
+ 211 00e0 1B68     		ldr	r3, [r3]
+ 212 00e2 DA6A     		ldr	r2, [r3, #44]
+ 213 00e4 9A63     		str	r2, [r3, #56]
+ 214 00e6 DBE7     		b	.L6
+ 215              	.L58:
+ 110:controller/actuators/dc_motors.c **** 		}
+ 216              		.loc 1 110 4 discriminator 6 view .LVU49
+ 217 00e8 2368     		ldr	r3, [r4]
+ 218 00ea 1B68     		ldr	r3, [r3]
+ 219 00ec DA6A     		ldr	r2, [r3, #44]
+ 220 00ee DA63     		str	r2, [r3, #60]
+ 221 00f0 D6E7     		b	.L6
+ 222              	.L13:
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 223              		.loc 1 112 3 discriminator 2 view .LVU50
+ 224 00f2 042B     		cmp	r3, #4
+ 225 00f4 06D0     		beq	.L59
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 226              		.loc 1 112 3 discriminator 4 view .LVU51
+ 227 00f6 082B     		cmp	r3, #8
+ 228 00f8 09D0     		beq	.L60
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 229              		.loc 1 112 3 discriminator 7 view .LVU52
+ 230 00fa 2368     		ldr	r3, [r4]
+ 231 00fc 1B68     		ldr	r3, [r3]
+ 232 00fe 0022     		movs	r2, #0
+ 233 0100 1A64     		str	r2, [r3, #64]
+ 234 0102 D3E7     		b	.L14
+ 235              	.L59:
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 236              		.loc 1 112 3 discriminator 3 view .LVU53
+ 237 0104 2368     		ldr	r3, [r4]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 8
 
 
- 231 00f2 BCE7     		b	.L11
- 232              	.L40:
-  73:controller/actuators/dc_motors.c **** 		break;
- 233              		.loc 1 73 3 discriminator 6 view .LVU51
- 234 00f4 2368     		ldr	r3, [r4]
- 235 00f6 1B68     		ldr	r3, [r3]
- 236 00f8 D863     		str	r0, [r3, #60]
- 237 00fa B8E7     		b	.L11
- 238              	.L21:
-  76:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 239              		.loc 1 76 3 discriminator 2 view .LVU52
- 240 00fc 042B     		cmp	r3, #4
- 241 00fe 04D0     		beq	.L41
-  76:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 242              		.loc 1 76 3 discriminator 4 view .LVU53
- 243 0100 082B     		cmp	r3, #8
- 244 0102 05D0     		beq	.L42
-  76:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 245              		.loc 1 76 3 discriminator 7 view .LVU54
- 246 0104 0023     		movs	r3, #0
- 247 0106 3B64     		str	r3, [r7, #64]
- 248 0108 A0E7     		b	.L22
- 249              	.L41:
-  76:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 250              		.loc 1 76 3 discriminator 3 view .LVU55
- 251 010a 0023     		movs	r3, #0
- 252 010c BB63     		str	r3, [r7, #56]
- 253 010e 9DE7     		b	.L22
- 254              	.L42:
-  76:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 255              		.loc 1 76 3 discriminator 6 view .LVU56
- 256 0110 0023     		movs	r3, #0
- 257 0112 FB63     		str	r3, [r7, #60]
- 258 0114 9AE7     		b	.L22
- 259              	.L25:
-  77:controller/actuators/dc_motors.c **** 		/**
- 260              		.loc 1 77 3 discriminator 2 view .LVU57
- 261 0116 042B     		cmp	r3, #4
- 262 0118 06D0     		beq	.L43
-  77:controller/actuators/dc_motors.c **** 		/**
- 263              		.loc 1 77 3 discriminator 4 view .LVU58
- 264 011a 082B     		cmp	r3, #8
- 265 011c 09D0     		beq	.L44
-  77:controller/actuators/dc_motors.c **** 		/**
- 266              		.loc 1 77 3 discriminator 7 view .LVU59
- 267 011e 2368     		ldr	r3, [r4]
- 268 0120 1B68     		ldr	r3, [r3]
- 269 0122 0022     		movs	r2, #0
- 270 0124 1A64     		str	r2, [r3, #64]
- 271 0126 A2E7     		b	.L11
- 272              	.L43:
-  77:controller/actuators/dc_motors.c **** 		/**
- 273              		.loc 1 77 3 discriminator 3 view .LVU60
- 274 0128 2368     		ldr	r3, [r4]
- 275 012a 1B68     		ldr	r3, [r3]
- 276 012c 0022     		movs	r2, #0
- 277 012e 9A63     		str	r2, [r3, #56]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 8
+ 238 0106 1B68     		ldr	r3, [r3]
+ 239 0108 0022     		movs	r2, #0
+ 240 010a 9A63     		str	r2, [r3, #56]
+ 241 010c CEE7     		b	.L14
+ 242              	.L60:
+ 112:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, compare_v
+ 243              		.loc 1 112 3 discriminator 6 view .LVU54
+ 244 010e 2368     		ldr	r3, [r4]
+ 245 0110 1B68     		ldr	r3, [r3]
+ 246 0112 0022     		movs	r2, #0
+ 247 0114 DA63     		str	r2, [r3, #60]
+ 248 0116 C9E7     		b	.L14
+ 249              	.L17:
+ 113:controller/actuators/dc_motors.c **** 		break;
+ 250              		.loc 1 113 3 discriminator 2 view .LVU55
+ 251 0118 042B     		cmp	r3, #4
+ 252 011a 05D0     		beq	.L61
+ 113:controller/actuators/dc_motors.c **** 		break;
+ 253              		.loc 1 113 3 discriminator 4 view .LVU56
+ 254 011c 082B     		cmp	r3, #8
+ 255 011e 07D0     		beq	.L62
+ 113:controller/actuators/dc_motors.c **** 		break;
+ 256              		.loc 1 113 3 discriminator 7 view .LVU57
+ 257 0120 2368     		ldr	r3, [r4]
+ 258 0122 1B68     		ldr	r3, [r3]
+ 259 0124 1864     		str	r0, [r3, #64]
+ 260 0126 C7E7     		b	.L18
+ 261              	.L61:
+ 113:controller/actuators/dc_motors.c **** 		break;
+ 262              		.loc 1 113 3 discriminator 3 view .LVU58
+ 263 0128 2368     		ldr	r3, [r4]
+ 264 012a 1B68     		ldr	r3, [r3]
+ 265 012c 9863     		str	r0, [r3, #56]
+ 266 012e C3E7     		b	.L18
+ 267              	.L62:
+ 113:controller/actuators/dc_motors.c **** 		break;
+ 268              		.loc 1 113 3 discriminator 6 view .LVU59
+ 269 0130 2368     		ldr	r3, [r4]
+ 270 0132 1B68     		ldr	r3, [r3]
+ 271 0134 D863     		str	r0, [r3, #60]
+ 272 0136 BFE7     		b	.L18
+ 273              	.L4:
+ 116:controller/actuators/dc_motors.c **** 		{
+ 274              		.loc 1 116 3 is_stmt 1 view .LVU60
+ 116:controller/actuators/dc_motors.c **** 		{
+ 275              		.loc 1 116 12 is_stmt 0 view .LVU61
+ 276 0138 E368     		ldr	r3, [r4, #12]
+ 116:controller/actuators/dc_motors.c **** 		{
+ 277              		.loc 1 116 6 view .LVU62
+ 278 013a 6BB1     		cbz	r3, .L21
+ 116:controller/actuators/dc_motors.c **** 		{
+ 279              		.loc 1 116 50 discriminator 1 view .LVU63
+ 280 013c 2369     		ldr	r3, [r4, #16]
+ 116:controller/actuators/dc_motors.c **** 		{
+ 281              		.loc 1 116 42 discriminator 1 view .LVU64
+ 282 013e 5BB1     		cbz	r3, .L21
+ 118:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TI
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 9
 
 
- 278 0130 9DE7     		b	.L11
- 279              	.L44:
-  77:controller/actuators/dc_motors.c **** 		/**
- 280              		.loc 1 77 3 discriminator 6 view .LVU61
- 281 0132 2368     		ldr	r3, [r4]
- 282 0134 1B68     		ldr	r3, [r3]
- 283 0136 0022     		movs	r2, #0
- 284 0138 DA63     		str	r2, [r3, #60]
- 285 013a 98E7     		b	.L11
- 286              	.LVL9:
- 287              	.L30:
- 288              		.cfi_def_cfa_offset 0
- 289              		.cfi_restore 3
- 290              		.cfi_restore 4
- 291              		.cfi_restore 5
- 292              		.cfi_restore 6
- 293              		.cfi_restore 7
- 294              		.cfi_restore 8
- 295              		.cfi_restore 9
- 296              		.cfi_restore 14
-  77:controller/actuators/dc_motors.c **** 		/**
- 297              		.loc 1 77 3 discriminator 6 view .LVU62
- 298 013c 7047     		bx	lr
- 299              	.L46:
- 300 013e 00BF     		.align	3
- 301              	.L45:
- 302 0140 00000000 		.word	0
- 303 0144 00E06F40 		.word	1081073664
- 304              		.cfi_endproc
- 305              	.LFE221:
- 307              		.section	.text.dc_motor_disable,"ax",%progbits
- 308              		.align	1
- 309              		.global	dc_motor_disable
- 310              		.syntax unified
- 311              		.thumb
- 312              		.thumb_func
- 314              	dc_motor_disable:
- 315              	.LVL10:
- 316              	.LFB223:
-  86:controller/actuators/dc_motors.c **** 
-  87:controller/actuators/dc_motors.c **** /**
-  88:controller/actuators/dc_motors.c ****  * @brief sets the pwm frequency
-  89:controller/actuators/dc_motors.c ****  * @note this changes the frequency of the entire timer, this includes all four channels
-  90:controller/actuators/dc_motors.c ****  */
-  91:controller/actuators/dc_motors.c **** void dc_motor_set_timer_freq(dc_motor_t *motor, pwm_freq_t frequency)
-  92:controller/actuators/dc_motors.c **** {
-  93:controller/actuators/dc_motors.c **** 	if (frequency == 0)
-  94:controller/actuators/dc_motors.c **** 	{
-  95:controller/actuators/dc_motors.c **** 		// Invalid frequency, return or handle error
-  96:controller/actuators/dc_motors.c **** 		dc_motor_disable(motor);
-  97:controller/actuators/dc_motors.c **** 		return;
-  98:controller/actuators/dc_motors.c **** 	}
-  99:controller/actuators/dc_motors.c **** 	if (frequency > DC_MOTOR_MAX_FREQUENCY)
- 100:controller/actuators/dc_motors.c **** 	{
- 101:controller/actuators/dc_motors.c **** 		frequency = DC_MOTOR_MAX_FREQUENCY;
- 102:controller/actuators/dc_motors.c **** 	}
- 103:controller/actuators/dc_motors.c **** 	
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 9
+ 283              		.loc 1 118 4 is_stmt 1 view .LVU65
+ 118:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TI
+ 284              		.loc 1 118 4 is_stmt 0 discriminator 2 view .LVU66
+ 285 0140 042B     		cmp	r3, #4
+ 286 0142 16D0     		beq	.L63
+ 118:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TI
+ 287              		.loc 1 118 4 discriminator 4 view .LVU67
+ 288 0144 082B     		cmp	r3, #8
+ 289 0146 17D0     		beq	.L64
+ 118:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TI
+ 290              		.loc 1 118 4 discriminator 7 view .LVU68
+ 291 0148 0023     		movs	r3, #0
+ 292 014a 3B64     		str	r3, [r7, #64]
+ 293              	.L23:
+ 119:controller/actuators/dc_motors.c **** 		}
+ 294              		.loc 1 119 4 is_stmt 1 view .LVU69
+ 295 014c E368     		ldr	r3, [r4, #12]
+ 296 014e B3B9     		cbnz	r3, .L25
+ 119:controller/actuators/dc_motors.c **** 		}
+ 297              		.loc 1 119 4 is_stmt 0 discriminator 1 view .LVU70
+ 298 0150 2368     		ldr	r3, [r4]
+ 299 0152 1B68     		ldr	r3, [r3]
+ 300 0154 DA6A     		ldr	r2, [r3, #44]
+ 301 0156 5A63     		str	r2, [r3, #52]
+ 302              	.L21:
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 303              		.loc 1 121 3 is_stmt 1 view .LVU71
+ 304 0158 6368     		ldr	r3, [r4, #4]
+ 305 015a 1BBB     		cbnz	r3, .L28
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 306              		.loc 1 121 3 is_stmt 0 discriminator 1 view .LVU72
+ 307 015c 2368     		ldr	r3, [r4]
+ 308 015e 1B68     		ldr	r3, [r3]
+ 309 0160 0022     		movs	r2, #0
+ 310 0162 5A63     		str	r2, [r3, #52]
+ 311              	.L29:
+ 122:controller/actuators/dc_motors.c **** 		break;
+ 312              		.loc 1 122 3 is_stmt 1 view .LVU73
+ 313 0164 A368     		ldr	r3, [r4, #8]
+ 314 0166 002B     		cmp	r3, #0
+ 315 0168 2FD1     		bne	.L32
+ 122:controller/actuators/dc_motors.c **** 		break;
+ 316              		.loc 1 122 3 is_stmt 0 discriminator 1 view .LVU74
+ 317 016a 2368     		ldr	r3, [r4]
+ 318 016c 1B68     		ldr	r3, [r3]
+ 319 016e 5863     		str	r0, [r3, #52]
+ 320 0170 A2E7     		b	.L18
+ 321              	.L63:
+ 118:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TI
+ 322              		.loc 1 118 4 discriminator 3 view .LVU75
+ 323 0172 0023     		movs	r3, #0
+ 324 0174 BB63     		str	r3, [r7, #56]
+ 325 0176 E9E7     		b	.L23
+ 326              	.L64:
+ 118:controller/actuators/dc_motors.c **** 			__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, __HAL_TI
+ 327              		.loc 1 118 4 discriminator 6 view .LVU76
+ 328 0178 0023     		movs	r3, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 10
 
 
- 104:controller/actuators/dc_motors.c **** 	uint32_t timer_clock = HAL_RCC_GetSysClockFreq(); // Get the timer clock frequency
- 105:controller/actuators/dc_motors.c **** 	uint16_t prescaler = 0;
- 106:controller/actuators/dc_motors.c **** 	uint32_t auto_reload = 0;
- 107:controller/actuators/dc_motors.c **** 
- 108:controller/actuators/dc_motors.c **** 	// Calculate prescaler and auto-reload values
- 109:controller/actuators/dc_motors.c **** 	for (prescaler = 0; prescaler <= 0xFFFF; prescaler++)
- 110:controller/actuators/dc_motors.c **** 	{
- 111:controller/actuators/dc_motors.c **** 		auto_reload = (timer_clock / ((prescaler + 1) * frequency)) - 1;
- 112:controller/actuators/dc_motors.c **** 		
- 113:controller/actuators/dc_motors.c **** 		if (auto_reload <= 0xFFFF)
- 114:controller/actuators/dc_motors.c **** 		{
- 115:controller/actuators/dc_motors.c **** 			break;
- 116:controller/actuators/dc_motors.c **** 
- 117:controller/actuators/dc_motors.c **** 		}
- 118:controller/actuators/dc_motors.c **** 	}
- 119:controller/actuators/dc_motors.c **** 
- 120:controller/actuators/dc_motors.c **** 	if (prescaler > 0xFFFF || auto_reload > 0xFFFF)
- 121:controller/actuators/dc_motors.c **** 	{
- 122:controller/actuators/dc_motors.c **** 		// Frequency is too low, cannot configure timer
- 123:controller/actuators/dc_motors.c **** 		return;
- 124:controller/actuators/dc_motors.c **** 	}
- 125:controller/actuators/dc_motors.c **** 	
- 126:controller/actuators/dc_motors.c **** 	// Set the prescaler and auto-reload values
- 127:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_PRESCALER((TIM_HandleTypeDef *)motor->timer, prescaler);
- 128:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer, auto_reload);
- 129:controller/actuators/dc_motors.c **** 
- 130:controller/actuators/dc_motors.c **** 	dc_motor_set(motor, motor->current_direction, motor->current_duty_cycle);
- 131:controller/actuators/dc_motors.c **** }
- 132:controller/actuators/dc_motors.c **** 
- 133:controller/actuators/dc_motors.c **** /**
- 134:controller/actuators/dc_motors.c ****  * @brief disables the motor.
- 135:controller/actuators/dc_motors.c ****  */
- 136:controller/actuators/dc_motors.c **** void dc_motor_disable(dc_motor_t *motor)
- 137:controller/actuators/dc_motors.c **** {
- 317              		.loc 1 137 1 is_stmt 1 view -0
- 318              		.cfi_startproc
- 319              		@ args = 0, pretend = 0, frame = 0
- 320              		@ frame_needed = 0, uses_anonymous_args = 0
- 321              		@ link register save eliminated.
- 138:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
- 322              		.loc 1 138 2 view .LVU64
- 323              		.loc 1 138 5 is_stmt 0 view .LVU65
- 324 0000 0346     		mov	r3, r0
- 325 0002 78B1     		cbz	r0, .L47
- 326              		.loc 1 138 28 discriminator 1 view .LVU66
- 327 0004 0268     		ldr	r2, [r0]
- 328              		.loc 1 138 20 discriminator 1 view .LVU67
- 329 0006 6AB1     		cbz	r2, .L47
- 139:controller/actuators/dc_motors.c **** 	{
- 140:controller/actuators/dc_motors.c **** 		return;
- 141:controller/actuators/dc_motors.c **** 		/**
- 142:controller/actuators/dc_motors.c **** 		 * @todo throw an error
- 143:controller/actuators/dc_motors.c **** 		 */
- 144:controller/actuators/dc_motors.c **** 	}
- 145:controller/actuators/dc_motors.c **** 
- 146:controller/actuators/dc_motors.c **** 	// Set duty cycle to 0 for both channels
- 147:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 10
+ 329 017a FB63     		str	r3, [r7, #60]
+ 330 017c E6E7     		b	.L23
+ 331              	.L25:
+ 119:controller/actuators/dc_motors.c **** 		}
+ 332              		.loc 1 119 4 discriminator 2 view .LVU77
+ 333 017e 042B     		cmp	r3, #4
+ 334 0180 06D0     		beq	.L65
+ 119:controller/actuators/dc_motors.c **** 		}
+ 335              		.loc 1 119 4 discriminator 4 view .LVU78
+ 336 0182 082B     		cmp	r3, #8
+ 337 0184 09D0     		beq	.L66
+ 119:controller/actuators/dc_motors.c **** 		}
+ 338              		.loc 1 119 4 discriminator 7 view .LVU79
+ 339 0186 2368     		ldr	r3, [r4]
+ 340 0188 1B68     		ldr	r3, [r3]
+ 341 018a DA6A     		ldr	r2, [r3, #44]
+ 342 018c 1A64     		str	r2, [r3, #64]
+ 343 018e E3E7     		b	.L21
+ 344              	.L65:
+ 119:controller/actuators/dc_motors.c **** 		}
+ 345              		.loc 1 119 4 discriminator 3 view .LVU80
+ 346 0190 2368     		ldr	r3, [r4]
+ 347 0192 1B68     		ldr	r3, [r3]
+ 348 0194 DA6A     		ldr	r2, [r3, #44]
+ 349 0196 9A63     		str	r2, [r3, #56]
+ 350 0198 DEE7     		b	.L21
+ 351              	.L66:
+ 119:controller/actuators/dc_motors.c **** 		}
+ 352              		.loc 1 119 4 discriminator 6 view .LVU81
+ 353 019a 2368     		ldr	r3, [r4]
+ 354 019c 1B68     		ldr	r3, [r3]
+ 355 019e DA6A     		ldr	r2, [r3, #44]
+ 356 01a0 DA63     		str	r2, [r3, #60]
+ 357 01a2 D9E7     		b	.L21
+ 358              	.L28:
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 359              		.loc 1 121 3 discriminator 2 view .LVU82
+ 360 01a4 042B     		cmp	r3, #4
+ 361 01a6 06D0     		beq	.L67
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 362              		.loc 1 121 3 discriminator 4 view .LVU83
+ 363 01a8 082B     		cmp	r3, #8
+ 364 01aa 09D0     		beq	.L68
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 365              		.loc 1 121 3 discriminator 7 view .LVU84
+ 366 01ac 2368     		ldr	r3, [r4]
+ 367 01ae 1B68     		ldr	r3, [r3]
+ 368 01b0 0022     		movs	r2, #0
+ 369 01b2 1A64     		str	r2, [r3, #64]
+ 370 01b4 D6E7     		b	.L29
+ 371              	.L67:
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 372              		.loc 1 121 3 discriminator 3 view .LVU85
+ 373 01b6 2368     		ldr	r3, [r4]
+ 374 01b8 1B68     		ldr	r3, [r3]
+ 375 01ba 0022     		movs	r2, #0
+ 376 01bc 9A63     		str	r2, [r3, #56]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 11
 
 
- 330              		.loc 1 147 2 is_stmt 1 view .LVU68
- 331 0008 4168     		ldr	r1, [r0, #4]
- 332 000a 61B9     		cbnz	r1, .L49
- 333              		.loc 1 147 2 is_stmt 0 discriminator 1 view .LVU69
- 334 000c 1268     		ldr	r2, [r2]
- 335 000e 5163     		str	r1, [r2, #52]
- 336              	.L50:
- 148:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 337              		.loc 1 148 2 is_stmt 1 view .LVU70
- 338 0010 9A68     		ldr	r2, [r3, #8]
- 339 0012 C2B9     		cbnz	r2, .L53
- 340              		.loc 1 148 2 is_stmt 0 discriminator 1 view .LVU71
- 341 0014 1A68     		ldr	r2, [r3]
- 342 0016 1268     		ldr	r2, [r2]
- 343 0018 0021     		movs	r1, #0
- 344 001a 5163     		str	r1, [r2, #52]
- 345              	.L54:
- 149:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 346              		.loc 1 149 2 is_stmt 1 view .LVU72
- 347              		.loc 1 149 28 is_stmt 0 view .LVU73
- 348 001c 0022     		movs	r2, #0
- 349 001e 5A73     		strb	r2, [r3, #13]
- 150:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_DISABLED;
- 350              		.loc 1 150 2 is_stmt 1 view .LVU74
- 351              		.loc 1 150 16 is_stmt 0 view .LVU75
- 352 0020 0222     		movs	r2, #2
- 353 0022 9A73     		strb	r2, [r3, #14]
- 354              	.L47:
- 151:controller/actuators/dc_motors.c **** }
- 355              		.loc 1 151 1 view .LVU76
- 356 0024 7047     		bx	lr
- 357              	.L49:
- 147:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 358              		.loc 1 147 2 discriminator 2 view .LVU77
- 359 0026 0429     		cmp	r1, #4
- 360 0028 05D0     		beq	.L57
- 147:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 361              		.loc 1 147 2 discriminator 4 view .LVU78
- 362 002a 0829     		cmp	r1, #8
- 363 002c 07D0     		beq	.L58
- 147:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 364              		.loc 1 147 2 discriminator 7 view .LVU79
- 365 002e 1268     		ldr	r2, [r2]
- 366 0030 0021     		movs	r1, #0
- 367 0032 1164     		str	r1, [r2, #64]
- 368 0034 ECE7     		b	.L50
- 369              	.L57:
- 147:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 370              		.loc 1 147 2 discriminator 3 view .LVU80
- 371 0036 1268     		ldr	r2, [r2]
- 372 0038 0021     		movs	r1, #0
- 373 003a 9163     		str	r1, [r2, #56]
- 374 003c E8E7     		b	.L50
- 375              	.L58:
- 147:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 376              		.loc 1 147 2 discriminator 6 view .LVU81
- 377 003e 1268     		ldr	r2, [r2]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 11
+ 377 01be D1E7     		b	.L29
+ 378              	.L68:
+ 121:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, compare_v
+ 379              		.loc 1 121 3 discriminator 6 view .LVU86
+ 380 01c0 2368     		ldr	r3, [r4]
+ 381 01c2 1B68     		ldr	r3, [r3]
+ 382 01c4 0022     		movs	r2, #0
+ 383 01c6 DA63     		str	r2, [r3, #60]
+ 384 01c8 CCE7     		b	.L29
+ 385              	.L32:
+ 122:controller/actuators/dc_motors.c **** 		break;
+ 386              		.loc 1 122 3 discriminator 2 view .LVU87
+ 387 01ca 042B     		cmp	r3, #4
+ 388 01cc 05D0     		beq	.L69
+ 122:controller/actuators/dc_motors.c **** 		break;
+ 389              		.loc 1 122 3 discriminator 4 view .LVU88
+ 390 01ce 082B     		cmp	r3, #8
+ 391 01d0 07D0     		beq	.L70
+ 122:controller/actuators/dc_motors.c **** 		break;
+ 392              		.loc 1 122 3 discriminator 7 view .LVU89
+ 393 01d2 2368     		ldr	r3, [r4]
+ 394 01d4 1B68     		ldr	r3, [r3]
+ 395 01d6 1864     		str	r0, [r3, #64]
+ 396 01d8 6EE7     		b	.L18
+ 397              	.L69:
+ 122:controller/actuators/dc_motors.c **** 		break;
+ 398              		.loc 1 122 3 discriminator 3 view .LVU90
+ 399 01da 2368     		ldr	r3, [r4]
+ 400 01dc 1B68     		ldr	r3, [r3]
+ 401 01de 9863     		str	r0, [r3, #56]
+ 402 01e0 6AE7     		b	.L18
+ 403              	.L70:
+ 122:controller/actuators/dc_motors.c **** 		break;
+ 404              		.loc 1 122 3 discriminator 6 view .LVU91
+ 405 01e2 2368     		ldr	r3, [r4]
+ 406 01e4 1B68     		ldr	r3, [r3]
+ 407 01e6 D863     		str	r0, [r3, #60]
+ 408 01e8 66E7     		b	.L18
+ 409              	.L35:
+ 125:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 410              		.loc 1 125 3 discriminator 2 view .LVU92
+ 411 01ea 042B     		cmp	r3, #4
+ 412 01ec 04D0     		beq	.L71
+ 125:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 413              		.loc 1 125 3 discriminator 4 view .LVU93
+ 414 01ee 082B     		cmp	r3, #8
+ 415 01f0 05D0     		beq	.L72
+ 125:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 416              		.loc 1 125 3 discriminator 7 view .LVU94
+ 417 01f2 0023     		movs	r3, #0
+ 418 01f4 3B64     		str	r3, [r7, #64]
+ 419 01f6 2AE7     		b	.L36
+ 420              	.L71:
+ 125:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 421              		.loc 1 125 3 discriminator 3 view .LVU95
+ 422 01f8 0023     		movs	r3, #0
+ 423 01fa BB63     		str	r3, [r7, #56]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 12
 
 
- 378 0040 0021     		movs	r1, #0
- 379 0042 D163     		str	r1, [r2, #60]
- 380 0044 E4E7     		b	.L50
- 381              	.L53:
- 148:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 382              		.loc 1 148 2 discriminator 2 view .LVU82
- 383 0046 042A     		cmp	r2, #4
- 384 0048 06D0     		beq	.L59
- 148:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 385              		.loc 1 148 2 discriminator 4 view .LVU83
- 386 004a 082A     		cmp	r2, #8
- 387 004c 09D0     		beq	.L60
- 148:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 388              		.loc 1 148 2 discriminator 7 view .LVU84
- 389 004e 1A68     		ldr	r2, [r3]
- 390 0050 1268     		ldr	r2, [r2]
- 391 0052 0021     		movs	r1, #0
- 392 0054 1164     		str	r1, [r2, #64]
- 393 0056 E1E7     		b	.L54
- 394              	.L59:
- 148:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 395              		.loc 1 148 2 discriminator 3 view .LVU85
- 396 0058 1A68     		ldr	r2, [r3]
- 397 005a 1268     		ldr	r2, [r2]
- 398 005c 0021     		movs	r1, #0
- 399 005e 9163     		str	r1, [r2, #56]
- 400 0060 DCE7     		b	.L54
- 401              	.L60:
- 148:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 402              		.loc 1 148 2 discriminator 6 view .LVU86
- 403 0062 1A68     		ldr	r2, [r3]
- 404 0064 1268     		ldr	r2, [r2]
- 405 0066 0021     		movs	r1, #0
- 406 0068 D163     		str	r1, [r2, #60]
- 407 006a D7E7     		b	.L54
- 408              		.cfi_endproc
- 409              	.LFE223:
- 411              		.section	.text.dc_motor_set_timer_freq,"ax",%progbits
- 412              		.align	1
- 413              		.global	dc_motor_set_timer_freq
- 414              		.syntax unified
- 415              		.thumb
- 416              		.thumb_func
- 418              	dc_motor_set_timer_freq:
- 419              	.LVL11:
- 420              	.LFB222:
-  92:controller/actuators/dc_motors.c **** 	if (frequency == 0)
- 421              		.loc 1 92 1 is_stmt 1 view -0
- 422              		.cfi_startproc
- 423              		@ args = 0, pretend = 0, frame = 0
- 424              		@ frame_needed = 0, uses_anonymous_args = 0
-  92:controller/actuators/dc_motors.c **** 	if (frequency == 0)
- 425              		.loc 1 92 1 is_stmt 0 view .LVU88
- 426 0000 38B5     		push	{r3, r4, r5, lr}
- 427              		.cfi_def_cfa_offset 16
- 428              		.cfi_offset 3, -16
- 429              		.cfi_offset 4, -12
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 12
+ 424 01fc 27E7     		b	.L36
+ 425              	.L72:
+ 125:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 426              		.loc 1 125 3 discriminator 6 view .LVU96
+ 427 01fe 0023     		movs	r3, #0
+ 428 0200 FB63     		str	r3, [r7, #60]
+ 429 0202 24E7     		b	.L36
+ 430              	.L39:
+ 126:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 431              		.loc 1 126 3 discriminator 2 view .LVU97
+ 432 0204 042B     		cmp	r3, #4
+ 433 0206 06D0     		beq	.L73
+ 126:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 434              		.loc 1 126 3 discriminator 4 view .LVU98
+ 435 0208 082B     		cmp	r3, #8
+ 436 020a 09D0     		beq	.L74
+ 126:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 437              		.loc 1 126 3 discriminator 7 view .LVU99
+ 438 020c 2368     		ldr	r3, [r4]
+ 439 020e 1B68     		ldr	r3, [r3]
+ 440 0210 0022     		movs	r2, #0
+ 441 0212 1A64     		str	r2, [r3, #64]
+ 442 0214 23E7     		b	.L40
+ 443              	.L73:
+ 126:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 444              		.loc 1 126 3 discriminator 3 view .LVU100
+ 445 0216 2368     		ldr	r3, [r4]
+ 446 0218 1B68     		ldr	r3, [r3]
+ 447 021a 0022     		movs	r2, #0
+ 448 021c 9A63     		str	r2, [r3, #56]
+ 449 021e 1EE7     		b	.L40
+ 450              	.L74:
+ 126:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 451              		.loc 1 126 3 discriminator 6 view .LVU101
+ 452 0220 2368     		ldr	r3, [r4]
+ 453 0222 1B68     		ldr	r3, [r3]
+ 454 0224 0022     		movs	r2, #0
+ 455 0226 DA63     		str	r2, [r3, #60]
+ 456 0228 19E7     		b	.L40
+ 457              	.L43:
+ 127:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 458              		.loc 1 127 3 discriminator 2 view .LVU102
+ 459 022a 042B     		cmp	r3, #4
+ 460 022c 06D0     		beq	.L75
+ 127:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 461              		.loc 1 127 3 discriminator 4 view .LVU103
+ 462 022e 082B     		cmp	r3, #8
+ 463 0230 09D0     		beq	.L76
+ 127:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 464              		.loc 1 127 3 discriminator 7 view .LVU104
+ 465 0232 2368     		ldr	r3, [r4]
+ 466 0234 1B68     		ldr	r3, [r3]
+ 467 0236 0022     		movs	r2, #0
+ 468 0238 1A64     		str	r2, [r3, #64]
+ 469 023a 18E7     		b	.L44
+ 470              	.L75:
+ 127:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 13
 
 
- 430              		.cfi_offset 5, -8
- 431              		.cfi_offset 14, -4
- 432 0002 0546     		mov	r5, r0
-  93:controller/actuators/dc_motors.c **** 	{
- 433              		.loc 1 93 2 is_stmt 1 view .LVU89
-  93:controller/actuators/dc_motors.c **** 	{
- 434              		.loc 1 93 5 is_stmt 0 view .LVU90
- 435 0004 99B1     		cbz	r1, .L69
- 436 0006 0C46     		mov	r4, r1
-  99:controller/actuators/dc_motors.c **** 	{
- 437              		.loc 1 99 2 is_stmt 1 view .LVU91
-  99:controller/actuators/dc_motors.c **** 	{
- 438              		.loc 1 99 5 is_stmt 0 view .LVU92
- 439 0008 42F21073 		movw	r3, #10000
- 440 000c 9942     		cmp	r1, r3
- 441 000e 00D9     		bls	.L64
- 101:controller/actuators/dc_motors.c **** 	}
- 442              		.loc 1 101 13 view .LVU93
- 443 0010 1C46     		mov	r4, r3
- 444              	.L64:
- 445              	.LVL12:
- 104:controller/actuators/dc_motors.c **** 	uint16_t prescaler = 0;
- 446              		.loc 1 104 2 is_stmt 1 view .LVU94
- 104:controller/actuators/dc_motors.c **** 	uint16_t prescaler = 0;
- 447              		.loc 1 104 25 is_stmt 0 view .LVU95
- 448 0012 FFF7FEFF 		bl	HAL_RCC_GetSysClockFreq
- 449              	.LVL13:
- 105:controller/actuators/dc_motors.c **** 	uint32_t auto_reload = 0;
- 450              		.loc 1 105 2 is_stmt 1 view .LVU96
- 106:controller/actuators/dc_motors.c **** 
- 451              		.loc 1 106 2 view .LVU97
- 109:controller/actuators/dc_motors.c **** 	{
- 452              		.loc 1 109 2 view .LVU98
- 109:controller/actuators/dc_motors.c **** 	{
- 453              		.loc 1 109 17 is_stmt 0 view .LVU99
- 454 0016 0022     		movs	r2, #0
- 455              	.LVL14:
- 456              	.L66:
- 111:controller/actuators/dc_motors.c **** 		
- 457              		.loc 1 111 3 is_stmt 1 view .LVU100
- 111:controller/actuators/dc_motors.c **** 		
- 458              		.loc 1 111 49 is_stmt 0 view .LVU101
- 459 0018 02FB0443 		mla	r3, r2, r4, r4
- 111:controller/actuators/dc_motors.c **** 		
- 460              		.loc 1 111 30 view .LVU102
- 461 001c B0FBF3F3 		udiv	r3, r0, r3
- 111:controller/actuators/dc_motors.c **** 		
- 462              		.loc 1 111 15 view .LVU103
- 463 0020 013B     		subs	r3, r3, #1
- 464              	.LVL15:
- 113:controller/actuators/dc_motors.c **** 		{
- 465              		.loc 1 113 3 is_stmt 1 view .LVU104
- 113:controller/actuators/dc_motors.c **** 		{
- 466              		.loc 1 113 6 is_stmt 0 view .LVU105
- 467 0022 B3F5803F 		cmp	r3, #65536
- 468 0026 05D3     		bcc	.L65
- 109:controller/actuators/dc_motors.c **** 	{
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 13
+ 471              		.loc 1 127 3 discriminator 3 view .LVU105
+ 472 023c 2368     		ldr	r3, [r4]
+ 473 023e 1B68     		ldr	r3, [r3]
+ 474 0240 0022     		movs	r2, #0
+ 475 0242 9A63     		str	r2, [r3, #56]
+ 476 0244 13E7     		b	.L44
+ 477              	.L76:
+ 127:controller/actuators/dc_motors.c **** 		__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 478              		.loc 1 127 3 discriminator 6 view .LVU106
+ 479 0246 2368     		ldr	r3, [r4]
+ 480 0248 1B68     		ldr	r3, [r3]
+ 481 024a 0022     		movs	r2, #0
+ 482 024c DA63     		str	r2, [r3, #60]
+ 483 024e 0EE7     		b	.L44
+ 484              	.L47:
+ 128:controller/actuators/dc_motors.c **** 		/**
+ 485              		.loc 1 128 3 discriminator 2 view .LVU107
+ 486 0250 042B     		cmp	r3, #4
+ 487 0252 06D0     		beq	.L77
+ 128:controller/actuators/dc_motors.c **** 		/**
+ 488              		.loc 1 128 3 discriminator 4 view .LVU108
+ 489 0254 082B     		cmp	r3, #8
+ 490 0256 09D0     		beq	.L78
+ 128:controller/actuators/dc_motors.c **** 		/**
+ 491              		.loc 1 128 3 discriminator 7 view .LVU109
+ 492 0258 2368     		ldr	r3, [r4]
+ 493 025a 1B68     		ldr	r3, [r3]
+ 494 025c 0022     		movs	r2, #0
+ 495 025e 1A64     		str	r2, [r3, #64]
+ 496 0260 2AE7     		b	.L18
+ 497              	.L77:
+ 128:controller/actuators/dc_motors.c **** 		/**
+ 498              		.loc 1 128 3 discriminator 3 view .LVU110
+ 499 0262 2368     		ldr	r3, [r4]
+ 500 0264 1B68     		ldr	r3, [r3]
+ 501 0266 0022     		movs	r2, #0
+ 502 0268 9A63     		str	r2, [r3, #56]
+ 503 026a 25E7     		b	.L18
+ 504              	.L78:
+ 128:controller/actuators/dc_motors.c **** 		/**
+ 505              		.loc 1 128 3 discriminator 6 view .LVU111
+ 506 026c 2368     		ldr	r3, [r4]
+ 507 026e 1B68     		ldr	r3, [r3]
+ 508 0270 0022     		movs	r2, #0
+ 509 0272 DA63     		str	r2, [r3, #60]
+ 510 0274 20E7     		b	.L18
+ 511              	.LVL9:
+ 512              	.L52:
+ 513              		.cfi_def_cfa_offset 0
+ 514              		.cfi_restore 3
+ 515              		.cfi_restore 4
+ 516              		.cfi_restore 5
+ 517              		.cfi_restore 6
+ 518              		.cfi_restore 7
+ 519              		.cfi_restore 8
+ 520              		.cfi_restore 9
+ 521              		.cfi_restore 14
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 14
 
 
- 469              		.loc 1 109 52 is_stmt 1 view .LVU106
- 470 0028 0132     		adds	r2, r2, #1
- 471              	.LVL16:
- 109:controller/actuators/dc_motors.c **** 	{
- 472              		.loc 1 109 52 is_stmt 0 view .LVU107
- 473 002a 92B2     		uxth	r2, r2
- 474              	.LVL17:
- 109:controller/actuators/dc_motors.c **** 	{
- 475              		.loc 1 109 2 is_stmt 1 view .LVU108
- 111:controller/actuators/dc_motors.c **** 		
- 476              		.loc 1 111 15 is_stmt 0 view .LVU109
- 477 002c F4E7     		b	.L66
- 478              	.LVL18:
- 479              	.L69:
-  96:controller/actuators/dc_motors.c **** 		return;
- 480              		.loc 1 96 3 is_stmt 1 view .LVU110
- 481 002e FFF7FEFF 		bl	dc_motor_disable
- 482              	.LVL19:
-  97:controller/actuators/dc_motors.c **** 	}
- 483              		.loc 1 97 3 view .LVU111
- 484 0032 0CE0     		b	.L61
- 485              	.LVL20:
- 486              	.L65:
- 120:controller/actuators/dc_motors.c **** 	{
- 487              		.loc 1 120 2 view .LVU112
- 127:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer, auto_reload);
- 488              		.loc 1 127 2 view .LVU113
- 489 0034 2968     		ldr	r1, [r5]
- 490 0036 0968     		ldr	r1, [r1]
- 491 0038 8A62     		str	r2, [r1, #40]
- 128:controller/actuators/dc_motors.c **** 
- 492              		.loc 1 128 2 view .LVU114
- 128:controller/actuators/dc_motors.c **** 
- 493              		.loc 1 128 2 view .LVU115
- 494 003a 2A68     		ldr	r2, [r5]
- 495              	.LVL21:
- 128:controller/actuators/dc_motors.c **** 
- 496              		.loc 1 128 2 is_stmt 0 view .LVU116
- 497 003c 1268     		ldr	r2, [r2]
- 498 003e D362     		str	r3, [r2, #44]
- 499              	.LVL22:
- 128:controller/actuators/dc_motors.c **** 
- 500              		.loc 1 128 2 is_stmt 1 view .LVU117
- 501 0040 2A68     		ldr	r2, [r5]
- 502 0042 D360     		str	r3, [r2, #12]
- 128:controller/actuators/dc_motors.c **** 
- 503              		.loc 1 128 2 view .LVU118
- 130:controller/actuators/dc_motors.c **** }
- 504              		.loc 1 130 2 view .LVU119
- 505 0044 6A7B     		ldrb	r2, [r5, #13]	@ zero_extendqisi2
- 506 0046 297B     		ldrb	r1, [r5, #12]	@ zero_extendqisi2
- 507 0048 2846     		mov	r0, r5
- 508              	.LVL23:
- 130:controller/actuators/dc_motors.c **** }
- 509              		.loc 1 130 2 is_stmt 0 view .LVU120
- 510 004a FFF7FEFF 		bl	dc_motor_set
- 511              	.LVL24:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 14
+ 128:controller/actuators/dc_motors.c **** 		/**
+ 522              		.loc 1 128 3 discriminator 6 view .LVU112
+ 523 0276 7047     		bx	lr
+ 524              	.L80:
+ 525              		.align	3
+ 526              	.L79:
+ 527 0278 00000000 		.word	0
+ 528 027c 00E06F40 		.word	1081073664
+ 529              		.cfi_endproc
+ 530              	.LFE222:
+ 532              		.section	.text.dc_motor_disable,"ax",%progbits
+ 533              		.align	1
+ 534              		.global	dc_motor_disable
+ 535              		.syntax unified
+ 536              		.thumb
+ 537              		.thumb_func
+ 539              	dc_motor_disable:
+ 540              	.LVL10:
+ 541              	.LFB224:
+ 137:controller/actuators/dc_motors.c **** 
+ 138:controller/actuators/dc_motors.c **** /**
+ 139:controller/actuators/dc_motors.c ****  * @brief sets the pwm frequency
+ 140:controller/actuators/dc_motors.c ****  * @note this changes the frequency of the entire timer, this includes all four channels
+ 141:controller/actuators/dc_motors.c ****  */
+ 142:controller/actuators/dc_motors.c **** void dc_motor_set_timer_freq(dc_motor_t *motor, pwm_freq_t frequency)
+ 143:controller/actuators/dc_motors.c **** {
+ 144:controller/actuators/dc_motors.c **** 	if (frequency == 0)
+ 145:controller/actuators/dc_motors.c **** 	{
+ 146:controller/actuators/dc_motors.c **** 		// Invalid frequency, return or handle error
+ 147:controller/actuators/dc_motors.c **** 		dc_motor_disable(motor);
+ 148:controller/actuators/dc_motors.c **** 		return;
+ 149:controller/actuators/dc_motors.c **** 	}
+ 150:controller/actuators/dc_motors.c **** 	if (frequency > DC_MOTOR_MAX_FREQUENCY)
+ 151:controller/actuators/dc_motors.c **** 	{
+ 152:controller/actuators/dc_motors.c **** 		frequency = DC_MOTOR_MAX_FREQUENCY;
+ 153:controller/actuators/dc_motors.c **** 	}
+ 154:controller/actuators/dc_motors.c **** 	
+ 155:controller/actuators/dc_motors.c **** 	uint32_t timer_clock = HAL_RCC_GetSysClockFreq(); // Get the timer clock frequency
+ 156:controller/actuators/dc_motors.c **** 	uint16_t prescaler = 0;
+ 157:controller/actuators/dc_motors.c **** 	uint32_t auto_reload = 0;
+ 158:controller/actuators/dc_motors.c **** 
+ 159:controller/actuators/dc_motors.c **** 	// Calculate prescaler and auto-reload values
+ 160:controller/actuators/dc_motors.c **** 	for (prescaler = 0; prescaler <= 0xFFFF; prescaler++)
+ 161:controller/actuators/dc_motors.c **** 	{
+ 162:controller/actuators/dc_motors.c **** 		auto_reload = (timer_clock / ((prescaler + 1) * frequency)) - 1;
+ 163:controller/actuators/dc_motors.c **** 		
+ 164:controller/actuators/dc_motors.c **** 		if (auto_reload <= 0xFFFF)
+ 165:controller/actuators/dc_motors.c **** 		{
+ 166:controller/actuators/dc_motors.c **** 			break;
+ 167:controller/actuators/dc_motors.c **** 
+ 168:controller/actuators/dc_motors.c **** 		}
+ 169:controller/actuators/dc_motors.c **** 	}
+ 170:controller/actuators/dc_motors.c **** 
+ 171:controller/actuators/dc_motors.c **** 	if (prescaler > 0xFFFF || auto_reload > 0xFFFF)
+ 172:controller/actuators/dc_motors.c **** 	{
+ 173:controller/actuators/dc_motors.c **** 		// Frequency is too low, cannot configure timer
+ 174:controller/actuators/dc_motors.c **** 		return;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 15
 
 
- 512              	.L61:
- 131:controller/actuators/dc_motors.c **** 
- 513              		.loc 1 131 1 view .LVU121
- 514 004e 38BD     		pop	{r3, r4, r5, pc}
- 131:controller/actuators/dc_motors.c **** 
- 515              		.loc 1 131 1 view .LVU122
- 516              		.cfi_endproc
- 517              	.LFE222:
- 519              		.section	.text.dc_motor_init,"ax",%progbits
- 520              		.align	1
- 521              		.global	dc_motor_init
- 522              		.syntax unified
- 523              		.thumb
- 524              		.thumb_func
- 526              	dc_motor_init:
- 527              	.LVL25:
- 528              	.LFB220:
-  13:controller/actuators/dc_motors.c ****     if (motor == NULL || timer == NULL)
- 529              		.loc 1 13 1 is_stmt 1 view -0
- 530              		.cfi_startproc
- 531              		@ args = 4, pretend = 0, frame = 0
- 532              		@ frame_needed = 0, uses_anonymous_args = 0
-  14:controller/actuators/dc_motors.c ****     {
- 533              		.loc 1 14 5 view .LVU124
-  14:controller/actuators/dc_motors.c ****     {
- 534              		.loc 1 14 8 is_stmt 0 view .LVU125
- 535 0000 0028     		cmp	r0, #0
- 536 0002 4DD0     		beq	.L81
-  13:controller/actuators/dc_motors.c ****     if (motor == NULL || timer == NULL)
- 537              		.loc 1 13 1 view .LVU126
- 538 0004 10B5     		push	{r4, lr}
- 539              		.cfi_def_cfa_offset 8
- 540              		.cfi_offset 4, -8
- 541              		.cfi_offset 14, -4
- 542 0006 0446     		mov	r4, r0
-  14:controller/actuators/dc_motors.c ****     {
- 543              		.loc 1 14 23 discriminator 1 view .LVU127
- 544 0008 19B3     		cbz	r1, .L70
-  22:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
- 545              		.loc 1 22 5 is_stmt 1 view .LVU128
-  22:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
- 546              		.loc 1 22 18 is_stmt 0 view .LVU129
- 547 000a 0160     		str	r1, [r0]
-  23:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
- 548              		.loc 1 23 5 is_stmt 1 view .LVU130
-  23:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
- 549              		.loc 1 23 35 is_stmt 0 view .LVU131
- 550 000c 4260     		str	r2, [r0, #4]
-  24:controller/actuators/dc_motors.c **** 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
- 551              		.loc 1 24 5 is_stmt 1 view .LVU132
-  24:controller/actuators/dc_motors.c **** 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
- 552              		.loc 1 24 35 is_stmt 0 view .LVU133
- 553 000e 8360     		str	r3, [r0, #8]
-  25:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
- 554              		.loc 1 25 2 is_stmt 1 view .LVU134
-  25:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
- 555              		.loc 1 25 27 is_stmt 0 view .LVU135
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 15
+ 175:controller/actuators/dc_motors.c **** 	}
+ 176:controller/actuators/dc_motors.c **** 	
+ 177:controller/actuators/dc_motors.c **** 	// Set the prescaler and auto-reload values
+ 178:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_PRESCALER((TIM_HandleTypeDef *)motor->timer, prescaler);
+ 179:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer, auto_reload);
+ 180:controller/actuators/dc_motors.c **** 
+ 181:controller/actuators/dc_motors.c **** 	dc_motor_set(motor, motor->current_direction, motor->current_duty_cycle);
+ 182:controller/actuators/dc_motors.c **** }
+ 183:controller/actuators/dc_motors.c **** 
+ 184:controller/actuators/dc_motors.c **** /**
+ 185:controller/actuators/dc_motors.c ****  * @brief disables the motor.
+ 186:controller/actuators/dc_motors.c ****  */
+ 187:controller/actuators/dc_motors.c **** void dc_motor_disable(dc_motor_t *motor)
+ 188:controller/actuators/dc_motors.c **** {
+ 542              		.loc 1 188 1 is_stmt 1 view -0
+ 543              		.cfi_startproc
+ 544              		@ args = 0, pretend = 0, frame = 0
+ 545              		@ frame_needed = 0, uses_anonymous_args = 0
+ 546              		@ link register save eliminated.
+ 189:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
+ 547              		.loc 1 189 2 view .LVU114
+ 548              		.loc 1 189 5 is_stmt 0 view .LVU115
+ 549 0000 0346     		mov	r3, r0
+ 550 0002 78B1     		cbz	r0, .L81
+ 551              		.loc 1 189 28 discriminator 1 view .LVU116
+ 552 0004 0268     		ldr	r2, [r0]
+ 553              		.loc 1 189 20 discriminator 1 view .LVU117
+ 554 0006 6AB1     		cbz	r2, .L81
+ 190:controller/actuators/dc_motors.c **** 	{
+ 191:controller/actuators/dc_motors.c **** 		return;
+ 192:controller/actuators/dc_motors.c **** 		/**
+ 193:controller/actuators/dc_motors.c **** 		 * @todo throw an error
+ 194:controller/actuators/dc_motors.c **** 		 */
+ 195:controller/actuators/dc_motors.c **** 	}
+ 196:controller/actuators/dc_motors.c **** 
+ 197:controller/actuators/dc_motors.c **** 	// Set duty cycle to 0 for both channels
+ 198:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
+ 555              		.loc 1 198 2 is_stmt 1 view .LVU118
+ 556 0008 4168     		ldr	r1, [r0, #4]
+ 557 000a 61B9     		cbnz	r1, .L83
+ 558              		.loc 1 198 2 is_stmt 0 discriminator 1 view .LVU119
+ 559 000c 1268     		ldr	r2, [r2]
+ 560 000e 5163     		str	r1, [r2, #52]
+ 561              	.L84:
+ 199:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 562              		.loc 1 199 2 is_stmt 1 view .LVU120
+ 563 0010 9A68     		ldr	r2, [r3, #8]
+ 564 0012 C2B9     		cbnz	r2, .L87
+ 565              		.loc 1 199 2 is_stmt 0 discriminator 1 view .LVU121
+ 566 0014 1A68     		ldr	r2, [r3]
+ 567 0016 1268     		ldr	r2, [r2]
+ 568 0018 0021     		movs	r1, #0
+ 569 001a 5163     		str	r1, [r2, #52]
+ 570              	.L88:
+ 200:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 571              		.loc 1 200 2 is_stmt 1 view .LVU122
+ 572              		.loc 1 200 28 is_stmt 0 view .LVU123
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 16
 
 
- 556 0010 0023     		movs	r3, #0
- 557              	.LVL26:
-  25:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
- 558              		.loc 1 25 27 view .LVU136
- 559 0012 0373     		strb	r3, [r0, #12]
-  26:controller/actuators/dc_motors.c **** 
- 560              		.loc 1 26 2 is_stmt 1 view .LVU137
-  26:controller/actuators/dc_motors.c **** 
- 561              		.loc 1 26 16 is_stmt 0 view .LVU138
- 562 0014 8373     		strb	r3, [r0, #14]
-  31:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
- 563              		.loc 1 31 2 is_stmt 1 view .LVU139
- 564 0016 0846     		mov	r0, r1
- 565              	.LVL27:
-  31:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
- 566              		.loc 1 31 2 is_stmt 0 view .LVU140
- 567 0018 FFF7FEFF 		bl	HAL_TIM_Base_Start
- 568              	.LVL28:
-  32:controller/actuators/dc_motors.c **** 	// Set initial duty cycle to 0 for both channels
- 569              		.loc 1 32 2 is_stmt 1 view .LVU141
- 570 001c BDF80810 		ldrh	r1, [sp, #8]
- 571 0020 2046     		mov	r0, r4
- 572 0022 FFF7FEFF 		bl	dc_motor_set_timer_freq
- 573              	.LVL29:
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 574              		.loc 1 34 2 view .LVU142
- 575 0026 6368     		ldr	r3, [r4, #4]
- 576 0028 A3B9     		cbnz	r3, .L72
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 577              		.loc 1 34 2 is_stmt 0 discriminator 1 view .LVU143
- 578 002a 2368     		ldr	r3, [r4]
- 579 002c 1B68     		ldr	r3, [r3]
- 580 002e 0022     		movs	r2, #0
- 581 0030 5A63     		str	r2, [r3, #52]
- 582              	.L73:
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 583              		.loc 1 35 2 is_stmt 1 view .LVU144
- 584 0032 A368     		ldr	r3, [r4, #8]
- 585 0034 0BBB     		cbnz	r3, .L76
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 586              		.loc 1 35 2 is_stmt 0 discriminator 1 view .LVU145
- 587 0036 2368     		ldr	r3, [r4]
- 588 0038 1B68     		ldr	r3, [r3]
- 589 003a 0022     		movs	r2, #0
- 590 003c 5A63     		str	r2, [r3, #52]
- 591              	.L77:
-  36:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
- 592              		.loc 1 36 2 is_stmt 1 view .LVU146
- 593 003e 6168     		ldr	r1, [r4, #4]
- 594 0040 2068     		ldr	r0, [r4]
- 595 0042 FFF7FEFF 		bl	HAL_TIM_PWM_Start
- 596              	.LVL30:
-  37:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 597              		.loc 1 37 2 view .LVU147
- 598 0046 A168     		ldr	r1, [r4, #8]
- 599 0048 2068     		ldr	r0, [r4]
- 600 004a FFF7FEFF 		bl	HAL_TIM_PWM_Start
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 16
+ 573 001c 0022     		movs	r2, #0
+ 574 001e 5A75     		strb	r2, [r3, #21]
+ 201:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_DISABLED;
+ 575              		.loc 1 201 2 is_stmt 1 view .LVU124
+ 576              		.loc 1 201 16 is_stmt 0 view .LVU125
+ 577 0020 0222     		movs	r2, #2
+ 578 0022 9A75     		strb	r2, [r3, #22]
+ 579              	.L81:
+ 202:controller/actuators/dc_motors.c **** }
+ 580              		.loc 1 202 1 view .LVU126
+ 581 0024 7047     		bx	lr
+ 582              	.L83:
+ 198:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 583              		.loc 1 198 2 discriminator 2 view .LVU127
+ 584 0026 0429     		cmp	r1, #4
+ 585 0028 05D0     		beq	.L91
+ 198:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 586              		.loc 1 198 2 discriminator 4 view .LVU128
+ 587 002a 0829     		cmp	r1, #8
+ 588 002c 07D0     		beq	.L92
+ 198:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 589              		.loc 1 198 2 discriminator 7 view .LVU129
+ 590 002e 1268     		ldr	r2, [r2]
+ 591 0030 0021     		movs	r1, #0
+ 592 0032 1164     		str	r1, [r2, #64]
+ 593 0034 ECE7     		b	.L84
+ 594              	.L91:
+ 198:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 595              		.loc 1 198 2 discriminator 3 view .LVU130
+ 596 0036 1268     		ldr	r2, [r2]
+ 597 0038 0021     		movs	r1, #0
+ 598 003a 9163     		str	r1, [r2, #56]
+ 599 003c E8E7     		b	.L84
+ 600              	.L92:
+ 198:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 601              		.loc 1 198 2 discriminator 6 view .LVU131
+ 602 003e 1268     		ldr	r2, [r2]
+ 603 0040 0021     		movs	r1, #0
+ 604 0042 D163     		str	r1, [r2, #60]
+ 605 0044 E4E7     		b	.L84
+ 606              	.L87:
+ 199:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 607              		.loc 1 199 2 discriminator 2 view .LVU132
+ 608 0046 042A     		cmp	r2, #4
+ 609 0048 06D0     		beq	.L93
+ 199:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 610              		.loc 1 199 2 discriminator 4 view .LVU133
+ 611 004a 082A     		cmp	r2, #8
+ 612 004c 09D0     		beq	.L94
+ 199:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 613              		.loc 1 199 2 discriminator 7 view .LVU134
+ 614 004e 1A68     		ldr	r2, [r3]
+ 615 0050 1268     		ldr	r2, [r2]
+ 616 0052 0021     		movs	r1, #0
+ 617 0054 1164     		str	r1, [r2, #64]
+ 618 0056 E1E7     		b	.L88
+ 619              	.L93:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 17
 
 
- 601              	.LVL31:
-  38:controller/actuators/dc_motors.c **** }
- 602              		.loc 1 38 2 view .LVU148
-  38:controller/actuators/dc_motors.c **** }
- 603              		.loc 1 38 28 is_stmt 0 view .LVU149
- 604 004e 0023     		movs	r3, #0
- 605 0050 6373     		strb	r3, [r4, #13]
- 606              	.L70:
-  39:controller/actuators/dc_motors.c **** 
- 607              		.loc 1 39 1 view .LVU150
- 608 0052 10BD     		pop	{r4, pc}
- 609              	.LVL32:
- 610              	.L72:
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 611              		.loc 1 34 2 discriminator 2 view .LVU151
- 612 0054 042B     		cmp	r3, #4
- 613 0056 06D0     		beq	.L84
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 614              		.loc 1 34 2 discriminator 4 view .LVU152
- 615 0058 082B     		cmp	r3, #8
- 616 005a 09D0     		beq	.L85
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 617              		.loc 1 34 2 discriminator 7 view .LVU153
- 618 005c 2368     		ldr	r3, [r4]
- 619 005e 1B68     		ldr	r3, [r3]
- 620 0060 0022     		movs	r2, #0
- 621 0062 1A64     		str	r2, [r3, #64]
- 622 0064 E5E7     		b	.L73
- 623              	.L84:
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 624              		.loc 1 34 2 discriminator 3 view .LVU154
- 625 0066 2368     		ldr	r3, [r4]
- 626 0068 1B68     		ldr	r3, [r3]
- 627 006a 0022     		movs	r2, #0
- 628 006c 9A63     		str	r2, [r3, #56]
- 629 006e E0E7     		b	.L73
- 630              	.L85:
-  34:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 631              		.loc 1 34 2 discriminator 6 view .LVU155
- 632 0070 2368     		ldr	r3, [r4]
- 633 0072 1B68     		ldr	r3, [r3]
- 634 0074 0022     		movs	r2, #0
- 635 0076 DA63     		str	r2, [r3, #60]
- 636 0078 DBE7     		b	.L73
- 637              	.L76:
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 638              		.loc 1 35 2 discriminator 2 view .LVU156
- 639 007a 042B     		cmp	r3, #4
- 640 007c 06D0     		beq	.L86
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 641              		.loc 1 35 2 discriminator 4 view .LVU157
- 642 007e 082B     		cmp	r3, #8
- 643 0080 09D0     		beq	.L87
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 644              		.loc 1 35 2 discriminator 7 view .LVU158
- 645 0082 2368     		ldr	r3, [r4]
- 646 0084 1B68     		ldr	r3, [r3]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 17
+ 199:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 620              		.loc 1 199 2 discriminator 3 view .LVU135
+ 621 0058 1A68     		ldr	r2, [r3]
+ 622 005a 1268     		ldr	r2, [r2]
+ 623 005c 0021     		movs	r1, #0
+ 624 005e 9163     		str	r1, [r2, #56]
+ 625 0060 DCE7     		b	.L88
+ 626              	.L94:
+ 199:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 627              		.loc 1 199 2 discriminator 6 view .LVU136
+ 628 0062 1A68     		ldr	r2, [r3]
+ 629 0064 1268     		ldr	r2, [r2]
+ 630 0066 0021     		movs	r1, #0
+ 631 0068 D163     		str	r1, [r2, #60]
+ 632 006a D7E7     		b	.L88
+ 633              		.cfi_endproc
+ 634              	.LFE224:
+ 636              		.section	.text.dc_motor_set_timer_freq,"ax",%progbits
+ 637              		.align	1
+ 638              		.global	dc_motor_set_timer_freq
+ 639              		.syntax unified
+ 640              		.thumb
+ 641              		.thumb_func
+ 643              	dc_motor_set_timer_freq:
+ 644              	.LVL11:
+ 645              	.LFB223:
+ 143:controller/actuators/dc_motors.c **** 	if (frequency == 0)
+ 646              		.loc 1 143 1 is_stmt 1 view -0
+ 647              		.cfi_startproc
+ 648              		@ args = 0, pretend = 0, frame = 0
+ 649              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143:controller/actuators/dc_motors.c **** 	if (frequency == 0)
+ 650              		.loc 1 143 1 is_stmt 0 view .LVU138
+ 651 0000 38B5     		push	{r3, r4, r5, lr}
+ 652              		.cfi_def_cfa_offset 16
+ 653              		.cfi_offset 3, -16
+ 654              		.cfi_offset 4, -12
+ 655              		.cfi_offset 5, -8
+ 656              		.cfi_offset 14, -4
+ 657 0002 0546     		mov	r5, r0
+ 144:controller/actuators/dc_motors.c **** 	{
+ 658              		.loc 1 144 2 is_stmt 1 view .LVU139
+ 144:controller/actuators/dc_motors.c **** 	{
+ 659              		.loc 1 144 5 is_stmt 0 view .LVU140
+ 660 0004 99B1     		cbz	r1, .L103
+ 661 0006 0C46     		mov	r4, r1
+ 150:controller/actuators/dc_motors.c **** 	{
+ 662              		.loc 1 150 2 is_stmt 1 view .LVU141
+ 150:controller/actuators/dc_motors.c **** 	{
+ 663              		.loc 1 150 5 is_stmt 0 view .LVU142
+ 664 0008 44F62063 		movw	r3, #20000
+ 665 000c 9942     		cmp	r1, r3
+ 666 000e 00D9     		bls	.L98
+ 152:controller/actuators/dc_motors.c **** 	}
+ 667              		.loc 1 152 13 view .LVU143
+ 668 0010 1C46     		mov	r4, r3
+ 669              	.L98:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 18
 
 
- 647 0086 0022     		movs	r2, #0
- 648 0088 1A64     		str	r2, [r3, #64]
- 649 008a D8E7     		b	.L77
- 650              	.L86:
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 651              		.loc 1 35 2 discriminator 3 view .LVU159
- 652 008c 2368     		ldr	r3, [r4]
- 653 008e 1B68     		ldr	r3, [r3]
- 654 0090 0022     		movs	r2, #0
- 655 0092 9A63     		str	r2, [r3, #56]
- 656 0094 D3E7     		b	.L77
- 657              	.L87:
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 658              		.loc 1 35 2 discriminator 6 view .LVU160
- 659 0096 2368     		ldr	r3, [r4]
- 660 0098 1B68     		ldr	r3, [r3]
- 661 009a 0022     		movs	r2, #0
- 662 009c DA63     		str	r2, [r3, #60]
- 663 009e CEE7     		b	.L77
- 664              	.LVL33:
- 665              	.L81:
- 666              		.cfi_def_cfa_offset 0
- 667              		.cfi_restore 4
- 668              		.cfi_restore 14
-  35:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
- 669              		.loc 1 35 2 discriminator 6 view .LVU161
- 670 00a0 7047     		bx	lr
- 671              		.cfi_endproc
- 672              	.LFE220:
- 674              		.section	.text.dc_motor_enable,"ax",%progbits
- 675              		.align	1
- 676              		.global	dc_motor_enable
- 677              		.syntax unified
- 678              		.thumb
- 679              		.thumb_func
- 681              	dc_motor_enable:
- 682              	.LVL34:
- 683              	.LFB224:
- 152:controller/actuators/dc_motors.c **** 
- 153:controller/actuators/dc_motors.c **** /**
- 154:controller/actuators/dc_motors.c ****  * @brief enables the motor.
- 155:controller/actuators/dc_motors.c ****  * @note sets the duty cycle to 0 for safety
- 156:controller/actuators/dc_motors.c ****  */
- 157:controller/actuators/dc_motors.c **** void dc_motor_enable(dc_motor_t *motor)
- 158:controller/actuators/dc_motors.c **** {
- 684              		.loc 1 158 1 is_stmt 1 view -0
- 685              		.cfi_startproc
- 686              		@ args = 0, pretend = 0, frame = 0
- 687              		@ frame_needed = 0, uses_anonymous_args = 0
- 688              		@ link register save eliminated.
- 159:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
- 689              		.loc 1 159 2 view .LVU163
- 690              		.loc 1 159 5 is_stmt 0 view .LVU164
- 691 0000 0346     		mov	r3, r0
- 692 0002 88B1     		cbz	r0, .L88
- 693              		.loc 1 159 28 discriminator 1 view .LVU165
- 694 0004 0268     		ldr	r2, [r0]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 18
-
-
- 695              		.loc 1 159 20 discriminator 1 view .LVU166
- 696 0006 7AB1     		cbz	r2, .L88
+ 670              	.LVL12:
+ 155:controller/actuators/dc_motors.c **** 	uint16_t prescaler = 0;
+ 671              		.loc 1 155 2 is_stmt 1 view .LVU144
+ 155:controller/actuators/dc_motors.c **** 	uint16_t prescaler = 0;
+ 672              		.loc 1 155 25 is_stmt 0 view .LVU145
+ 673 0012 FFF7FEFF 		bl	HAL_RCC_GetSysClockFreq
+ 674              	.LVL13:
+ 156:controller/actuators/dc_motors.c **** 	uint32_t auto_reload = 0;
+ 675              		.loc 1 156 2 is_stmt 1 view .LVU146
+ 157:controller/actuators/dc_motors.c **** 
+ 676              		.loc 1 157 2 view .LVU147
  160:controller/actuators/dc_motors.c **** 	{
- 161:controller/actuators/dc_motors.c **** 		return;
- 162:controller/actuators/dc_motors.c **** 		/**
- 163:controller/actuators/dc_motors.c **** 		 * @todo throw an error
- 164:controller/actuators/dc_motors.c **** 		 */
- 165:controller/actuators/dc_motors.c **** 	}
- 166:controller/actuators/dc_motors.c **** 	if (motor->status == MOTOR_STATE_NORMAL || motor->status == MOTOR_STATE_FAULT || motor == NULL)
- 697              		.loc 1 166 2 is_stmt 1 view .LVU167
- 698              		.loc 1 166 11 is_stmt 0 view .LVU168
- 699 0008 817B     		ldrb	r1, [r0, #14]	@ zero_extendqisi2
- 700              		.loc 1 166 5 view .LVU169
- 701 000a 0129     		cmp	r1, #1
- 702 000c 0CD9     		bls	.L88
- 167:controller/actuators/dc_motors.c **** 	{
- 168:controller/actuators/dc_motors.c **** 		return;
- 169:controller/actuators/dc_motors.c **** 		/**
- 170:controller/actuators/dc_motors.c **** 		 * @todo throw an error
- 171:controller/actuators/dc_motors.c **** 		 */
- 172:controller/actuators/dc_motors.c **** 	}
- 173:controller/actuators/dc_motors.c **** 
- 174:controller/actuators/dc_motors.c **** 	// Set duty cycle to 0 for both channels
- 175:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
- 703              		.loc 1 175 2 is_stmt 1 view .LVU170
- 704 000e 4168     		ldr	r1, [r0, #4]
- 705 0010 59B9     		cbnz	r1, .L90
- 706              		.loc 1 175 2 is_stmt 0 discriminator 1 view .LVU171
- 707 0012 1268     		ldr	r2, [r2]
- 708 0014 5163     		str	r1, [r2, #52]
- 709              	.L91:
- 176:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 710              		.loc 1 176 2 is_stmt 1 view .LVU172
- 711 0016 9A68     		ldr	r2, [r3, #8]
- 712 0018 BAB9     		cbnz	r2, .L94
- 713              		.loc 1 176 2 is_stmt 0 discriminator 1 view .LVU173
- 714 001a 1A68     		ldr	r2, [r3]
- 715 001c 1268     		ldr	r2, [r2]
- 716 001e 0021     		movs	r1, #0
- 717 0020 5163     		str	r1, [r2, #52]
- 718              	.L95:
- 177:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 719              		.loc 1 177 2 is_stmt 1 view .LVU174
- 720              		.loc 1 177 28 is_stmt 0 view .LVU175
- 721 0022 0022     		movs	r2, #0
- 722 0024 5A73     		strb	r2, [r3, #13]
- 178:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
- 723              		.loc 1 178 2 is_stmt 1 view .LVU176
- 724              		.loc 1 178 16 is_stmt 0 view .LVU177
- 725 0026 9A73     		strb	r2, [r3, #14]
- 726              	.L88:
- 179:controller/actuators/dc_motors.c **** }
- 727              		.loc 1 179 1 view .LVU178
- 728 0028 7047     		bx	lr
- 729              	.L90:
- 175:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 730              		.loc 1 175 2 discriminator 2 view .LVU179
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 19
+ 677              		.loc 1 160 2 view .LVU148
+ 160:controller/actuators/dc_motors.c **** 	{
+ 678              		.loc 1 160 17 is_stmt 0 view .LVU149
+ 679 0016 0022     		movs	r2, #0
+ 680              	.LVL14:
+ 681              	.L100:
+ 162:controller/actuators/dc_motors.c **** 		
+ 682              		.loc 1 162 3 is_stmt 1 view .LVU150
+ 162:controller/actuators/dc_motors.c **** 		
+ 683              		.loc 1 162 49 is_stmt 0 view .LVU151
+ 684 0018 02FB0443 		mla	r3, r2, r4, r4
+ 162:controller/actuators/dc_motors.c **** 		
+ 685              		.loc 1 162 30 view .LVU152
+ 686 001c B0FBF3F3 		udiv	r3, r0, r3
+ 162:controller/actuators/dc_motors.c **** 		
+ 687              		.loc 1 162 15 view .LVU153
+ 688 0020 013B     		subs	r3, r3, #1
+ 689              	.LVL15:
+ 164:controller/actuators/dc_motors.c **** 		{
+ 690              		.loc 1 164 3 is_stmt 1 view .LVU154
+ 164:controller/actuators/dc_motors.c **** 		{
+ 691              		.loc 1 164 6 is_stmt 0 view .LVU155
+ 692 0022 B3F5803F 		cmp	r3, #65536
+ 693 0026 05D3     		bcc	.L99
+ 160:controller/actuators/dc_motors.c **** 	{
+ 694              		.loc 1 160 52 is_stmt 1 view .LVU156
+ 695 0028 0132     		adds	r2, r2, #1
+ 696              	.LVL16:
+ 160:controller/actuators/dc_motors.c **** 	{
+ 697              		.loc 1 160 52 is_stmt 0 view .LVU157
+ 698 002a 92B2     		uxth	r2, r2
+ 699              	.LVL17:
+ 160:controller/actuators/dc_motors.c **** 	{
+ 700              		.loc 1 160 2 is_stmt 1 view .LVU158
+ 162:controller/actuators/dc_motors.c **** 		
+ 701              		.loc 1 162 15 is_stmt 0 view .LVU159
+ 702 002c F4E7     		b	.L100
+ 703              	.LVL18:
+ 704              	.L103:
+ 147:controller/actuators/dc_motors.c **** 		return;
+ 705              		.loc 1 147 3 is_stmt 1 view .LVU160
+ 706 002e FFF7FEFF 		bl	dc_motor_disable
+ 707              	.LVL19:
+ 148:controller/actuators/dc_motors.c **** 	}
+ 708              		.loc 1 148 3 view .LVU161
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 19
 
 
- 731 002a 0429     		cmp	r1, #4
- 732 002c 05D0     		beq	.L98
- 175:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 733              		.loc 1 175 2 discriminator 4 view .LVU180
- 734 002e 0829     		cmp	r1, #8
- 735 0030 07D0     		beq	.L99
- 175:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 736              		.loc 1 175 2 discriminator 7 view .LVU181
- 737 0032 1268     		ldr	r2, [r2]
- 738 0034 0021     		movs	r1, #0
- 739 0036 1164     		str	r1, [r2, #64]
- 740 0038 EDE7     		b	.L91
- 741              	.L98:
- 175:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 742              		.loc 1 175 2 discriminator 3 view .LVU182
- 743 003a 1268     		ldr	r2, [r2]
- 744 003c 0021     		movs	r1, #0
- 745 003e 9163     		str	r1, [r2, #56]
- 746 0040 E9E7     		b	.L91
- 747              	.L99:
- 175:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
- 748              		.loc 1 175 2 discriminator 6 view .LVU183
- 749 0042 1268     		ldr	r2, [r2]
- 750 0044 0021     		movs	r1, #0
- 751 0046 D163     		str	r1, [r2, #60]
- 752 0048 E5E7     		b	.L91
- 753              	.L94:
- 176:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 754              		.loc 1 176 2 discriminator 2 view .LVU184
- 755 004a 042A     		cmp	r2, #4
- 756 004c 06D0     		beq	.L100
- 176:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 757              		.loc 1 176 2 discriminator 4 view .LVU185
- 758 004e 082A     		cmp	r2, #8
- 759 0050 09D0     		beq	.L101
- 176:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 760              		.loc 1 176 2 discriminator 7 view .LVU186
- 761 0052 1A68     		ldr	r2, [r3]
- 762 0054 1268     		ldr	r2, [r2]
- 763 0056 0021     		movs	r1, #0
- 764 0058 1164     		str	r1, [r2, #64]
- 765 005a E2E7     		b	.L95
- 766              	.L100:
- 176:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 767              		.loc 1 176 2 discriminator 3 view .LVU187
- 768 005c 1A68     		ldr	r2, [r3]
- 769 005e 1268     		ldr	r2, [r2]
- 770 0060 0021     		movs	r1, #0
- 771 0062 9163     		str	r1, [r2, #56]
- 772 0064 DDE7     		b	.L95
- 773              	.L101:
- 176:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
- 774              		.loc 1 176 2 discriminator 6 view .LVU188
- 775 0066 1A68     		ldr	r2, [r3]
- 776 0068 1268     		ldr	r2, [r2]
- 777 006a 0021     		movs	r1, #0
- 778 006c D163     		str	r1, [r2, #60]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 20
+ 709 0032 0CE0     		b	.L95
+ 710              	.LVL20:
+ 711              	.L99:
+ 171:controller/actuators/dc_motors.c **** 	{
+ 712              		.loc 1 171 2 view .LVU162
+ 178:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer, auto_reload);
+ 713              		.loc 1 178 2 view .LVU163
+ 714 0034 2968     		ldr	r1, [r5]
+ 715 0036 0968     		ldr	r1, [r1]
+ 716 0038 8A62     		str	r2, [r1, #40]
+ 179:controller/actuators/dc_motors.c **** 
+ 717              		.loc 1 179 2 view .LVU164
+ 179:controller/actuators/dc_motors.c **** 
+ 718              		.loc 1 179 2 view .LVU165
+ 719 003a 2A68     		ldr	r2, [r5]
+ 720              	.LVL21:
+ 179:controller/actuators/dc_motors.c **** 
+ 721              		.loc 1 179 2 is_stmt 0 view .LVU166
+ 722 003c 1268     		ldr	r2, [r2]
+ 723 003e D362     		str	r3, [r2, #44]
+ 724              	.LVL22:
+ 179:controller/actuators/dc_motors.c **** 
+ 725              		.loc 1 179 2 is_stmt 1 view .LVU167
+ 726 0040 2A68     		ldr	r2, [r5]
+ 727 0042 D360     		str	r3, [r2, #12]
+ 179:controller/actuators/dc_motors.c **** 
+ 728              		.loc 1 179 2 view .LVU168
+ 181:controller/actuators/dc_motors.c **** }
+ 729              		.loc 1 181 2 view .LVU169
+ 730 0044 6A7D     		ldrb	r2, [r5, #21]	@ zero_extendqisi2
+ 731 0046 297D     		ldrb	r1, [r5, #20]	@ zero_extendqisi2
+ 732 0048 2846     		mov	r0, r5
+ 733              	.LVL23:
+ 181:controller/actuators/dc_motors.c **** }
+ 734              		.loc 1 181 2 is_stmt 0 view .LVU170
+ 735 004a FFF7FEFF 		bl	dc_motor_set
+ 736              	.LVL24:
+ 737              	.L95:
+ 182:controller/actuators/dc_motors.c **** 
+ 738              		.loc 1 182 1 view .LVU171
+ 739 004e 38BD     		pop	{r3, r4, r5, pc}
+ 182:controller/actuators/dc_motors.c **** 
+ 740              		.loc 1 182 1 view .LVU172
+ 741              		.cfi_endproc
+ 742              	.LFE223:
+ 744              		.section	.text.dc_motor_init,"ax",%progbits
+ 745              		.align	1
+ 746              		.global	dc_motor_init
+ 747              		.syntax unified
+ 748              		.thumb
+ 749              		.thumb_func
+ 751              	dc_motor_init:
+ 752              	.LVL25:
+ 753              	.LFB220:
+  13:controller/actuators/dc_motors.c ****     if (motor == NULL || timer == NULL)
+ 754              		.loc 1 13 1 is_stmt 1 view -0
+ 755              		.cfi_startproc
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 20
 
 
- 779 006e D8E7     		b	.L95
- 780              		.cfi_endproc
- 781              	.LFE224:
- 783              		.text
- 784              	.Letext0:
- 785              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 786              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 787              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 788              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 789              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 790              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 791              		.file 8 "controller/types.h"
- 792              		.file 9 "controller/actuators/dc_motors.h"
- 793              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s 			page 21
+ 756              		@ args = 4, pretend = 0, frame = 0
+ 757              		@ frame_needed = 0, uses_anonymous_args = 0
+  14:controller/actuators/dc_motors.c ****     {
+ 758              		.loc 1 14 5 view .LVU174
+  14:controller/actuators/dc_motors.c ****     {
+ 759              		.loc 1 14 8 is_stmt 0 view .LVU175
+ 760 0000 0028     		cmp	r0, #0
+ 761 0002 4FD0     		beq	.L115
+  13:controller/actuators/dc_motors.c ****     if (motor == NULL || timer == NULL)
+ 762              		.loc 1 13 1 view .LVU176
+ 763 0004 10B5     		push	{r4, lr}
+ 764              		.cfi_def_cfa_offset 8
+ 765              		.cfi_offset 4, -8
+ 766              		.cfi_offset 14, -4
+ 767 0006 0446     		mov	r4, r0
+  14:controller/actuators/dc_motors.c ****     {
+ 768              		.loc 1 14 23 discriminator 1 view .LVU177
+ 769 0008 29B3     		cbz	r1, .L104
+  22:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
+ 770              		.loc 1 22 5 is_stmt 1 view .LVU178
+  22:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
+ 771              		.loc 1 22 18 is_stmt 0 view .LVU179
+ 772 000a 0160     		str	r1, [r0]
+  23:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
+ 773              		.loc 1 23 5 is_stmt 1 view .LVU180
+  23:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
+ 774              		.loc 1 23 35 is_stmt 0 view .LVU181
+ 775 000c 4260     		str	r2, [r0, #4]
+  24:controller/actuators/dc_motors.c **** 	motor->timer_channel_output_3 = 0;
+ 776              		.loc 1 24 5 is_stmt 1 view .LVU182
+  24:controller/actuators/dc_motors.c **** 	motor->timer_channel_output_3 = 0;
+ 777              		.loc 1 24 35 is_stmt 0 view .LVU183
+ 778 000e 8360     		str	r3, [r0, #8]
+  25:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = 0;
+ 779              		.loc 1 25 2 is_stmt 1 view .LVU184
+  25:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = 0;
+ 780              		.loc 1 25 32 is_stmt 0 view .LVU185
+ 781 0010 0023     		movs	r3, #0
+ 782              	.LVL26:
+  25:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = 0;
+ 783              		.loc 1 25 32 view .LVU186
+ 784 0012 C360     		str	r3, [r0, #12]
+  26:controller/actuators/dc_motors.c **** 	
+ 785              		.loc 1 26 5 is_stmt 1 view .LVU187
+  26:controller/actuators/dc_motors.c **** 	
+ 786              		.loc 1 26 35 is_stmt 0 view .LVU188
+ 787 0014 0361     		str	r3, [r0, #16]
+  28:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
+ 788              		.loc 1 28 2 is_stmt 1 view .LVU189
+  28:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
+ 789              		.loc 1 28 27 is_stmt 0 view .LVU190
+ 790 0016 0375     		strb	r3, [r0, #20]
+  29:controller/actuators/dc_motors.c **** 
+ 791              		.loc 1 29 2 is_stmt 1 view .LVU191
+  29:controller/actuators/dc_motors.c **** 
+ 792              		.loc 1 29 16 is_stmt 0 view .LVU192
+ 793 0018 8375     		strb	r3, [r0, #22]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 21
+
+
+  34:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
+ 794              		.loc 1 34 2 is_stmt 1 view .LVU193
+ 795 001a 0846     		mov	r0, r1
+ 796              	.LVL27:
+  34:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
+ 797              		.loc 1 34 2 is_stmt 0 view .LVU194
+ 798 001c FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 799              	.LVL28:
+  35:controller/actuators/dc_motors.c **** 	// Set initial duty cycle to 0 for both channels
+ 800              		.loc 1 35 2 is_stmt 1 view .LVU195
+ 801 0020 BDF80810 		ldrh	r1, [sp, #8]
+ 802 0024 2046     		mov	r0, r4
+ 803 0026 FFF7FEFF 		bl	dc_motor_set_timer_freq
+ 804              	.LVL29:
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 805              		.loc 1 37 2 view .LVU196
+ 806 002a 6368     		ldr	r3, [r4, #4]
+ 807 002c A3B9     		cbnz	r3, .L106
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 808              		.loc 1 37 2 is_stmt 0 discriminator 1 view .LVU197
+ 809 002e 2368     		ldr	r3, [r4]
+ 810 0030 1B68     		ldr	r3, [r3]
+ 811 0032 0022     		movs	r2, #0
+ 812 0034 5A63     		str	r2, [r3, #52]
+ 813              	.L107:
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 814              		.loc 1 38 2 is_stmt 1 view .LVU198
+ 815 0036 A368     		ldr	r3, [r4, #8]
+ 816 0038 0BBB     		cbnz	r3, .L110
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 817              		.loc 1 38 2 is_stmt 0 discriminator 1 view .LVU199
+ 818 003a 2368     		ldr	r3, [r4]
+ 819 003c 1B68     		ldr	r3, [r3]
+ 820 003e 0022     		movs	r2, #0
+ 821 0040 5A63     		str	r2, [r3, #52]
+ 822              	.L111:
+  39:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
+ 823              		.loc 1 39 2 is_stmt 1 view .LVU200
+ 824 0042 6168     		ldr	r1, [r4, #4]
+ 825 0044 2068     		ldr	r0, [r4]
+ 826 0046 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 827              	.LVL30:
+  40:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 828              		.loc 1 40 2 view .LVU201
+ 829 004a A168     		ldr	r1, [r4, #8]
+ 830 004c 2068     		ldr	r0, [r4]
+ 831 004e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 832              	.LVL31:
+  41:controller/actuators/dc_motors.c **** }
+ 833              		.loc 1 41 2 view .LVU202
+  41:controller/actuators/dc_motors.c **** }
+ 834              		.loc 1 41 28 is_stmt 0 view .LVU203
+ 835 0052 0023     		movs	r3, #0
+ 836 0054 6375     		strb	r3, [r4, #21]
+ 837              	.L104:
+  42:controller/actuators/dc_motors.c **** 
+ 838              		.loc 1 42 1 view .LVU204
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 22
+
+
+ 839 0056 10BD     		pop	{r4, pc}
+ 840              	.LVL32:
+ 841              	.L106:
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 842              		.loc 1 37 2 discriminator 2 view .LVU205
+ 843 0058 042B     		cmp	r3, #4
+ 844 005a 06D0     		beq	.L118
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 845              		.loc 1 37 2 discriminator 4 view .LVU206
+ 846 005c 082B     		cmp	r3, #8
+ 847 005e 09D0     		beq	.L119
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 848              		.loc 1 37 2 discriminator 7 view .LVU207
+ 849 0060 2368     		ldr	r3, [r4]
+ 850 0062 1B68     		ldr	r3, [r3]
+ 851 0064 0022     		movs	r2, #0
+ 852 0066 1A64     		str	r2, [r3, #64]
+ 853 0068 E5E7     		b	.L107
+ 854              	.L118:
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 855              		.loc 1 37 2 discriminator 3 view .LVU208
+ 856 006a 2368     		ldr	r3, [r4]
+ 857 006c 1B68     		ldr	r3, [r3]
+ 858 006e 0022     		movs	r2, #0
+ 859 0070 9A63     		str	r2, [r3, #56]
+ 860 0072 E0E7     		b	.L107
+ 861              	.L119:
+  37:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 862              		.loc 1 37 2 discriminator 6 view .LVU209
+ 863 0074 2368     		ldr	r3, [r4]
+ 864 0076 1B68     		ldr	r3, [r3]
+ 865 0078 0022     		movs	r2, #0
+ 866 007a DA63     		str	r2, [r3, #60]
+ 867 007c DBE7     		b	.L107
+ 868              	.L110:
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 869              		.loc 1 38 2 discriminator 2 view .LVU210
+ 870 007e 042B     		cmp	r3, #4
+ 871 0080 06D0     		beq	.L120
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 872              		.loc 1 38 2 discriminator 4 view .LVU211
+ 873 0082 082B     		cmp	r3, #8
+ 874 0084 09D0     		beq	.L121
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 875              		.loc 1 38 2 discriminator 7 view .LVU212
+ 876 0086 2368     		ldr	r3, [r4]
+ 877 0088 1B68     		ldr	r3, [r3]
+ 878 008a 0022     		movs	r2, #0
+ 879 008c 1A64     		str	r2, [r3, #64]
+ 880 008e D8E7     		b	.L111
+ 881              	.L120:
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 882              		.loc 1 38 2 discriminator 3 view .LVU213
+ 883 0090 2368     		ldr	r3, [r4]
+ 884 0092 1B68     		ldr	r3, [r3]
+ 885 0094 0022     		movs	r2, #0
+ 886 0096 9A63     		str	r2, [r3, #56]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 23
+
+
+ 887 0098 D3E7     		b	.L111
+ 888              	.L121:
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 889              		.loc 1 38 2 discriminator 6 view .LVU214
+ 890 009a 2368     		ldr	r3, [r4]
+ 891 009c 1B68     		ldr	r3, [r3]
+ 892 009e 0022     		movs	r2, #0
+ 893 00a0 DA63     		str	r2, [r3, #60]
+ 894 00a2 CEE7     		b	.L111
+ 895              	.LVL33:
+ 896              	.L115:
+ 897              		.cfi_def_cfa_offset 0
+ 898              		.cfi_restore 4
+ 899              		.cfi_restore 14
+  38:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
+ 900              		.loc 1 38 2 discriminator 6 view .LVU215
+ 901 00a4 7047     		bx	lr
+ 902              		.cfi_endproc
+ 903              	.LFE220:
+ 905              		.section	.text.dc_motor_init_simple_Hbridge,"ax",%progbits
+ 906              		.align	1
+ 907              		.global	dc_motor_init_simple_Hbridge
+ 908              		.syntax unified
+ 909              		.thumb
+ 910              		.thumb_func
+ 912              	dc_motor_init_simple_Hbridge:
+ 913              	.LVL34:
+ 914              	.LFB221:
+  45:controller/actuators/dc_motors.c ****     if (motor == NULL || timer == NULL)
+ 915              		.loc 1 45 1 is_stmt 1 view -0
+ 916              		.cfi_startproc
+ 917              		@ args = 12, pretend = 0, frame = 0
+ 918              		@ frame_needed = 0, uses_anonymous_args = 0
+  46:controller/actuators/dc_motors.c ****     {
+ 919              		.loc 1 46 5 view .LVU217
+  46:controller/actuators/dc_motors.c ****     {
+ 920              		.loc 1 46 8 is_stmt 0 view .LVU218
+ 921 0000 0028     		cmp	r0, #0
+ 922 0002 00F09180 		beq	.L141
+  45:controller/actuators/dc_motors.c ****     if (motor == NULL || timer == NULL)
+ 923              		.loc 1 45 1 view .LVU219
+ 924 0006 10B5     		push	{r4, lr}
+ 925              		.cfi_def_cfa_offset 8
+ 926              		.cfi_offset 4, -8
+ 927              		.cfi_offset 14, -4
+ 928 0008 0446     		mov	r4, r0
+  46:controller/actuators/dc_motors.c ****     {
+ 929              		.loc 1 46 23 discriminator 1 view .LVU220
+ 930 000a 0029     		cmp	r1, #0
+ 931 000c 3FD0     		beq	.L122
+  54:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
+ 932              		.loc 1 54 5 is_stmt 1 view .LVU221
+  54:controller/actuators/dc_motors.c ****     motor->timer_channel_output_1 = timer_channel_output_1;
+ 933              		.loc 1 54 18 is_stmt 0 view .LVU222
+ 934 000e 0160     		str	r1, [r0]
+  55:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
+ 935              		.loc 1 55 5 is_stmt 1 view .LVU223
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 24
+
+
+  55:controller/actuators/dc_motors.c ****     motor->timer_channel_output_2 = timer_channel_output_2;
+ 936              		.loc 1 55 35 is_stmt 0 view .LVU224
+ 937 0010 4260     		str	r2, [r0, #4]
+  56:controller/actuators/dc_motors.c **** 	motor->timer_channel_output_3 = timer_channel_output_3;
+ 938              		.loc 1 56 5 is_stmt 1 view .LVU225
+  56:controller/actuators/dc_motors.c **** 	motor->timer_channel_output_3 = timer_channel_output_3;
+ 939              		.loc 1 56 35 is_stmt 0 view .LVU226
+ 940 0012 8360     		str	r3, [r0, #8]
+  57:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = timer_channel_output_4;
+ 941              		.loc 1 57 2 is_stmt 1 view .LVU227
+  57:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = timer_channel_output_4;
+ 942              		.loc 1 57 32 is_stmt 0 view .LVU228
+ 943 0014 029B     		ldr	r3, [sp, #8]
+ 944              	.LVL35:
+  57:controller/actuators/dc_motors.c ****     motor->timer_channel_output_4 = timer_channel_output_4;
+ 945              		.loc 1 57 32 view .LVU229
+ 946 0016 C360     		str	r3, [r0, #12]
+  58:controller/actuators/dc_motors.c **** 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
+ 947              		.loc 1 58 5 is_stmt 1 view .LVU230
+  58:controller/actuators/dc_motors.c **** 	motor->current_direction = MOTOR_DIRECTION_FORWARD;
+ 948              		.loc 1 58 35 is_stmt 0 view .LVU231
+ 949 0018 039B     		ldr	r3, [sp, #12]
+ 950 001a 0361     		str	r3, [r0, #16]
+  59:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
+ 951              		.loc 1 59 2 is_stmt 1 view .LVU232
+  59:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
+ 952              		.loc 1 59 27 is_stmt 0 view .LVU233
+ 953 001c 0023     		movs	r3, #0
+ 954 001e 0375     		strb	r3, [r0, #20]
+  60:controller/actuators/dc_motors.c **** 
+ 955              		.loc 1 60 2 is_stmt 1 view .LVU234
+  60:controller/actuators/dc_motors.c **** 
+ 956              		.loc 1 60 16 is_stmt 0 view .LVU235
+ 957 0020 8375     		strb	r3, [r0, #22]
+  65:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
+ 958              		.loc 1 65 2 is_stmt 1 view .LVU236
+ 959 0022 0846     		mov	r0, r1
+ 960              	.LVL36:
+  65:controller/actuators/dc_motors.c **** 	dc_motor_set_timer_freq(motor, frequency);
+ 961              		.loc 1 65 2 is_stmt 0 view .LVU237
+ 962 0024 FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 963              	.LVL37:
+  66:controller/actuators/dc_motors.c **** 	// Set initial duty cycle to 0 for both channels
+ 964              		.loc 1 66 2 is_stmt 1 view .LVU238
+ 965 0028 BDF81010 		ldrh	r1, [sp, #16]
+ 966 002c 2046     		mov	r0, r4
+ 967 002e FFF7FEFF 		bl	dc_motor_set_timer_freq
+ 968              	.LVL38:
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 969              		.loc 1 68 2 view .LVU239
+ 970 0032 6368     		ldr	r3, [r4, #4]
+ 971 0034 002B     		cmp	r3, #0
+ 972 0036 2BD1     		bne	.L124
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 973              		.loc 1 68 2 is_stmt 0 discriminator 1 view .LVU240
+ 974 0038 2368     		ldr	r3, [r4]
+ 975 003a 1B68     		ldr	r3, [r3]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 25
+
+
+ 976 003c 0022     		movs	r2, #0
+ 977 003e 5A63     		str	r2, [r3, #52]
+ 978              	.L125:
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 979              		.loc 1 69 2 is_stmt 1 view .LVU241
+ 980 0040 A368     		ldr	r3, [r4, #8]
+ 981 0042 002B     		cmp	r3, #0
+ 982 0044 37D1     		bne	.L128
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 983              		.loc 1 69 2 is_stmt 0 discriminator 1 view .LVU242
+ 984 0046 2368     		ldr	r3, [r4]
+ 985 0048 1B68     		ldr	r3, [r3]
+ 986 004a 0022     		movs	r2, #0
+ 987 004c 5A63     		str	r2, [r3, #52]
+ 988              	.L129:
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 989              		.loc 1 70 2 is_stmt 1 view .LVU243
+ 990 004e E368     		ldr	r3, [r4, #12]
+ 991 0050 002B     		cmp	r3, #0
+ 992 0052 43D1     		bne	.L132
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 993              		.loc 1 70 2 is_stmt 0 discriminator 1 view .LVU244
+ 994 0054 2368     		ldr	r3, [r4]
+ 995 0056 1B68     		ldr	r3, [r3]
+ 996 0058 0022     		movs	r2, #0
+ 997 005a 5A63     		str	r2, [r3, #52]
+ 998              	.L133:
+  71:controller/actuators/dc_motors.c **** 	
+ 999              		.loc 1 71 2 is_stmt 1 view .LVU245
+ 1000 005c 2369     		ldr	r3, [r4, #16]
+ 1001 005e 002B     		cmp	r3, #0
+ 1002 0060 4FD1     		bne	.L136
+  71:controller/actuators/dc_motors.c **** 	
+ 1003              		.loc 1 71 2 is_stmt 0 discriminator 1 view .LVU246
+ 1004 0062 2368     		ldr	r3, [r4]
+ 1005 0064 1B68     		ldr	r3, [r3]
+ 1006 0066 0022     		movs	r2, #0
+ 1007 0068 5A63     		str	r2, [r3, #52]
+ 1008              	.L137:
+  73:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
+ 1009              		.loc 1 73 2 is_stmt 1 view .LVU247
+ 1010 006a 6168     		ldr	r1, [r4, #4]
+ 1011 006c 2068     		ldr	r0, [r4]
+ 1012 006e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 1013              	.LVL39:
+  74:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3);
+ 1014              		.loc 1 74 2 view .LVU248
+ 1015 0072 A168     		ldr	r1, [r4, #8]
+ 1016 0074 2068     		ldr	r0, [r4]
+ 1017 0076 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 1018              	.LVL40:
+  75:controller/actuators/dc_motors.c **** 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4);
+ 1019              		.loc 1 75 2 view .LVU249
+ 1020 007a E168     		ldr	r1, [r4, #12]
+ 1021 007c 2068     		ldr	r0, [r4]
+ 1022 007e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 1023              	.LVL41:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 26
+
+
+  76:controller/actuators/dc_motors.c **** 
+ 1024              		.loc 1 76 2 view .LVU250
+ 1025 0082 2169     		ldr	r1, [r4, #16]
+ 1026 0084 2068     		ldr	r0, [r4]
+ 1027 0086 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 1028              	.LVL42:
+  78:controller/actuators/dc_motors.c **** }
+ 1029              		.loc 1 78 2 view .LVU251
+  78:controller/actuators/dc_motors.c **** }
+ 1030              		.loc 1 78 28 is_stmt 0 view .LVU252
+ 1031 008a 0023     		movs	r3, #0
+ 1032 008c 6375     		strb	r3, [r4, #21]
+ 1033              	.L122:
+  79:controller/actuators/dc_motors.c **** /**
+ 1034              		.loc 1 79 1 view .LVU253
+ 1035 008e 10BD     		pop	{r4, pc}
+ 1036              	.LVL43:
+ 1037              	.L124:
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1038              		.loc 1 68 2 discriminator 2 view .LVU254
+ 1039 0090 042B     		cmp	r3, #4
+ 1040 0092 06D0     		beq	.L144
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1041              		.loc 1 68 2 discriminator 4 view .LVU255
+ 1042 0094 082B     		cmp	r3, #8
+ 1043 0096 09D0     		beq	.L145
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1044              		.loc 1 68 2 discriminator 7 view .LVU256
+ 1045 0098 2368     		ldr	r3, [r4]
+ 1046 009a 1B68     		ldr	r3, [r3]
+ 1047 009c 0022     		movs	r2, #0
+ 1048 009e 1A64     		str	r2, [r3, #64]
+ 1049 00a0 CEE7     		b	.L125
+ 1050              	.L144:
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1051              		.loc 1 68 2 discriminator 3 view .LVU257
+ 1052 00a2 2368     		ldr	r3, [r4]
+ 1053 00a4 1B68     		ldr	r3, [r3]
+ 1054 00a6 0022     		movs	r2, #0
+ 1055 00a8 9A63     		str	r2, [r3, #56]
+ 1056 00aa C9E7     		b	.L125
+ 1057              	.L145:
+  68:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1058              		.loc 1 68 2 discriminator 6 view .LVU258
+ 1059 00ac 2368     		ldr	r3, [r4]
+ 1060 00ae 1B68     		ldr	r3, [r3]
+ 1061 00b0 0022     		movs	r2, #0
+ 1062 00b2 DA63     		str	r2, [r3, #60]
+ 1063 00b4 C4E7     		b	.L125
+ 1064              	.L128:
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 1065              		.loc 1 69 2 discriminator 2 view .LVU259
+ 1066 00b6 042B     		cmp	r3, #4
+ 1067 00b8 06D0     		beq	.L146
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 1068              		.loc 1 69 2 discriminator 4 view .LVU260
+ 1069 00ba 082B     		cmp	r3, #8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 27
+
+
+ 1070 00bc 09D0     		beq	.L147
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 1071              		.loc 1 69 2 discriminator 7 view .LVU261
+ 1072 00be 2368     		ldr	r3, [r4]
+ 1073 00c0 1B68     		ldr	r3, [r3]
+ 1074 00c2 0022     		movs	r2, #0
+ 1075 00c4 1A64     		str	r2, [r3, #64]
+ 1076 00c6 C2E7     		b	.L129
+ 1077              	.L146:
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 1078              		.loc 1 69 2 discriminator 3 view .LVU262
+ 1079 00c8 2368     		ldr	r3, [r4]
+ 1080 00ca 1B68     		ldr	r3, [r3]
+ 1081 00cc 0022     		movs	r2, #0
+ 1082 00ce 9A63     		str	r2, [r3, #56]
+ 1083 00d0 BDE7     		b	.L129
+ 1084              	.L147:
+  69:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_3, 0);
+ 1085              		.loc 1 69 2 discriminator 6 view .LVU263
+ 1086 00d2 2368     		ldr	r3, [r4]
+ 1087 00d4 1B68     		ldr	r3, [r3]
+ 1088 00d6 0022     		movs	r2, #0
+ 1089 00d8 DA63     		str	r2, [r3, #60]
+ 1090 00da B8E7     		b	.L129
+ 1091              	.L132:
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 1092              		.loc 1 70 2 discriminator 2 view .LVU264
+ 1093 00dc 042B     		cmp	r3, #4
+ 1094 00de 06D0     		beq	.L148
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 1095              		.loc 1 70 2 discriminator 4 view .LVU265
+ 1096 00e0 082B     		cmp	r3, #8
+ 1097 00e2 09D0     		beq	.L149
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 1098              		.loc 1 70 2 discriminator 7 view .LVU266
+ 1099 00e4 2368     		ldr	r3, [r4]
+ 1100 00e6 1B68     		ldr	r3, [r3]
+ 1101 00e8 0022     		movs	r2, #0
+ 1102 00ea 1A64     		str	r2, [r3, #64]
+ 1103 00ec B6E7     		b	.L133
+ 1104              	.L148:
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 1105              		.loc 1 70 2 discriminator 3 view .LVU267
+ 1106 00ee 2368     		ldr	r3, [r4]
+ 1107 00f0 1B68     		ldr	r3, [r3]
+ 1108 00f2 0022     		movs	r2, #0
+ 1109 00f4 9A63     		str	r2, [r3, #56]
+ 1110 00f6 B1E7     		b	.L133
+ 1111              	.L149:
+  70:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4, 0);
+ 1112              		.loc 1 70 2 discriminator 6 view .LVU268
+ 1113 00f8 2368     		ldr	r3, [r4]
+ 1114 00fa 1B68     		ldr	r3, [r3]
+ 1115 00fc 0022     		movs	r2, #0
+ 1116 00fe DA63     		str	r2, [r3, #60]
+ 1117 0100 ACE7     		b	.L133
+ 1118              	.L136:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 28
+
+
+  71:controller/actuators/dc_motors.c **** 	
+ 1119              		.loc 1 71 2 discriminator 2 view .LVU269
+ 1120 0102 042B     		cmp	r3, #4
+ 1121 0104 06D0     		beq	.L150
+  71:controller/actuators/dc_motors.c **** 	
+ 1122              		.loc 1 71 2 discriminator 4 view .LVU270
+ 1123 0106 082B     		cmp	r3, #8
+ 1124 0108 09D0     		beq	.L151
+  71:controller/actuators/dc_motors.c **** 	
+ 1125              		.loc 1 71 2 discriminator 7 view .LVU271
+ 1126 010a 2368     		ldr	r3, [r4]
+ 1127 010c 1B68     		ldr	r3, [r3]
+ 1128 010e 0022     		movs	r2, #0
+ 1129 0110 1A64     		str	r2, [r3, #64]
+ 1130 0112 AAE7     		b	.L137
+ 1131              	.L150:
+  71:controller/actuators/dc_motors.c **** 	
+ 1132              		.loc 1 71 2 discriminator 3 view .LVU272
+ 1133 0114 2368     		ldr	r3, [r4]
+ 1134 0116 1B68     		ldr	r3, [r3]
+ 1135 0118 0022     		movs	r2, #0
+ 1136 011a 9A63     		str	r2, [r3, #56]
+ 1137 011c A5E7     		b	.L137
+ 1138              	.L151:
+  71:controller/actuators/dc_motors.c **** 	
+ 1139              		.loc 1 71 2 discriminator 6 view .LVU273
+ 1140 011e 2368     		ldr	r3, [r4]
+ 1141 0120 1B68     		ldr	r3, [r3]
+ 1142 0122 0022     		movs	r2, #0
+ 1143 0124 DA63     		str	r2, [r3, #60]
+ 1144 0126 A0E7     		b	.L137
+ 1145              	.LVL44:
+ 1146              	.L141:
+ 1147              		.cfi_def_cfa_offset 0
+ 1148              		.cfi_restore 4
+ 1149              		.cfi_restore 14
+  71:controller/actuators/dc_motors.c **** 	
+ 1150              		.loc 1 71 2 discriminator 6 view .LVU274
+ 1151 0128 7047     		bx	lr
+ 1152              		.cfi_endproc
+ 1153              	.LFE221:
+ 1155              		.section	.text.dc_motor_enable,"ax",%progbits
+ 1156              		.align	1
+ 1157              		.global	dc_motor_enable
+ 1158              		.syntax unified
+ 1159              		.thumb
+ 1160              		.thumb_func
+ 1162              	dc_motor_enable:
+ 1163              	.LVL45:
+ 1164              	.LFB225:
+ 203:controller/actuators/dc_motors.c **** 
+ 204:controller/actuators/dc_motors.c **** /**
+ 205:controller/actuators/dc_motors.c ****  * @brief enables the motor.
+ 206:controller/actuators/dc_motors.c ****  * @note sets the duty cycle to 0 for safety
+ 207:controller/actuators/dc_motors.c ****  */
+ 208:controller/actuators/dc_motors.c **** void dc_motor_enable(dc_motor_t *motor)
+ 209:controller/actuators/dc_motors.c **** {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 29
+
+
+ 1165              		.loc 1 209 1 is_stmt 1 view -0
+ 1166              		.cfi_startproc
+ 1167              		@ args = 0, pretend = 0, frame = 0
+ 1168              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1169              		@ link register save eliminated.
+ 210:controller/actuators/dc_motors.c **** 	if (motor == NULL || motor->timer == NULL)
+ 1170              		.loc 1 210 2 view .LVU276
+ 1171              		.loc 1 210 5 is_stmt 0 view .LVU277
+ 1172 0000 0346     		mov	r3, r0
+ 1173 0002 88B1     		cbz	r0, .L152
+ 1174              		.loc 1 210 28 discriminator 1 view .LVU278
+ 1175 0004 0268     		ldr	r2, [r0]
+ 1176              		.loc 1 210 20 discriminator 1 view .LVU279
+ 1177 0006 7AB1     		cbz	r2, .L152
+ 211:controller/actuators/dc_motors.c **** 	{
+ 212:controller/actuators/dc_motors.c **** 		return;
+ 213:controller/actuators/dc_motors.c **** 		/**
+ 214:controller/actuators/dc_motors.c **** 		 * @todo throw an error
+ 215:controller/actuators/dc_motors.c **** 		 */
+ 216:controller/actuators/dc_motors.c **** 	}
+ 217:controller/actuators/dc_motors.c **** 	if (motor->status == MOTOR_STATE_NORMAL || motor->status == MOTOR_STATE_FAULT || motor == NULL)
+ 1178              		.loc 1 217 2 is_stmt 1 view .LVU280
+ 1179              		.loc 1 217 11 is_stmt 0 view .LVU281
+ 1180 0008 817D     		ldrb	r1, [r0, #22]	@ zero_extendqisi2
+ 1181              		.loc 1 217 5 view .LVU282
+ 1182 000a 0129     		cmp	r1, #1
+ 1183 000c 0CD9     		bls	.L152
+ 218:controller/actuators/dc_motors.c **** 	{
+ 219:controller/actuators/dc_motors.c **** 		return;
+ 220:controller/actuators/dc_motors.c **** 		/**
+ 221:controller/actuators/dc_motors.c **** 		 * @todo throw an error
+ 222:controller/actuators/dc_motors.c **** 		 */
+ 223:controller/actuators/dc_motors.c **** 	}
+ 224:controller/actuators/dc_motors.c **** 
+ 225:controller/actuators/dc_motors.c **** 	// Set duty cycle to 0 for both channels
+ 226:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1, 0);
+ 1184              		.loc 1 226 2 is_stmt 1 view .LVU283
+ 1185 000e 4168     		ldr	r1, [r0, #4]
+ 1186 0010 59B9     		cbnz	r1, .L154
+ 1187              		.loc 1 226 2 is_stmt 0 discriminator 1 view .LVU284
+ 1188 0012 1268     		ldr	r2, [r2]
+ 1189 0014 5163     		str	r1, [r2, #52]
+ 1190              	.L155:
+ 227:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1191              		.loc 1 227 2 is_stmt 1 view .LVU285
+ 1192 0016 9A68     		ldr	r2, [r3, #8]
+ 1193 0018 BAB9     		cbnz	r2, .L158
+ 1194              		.loc 1 227 2 is_stmt 0 discriminator 1 view .LVU286
+ 1195 001a 1A68     		ldr	r2, [r3]
+ 1196 001c 1268     		ldr	r2, [r2]
+ 1197 001e 0021     		movs	r1, #0
+ 1198 0020 5163     		str	r1, [r2, #52]
+ 1199              	.L159:
+ 228:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 1200              		.loc 1 228 2 is_stmt 1 view .LVU287
+ 1201              		.loc 1 228 28 is_stmt 0 view .LVU288
+ 1202 0022 0022     		movs	r2, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 30
+
+
+ 1203 0024 5A75     		strb	r2, [r3, #21]
+ 229:controller/actuators/dc_motors.c **** 	motor->status = MOTOR_STATE_NORMAL;
+ 1204              		.loc 1 229 2 is_stmt 1 view .LVU289
+ 1205              		.loc 1 229 16 is_stmt 0 view .LVU290
+ 1206 0026 9A75     		strb	r2, [r3, #22]
+ 1207              	.L152:
+ 230:controller/actuators/dc_motors.c **** }
+ 1208              		.loc 1 230 1 view .LVU291
+ 1209 0028 7047     		bx	lr
+ 1210              	.L154:
+ 226:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1211              		.loc 1 226 2 discriminator 2 view .LVU292
+ 1212 002a 0429     		cmp	r1, #4
+ 1213 002c 05D0     		beq	.L162
+ 226:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1214              		.loc 1 226 2 discriminator 4 view .LVU293
+ 1215 002e 0829     		cmp	r1, #8
+ 1216 0030 07D0     		beq	.L163
+ 226:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1217              		.loc 1 226 2 discriminator 7 view .LVU294
+ 1218 0032 1268     		ldr	r2, [r2]
+ 1219 0034 0021     		movs	r1, #0
+ 1220 0036 1164     		str	r1, [r2, #64]
+ 1221 0038 EDE7     		b	.L155
+ 1222              	.L162:
+ 226:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1223              		.loc 1 226 2 discriminator 3 view .LVU295
+ 1224 003a 1268     		ldr	r2, [r2]
+ 1225 003c 0021     		movs	r1, #0
+ 1226 003e 9163     		str	r1, [r2, #56]
+ 1227 0040 E9E7     		b	.L155
+ 1228              	.L163:
+ 226:controller/actuators/dc_motors.c **** 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
+ 1229              		.loc 1 226 2 discriminator 6 view .LVU296
+ 1230 0042 1268     		ldr	r2, [r2]
+ 1231 0044 0021     		movs	r1, #0
+ 1232 0046 D163     		str	r1, [r2, #60]
+ 1233 0048 E5E7     		b	.L155
+ 1234              	.L158:
+ 227:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 1235              		.loc 1 227 2 discriminator 2 view .LVU297
+ 1236 004a 042A     		cmp	r2, #4
+ 1237 004c 06D0     		beq	.L164
+ 227:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 1238              		.loc 1 227 2 discriminator 4 view .LVU298
+ 1239 004e 082A     		cmp	r2, #8
+ 1240 0050 09D0     		beq	.L165
+ 227:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 1241              		.loc 1 227 2 discriminator 7 view .LVU299
+ 1242 0052 1A68     		ldr	r2, [r3]
+ 1243 0054 1268     		ldr	r2, [r2]
+ 1244 0056 0021     		movs	r1, #0
+ 1245 0058 1164     		str	r1, [r2, #64]
+ 1246 005a E2E7     		b	.L159
+ 1247              	.L164:
+ 227:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 1248              		.loc 1 227 2 discriminator 3 view .LVU300
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 31
+
+
+ 1249 005c 1A68     		ldr	r2, [r3]
+ 1250 005e 1268     		ldr	r2, [r2]
+ 1251 0060 0021     		movs	r1, #0
+ 1252 0062 9163     		str	r1, [r2, #56]
+ 1253 0064 DDE7     		b	.L159
+ 1254              	.L165:
+ 227:controller/actuators/dc_motors.c **** 	motor->current_duty_cycle = 0;
+ 1255              		.loc 1 227 2 discriminator 6 view .LVU301
+ 1256 0066 1A68     		ldr	r2, [r3]
+ 1257 0068 1268     		ldr	r2, [r2]
+ 1258 006a 0021     		movs	r1, #0
+ 1259 006c D163     		str	r1, [r2, #60]
+ 1260 006e D8E7     		b	.L159
+ 1261              		.cfi_endproc
+ 1262              	.LFE225:
+ 1264              		.text
+ 1265              	.Letext0:
+ 1266              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 1267              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 1268              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 1269              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1270              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 1271              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 1272              		.file 8 "controller/types.h"
+ 1273              		.file 9 "controller/actuators/dc_motors.h"
+ 1274              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s 			page 32
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 dc_motors.c
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:21     .text.dc_motor_set:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:27     .text.dc_motor_set:00000000 dc_motor_set
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:302    .text.dc_motor_set:00000140 $d
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:308    .text.dc_motor_disable:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:314    .text.dc_motor_disable:00000000 dc_motor_disable
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:412    .text.dc_motor_set_timer_freq:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:418    .text.dc_motor_set_timer_freq:00000000 dc_motor_set_timer_freq
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:520    .text.dc_motor_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:526    .text.dc_motor_init:00000000 dc_motor_init
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:675    .text.dc_motor_enable:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccBTqppv.s:681    .text.dc_motor_enable:00000000 dc_motor_enable
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:21     .text.dc_motor_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:27     .text.dc_motor_set:00000000 dc_motor_set
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:527    .text.dc_motor_set:00000278 $d
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:533    .text.dc_motor_disable:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:539    .text.dc_motor_disable:00000000 dc_motor_disable
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:637    .text.dc_motor_set_timer_freq:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:643    .text.dc_motor_set_timer_freq:00000000 dc_motor_set_timer_freq
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:745    .text.dc_motor_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:751    .text.dc_motor_init:00000000 dc_motor_init
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:906    .text.dc_motor_init_simple_Hbridge:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:912    .text.dc_motor_init_simple_Hbridge:00000000 dc_motor_init_simple_Hbridge
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:1156   .text.dc_motor_enable:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccnVibPb.s:1162   .text.dc_motor_enable:00000000 dc_motor_enable
 
 UNDEFINED SYMBOLS
 __aeabi_i2d

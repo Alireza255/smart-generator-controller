@@ -4,8 +4,12 @@
 #include "types.h"
 #include "main.h"
 
-#define DC_MOTOR_MAX_FREQUENCY 10000U
+#define DC_MOTOR_MAX_FREQUENCY 20000U
 
+/**
+ * @todo add a code to produce a sound using the motor coils when
+ * init happens succesfully
+ */
 typedef enum
 {
     MOTOR_STATE_NORMAL,
@@ -24,6 +28,8 @@ typedef struct
     TIM_HandleTypeDef *timer;
     uint32_t timer_channel_output_1;
     uint32_t timer_channel_output_2;
+    uint32_t timer_channel_output_3;
+    uint32_t timer_channel_output_4;
     dc_motor_direction_t current_direction;
     uint8_t current_duty_cycle;
     dc_motor_status_t status;
@@ -40,6 +46,7 @@ typedef struct
  * @param frequency the desired pwm frequency
  */
 void dc_motor_init(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, pwm_freq_t frequency);
+void dc_motor_init_simple_Hbridge(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, uint32_t timer_channel_output_3, uint32_t timer_channel_output_4, pwm_freq_t frequency);
 
 /**
  * @brief sets the pwm duty cycle of the motor

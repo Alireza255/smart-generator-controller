@@ -17,6 +17,7 @@
 
 <<<<<<< Updated upstream
 #define ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION (percent_t)0
+#define ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD (percent_t)0.5f
 
 typedef enum
 {
@@ -32,6 +33,10 @@ typedef struct
     pid_t *pid;
     sensor_tps_t *sensor;
     percent_t target_position;
+    percent_t current_position;
+    percent_t duty_cycle_limiting_lower;
+    percent_t duty_cycle_limiting_upper;
+    bool is_duty_cycle_limiting_enabled;
 } electronic_throttle_t;
 =======
 >>>>>>> Stashed changes
@@ -41,8 +46,10 @@ typedef struct
  */
 void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor);
 
+void electronic_throttle_auto_tune(electronic_throttle_t *etb);
+
 void electronic_throttle_set(electronic_throttle_t *etb, percent_t position);
 
 void electronic_throttle_update(void *arg);
-
+ 
 #endif // ELECTRONIC_THROTTLE_H
