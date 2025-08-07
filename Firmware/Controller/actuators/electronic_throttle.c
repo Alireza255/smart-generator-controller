@@ -85,7 +85,7 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
     /* First, we will try to find the end of travel for open and closed positions*/
     uint8_t opening_duty_cycle = 180; // 0 to 255
     uint8_t closing_duty_cycle = 180; // 0 to 255
-    uint8_t settling_time_delay = 1000; // time it takes for the etb to move and settle
+    uint16_t settling_time_delay = 1000; // time it takes for the etb to move and settle
     uint8_t number_of_samples = 10;
 
     uint16_t open_adc_value = 0;

@@ -8,31 +8,24 @@
 
 typedef enum
 {
-    TRIGGER_FILTERING_NONE,
-    TRIGGER_FILTERING_LITE,
-    TRIGGER_FILTERING_MEDIUM,
-    TRIGGER_FILTERING_AGGRESSIVE,
+    TRIGGER_FILTERING_NONE = 0,
+    TRIGGER_FILTERING_LITE = 1,
+    TRIGGER_FILTERING_MEDIUM = 2,
+    TRIGGER_FILTERING_AGGRESSIVE = 3,
 } trigger_filtering_t;
-
-typedef struct
-{
-    trigger_filtering_t filtering;
-    uint8_t full_teeth;
-    uint8_t missing_teeth;
-} trigger_settings_t;
 
 typedef enum
 {
-    TS_NOT_SYNCED,
-    TS_FULLY_SYNCED,
+    TS_NOT_SYNCED = 0,
+    TS_FULLY_SYNCED = 1,
 } trigger_sync_status_t;
 
 
 typedef struct
 {
     bool initialized;
-    trigger_sync_status_t sync_status;
-    uint16_t sync_loss_counter;
+    uint8_t status_synced_index; // which of the status bits in runtime we are using
+    uint8_t *filtering;
     time_us_t _trigger_filter_time_us;
     time_us_t _tooth_time_us[3]; // the higher the index, the older the sample. 0 is the current tooth time
     time_us_t _current_tooth_gap_us;
@@ -40,28 +33,29 @@ typedef struct
     time_us_t _target_tooth_gap_us;
     uint16_t _counted_tooth;
     uint8_t _trigger_actual_teeth;
-    trigger_settings_t *settings;
+    uint8_t _full_teeth;
+    uint8_t _missing_teeth;
 } trigger_t;
 
 typedef enum {
     /**
      * The engine is not spinning, RPM=0
      */
-    SS_STOPPED,
+    SS_STOPPED = 0,
     /**
      * The engine is spinning up (reliable RPM is not detected yet).
      * In this state, rpmValue is >= 0 (can be zero).
      */
-    SS_SPINNING_UP,
+    SS_SPINNING_UP = 1,
     /**
      * The engine is cranking (0 < RPM < cranking rpm)
      */
-    SS_CRANKING,
+    SS_CRANKING = 2,
     /**
      * The engine is running (RPM >= cranking rpm)
      */
-    SS_RUNNING,
-} spinning_state_e;
+    SS_RUNNING = 3,
+} spinning_state_t;
 
 /**
  * @brief returns the state of the engine - ie: cranking, running, stopped
@@ -79,11 +73,13 @@ angle_t crankshaft_get_angle();
  */
 rpm_t crankshaft_get_rpm();
 
+angle_t camshaft_get_angle();
+
 /**
  * @brief called by an interrupt in the middle of the tooth i.e.- zero crossing of the signal
  * @todo add filtering capability
  */
-void trigger_tooth_handle();
-void trigger_init(trigger_t *trigger, trigger_settings_t *settings);
+void trigger_tooth_handle(trigger_t *trigger);
+void trigger_init(trigger_t *trigger, trigger_wheel_type_t wheel_type, uint8_t *filtering, status_t sync_status_bit, uint8_t trigger_number);
 
 #endif // TRIGGER_H

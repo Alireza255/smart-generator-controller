@@ -6,17 +6,7 @@
 #include "sensors.h"
 #include "controller.h"
 
-<<<<<<< Updated upstream
-typedef struct
-{
-    controller_output_pin_t pin;
-    temperature_t temp_off;
-    temperature_t temp_on;
-    uint32_t on_flag;
-} fan_control_t;
 
-void fan_control_update(fan_control_t *fan);
-=======
->>>>>>> Stashed changes
+void fan_control_update();
 
 #endif // FAN_CONTROL_H

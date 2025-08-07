@@ -15,7 +15,6 @@
 #include "error_handling.h"
 #include "math.h"
 
-<<<<<<< Updated upstream
 #define ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION (percent_t)0
 #define ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD (percent_t)0.5f
 
@@ -38,8 +37,6 @@ typedef struct
     percent_t duty_cycle_limiting_upper;
     bool is_duty_cycle_limiting_enabled;
 } electronic_throttle_t;
-=======
->>>>>>> Stashed changes
 
 /**
  * @note sensor and motor have to be initialized before calling this function

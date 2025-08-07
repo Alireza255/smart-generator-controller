@@ -1,10 +1,10 @@
 /**
  * @file utils.h
  * @brief Header file containing utility functions and definitions for the smart generator controller firmware.
- * 
+ *
  * This file provides declarations for utility functions and macros that are
  * used throughout the firmware to support various functionalities.
- * 
+ *
  * @note Ensure that this file is included wherever utility functions are required.
  */
 #ifndef UTILS_H
@@ -16,11 +16,34 @@
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
 
-void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
+static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
+{
+    if (bit > 31)
+    {
+        return;
+    }
+    if (state)
+    {
+        *var |= (1u << bit);
+    }
+    else
+    {
+        *var &= ~(1u << bit);
+    }
+}
+
+static inline bool get_bit(uint32_t flags, uint8_t bit)
+{
+    if (bit < 32)
+    {
+        return (flags >> bit) & 1u;
+    }
+    return false;
+}
 
 /**
  * @brief Maps a value from one range to another.
- * 
+ *
  * @param x The value to map.
  * @param in_min The lower bound of the input range.
  * @param in_max The upper bound of the input range.
@@ -31,10 +54,9 @@ void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
 #define MAP(x, in_min, in_max, out_min, out_max) \
     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
 
-
 /**
  * @brief Maps a uint16_t value from one range to another.
- * 
+ *
  * @param x The value to map.
  * @param in_min The lower bound of the input range.
  * @param in_max The upper bound of the input range.
@@ -63,12 +85,12 @@ static inline float mapf(float x, float in_min, float in_max, float out_min, flo
 // http://en.wikipedia.org/wiki/Endianness
 inline uint16_t swap_endian_uint16(uint16_t x)
 {
-	return ((x << 8) | (x >> 8));
+    return ((x << 8) | (x >> 8));
 }
 inline uint32_t swap_endian_uint32(uint32_t x)
 {
-	return (((x >> 24) & 0x000000ff) | ((x <<  8) & 0x00ff0000) |
-			((x >>  8) & 0x0000ff00) | ((x << 24) & 0xff000000));
+    return (((x >> 24) & 0x000000ff) | ((x << 8) & 0x00ff0000) |
+            ((x >> 8) & 0x0000ff00) | ((x << 24) & 0xff000000));
 }
 
 void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
@@ -86,7 +108,7 @@ static inline time_us_t microseconds_per_degree(rpm_t rpm)
     {
         return 0;
     }
-    return (time_us_t) 60.0f * 1e6f / (rpm * 360.0f);
+    return (time_us_t)60.0f * 1e6f / (rpm * 360.0f);
 }
 
 /**

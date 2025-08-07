@@ -9,7 +9,6 @@
 
 #define TEST_MODE
 
-#define IGNITION_MAX_OUTPUTS 4
 #define IGNITION_MIN_DWELL_TIME_MS 0.5f
 #define IGNITION_MAX_DWELL_TIME_MS 4.0f
 #define IGNITION_MULTI_SPARK_MAX_SPARKS 8
@@ -19,10 +18,6 @@
 
 #define IGNITION_ADVANCE_FAIL_SAFE (angle_t)10
 
-typedef struct
-{
-    controller_output_pin_t output[IGNITION_MAX_OUTPUTS];
-} ignition_output_conf_t;
 
 typedef enum
 {
@@ -30,7 +25,7 @@ typedef enum
     IGNITION_COIL_STATE_CHARGING = 1,
 } ignition_coil_state_t;
 
-void ignition_init(ignition_output_conf_t *output_conf);
+void ignition_init(controller_output_pin_t *outputs);
 
 /**
  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.
@@ -40,14 +35,6 @@ void ignition_init(ignition_output_conf_t *output_conf);
  * @param current_time_us The current time in microseconds.
  */
 void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us);
-
-/**
- * @brief Gets the number of sparks per coil based on the ignition mode.
- * 
- * @param ignition_mode The mode of ignition, specified as an enumeration of type ignition_mode_e.
- * @return The number of sparks per coil.
- */
-uint8_t ignition_get_number_of_sparks_per_coil(ignition_mode_e ignition_mode);
 
 /**
  * @brief Charges the ignition coil at the specified index.

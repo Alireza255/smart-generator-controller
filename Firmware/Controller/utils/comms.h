@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "usbd_cdc_if.h"
 #include <stdbool.h>
+#include "config_and_runtime.h"
 /**
  * CRC packets are implemend like this:
  * size in the beginning of a packet and a crc32 at the end.
@@ -143,79 +144,6 @@ typedef enum
     TS_CRC = 1
 } comms_response_format_t;
 
-typedef struct
-{
-    uint8_t data[TS_PAGE_SIZE];
-} calibration_page;
-
-typedef enum
-{
-    STATUS_CRITICAL_ERROR = 0,
-    STATUS_CHECK_ENGINE = 1,
-    STATUS_WARNING = 2,
-    STATUS_NEED_BURN = 3,
-    STATUS_MAIN_RELAY_ON = 4,
-    STATUS_GAS_SOLENOID_ON = 5,
-    STATUS_FUEL_PUMP_ON = 6,
-    STATUS_O2_HEATER_ON = 7,
-    STATUS_TPS1_ERROR = 8,
-    STATUS_TPS2_ERROR = 9,
-    STATUS_MAP_ERROR = 10,
-    STATUS_CLT_ERROR = 11,
-    STATUS_IAT_ERROR = 12,
-    STATUS_TRIGGER_ERROR = 13,
-    STATUS_IGNITION_ERROR = 14,
-    STATUS_INJECTOR_ERROR = 15,
-    STATUS_REV_LIMIT_IGNITION = 16,
-    STATUS_REV_LIMIT_ETB = 17,
-    STATUS_ETB1_OK = 18,
-    STATUS_ETB2_OK = 19,
-    STATUS_FAN1_ON = 20,
-    STATUS_FAN2_ON = 21,
-    STATUS_FUEL_PRESSURE_LOW_GAS = 22,
-    STATUS_FUEL_PRESSURE_LOW_PETROL = 23,
-    STATUS_CRANKING = 24,
-    STATUS_RUNNING = 25,
-    STATUS_TRIGGER_SYNCED = 26,
-    STATUS_RESERVED1 = 27,
-    STATUS_RESERVED2 = 28,
-    STATUS_RESERVED3 = 29,
-    STATUS_RESERVED4 = 30,
-    STATUS_RESERVED5 = 31
-} status_flags_t;
-
-typedef struct __attribute__((packed))
-{
-    uint32_t status;
-    float rpm;
-    float map;
-    float tps;
-    float lambda;
-    float advance;
-    float dwell;
-    float vbatt;
-    float clt;
-    uint16_t sync_loss_count;
-    float iat;
-    float ego_correction;
-    float warmup_enrichment;
-    float acceleration_enrichment;
-    float gamma_enrichment;
-    float ve1;
-    float ve2;
-    float lambda_target;
-    uint16_t tps_adc_value;
-    float injector_pulse_width;
-    float gas_valve_position;
-    float target_rpm;
-    float fuel_pressure_gas;
-    float fuel_pressure_petrol;
-    uint8_t spark_per_ignition_event_count;
-    float fuel_load_gas;
-    float fuel_load_petrol;
-
-} output_channels_t;
-
 // ==================== USB CDC Configuration ====================
 #define USB_RX_QUEUE_SIZE    10  // Number of packets to buffer
 #define USB_MAX_PACKET_SIZE  64  // Max CDC packet size (64 bytes for full-speed USB)
@@ -232,13 +160,6 @@ typedef struct {
 
 extern osMessageQueueId_t usb_rx_queue;
 
-
-// ==================== Global Variables ====================
-extern calibration_page cal_page;
-extern output_channels_t output_channels;
-extern osMutexId_t runtime_mutex;
-extern osMutexId_t page_mutex;
-
 // ==================== Function Prototypes ====================
 void comms_init();
 void comms_task(void *argument);
@@ -248,5 +169,4 @@ void read_calibration_data(uint16_t offset, uint16_t len);
 void write_calibration_data(uint16_t offset, uint8_t *data, uint16_t len);
 void runtime_update_task(void *argument);
 
-void comms_write_status_flag(status_flags_t flag, bool state);
 #endif // COMMS_H

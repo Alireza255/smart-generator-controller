@@ -1,116 +1,158 @@
-
 import re
-import sys
 
-# Mapping of C types to TunerStudio types and sizes (in bytes)
-TYPE_MAP = {
-    "float": ("F32", 4),
-    "uint16_t": ("U16", 2),
-    "uint8_t": ("U08", 1),
-    "bool": ("U08", 1),  # Treat bool as 1 byte in packed structure
+
+# Add this global mapping dictionary:
+C_TO_INI_TYPE = {
+    'float': 'F32',
+    'uint32_t': 'U32',
+    'int32_t': 'I32',   # if you want to treat signed same as unsigned here
+    'uint16_t': 'U16',
+    'int16_t': 'I16',
+    'uint8_t': 'U8',
+    'int8_t': 'I8',
+    # add more if needed
 }
 
-# Units for TunerStudio output
-UNITS_MAP = {
-    "rpm": ("RPM", 1, 0),
-    "map": ("kPa", 0.01, 0),
-    "tps": ("%", 0.01, 0),
-    "lambda": ("", 0.0001, 0),
-    "advance": ("deg", 0.02, 0),
-    "dwell": ("ms", 1, 0),
-    "clt": ("C", 0.001, 0),
-    "vbatt": ("V", 0.001, 0),
-    "sync_loss_count": ("", 1, 0),
-    "iat": ("C", 0.001, 0),
-    "ego_correction": ("%", 1, 0),
-    "warmup_enrichment": ("%", 1, 0),
-    "acceleration_enrichment": ("%", 1, 0),
-    "gamma_enrichment": ("%", 1, 0),
-    "ve1": ("%", 1, 0),
-    "ve2": ("%", 1, 0),
-    "lambda_target": ("", 1, 0),
-    "tps_adc_value": ("", 1, 0),
-    "injector_pulse_width": ("ms", 1, 0),
-    "gas_valve_position": ("%", 1, 0),
-    "target_rpm": ("RPM", 1, 0),
-    "fuel_pressure_gas": ("kPa", 1, 0),
-    "fuel_pressure_petrol": ("kPa", 1, 0),
-    "spark_per_ignition_event_count": ("", 1, 0),
-    "fuel_load_gas": ("%", 1, 0),
-    "fuel_load_petrol": ("%", 1, 0),
-}
 
-def main():
-    print("Script started")
-    if len(sys.argv) != 2:
-        print("Usage: python ini_generator.py <path_to_comms.h>")
-        sys.exit(1)
 
-    file_path = sys.argv[1]
-    print(f"Attempting to read file: {file_path}")
-    try:
-        with open(file_path, 'r') as f:
-            content = f.read()
-    except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found")
-        sys.exit(1)
-    print("File read successfully")
-
-    # Match only output_channels_t structure
-    match = re.search(r'typedef struct\s*(?:__attribute__$$ \(packed $$\)\s*)?\{(.*?)\}\s*output_channels_t\s*;', content, re.DOTALL)
-    if not match:
-        print("Error: Could not find 'output_channels_t' structure")
-        sys.exit(1)
-    struct_content = match.group(1)
-    lines = [line.strip() for line in struct_content.split(';') if line.strip()]
-    print(f"Found {len(lines)} lines in output_channels_t structure")
-
-    config_lines = []
-    offset = 0  # Cumulative byte offset
+# ------------------
+# Constants Parser
+# ------------------
+def parse_constants_file(constants_file):
+    constants = {}
+    with open(constants_file, 'r') as file:
+        lines = file.readlines()
 
     for line in lines:
-        line = re.sub(r'//.*', '', line).strip()  # Remove comments
-        line = re.sub(r'__attribute__$$ \(packed $$\)', '', line).strip()  # Remove __attribute__((packed))
-        if not line:
-            print("Skipping empty line")
-            continue
-        match = re.match(r'(\w+)\s+([\w$$  $$]+)', line)
-        if not match:
-            print(f"Skipping unparsable line: {line}")
-            continue
-        type_name, name = match.groups()
-        size = 1
-        if '[' in name:
-            name, size_str = name.split('[')
-            size_str = size_str.rstrip(']')
-            if not size_str.isdigit():
-                print(f"Skipping array with non-numeric size: {name}[{size_str}]")
-                continue
-            size = int(size_str)
-            print(f"Array detected: {name}[{size}]")
+        line = line.strip()
+        if line.startswith('#define'):
+            tokens = line.split()
+            if len(tokens) >= 3:
+                name = tokens[1]
+                value = tokens[2]
 
-        if type_name not in TYPE_MAP:
-            print(f"Skipping unsupported type: {type_name}")
-            continue
-        ts_type, type_size = TYPE_MAP[type_name]
-        print(f"Processing {name}: Type {type_name}, TunerStudio type {ts_type}, Size {type_size} bytes")
+                # Extract number even if it's like (type)123
+                numeric_match = re.search(r"(-?\d+)", value)
+                if numeric_match:
+                    constants[name] = int(numeric_match.group(1))
+                # else ignore non-numeric macros
+    return constants
 
-        units, scale, translate = UNITS_MAP.get(name, ("", 1, 0))
-        for i in range(size):
-            field_name = f"{name}{i if size > 1 else ''}"
-            if type_name == "bool":
-                config_lines.append(f"status_{field_name} = scalar, {ts_type}, {offset}, \"\", 1, 0")
-            else:
-                config_lines.append(f"{field_name}_value = scalar, {ts_type}, {offset}, \"{units}\", {scale}, {translate}")
-            print(f"Added field: {field_name} at offset {offset}, units: {units}")
-            offset += type_size
+# ------------------
+# Struct Parser
+# ------------------
+TYPE_SIZES = {
+    'uint8_t': 1,
+    'int8_t': 1,
+    'uint16_t': 2,
+    'int16_t': 2,
+    'uint32_t': 4,
+    'int32_t': 4,
+    'float': 4,
+    'double': 8,
+    'char': 1,
+    'int': 4,  # Assuming 32-bit
+}
 
-    print(f"Generated {len(config_lines)} configuration lines")
-    print("[OutputChannels]")
-    for line in config_lines:
-        print(line)
-    print(f"Total structure size: {offset} bytes")
-    print("Script completed successfully")
+def parse_struct(file_path, struct_name, constants_dict):
+    with open(file_path, 'r') as file:
+        content = file.read()
 
+    # Try anonymous struct
+    struct_pattern = rf"typedef\s+struct\s*\{{(.*?)\}}\s*{struct_name}\s*;"
+    match = re.search(struct_pattern, content, re.DOTALL)
+
+    # Try tagged struct if anonymous not found
+    if not match:
+        struct_pattern_tagged = rf"typedef\s+struct\s+\w+\s*\{{(.*?)\}}\s*{struct_name}\s*;"
+        match = re.search(struct_pattern_tagged, content, re.DOTALL)
+
+    if not match:
+        raise ValueError(f"Struct '{struct_name}' not found in {file_path}")
+
+    struct_body = match.group(1)
+
+    # Extract fields: type, name, arrays (allow multiple dimensions)
+    field_pattern = r"\s*([\w\s\*]+)\s+(\w+)(\s*(\[[^\]]+\])*)\s*;"
+    fields = re.findall(field_pattern, struct_body)
+
+    parsed_fields = []
+    for field in fields:
+        field_type = field[0].strip()
+        field_name = field[1].strip()
+        array_sizes_str = field[2]
+
+        sizes = []
+        if array_sizes_str:
+            size_tokens = re.findall(r"\[([^\]]+)\]", array_sizes_str)
+            for token in size_tokens:
+                token = token.strip()
+                if token.isdigit():
+                    sizes.append(int(token))
+                elif token in constants_dict:
+                    sizes.append(constants_dict[token])
+                else:
+                    raise ValueError(f"Unknown constant/macro: {token}")
+
+        parsed_fields.append((field_type, field_name, sizes))
+
+    return parsed_fields
+
+# ------------------
+# Size Calculator
+# ------------------
+def compute_size(field_type, array_sizes):
+    base_size = TYPE_SIZES.get(field_type.strip(), None)
+    if base_size is None:
+        raise ValueError(f"Unknown type '{field_type}'")
+
+    total_elements = 1
+    for size in array_sizes:
+        total_elements *= size
+
+    return base_size * total_elements
+
+# ------------------
+# INI Generator
+# ------------------
+
+
+def generate_ini(struct_fields, ini_template, output_file):
+    with open(ini_template, 'r') as file:
+        lines = file.readlines()
+
+    new_lines = []
+    inserted = False
+    offset_counter = 0
+
+    for line in lines:
+        new_lines.append(line)
+        # Insert after [Constants] section header
+        if line.strip().lower() == "[constants]" and not inserted:
+            new_lines.append("\n; --- Auto-generated from Struct ---\n")
+            for field_type, field_name, array_sizes in struct_fields:
+                size_in_bytes = compute_size(field_type, array_sizes)
+                offset_dec = f"{offset_counter}"
+
+                shape_str = ''
+                if array_sizes:
+                    shape_str = ''.join([f'[{s}]' for s in array_sizes])
+                ini_type = C_TO_INI_TYPE.get(field_type.strip(), field_type)  # fallback to original if missing
+                ini_line = f"{field_name} = scalar, {ini_type}, {offset_dec}, {shape_str}, , 1, 0, 0, 100, 0\n"
+                new_lines.append(ini_line)
+
+                offset_counter += size_in_bytes
+
+            inserted = True
+
+    with open(output_file, 'w') as file:
+        file.writelines(new_lines)
+
+# ------------------
+# Main Runner
+# ------------------
 if __name__ == "__main__":
-    main()
+    constants = parse_constants_file('constants.h')
+    struct_fields = parse_struct('input.h', 'engine_configuration_t', constants)
+    generate_ini(struct_fields, 'config.ini', 'output_config.ini')
+    print("INI file generated with macros resolved! Check 'output_config.ini'")

@@ -36,8 +36,6 @@ reception. The sender MUST act on the response code and MUST check the CRC32.
  ******************************************************************************/
 // ==================== Global Variables ====================
 osMessageQueueId_t usb_rx_queue;
-output_channels_t output_channels;
-calibration_page calibration_values;
 
 usb_rx_packet_t rx_packet;
 /**
@@ -123,8 +121,6 @@ void comms_init(void)
 {
 	usb_rx_queue = osMessageQueueNew(10, sizeof(usb_packet_ptr_t), NULL);
 
-
-
     const osThreadAttr_t comms_task_attrs = {
         .name = "comms_task",
         .stack_size = 1024 * 4,
@@ -132,12 +128,6 @@ void comms_init(void)
     };
     osThreadNew(comms_task, NULL, &comms_task_attrs);
 
-	const osThreadAttr_t runtime_update_task_attrs = {
-		.name = "update_task",
-		.stack_size = 1024,
-		.priority = osPriorityNormal,
-	};
-	osThreadNew(runtime_update_task, NULL, &runtime_update_task_attrs);
 }
 
 // ==================== Communication Task ====================
@@ -251,7 +241,7 @@ void process_command(uint8_t *request, uint16_t size)
         break;
 
     case TS_OUTPUT_COMMAND:
-        send_response(TS_RESPONSE_OK, (uint8_t *)&output_channels, sizeof(output_channels), TS_CRC);
+        send_response(TS_RESPONSE_OK, (uint8_t *)&runtime, sizeof(runtime), TS_CRC);
         return;
         break;
     case TS_READ_COMMAND:
@@ -262,7 +252,7 @@ void process_command(uint8_t *request, uint16_t size)
         return;
         break;
     case TS_CRC_CHECK_COMMAND:
-        uint32_t page_crc = crc32_inc(0, calibration_values.data, sizeof(calibration_values.data));
+        uint32_t page_crc = crc32_inc(0, (uint8_t *)&config, sizeof(config));
         send_response(TS_RESPONSE_OK, (uint8_t *)&page_crc, sizeof(page_crc), TS_CRC);
         return;
         break;
@@ -272,7 +262,7 @@ void process_command(uint8_t *request, uint16_t size)
         uint16_t page = 0;
         uint16_t offset = *(uint16_t *)&request[3];
         uint16_t size = *(uint16_t *)&request[5];
-        memcpy(calibration_values.data + offset, &request[7], size);
+        memcpy((uint8_t *)&config + offset, &request[7], size);
         send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
         return;
         break;
@@ -282,7 +272,7 @@ void process_command(uint8_t *request, uint16_t size)
         uint16_t page = 0;
         uint16_t offset = *(uint16_t *)&request[3];
         uint16_t size = *(uint16_t *)&request[5];
-        memcpy(calibration_values.data + offset, &request[7], size);
+        memcpy((uint8_t *)&config + offset, &request[7], size);
         send_response(TS_RESPONSE_OK, NULL, 0, TS_CRC);
         return;
         break;
@@ -309,8 +299,8 @@ void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count)
 	{
 		return;
 	}
-	
-	send_response(TS_RESPONSE_OK, (uint8_t*)&calibration_values.data + offset, count, TS_CRC);
+
+	send_response(TS_RESPONSE_OK, (uint8_t*)&config + offset, count, TS_CRC);
 }
 
 void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count)
@@ -326,32 +316,3 @@ void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count)
 	
 }
 
-
-void comms_write_status_flag(status_flags_t flag, bool state)
-{
-	uint8_t index = flag;
-	change_bit_uint32(&output_channels.status, index, state);
-}
-
-// ==================== Runtime Update Task ====================
-void runtime_update_task(void *argument)
-{
-	for (;;)
-	{
-		output_channels.sync_loss_count = engine.trigger.sync_loss_counter;
-		change_bit_uint32(&output_channels.status, STATUS_TRIGGER_SYNCED, engine.trigger.sync_status == TS_FULLY_SYNCED);
-		change_bit_uint32(&output_channels.status, STATUS_TRIGGER_ERROR, engine.trigger.sync_loss_counter > 1000);
-		change_bit_uint32(&output_channels.status, STATUS_CRANKING, engine.spinning_state == SS_CRANKING);
-		change_bit_uint32(&output_channels.status, STATUS_RUNNING, engine.spinning_state == SS_RUNNING);
-		// Replace with actual sensor readings
-		output_channels.rpm = engine.rpm;
-		output_channels.map = engine.map;
-		output_channels.tps = engine.tps1;
-		output_channels.lambda = 1;
-		output_channels.advance = engine.ignition_advance;
-		output_channels.dwell = configuration.ignition_dwell;
-		output_channels.vbatt = 10;
-		output_channels.clt = engine.clt;
-		osDelay(10);
-	}
-}

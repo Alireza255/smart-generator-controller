@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -28,7 +28,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 1
   25              		.thumb_func
   27              	StartDefaultTask:
   28              	.LVL0:
-  29              	.LFB235:
+  29              	.LFB237:
    1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
    2:Core/Src/freertos.c **** /**
    3:Core/Src/freertos.c ****   ******************************************************************************
@@ -58,1231 +58,1093 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 1
   27:Core/Src/freertos.c **** /* USER CODE BEGIN Includes */
   28:Core/Src/freertos.c **** #include "controller.h"
   29:Core/Src/freertos.c **** #include "trigger_simulator.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 2
 
 
   30:Core/Src/freertos.c **** #include "utils.h"
   31:Core/Src/freertos.c **** /* USER CODE END Includes */
   32:Core/Src/freertos.c **** 
   33:Core/Src/freertos.c **** /* Private typedef -----------------------------------------------------------*/
-  34:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
-  35:Core/Src/freertos.c **** 
-  36:Core/Src/freertos.c **** /* USER CODE END PTD */
-  37:Core/Src/freertos.c **** 
-  38:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
-  39:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
-  40:Core/Src/freertos.c **** 
-  41:Core/Src/freertos.c **** /* USER CODE END PD */
-  42:Core/Src/freertos.c **** 
-  43:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
-  44:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
-  45:Core/Src/freertos.c **** 
-  46:Core/Src/freertos.c **** /* USER CODE END PM */
-  47:Core/Src/freertos.c **** 
-  48:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
-  49:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
-  50:Core/Src/freertos.c **** rpm_t simulated_rpm = 1000;
-  51:Core/Src/freertos.c **** table_2d_t test_table = {0};
-  52:Core/Src/freertos.c **** float table_value = 0.0f;
-  53:Core/Src/freertos.c **** /* USER CODE END Variables */
-  54:Core/Src/freertos.c **** /* Definitions for defaultTask */
-  55:Core/Src/freertos.c **** osThreadId_t defaultTaskHandle;
-  56:Core/Src/freertos.c **** const osThreadAttr_t defaultTask_attributes = {
-  57:Core/Src/freertos.c ****   .name = "defaultTask",
-  58:Core/Src/freertos.c ****   .stack_size = 128 * 4,
-  59:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityRealtime,
-  60:Core/Src/freertos.c **** };
-  61:Core/Src/freertos.c **** /* Definitions for trig_sim */
-  62:Core/Src/freertos.c **** osThreadId_t trig_simHandle;
-  63:Core/Src/freertos.c **** const osThreadAttr_t trig_sim_attributes = {
-  64:Core/Src/freertos.c ****   .name = "trig_sim",
-  65:Core/Src/freertos.c ****   .stack_size = 128 * 4,
-  66:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityHigh,
-  67:Core/Src/freertos.c **** };
-  68:Core/Src/freertos.c **** /* Definitions for fuel_task */
-  69:Core/Src/freertos.c **** osThreadId_t fuel_taskHandle;
-  70:Core/Src/freertos.c **** const osThreadAttr_t fuel_task_attributes = {
-  71:Core/Src/freertos.c ****   .name = "fuel_task",
-  72:Core/Src/freertos.c ****   .stack_size = 128 * 4,
-  73:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
-  74:Core/Src/freertos.c **** };
-  75:Core/Src/freertos.c **** /* Definitions for init_task */
-  76:Core/Src/freertos.c **** osThreadId_t init_taskHandle;
-  77:Core/Src/freertos.c **** const osThreadAttr_t init_task_attributes = {
-  78:Core/Src/freertos.c ****   .name = "init_task",
-  79:Core/Src/freertos.c ****   .stack_size = 128 * 4,
-  80:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityRealtime,
-  81:Core/Src/freertos.c **** };
-  82:Core/Src/freertos.c **** /* Definitions for sensor_task */
-  83:Core/Src/freertos.c **** osThreadId_t sensor_taskHandle;
-  84:Core/Src/freertos.c **** const osThreadAttr_t sensor_task_attributes = {
-  85:Core/Src/freertos.c ****   .name = "sensor_task",
-  86:Core/Src/freertos.c ****   .stack_size = 128 * 4,
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 3
+  34:Core/Src/freertos.c **** typedef StaticEventGroup_t osStaticEventGroupDef_t;
+  35:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
+  36:Core/Src/freertos.c **** 
+  37:Core/Src/freertos.c **** /* USER CODE END PTD */
+  38:Core/Src/freertos.c **** 
+  39:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
+  40:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+  41:Core/Src/freertos.c **** 
+  42:Core/Src/freertos.c **** /* USER CODE END PD */
+  43:Core/Src/freertos.c **** 
+  44:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
+  45:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
+  46:Core/Src/freertos.c **** 
+  47:Core/Src/freertos.c **** /* USER CODE END PM */
+  48:Core/Src/freertos.c **** 
+  49:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
+  50:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
+  51:Core/Src/freertos.c **** 
+  52:Core/Src/freertos.c **** table_2d_t test_table = {0};
+  53:Core/Src/freertos.c **** float table_value = 0.0f;
+  54:Core/Src/freertos.c **** /* USER CODE END Variables */
+  55:Core/Src/freertos.c **** /* Definitions for defaultTask */
+  56:Core/Src/freertos.c **** osThreadId_t defaultTaskHandle;
+  57:Core/Src/freertos.c **** const osThreadAttr_t defaultTask_attributes = {
+  58:Core/Src/freertos.c ****   .name = "defaultTask",
+  59:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  60:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityRealtime,
+  61:Core/Src/freertos.c **** };
+  62:Core/Src/freertos.c **** /* Definitions for trig_sim */
+  63:Core/Src/freertos.c **** osThreadId_t trig_simHandle;
+  64:Core/Src/freertos.c **** const osThreadAttr_t trig_sim_attributes = {
+  65:Core/Src/freertos.c ****   .name = "trig_sim",
+  66:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  67:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityHigh,
+  68:Core/Src/freertos.c **** };
+  69:Core/Src/freertos.c **** /* Definitions for fuel_task */
+  70:Core/Src/freertos.c **** osThreadId_t fuel_taskHandle;
+  71:Core/Src/freertos.c **** const osThreadAttr_t fuel_task_attributes = {
+  72:Core/Src/freertos.c ****   .name = "fuel_task",
+  73:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  74:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  75:Core/Src/freertos.c **** };
+  76:Core/Src/freertos.c **** /* Definitions for init_task */
+  77:Core/Src/freertos.c **** osThreadId_t init_taskHandle;
+  78:Core/Src/freertos.c **** const osThreadAttr_t init_task_attributes = {
+  79:Core/Src/freertos.c ****   .name = "init_task",
+  80:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  81:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityRealtime,
+  82:Core/Src/freertos.c **** };
+  83:Core/Src/freertos.c **** /* Definitions for sensor_task */
+  84:Core/Src/freertos.c **** osThreadId_t sensor_taskHandle;
+  85:Core/Src/freertos.c **** const osThreadAttr_t sensor_task_attributes = {
+  86:Core/Src/freertos.c ****   .name = "sensor_task",
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 3
 
 
-  87:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
-  88:Core/Src/freertos.c **** };
-  89:Core/Src/freertos.c **** /* Definitions for engine_flags */
-  90:Core/Src/freertos.c **** osEventFlagsId_t engine_flagsHandle;
-  91:Core/Src/freertos.c **** const osEventFlagsAttr_t engine_flags_attributes = {
-  92:Core/Src/freertos.c ****   .name = "engine_flags"
-  93:Core/Src/freertos.c **** };
-  94:Core/Src/freertos.c **** 
-  95:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
-  96:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
-  97:Core/Src/freertos.c **** 
-  98:Core/Src/freertos.c **** void toggle_led();
-  99:Core/Src/freertos.c **** 
- 100:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+  87:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  88:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  89:Core/Src/freertos.c **** };
+  90:Core/Src/freertos.c **** /* Definitions for engine_flags */
+  91:Core/Src/freertos.c **** osEventFlagsId_t engine_flagsHandle;
+  92:Core/Src/freertos.c **** osStaticEventGroupDef_t engine_flagsControlBlock;
+  93:Core/Src/freertos.c **** const osEventFlagsAttr_t engine_flags_attributes = {
+  94:Core/Src/freertos.c ****   .name = "engine_flags",
+  95:Core/Src/freertos.c ****   .cb_mem = &engine_flagsControlBlock,
+  96:Core/Src/freertos.c ****   .cb_size = sizeof(engine_flagsControlBlock),
+  97:Core/Src/freertos.c **** };
+  98:Core/Src/freertos.c **** 
+  99:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+ 100:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
  101:Core/Src/freertos.c **** 
- 102:Core/Src/freertos.c **** void StartDefaultTask(void *argument);
- 103:Core/Src/freertos.c **** void trigger_simulator_task(void *argument);
- 104:Core/Src/freertos.c **** void start_fuel_task(void *argument);
- 105:Core/Src/freertos.c **** void controller_init_task(void *argument);
- 106:Core/Src/freertos.c **** void sensors_task(void *argument);
- 107:Core/Src/freertos.c **** 
- 108:Core/Src/freertos.c **** extern void MX_USB_DEVICE_Init(void);
- 109:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
- 110:Core/Src/freertos.c **** 
- 111:Core/Src/freertos.c **** /**
- 112:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
- 113:Core/Src/freertos.c ****   * @param  None
- 114:Core/Src/freertos.c ****   * @retval None
- 115:Core/Src/freertos.c ****   */
- 116:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
- 117:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
- 118:Core/Src/freertos.c **** 
- 119:Core/Src/freertos.c ****   /* USER CODE END Init */
- 120:Core/Src/freertos.c **** 
- 121:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
- 122:Core/Src/freertos.c ****   /* add mutexes, ... */
- 123:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+ 102:Core/Src/freertos.c **** void toggle_led();
+ 103:Core/Src/freertos.c **** 
+ 104:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+ 105:Core/Src/freertos.c **** 
+ 106:Core/Src/freertos.c **** void StartDefaultTask(void *argument);
+ 107:Core/Src/freertos.c **** void trigger_simulator_task(void *argument);
+ 108:Core/Src/freertos.c **** void start_fuel_task(void *argument);
+ 109:Core/Src/freertos.c **** void controller_init_task(void *argument);
+ 110:Core/Src/freertos.c **** void sensors_task(void *argument);
+ 111:Core/Src/freertos.c **** 
+ 112:Core/Src/freertos.c **** extern void MX_USB_DEVICE_Init(void);
+ 113:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+ 114:Core/Src/freertos.c **** 
+ 115:Core/Src/freertos.c **** /**
+ 116:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+ 117:Core/Src/freertos.c ****   * @param  None
+ 118:Core/Src/freertos.c ****   * @retval None
+ 119:Core/Src/freertos.c ****   */
+ 120:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+ 121:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 122:Core/Src/freertos.c **** 
+ 123:Core/Src/freertos.c ****   /* USER CODE END Init */
  124:Core/Src/freertos.c **** 
- 125:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
- 126:Core/Src/freertos.c ****   /* add semaphores, ... */
- 127:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+ 125:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 126:Core/Src/freertos.c ****   /* add mutexes, ... */
+ 127:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
  128:Core/Src/freertos.c **** 
- 129:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
- 130:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
- 131:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+ 129:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 130:Core/Src/freertos.c ****   /* add semaphores, ... */
+ 131:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
  132:Core/Src/freertos.c **** 
- 133:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
- 134:Core/Src/freertos.c ****   /* add queues, ... */
- 135:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+ 133:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 134:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+ 135:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
  136:Core/Src/freertos.c **** 
- 137:Core/Src/freertos.c ****   /* Create the thread(s) */
- 138:Core/Src/freertos.c ****   /* creation of defaultTask */
- 139:Core/Src/freertos.c ****   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+ 137:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 138:Core/Src/freertos.c ****   /* add queues, ... */
+ 139:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
  140:Core/Src/freertos.c **** 
- 141:Core/Src/freertos.c ****   /* creation of trig_sim */
- 142:Core/Src/freertos.c ****   trig_simHandle = osThreadNew(trigger_simulator_task, NULL, &trig_sim_attributes);
- 143:Core/Src/freertos.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 4
+ 141:Core/Src/freertos.c ****   /* Create the thread(s) */
+ 142:Core/Src/freertos.c ****   /* creation of defaultTask */
+ 143:Core/Src/freertos.c ****   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 4
 
 
- 144:Core/Src/freertos.c ****   /* creation of fuel_task */
- 145:Core/Src/freertos.c ****   fuel_taskHandle = osThreadNew(start_fuel_task, NULL, &fuel_task_attributes);
- 146:Core/Src/freertos.c **** 
- 147:Core/Src/freertos.c ****   /* creation of init_task */
- 148:Core/Src/freertos.c ****   init_taskHandle = osThreadNew(controller_init_task, NULL, &init_task_attributes);
- 149:Core/Src/freertos.c **** 
- 150:Core/Src/freertos.c ****   /* creation of sensor_task */
- 151:Core/Src/freertos.c ****   sensor_taskHandle = osThreadNew(sensors_task, NULL, &sensor_task_attributes);
- 152:Core/Src/freertos.c **** 
- 153:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
- 154:Core/Src/freertos.c ****   /* add threads, ... */
- 155:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 144:Core/Src/freertos.c **** 
+ 145:Core/Src/freertos.c ****   /* creation of trig_sim */
+ 146:Core/Src/freertos.c ****   trig_simHandle = osThreadNew(trigger_simulator_task, NULL, &trig_sim_attributes);
+ 147:Core/Src/freertos.c **** 
+ 148:Core/Src/freertos.c ****   /* creation of fuel_task */
+ 149:Core/Src/freertos.c ****   fuel_taskHandle = osThreadNew(start_fuel_task, NULL, &fuel_task_attributes);
+ 150:Core/Src/freertos.c **** 
+ 151:Core/Src/freertos.c ****   /* creation of init_task */
+ 152:Core/Src/freertos.c ****   init_taskHandle = osThreadNew(controller_init_task, NULL, &init_task_attributes);
+ 153:Core/Src/freertos.c **** 
+ 154:Core/Src/freertos.c ****   /* creation of sensor_task */
+ 155:Core/Src/freertos.c ****   sensor_taskHandle = osThreadNew(sensors_task, NULL, &sensor_task_attributes);
  156:Core/Src/freertos.c **** 
- 157:Core/Src/freertos.c ****   /* Create the event(s) */
- 158:Core/Src/freertos.c ****   /* creation of engine_flags */
- 159:Core/Src/freertos.c ****   engine_flagsHandle = osEventFlagsNew(&engine_flags_attributes);
+ 157:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 158:Core/Src/freertos.c ****   /* add threads, ... */
+ 159:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
  160:Core/Src/freertos.c **** 
- 161:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
- 162:Core/Src/freertos.c ****   /* add events, ... */
- 163:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 161:Core/Src/freertos.c ****   /* Create the event(s) */
+ 162:Core/Src/freertos.c ****   /* creation of engine_flags */
+ 163:Core/Src/freertos.c ****   engine_flagsHandle = osEventFlagsNew(&engine_flags_attributes);
  164:Core/Src/freertos.c **** 
- 165:Core/Src/freertos.c **** }
- 166:Core/Src/freertos.c **** 
- 167:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartDefaultTask */
- 168:Core/Src/freertos.c **** /**
- 169:Core/Src/freertos.c ****   * @brief  Function implementing the defaultTask thread.
- 170:Core/Src/freertos.c ****   * @param  argument: Not used
- 171:Core/Src/freertos.c ****   * @retval None
- 172:Core/Src/freertos.c ****   */
- 173:Core/Src/freertos.c **** /* USER CODE END Header_StartDefaultTask */
- 174:Core/Src/freertos.c **** void StartDefaultTask(void *argument)
- 175:Core/Src/freertos.c **** {
-  30              		.loc 1 175 1 view -0
+ 165:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 166:Core/Src/freertos.c ****   /* add events, ... */
+ 167:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 168:Core/Src/freertos.c **** 
+ 169:Core/Src/freertos.c **** }
+ 170:Core/Src/freertos.c **** 
+ 171:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartDefaultTask */
+ 172:Core/Src/freertos.c **** /**
+ 173:Core/Src/freertos.c ****   * @brief  Function implementing the defaultTask thread.
+ 174:Core/Src/freertos.c ****   * @param  argument: Not used
+ 175:Core/Src/freertos.c ****   * @retval None
+ 176:Core/Src/freertos.c ****   */
+ 177:Core/Src/freertos.c **** /* USER CODE END Header_StartDefaultTask */
+ 178:Core/Src/freertos.c **** void StartDefaultTask(void *argument)
+ 179:Core/Src/freertos.c **** {
+  30              		.loc 1 179 1 view -0
   31              		.cfi_startproc
   32              		@ Volatile: function does not return.
   33              		@ args = 0, pretend = 0, frame = 0
   34              		@ frame_needed = 0, uses_anonymous_args = 0
-  35              		.loc 1 175 1 is_stmt 0 view .LVU1
+  35              		.loc 1 179 1 is_stmt 0 view .LVU1
   36 0000 08B5     		push	{r3, lr}
   37              		.cfi_def_cfa_offset 8
   38              		.cfi_offset 3, -8
   39              		.cfi_offset 14, -4
- 176:Core/Src/freertos.c ****   /* init code for USB_DEVICE */
- 177:Core/Src/freertos.c ****   MX_USB_DEVICE_Init();
-  40              		.loc 1 177 3 is_stmt 1 view .LVU2
+ 180:Core/Src/freertos.c ****   /* init code for USB_DEVICE */
+ 181:Core/Src/freertos.c ****   MX_USB_DEVICE_Init();
+  40              		.loc 1 181 3 is_stmt 1 view .LVU2
   41 0002 FFF7FEFF 		bl	MX_USB_DEVICE_Init
   42              	.LVL1:
- 178:Core/Src/freertos.c ****   /* USER CODE BEGIN StartDefaultTask */
- 179:Core/Src/freertos.c **** 
- 180:Core/Src/freertos.c ****   osDelay(100);
-  43              		.loc 1 180 3 view .LVU3
+ 182:Core/Src/freertos.c ****   /* USER CODE BEGIN StartDefaultTask */
+ 183:Core/Src/freertos.c **** 
+ 184:Core/Src/freertos.c ****   osDelay(100);
+  43              		.loc 1 184 3 view .LVU3
   44 0006 6420     		movs	r0, #100
   45 0008 FFF7FEFF 		bl	osDelay
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 5
+
+
   46              	.LVL2:
   47              	.L2:
- 181:Core/Src/freertos.c ****   
- 182:Core/Src/freertos.c ****   /* Infinite loop */
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 5
-
-
- 183:Core/Src/freertos.c ****   for(;;)
-  48              		.loc 1 183 3 view .LVU4
- 184:Core/Src/freertos.c ****   {
- 185:Core/Src/freertos.c **** 
- 186:Core/Src/freertos.c ****     osDelay(1);
-  49              		.loc 1 186 5 discriminator 1 view .LVU5
+ 185:Core/Src/freertos.c ****   
+ 186:Core/Src/freertos.c ****   /* Infinite loop */
+ 187:Core/Src/freertos.c ****   for(;;)
+  48              		.loc 1 187 3 view .LVU4
+ 188:Core/Src/freertos.c ****   {
+ 189:Core/Src/freertos.c **** 
+ 190:Core/Src/freertos.c ****     osDelay(1);
+  49              		.loc 1 190 5 discriminator 1 view .LVU5
   50 000c 0120     		movs	r0, #1
   51 000e FFF7FEFF 		bl	osDelay
   52              	.LVL3:
- 183:Core/Src/freertos.c ****   {
-  53              		.loc 1 183 3 view .LVU6
+ 187:Core/Src/freertos.c ****   {
+  53              		.loc 1 187 3 view .LVU6
   54 0012 FBE7     		b	.L2
   55              		.cfi_endproc
-  56              	.LFE235:
-  58              		.section	.text.start_fuel_task,"ax",%progbits
+  56              	.LFE237:
+  58              		.section	.text.trigger_simulator_task,"ax",%progbits
   59              		.align	1
-  60              		.global	start_fuel_task
+  60              		.global	trigger_simulator_task
   61              		.syntax unified
   62              		.thumb
   63              		.thumb_func
-  65              	start_fuel_task:
-  66              	.LFB237:
- 187:Core/Src/freertos.c ****   }
- 188:Core/Src/freertos.c ****   /* USER CODE END StartDefaultTask */
- 189:Core/Src/freertos.c **** }
- 190:Core/Src/freertos.c **** 
- 191:Core/Src/freertos.c **** /* USER CODE BEGIN Header_trigger_simulator_task */
- 192:Core/Src/freertos.c **** /**
- 193:Core/Src/freertos.c **** * @brief Function implementing the trig_sim thread.
- 194:Core/Src/freertos.c **** * @param argument: Not used
- 195:Core/Src/freertos.c **** * @retval None
- 196:Core/Src/freertos.c **** */
- 197:Core/Src/freertos.c **** /* USER CODE END Header_trigger_simulator_task */
- 198:Core/Src/freertos.c **** void trigger_simulator_task(void *argument)
- 199:Core/Src/freertos.c **** {
- 200:Core/Src/freertos.c ****   /* USER CODE BEGIN trigger_simulator_task */
- 201:Core/Src/freertos.c ****   osDelay(100);
- 202:Core/Src/freertos.c ****   trigger_simulator_init(60, 2, trigger_tooth_handle);
- 203:Core/Src/freertos.c **** 
- 204:Core/Src/freertos.c ****   /* Infinite loop */
- 205:Core/Src/freertos.c ****   for(;;)
- 206:Core/Src/freertos.c ****   {
- 207:Core/Src/freertos.c ****     simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095
- 208:Core/Src/freertos.c ****     //simulated_rpm = 500;
- 209:Core/Src/freertos.c ****     trigger_simulator_update(simulated_rpm);
- 210:Core/Src/freertos.c ****     osDelay(1);
- 211:Core/Src/freertos.c **** 
- 212:Core/Src/freertos.c ****   }
- 213:Core/Src/freertos.c ****   /* USER CODE END trigger_simulator_task */
- 214:Core/Src/freertos.c **** }
- 215:Core/Src/freertos.c **** 
- 216:Core/Src/freertos.c **** /* USER CODE BEGIN Header_start_fuel_task */
- 217:Core/Src/freertos.c **** /**
- 218:Core/Src/freertos.c **** * @brief Function implementing the fuel_task thread.
- 219:Core/Src/freertos.c **** * @param argument: Not used
- 220:Core/Src/freertos.c **** * @retval None
- 221:Core/Src/freertos.c **** */
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 6
-
-
- 222:Core/Src/freertos.c **** /* USER CODE END Header_start_fuel_task */
- 223:Core/Src/freertos.c **** void start_fuel_task(void *argument)
- 224:Core/Src/freertos.c **** {
-  67              		.loc 1 224 1 view -0
+  65              	trigger_simulator_task:
+  66              	.LFB238:
+ 191:Core/Src/freertos.c ****   }
+ 192:Core/Src/freertos.c ****   /* USER CODE END StartDefaultTask */
+ 193:Core/Src/freertos.c **** }
+ 194:Core/Src/freertos.c **** 
+ 195:Core/Src/freertos.c **** /* USER CODE BEGIN Header_trigger_simulator_task */
+ 196:Core/Src/freertos.c **** /**
+ 197:Core/Src/freertos.c **** * @brief Function implementing the trig_sim thread.
+ 198:Core/Src/freertos.c **** * @param argument: Not used
+ 199:Core/Src/freertos.c **** * @retval None
+ 200:Core/Src/freertos.c **** */
+ 201:Core/Src/freertos.c **** /* USER CODE END Header_trigger_simulator_task */
+ 202:Core/Src/freertos.c **** void trigger_simulator_task(void *argument)
+ 203:Core/Src/freertos.c **** {
+  67              		.loc 1 203 1 view -0
   68              		.cfi_startproc
   69              		@ Volatile: function does not return.
   70              		@ args = 0, pretend = 0, frame = 0
   71              		@ frame_needed = 0, uses_anonymous_args = 0
   72              	.LVL4:
-  73              		.loc 1 224 1 is_stmt 0 view .LVU8
+  73              		.loc 1 203 1 is_stmt 0 view .LVU8
   74 0000 08B5     		push	{r3, lr}
   75              		.cfi_def_cfa_offset 8
   76              		.cfi_offset 3, -8
   77              		.cfi_offset 14, -4
   78              	.LVL5:
   79              	.L5:
- 225:Core/Src/freertos.c ****   /* USER CODE BEGIN start_fuel_task */
- 226:Core/Src/freertos.c **** 
- 227:Core/Src/freertos.c **** 
- 228:Core/Src/freertos.c ****   /* Infinite loop */
- 229:Core/Src/freertos.c ****   for(;;)
-  80              		.loc 1 229 3 is_stmt 1 view .LVU9
- 230:Core/Src/freertos.c ****   {
- 231:Core/Src/freertos.c ****     osDelay(1);
-  81              		.loc 1 231 5 discriminator 1 view .LVU10
+ 204:Core/Src/freertos.c ****   /* USER CODE BEGIN trigger_simulator_task */
+ 205:Core/Src/freertos.c **** 
+ 206:Core/Src/freertos.c ****   /* Infinite loop */
+ 207:Core/Src/freertos.c ****   for(;;)
+  80              		.loc 1 207 3 is_stmt 1 view .LVU9
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 6
+
+
+ 208:Core/Src/freertos.c ****   {
+ 209:Core/Src/freertos.c ****     osDelay(1);
+  81              		.loc 1 209 5 discriminator 1 view .LVU10
   82 0002 0120     		movs	r0, #1
   83 0004 FFF7FEFF 		bl	osDelay
   84              	.LVL6:
- 229:Core/Src/freertos.c ****   {
-  85              		.loc 1 229 3 view .LVU11
+ 207:Core/Src/freertos.c ****   {
+  85              		.loc 1 207 3 view .LVU11
   86 0008 FBE7     		b	.L5
   87              		.cfi_endproc
-  88              	.LFE237:
-  90              		.section	.text.trigger_simulator_task,"ax",%progbits
+  88              	.LFE238:
+  90              		.section	.text.start_fuel_task,"ax",%progbits
   91              		.align	1
-  92              		.global	trigger_simulator_task
+  92              		.global	start_fuel_task
   93              		.syntax unified
   94              		.thumb
   95              		.thumb_func
-  97              	trigger_simulator_task:
-  98              	.LVL7:
-  99              	.LFB236:
- 199:Core/Src/freertos.c ****   /* USER CODE BEGIN trigger_simulator_task */
- 100              		.loc 1 199 1 view -0
- 101              		.cfi_startproc
- 102              		@ Volatile: function does not return.
- 103              		@ args = 0, pretend = 0, frame = 0
- 104              		@ frame_needed = 0, uses_anonymous_args = 0
- 199:Core/Src/freertos.c ****   /* USER CODE BEGIN trigger_simulator_task */
- 105              		.loc 1 199 1 is_stmt 0 view .LVU13
+  97              	start_fuel_task:
+  98              	.LFB239:
+ 210:Core/Src/freertos.c **** 
+ 211:Core/Src/freertos.c ****   }
+ 212:Core/Src/freertos.c ****   /* USER CODE END trigger_simulator_task */
+ 213:Core/Src/freertos.c **** }
+ 214:Core/Src/freertos.c **** 
+ 215:Core/Src/freertos.c **** /* USER CODE BEGIN Header_start_fuel_task */
+ 216:Core/Src/freertos.c **** /**
+ 217:Core/Src/freertos.c **** * @brief Function implementing the fuel_task thread.
+ 218:Core/Src/freertos.c **** * @param argument: Not used
+ 219:Core/Src/freertos.c **** * @retval None
+ 220:Core/Src/freertos.c **** */
+ 221:Core/Src/freertos.c **** /* USER CODE END Header_start_fuel_task */
+ 222:Core/Src/freertos.c **** void start_fuel_task(void *argument)
+ 223:Core/Src/freertos.c **** {
+  99              		.loc 1 223 1 view -0
+ 100              		.cfi_startproc
+ 101              		@ Volatile: function does not return.
+ 102              		@ args = 0, pretend = 0, frame = 0
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ 104              	.LVL7:
+ 105              		.loc 1 223 1 is_stmt 0 view .LVU13
  106 0000 08B5     		push	{r3, lr}
  107              		.cfi_def_cfa_offset 8
  108              		.cfi_offset 3, -8
  109              		.cfi_offset 14, -4
- 201:Core/Src/freertos.c ****   trigger_simulator_init(60, 2, trigger_tooth_handle);
- 110              		.loc 1 201 3 is_stmt 1 view .LVU14
- 111 0002 6420     		movs	r0, #100
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 7
+ 110              	.LVL8:
+ 111              	.L8:
+ 224:Core/Src/freertos.c ****   /* USER CODE BEGIN start_fuel_task */
+ 225:Core/Src/freertos.c **** 
+ 226:Core/Src/freertos.c **** 
+ 227:Core/Src/freertos.c ****   /* Infinite loop */
+ 228:Core/Src/freertos.c ****   for(;;)
+ 112              		.loc 1 228 3 is_stmt 1 view .LVU14
+ 229:Core/Src/freertos.c ****   {
+ 230:Core/Src/freertos.c ****     osDelay(1);
+ 113              		.loc 1 230 5 discriminator 1 view .LVU15
+ 114 0002 0120     		movs	r0, #1
+ 115 0004 FFF7FEFF 		bl	osDelay
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 7
 
 
- 112              	.LVL8:
- 201:Core/Src/freertos.c ****   trigger_simulator_init(60, 2, trigger_tooth_handle);
- 113              		.loc 1 201 3 is_stmt 0 view .LVU15
- 114 0004 FFF7FEFF 		bl	osDelay
- 115              	.LVL9:
- 202:Core/Src/freertos.c **** 
- 116              		.loc 1 202 3 is_stmt 1 view .LVU16
- 117 0008 104A     		ldr	r2, .L10
- 118 000a 0221     		movs	r1, #2
- 119 000c 3C20     		movs	r0, #60
- 120 000e FFF7FEFF 		bl	trigger_simulator_init
- 121              	.LVL10:
- 122              	.L8:
- 205:Core/Src/freertos.c ****   {
- 123              		.loc 1 205 3 view .LVU17
- 207:Core/Src/freertos.c ****     //simulated_rpm = 500;
- 124              		.loc 1 207 5 view .LVU18
- 207:Core/Src/freertos.c ****     //simulated_rpm = 500;
- 125              		.loc 1 207 40 is_stmt 0 view .LVU19
- 126 0012 0320     		movs	r0, #3
- 127 0014 FFF7FEFF 		bl	analog_inputs_get_data
- 128              	.LVL11:
- 129 0018 07EE900A 		vmov	s15, r0	@ int
- 207:Core/Src/freertos.c ****     //simulated_rpm = 500;
- 130              		.loc 1 207 21 discriminator 1 view .LVU20
- 131 001c F8EE677A 		vcvt.f32.u32	s15, s15
- 132              	.LVL12:
- 133              	.LBB4:
- 134              	.LBI4:
- 135              		.file 2 "controller/utils/utils.h"
-   1:controller/utils/utils.h **** /**
-   2:controller/utils/utils.h ****  * @file utils.h
-   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
-   4:controller/utils/utils.h ****  * 
-   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
-   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
-   7:controller/utils/utils.h ****  * 
-   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
-   9:controller/utils/utils.h ****  */
-  10:controller/utils/utils.h **** #ifndef UTILS_H
-  11:controller/utils/utils.h **** #define UTILS_H
-  12:controller/utils/utils.h **** 
-  13:controller/utils/utils.h **** #include "types.h"
-  14:controller/utils/utils.h **** #include "math.h"
-  15:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
-  16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
-  17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
-  18:controller/utils/utils.h **** 
-  19:controller/utils/utils.h **** void change_bit_uint32(uint32_t *var, uint8_t bit_index, bool state);
-  20:controller/utils/utils.h **** 
-  21:controller/utils/utils.h **** /**
-  22:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
-  23:controller/utils/utils.h ****  * 
-  24:controller/utils/utils.h ****  * @param x The value to map.
-  25:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  26:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  27:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 8
-
-
-  28:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  29:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  30:controller/utils/utils.h ****  */
-  31:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
-  32:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
-  33:controller/utils/utils.h **** 
-  34:controller/utils/utils.h **** 
-  35:controller/utils/utils.h **** /**
-  36:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
-  37:controller/utils/utils.h ****  * 
-  38:controller/utils/utils.h ****  * @param x The value to map.
-  39:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  40:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  41:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  42:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  43:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  44:controller/utils/utils.h ****  */
-  45:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
-  46:controller/utils/utils.h **** {
-  47:controller/utils/utils.h ****     if (in_max == in_min)
-  48:controller/utils/utils.h ****     {
-  49:controller/utils/utils.h ****         return 0; // Avoid division by zero
-  50:controller/utils/utils.h ****     }
-  51:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-  52:controller/utils/utils.h **** }
-  53:controller/utils/utils.h **** 
-  54:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
- 136              		.loc 2 54 21 is_stmt 1 view .LVU21
- 137              	.LBB5:
-  55:controller/utils/utils.h **** {
-  56:controller/utils/utils.h ****     if (in_max == in_min)
- 138              		.loc 2 56 5 view .LVU22
-  57:controller/utils/utils.h ****     {
-  58:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
-  59:controller/utils/utils.h ****     }
-  60:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
- 139              		.loc 2 60 5 view .LVU23
- 140              		.loc 2 60 25 is_stmt 0 view .LVU24
- 141 0020 9FED0B7A 		vldr.32	s14, .L10+4
- 142 0024 67EE877A 		vmul.f32	s15, s15, s14
- 143              	.LVL13:
- 144              		.loc 2 60 47 view .LVU25
- 145 0028 9FED0A7A 		vldr.32	s14, .L10+8
- 146 002c 87EE870A 		vdiv.f32	s0, s15, s14
- 147              		.loc 2 60 67 view .LVU26
- 148 0030 F2EE047A 		vmov.f32	s15, #1.0e+1
- 149 0034 30EE270A 		vadd.f32	s0, s0, s15
- 150              	.LVL14:
- 151              		.loc 2 60 67 view .LVU27
- 152              	.LBE5:
- 153              	.LBE4:
- 207:Core/Src/freertos.c ****     //simulated_rpm = 500;
- 154              		.loc 1 207 19 discriminator 2 view .LVU28
- 155 0038 074B     		ldr	r3, .L10+12
- 156 003a 83ED000A 		vstr.32	s0, [r3]
- 209:Core/Src/freertos.c ****     osDelay(1);
- 157              		.loc 1 209 5 is_stmt 1 view .LVU29
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 9
-
-
- 158 003e FFF7FEFF 		bl	trigger_simulator_update
- 159              	.LVL15:
- 210:Core/Src/freertos.c **** 
- 160              		.loc 1 210 5 discriminator 1 view .LVU30
- 161 0042 0120     		movs	r0, #1
- 162 0044 FFF7FEFF 		bl	osDelay
- 163              	.LVL16:
- 205:Core/Src/freertos.c ****   {
- 164              		.loc 1 205 3 view .LVU31
- 165 0048 E3E7     		b	.L8
- 166              	.L11:
- 167 004a 00BF     		.align	2
- 168              	.L10:
- 169 004c 00000000 		.word	trigger_tooth_handle
- 170 0050 00807744 		.word	1148682240
- 171 0054 00F07F45 		.word	1166012416
- 172 0058 00000000 		.word	simulated_rpm
- 173              		.cfi_endproc
- 174              	.LFE236:
- 176              		.section	.text.controller_init_task,"ax",%progbits
- 177              		.align	1
- 178              		.global	controller_init_task
- 179              		.syntax unified
- 180              		.thumb
- 181              		.thumb_func
- 183              	controller_init_task:
- 184              	.LVL17:
- 185              	.LFB238:
- 232:Core/Src/freertos.c ****   }
- 233:Core/Src/freertos.c ****   /* USER CODE END start_fuel_task */
- 234:Core/Src/freertos.c **** }
- 235:Core/Src/freertos.c **** 
- 236:Core/Src/freertos.c **** /* USER CODE BEGIN Header_controller_init_task */
- 237:Core/Src/freertos.c **** /**
- 238:Core/Src/freertos.c **** * @brief Function implementing the init_task thread.
- 239:Core/Src/freertos.c **** * @param argument: Not used
- 240:Core/Src/freertos.c **** * @retval None
- 241:Core/Src/freertos.c **** */
- 242:Core/Src/freertos.c **** /* USER CODE END Header_controller_init_task */
- 243:Core/Src/freertos.c **** void controller_init_task(void *argument)
- 244:Core/Src/freertos.c **** {
- 186              		.loc 1 244 1 view -0
- 187              		.cfi_startproc
- 188              		@ args = 0, pretend = 0, frame = 0
- 189              		@ frame_needed = 0, uses_anonymous_args = 0
- 190              		.loc 1 244 1 is_stmt 0 view .LVU33
- 191 0000 08B5     		push	{r3, lr}
- 192              		.cfi_def_cfa_offset 8
- 193              		.cfi_offset 3, -8
- 194              		.cfi_offset 14, -4
- 245:Core/Src/freertos.c ****   /* USER CODE BEGIN controller_init_task */
- 246:Core/Src/freertos.c **** 
- 247:Core/Src/freertos.c ****   controller_init_with_defaults();
- 195              		.loc 1 247 3 is_stmt 1 view .LVU34
- 196 0002 FFF7FEFF 		bl	controller_init_with_defaults
- 197              	.LVL18:
+ 116              	.LVL9:
+ 228:Core/Src/freertos.c ****   {
+ 117              		.loc 1 228 3 view .LVU16
+ 118 0008 FBE7     		b	.L8
+ 119              		.cfi_endproc
+ 120              	.LFE239:
+ 122              		.section	.text.controller_init_task,"ax",%progbits
+ 123              		.align	1
+ 124              		.global	controller_init_task
+ 125              		.syntax unified
+ 126              		.thumb
+ 127              		.thumb_func
+ 129              	controller_init_task:
+ 130              	.LVL10:
+ 131              	.LFB240:
+ 231:Core/Src/freertos.c ****   }
+ 232:Core/Src/freertos.c ****   /* USER CODE END start_fuel_task */
+ 233:Core/Src/freertos.c **** }
+ 234:Core/Src/freertos.c **** 
+ 235:Core/Src/freertos.c **** /* USER CODE BEGIN Header_controller_init_task */
+ 236:Core/Src/freertos.c **** /**
+ 237:Core/Src/freertos.c **** * @brief Function implementing the init_task thread.
+ 238:Core/Src/freertos.c **** * @param argument: Not used
+ 239:Core/Src/freertos.c **** * @retval None
+ 240:Core/Src/freertos.c **** */
+ 241:Core/Src/freertos.c **** /* USER CODE END Header_controller_init_task */
+ 242:Core/Src/freertos.c **** void controller_init_task(void *argument)
+ 243:Core/Src/freertos.c **** {
+ 132              		.loc 1 243 1 view -0
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136              		.loc 1 243 1 is_stmt 0 view .LVU18
+ 137 0000 08B5     		push	{r3, lr}
+ 138              		.cfi_def_cfa_offset 8
+ 139              		.cfi_offset 3, -8
+ 140              		.cfi_offset 14, -4
+ 244:Core/Src/freertos.c ****   /* USER CODE BEGIN controller_init_task */
+ 245:Core/Src/freertos.c **** 
+ 246:Core/Src/freertos.c ****   controller_init_with_defaults();
+ 141              		.loc 1 246 3 is_stmt 1 view .LVU19
+ 142 0002 FFF7FEFF 		bl	controller_init_with_defaults
+ 143              	.LVL11:
+ 247:Core/Src/freertos.c **** 
  248:Core/Src/freertos.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 10
-
-
- 249:Core/Src/freertos.c **** 
- 250:Core/Src/freertos.c ****   for (size_t i = 0; i < (sizeof(test_table.x_bins) / sizeof(test_table.x_bins[0])); i++)
- 198              		.loc 1 250 3 view .LVU35
- 199              	.LBB6:
- 200              		.loc 1 250 8 view .LVU36
- 201              		.loc 1 250 15 is_stmt 0 view .LVU37
- 202 0006 0022     		movs	r2, #0
- 203              		.loc 1 250 3 view .LVU38
- 204 0008 0EE0     		b	.L13
- 205              	.LVL19:
- 206              	.L14:
- 251:Core/Src/freertos.c ****   {
- 252:Core/Src/freertos.c ****     test_table.x_bins[i] = i * 100;  // Example values
- 207              		.loc 1 252 5 is_stmt 1 view .LVU39
- 208              		.loc 1 252 30 is_stmt 0 view .LVU40
- 209 000a 6423     		movs	r3, #100
- 210 000c 02FB03F3 		mul	r3, r2, r3
- 211              		.loc 1 252 26 view .LVU41
- 212 0010 02F58070 		add	r0, r2, #256
- 213 0014 2D49     		ldr	r1, .L26
- 214 0016 01EB8001 		add	r1, r1, r0, lsl #2
- 215 001a 07EE903A 		vmov	s15, r3	@ int
- 216 001e F8EE677A 		vcvt.f32.u32	s15, s15
- 217 0022 C1ED007A 		vstr.32	s15, [r1]
+ 249:Core/Src/freertos.c ****   for (size_t i = 0; i < (sizeof(test_table.x_bins) / sizeof(test_table.x_bins[0])); i++)
+ 144              		.loc 1 249 3 view .LVU20
+ 145              	.LBB2:
+ 146              		.loc 1 249 8 view .LVU21
+ 147              		.loc 1 249 15 is_stmt 0 view .LVU22
+ 148 0006 0022     		movs	r2, #0
+ 149              		.loc 1 249 3 view .LVU23
+ 150 0008 0EE0     		b	.L11
+ 151              	.LVL12:
+ 152              	.L12:
  250:Core/Src/freertos.c ****   {
- 218              		.loc 1 250 87 is_stmt 1 discriminator 3 view .LVU42
- 219 0026 0132     		adds	r2, r2, #1
- 220              	.LVL20:
- 221              	.L13:
- 250:Core/Src/freertos.c ****   {
- 222              		.loc 1 250 24 discriminator 1 view .LVU43
- 223 0028 0F2A     		cmp	r2, #15
- 224 002a EED9     		bls	.L14
- 225              	.LBE6:
- 226              	.LBB7:
- 253:Core/Src/freertos.c ****   }
- 254:Core/Src/freertos.c ****   for (size_t i = 0; i < (sizeof(test_table.y_bins) / sizeof(test_table.y_bins[0])); i++)
- 227              		.loc 1 254 15 is_stmt 0 view .LVU44
- 228 002c 0023     		movs	r3, #0
- 229 002e 0EE0     		b	.L15
- 230              	.LVL21:
- 231              	.L16:
- 255:Core/Src/freertos.c ****   {
- 256:Core/Src/freertos.c ****     test_table.y_bins[i] = i * 10;  // Example values
- 232              		.loc 1 256 5 is_stmt 1 view .LVU45
- 233              		.loc 1 256 30 is_stmt 0 view .LVU46
- 234 0030 03EB8302 		add	r2, r3, r3, lsl #2
- 235 0034 5200     		lsls	r2, r2, #1
- 236              		.loc 1 256 26 view .LVU47
- 237 0036 03F58870 		add	r0, r3, #272
- 238 003a 2449     		ldr	r1, .L26
- 239 003c 01EB8001 		add	r1, r1, r0, lsl #2
- 240 0040 07EE902A 		vmov	s15, r2	@ int
- 241 0044 F8EE677A 		vcvt.f32.u32	s15, s15
- 242 0048 C1ED007A 		vstr.32	s15, [r1]
+ 251:Core/Src/freertos.c ****     test_table.x_bins[i] = i * 100;  // Example values
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 8
+
+
+ 153              		.loc 1 251 5 is_stmt 1 view .LVU24
+ 154              		.loc 1 251 30 is_stmt 0 view .LVU25
+ 155 000a 6423     		movs	r3, #100
+ 156 000c 02FB03F3 		mul	r3, r2, r3
+ 157              		.loc 1 251 26 view .LVU26
+ 158 0010 02F58070 		add	r0, r2, #256
+ 159 0014 2D49     		ldr	r1, .L24
+ 160 0016 01EB8001 		add	r1, r1, r0, lsl #2
+ 161 001a 07EE903A 		vmov	s15, r3	@ int
+ 162 001e F8EE677A 		vcvt.f32.u32	s15, s15
+ 163 0022 C1ED007A 		vstr.32	s15, [r1]
+ 249:Core/Src/freertos.c ****   {
+ 164              		.loc 1 249 87 is_stmt 1 discriminator 3 view .LVU27
+ 165 0026 0132     		adds	r2, r2, #1
+ 166              	.LVL13:
+ 167              	.L11:
+ 249:Core/Src/freertos.c ****   {
+ 168              		.loc 1 249 24 discriminator 1 view .LVU28
+ 169 0028 0F2A     		cmp	r2, #15
+ 170 002a EED9     		bls	.L12
+ 171              	.LBE2:
+ 172              	.LBB3:
+ 252:Core/Src/freertos.c ****   }
+ 253:Core/Src/freertos.c ****   for (size_t i = 0; i < (sizeof(test_table.y_bins) / sizeof(test_table.y_bins[0])); i++)
+ 173              		.loc 1 253 15 is_stmt 0 view .LVU29
+ 174 002c 0023     		movs	r3, #0
+ 175 002e 0EE0     		b	.L13
+ 176              	.LVL14:
+ 177              	.L14:
  254:Core/Src/freertos.c ****   {
- 243              		.loc 1 254 87 is_stmt 1 discriminator 3 view .LVU48
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 11
+ 255:Core/Src/freertos.c ****     test_table.y_bins[i] = i * 10;  // Example values
+ 178              		.loc 1 255 5 is_stmt 1 view .LVU30
+ 179              		.loc 1 255 30 is_stmt 0 view .LVU31
+ 180 0030 03EB8302 		add	r2, r3, r3, lsl #2
+ 181 0034 5200     		lsls	r2, r2, #1
+ 182              		.loc 1 255 26 view .LVU32
+ 183 0036 03F58870 		add	r0, r3, #272
+ 184 003a 2449     		ldr	r1, .L24
+ 185 003c 01EB8001 		add	r1, r1, r0, lsl #2
+ 186 0040 07EE902A 		vmov	s15, r2	@ int
+ 187 0044 F8EE677A 		vcvt.f32.u32	s15, s15
+ 188 0048 C1ED007A 		vstr.32	s15, [r1]
+ 253:Core/Src/freertos.c ****   {
+ 189              		.loc 1 253 87 is_stmt 1 discriminator 3 view .LVU33
+ 190 004c 0133     		adds	r3, r3, #1
+ 191              	.LVL15:
+ 192              	.L13:
+ 253:Core/Src/freertos.c ****   {
+ 193              		.loc 1 253 24 discriminator 1 view .LVU34
+ 194 004e 0F2B     		cmp	r3, #15
+ 195 0050 EED9     		bls	.L14
+ 196              	.LBE3:
+ 197              	.LBB4:
+ 256:Core/Src/freertos.c ****   }
+ 257:Core/Src/freertos.c ****   for (size_t i = 0; i < (sizeof(test_table.data) / sizeof(test_table.data[0])); i++)
+ 198              		.loc 1 257 15 is_stmt 0 view .LVU35
+ 199 0052 0020     		movs	r0, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 9
 
 
- 244 004c 0133     		adds	r3, r3, #1
- 245              	.LVL22:
- 246              	.L15:
- 254:Core/Src/freertos.c ****   {
- 247              		.loc 1 254 24 discriminator 1 view .LVU49
- 248 004e 0F2B     		cmp	r3, #15
- 249 0050 EED9     		bls	.L16
- 250              	.LBE7:
- 251              	.LBB8:
- 257:Core/Src/freertos.c ****   }
- 258:Core/Src/freertos.c ****   for (size_t i = 0; i < (sizeof(test_table.data) / sizeof(test_table.data[0])); i++)
- 252              		.loc 1 258 15 is_stmt 0 view .LVU50
- 253 0052 0020     		movs	r0, #0
- 254 0054 11E0     		b	.L17
- 255              	.LVL23:
- 256              	.L18:
- 257              	.LBB9:
- 259:Core/Src/freertos.c ****   {
- 260:Core/Src/freertos.c ****     for (size_t j = 0; j < (sizeof(test_table.data[0]) / sizeof(test_table.data[0][0])); j++)
- 261:Core/Src/freertos.c ****     {
- 262:Core/Src/freertos.c ****       test_table.data[i][j] = (i + 1) * (j + 1);  // Example values
- 258              		.loc 1 262 7 is_stmt 1 view .LVU51
- 259              		.loc 1 262 44 is_stmt 0 view .LVU52
- 260 0056 5A1C     		adds	r2, r3, #1
- 261              		.loc 1 262 39 view .LVU53
- 262 0058 00FB0221 		mla	r1, r0, r2, r2
- 263 005c 07EE901A 		vmov	s15, r1	@ int
- 264              		.loc 1 262 29 view .LVU54
- 265 0060 03EB0013 		add	r3, r3, r0, lsl #4
- 266              	.LVL24:
- 267              		.loc 1 262 29 view .LVU55
- 268 0064 1949     		ldr	r1, .L26
- 269 0066 01EB8303 		add	r3, r1, r3, lsl #2
- 270 006a F8EE677A 		vcvt.f32.u32	s15, s15
- 271 006e C3ED007A 		vstr.32	s15, [r3]
- 260:Core/Src/freertos.c ****     {
- 272              		.loc 1 260 91 is_stmt 1 discriminator 3 view .LVU56
- 273              	.LVL25:
- 260:Core/Src/freertos.c ****     {
- 274              		.loc 1 260 91 is_stmt 0 discriminator 3 view .LVU57
- 275 0072 1346     		mov	r3, r2
- 276              	.LVL26:
- 277              	.L19:
- 260:Core/Src/freertos.c ****     {
- 278              		.loc 1 260 26 is_stmt 1 discriminator 1 view .LVU58
- 279 0074 0F2B     		cmp	r3, #15
- 280 0076 EED9     		bls	.L18
- 281              	.LBE9:
+ 200 0054 11E0     		b	.L15
+ 201              	.LVL16:
+ 202              	.L16:
+ 203              	.LBB5:
  258:Core/Src/freertos.c ****   {
- 282              		.loc 1 258 83 discriminator 2 view .LVU59
- 283 0078 0130     		adds	r0, r0, #1
- 284              	.LVL27:
- 285              	.L17:
- 258:Core/Src/freertos.c ****   {
- 286              		.loc 1 258 24 discriminator 1 view .LVU60
- 287 007a 0F28     		cmp	r0, #15
- 288 007c 0CD8     		bhi	.L22
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 12
+ 259:Core/Src/freertos.c ****     for (size_t j = 0; j < (sizeof(test_table.data[0]) / sizeof(test_table.data[0][0])); j++)
+ 260:Core/Src/freertos.c ****     {
+ 261:Core/Src/freertos.c ****       test_table.data[i][j] = (i + 1) * (j + 1);  // Example values
+ 204              		.loc 1 261 7 is_stmt 1 view .LVU36
+ 205              		.loc 1 261 44 is_stmt 0 view .LVU37
+ 206 0056 5A1C     		adds	r2, r3, #1
+ 207              		.loc 1 261 39 view .LVU38
+ 208 0058 00FB0221 		mla	r1, r0, r2, r2
+ 209 005c 07EE901A 		vmov	s15, r1	@ int
+ 210              		.loc 1 261 29 view .LVU39
+ 211 0060 03EB0013 		add	r3, r3, r0, lsl #4
+ 212              	.LVL17:
+ 213              		.loc 1 261 29 view .LVU40
+ 214 0064 1949     		ldr	r1, .L24
+ 215 0066 01EB8303 		add	r3, r1, r3, lsl #2
+ 216 006a F8EE677A 		vcvt.f32.u32	s15, s15
+ 217 006e C3ED007A 		vstr.32	s15, [r3]
+ 259:Core/Src/freertos.c ****     {
+ 218              		.loc 1 259 91 is_stmt 1 discriminator 3 view .LVU41
+ 219              	.LVL18:
+ 259:Core/Src/freertos.c ****     {
+ 220              		.loc 1 259 91 is_stmt 0 discriminator 3 view .LVU42
+ 221 0072 1346     		mov	r3, r2
+ 222              	.LVL19:
+ 223              	.L17:
+ 259:Core/Src/freertos.c ****     {
+ 224              		.loc 1 259 26 is_stmt 1 discriminator 1 view .LVU43
+ 225 0074 0F2B     		cmp	r3, #15
+ 226 0076 EED9     		bls	.L16
+ 227              	.LBE5:
+ 257:Core/Src/freertos.c ****   {
+ 228              		.loc 1 257 83 discriminator 2 view .LVU44
+ 229 0078 0130     		adds	r0, r0, #1
+ 230              	.LVL20:
+ 231              	.L15:
+ 257:Core/Src/freertos.c ****   {
+ 232              		.loc 1 257 24 discriminator 1 view .LVU45
+ 233 007a 0F28     		cmp	r0, #15
+ 234 007c 0CD8     		bhi	.L20
+ 235              	.LBB6:
+ 259:Core/Src/freertos.c ****     {
+ 236              		.loc 1 259 17 is_stmt 0 view .LVU46
+ 237 007e 0023     		movs	r3, #0
+ 238 0080 F8E7     		b	.L17
+ 239              	.LVL21:
+ 240              	.L18:
+ 259:Core/Src/freertos.c ****     {
+ 241              		.loc 1 259 17 view .LVU47
+ 242              	.LBE6:
+ 243              	.LBE4:
+ 244              	.LBB7:
+ 262:Core/Src/freertos.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 10
 
 
- 289              	.LBB10:
- 260:Core/Src/freertos.c ****     {
- 290              		.loc 1 260 17 is_stmt 0 view .LVU61
- 291 007e 0023     		movs	r3, #0
- 292 0080 F8E7     		b	.L19
- 293              	.LVL28:
- 294              	.L20:
- 260:Core/Src/freertos.c ****     {
- 295              		.loc 1 260 17 view .LVU62
- 296              	.LBE10:
- 297              	.LBE8:
- 298              	.LBB11:
- 263:Core/Src/freertos.c ****     }
- 264:Core/Src/freertos.c ****   }
- 265:Core/Src/freertos.c **** 
- 266:Core/Src/freertos.c ****   /* Infinite loop */
- 267:Core/Src/freertos.c ****   for(;;)
- 268:Core/Src/freertos.c ****   {
- 269:Core/Src/freertos.c ****     osDelay(1);
- 270:Core/Src/freertos.c ****     static float rpm = 0;
- 271:Core/Src/freertos.c ****     static float load = 0;
- 272:Core/Src/freertos.c ****     rpm += 10;  // Simulate RPM increase
- 273:Core/Src/freertos.c ****     load = 11.25f;  // Simulate load increase
- 274:Core/Src/freertos.c ****     if (rpm > 5000)
- 275:Core/Src/freertos.c ****     {
- 276:Core/Src/freertos.c ****       rpm = -1000;
- 277:Core/Src/freertos.c ****     }
- 278:Core/Src/freertos.c ****     table_value = table_2d_get_value(&test_table, rpm, load);
- 299              		.loc 1 278 5 is_stmt 1 view .LVU63
- 300              		.loc 1 278 19 is_stmt 0 view .LVU64
- 301 0082 DFED130A 		vldr.32	s1, .L26+4
- 302 0086 134B     		ldr	r3, .L26+8
- 303 0088 93ED000A 		vldr.32	s0, [r3]
- 304 008c 0F48     		ldr	r0, .L26
- 305 008e FFF7FEFF 		bl	table_2d_get_value
- 306              	.LVL29:
- 307              		.loc 1 278 17 discriminator 1 view .LVU65
- 308 0092 114B     		ldr	r3, .L26+12
- 309 0094 83ED000A 		vstr.32	s0, [r3]
- 310              	.LBE11:
+ 263:Core/Src/freertos.c ****   }
+ 264:Core/Src/freertos.c **** 
+ 265:Core/Src/freertos.c ****   /* Infinite loop */
+ 266:Core/Src/freertos.c ****   for(;;)
  267:Core/Src/freertos.c ****   {
- 311              		.loc 1 267 3 is_stmt 1 view .LVU66
- 312              	.L22:
- 267:Core/Src/freertos.c ****   {
- 313              		.loc 1 267 3 view .LVU67
- 314              	.LBB12:
+ 268:Core/Src/freertos.c ****     osDelay(1);
  269:Core/Src/freertos.c ****     static float rpm = 0;
- 315              		.loc 1 269 5 view .LVU68
- 316 0098 0120     		movs	r0, #1
- 317 009a FFF7FEFF 		bl	osDelay
- 318              	.LVL30:
  270:Core/Src/freertos.c ****     static float load = 0;
- 319              		.loc 1 270 5 view .LVU69
  271:Core/Src/freertos.c ****     rpm += 10;  // Simulate RPM increase
- 320              		.loc 1 271 5 view .LVU70
  272:Core/Src/freertos.c ****     load = 11.25f;  // Simulate load increase
- 321              		.loc 1 272 5 view .LVU71
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 13
-
-
- 272:Core/Src/freertos.c ****     load = 11.25f;  // Simulate load increase
- 322              		.loc 1 272 9 is_stmt 0 view .LVU72
- 323 009e 0D4B     		ldr	r3, .L26+8
- 324 00a0 D3ED007A 		vldr.32	s15, [r3]
- 325 00a4 B2EE047A 		vmov.f32	s14, #1.0e+1
- 326 00a8 77EE877A 		vadd.f32	s15, s15, s14
- 327 00ac C3ED007A 		vstr.32	s15, [r3]
  273:Core/Src/freertos.c ****     if (rpm > 5000)
- 328              		.loc 1 273 5 is_stmt 1 view .LVU73
- 273:Core/Src/freertos.c ****     if (rpm > 5000)
- 329              		.loc 1 273 10 is_stmt 0 view .LVU74
- 330 00b0 0A4B     		ldr	r3, .L26+16
- 331 00b2 0B4A     		ldr	r2, .L26+20
- 332 00b4 1A60     		str	r2, [r3]	@ float
  274:Core/Src/freertos.c ****     {
- 333              		.loc 1 274 5 is_stmt 1 view .LVU75
- 274:Core/Src/freertos.c ****     {
- 334              		.loc 1 274 8 is_stmt 0 view .LVU76
- 335 00b6 9FED0B7A 		vldr.32	s14, .L26+24
- 336 00ba F4EEC77A 		vcmpe.f32	s15, s14
- 337 00be F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 338 00c2 DEDD     		ble	.L20
+ 275:Core/Src/freertos.c ****       rpm = -1000;
  276:Core/Src/freertos.c ****     }
- 339              		.loc 1 276 7 is_stmt 1 view .LVU77
- 276:Core/Src/freertos.c ****     }
- 340              		.loc 1 276 11 is_stmt 0 view .LVU78
- 341 00c4 034B     		ldr	r3, .L26+8
- 342 00c6 084A     		ldr	r2, .L26+28
- 343 00c8 1A60     		str	r2, [r3]	@ float
- 344 00ca DAE7     		b	.L20
- 345              	.L27:
- 346              		.align	2
- 347              	.L26:
- 348 00cc 00000000 		.word	test_table
- 349 00d0 00003441 		.word	1093926912
- 350 00d4 00000000 		.word	rpm.1
- 351 00d8 00000000 		.word	table_value
- 352 00dc 00000000 		.word	load.0
- 353 00e0 00003441 		.word	1093926912
- 354 00e4 00409C45 		.word	1167867904
- 355 00e8 00007AC4 		.word	-998637568
- 356              	.LBE12:
- 357              		.cfi_endproc
- 358              	.LFE238:
- 360              		.section	.text.sensors_task,"ax",%progbits
- 361              		.align	1
- 362              		.global	sensors_task
- 363              		.syntax unified
- 364              		.thumb
- 365              		.thumb_func
- 367              	sensors_task:
- 368              	.LFB239:
- 279:Core/Src/freertos.c **** 
- 280:Core/Src/freertos.c ****     
- 281:Core/Src/freertos.c ****   }
- 282:Core/Src/freertos.c ****   /* USER CODE END controller_init_task */
- 283:Core/Src/freertos.c **** }
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 14
+ 277:Core/Src/freertos.c ****     table_value = table_2d_get_value(&test_table, rpm, load);
+ 245              		.loc 1 277 5 is_stmt 1 view .LVU48
+ 246              		.loc 1 277 19 is_stmt 0 view .LVU49
+ 247 0082 DFED130A 		vldr.32	s1, .L24+4
+ 248 0086 134B     		ldr	r3, .L24+8
+ 249 0088 93ED000A 		vldr.32	s0, [r3]
+ 250 008c 0F48     		ldr	r0, .L24
+ 251 008e FFF7FEFF 		bl	table_2d_get_value
+ 252              	.LVL22:
+ 253              		.loc 1 277 17 discriminator 1 view .LVU50
+ 254 0092 114B     		ldr	r3, .L24+12
+ 255 0094 83ED000A 		vstr.32	s0, [r3]
+ 256              	.LBE7:
+ 266:Core/Src/freertos.c ****   {
+ 257              		.loc 1 266 3 is_stmt 1 view .LVU51
+ 258              	.L20:
+ 266:Core/Src/freertos.c ****   {
+ 259              		.loc 1 266 3 view .LVU52
+ 260              	.LBB8:
+ 268:Core/Src/freertos.c ****     static float rpm = 0;
+ 261              		.loc 1 268 5 view .LVU53
+ 262 0098 0120     		movs	r0, #1
+ 263 009a FFF7FEFF 		bl	osDelay
+ 264              	.LVL23:
+ 269:Core/Src/freertos.c ****     static float load = 0;
+ 265              		.loc 1 269 5 view .LVU54
+ 270:Core/Src/freertos.c ****     rpm += 10;  // Simulate RPM increase
+ 266              		.loc 1 270 5 view .LVU55
+ 271:Core/Src/freertos.c ****     load = 11.25f;  // Simulate load increase
+ 267              		.loc 1 271 5 view .LVU56
+ 271:Core/Src/freertos.c ****     load = 11.25f;  // Simulate load increase
+ 268              		.loc 1 271 9 is_stmt 0 view .LVU57
+ 269 009e 0D4B     		ldr	r3, .L24+8
+ 270 00a0 D3ED007A 		vldr.32	s15, [r3]
+ 271 00a4 B2EE047A 		vmov.f32	s14, #1.0e+1
+ 272 00a8 77EE877A 		vadd.f32	s15, s15, s14
+ 273 00ac C3ED007A 		vstr.32	s15, [r3]
+ 272:Core/Src/freertos.c ****     if (rpm > 5000)
+ 274              		.loc 1 272 5 is_stmt 1 view .LVU58
+ 272:Core/Src/freertos.c ****     if (rpm > 5000)
+ 275              		.loc 1 272 10 is_stmt 0 view .LVU59
+ 276 00b0 0A4B     		ldr	r3, .L24+16
+ 277 00b2 0B4A     		ldr	r2, .L24+20
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 11
 
 
- 284:Core/Src/freertos.c **** 
- 285:Core/Src/freertos.c **** /* USER CODE BEGIN Header_sensors_task */
- 286:Core/Src/freertos.c **** /**
- 287:Core/Src/freertos.c **** * @brief Function implementing the sensor_task thread.
- 288:Core/Src/freertos.c **** * @param argument: Not used
- 289:Core/Src/freertos.c **** * @retval None
- 290:Core/Src/freertos.c **** */
- 291:Core/Src/freertos.c **** /* USER CODE END Header_sensors_task */
- 292:Core/Src/freertos.c **** void sensors_task(void *argument)
- 293:Core/Src/freertos.c **** {
- 369              		.loc 1 293 1 is_stmt 1 view -0
- 370              		.cfi_startproc
- 371              		@ Volatile: function does not return.
+ 278 00b4 1A60     		str	r2, [r3]	@ float
+ 273:Core/Src/freertos.c ****     {
+ 279              		.loc 1 273 5 is_stmt 1 view .LVU60
+ 273:Core/Src/freertos.c ****     {
+ 280              		.loc 1 273 8 is_stmt 0 view .LVU61
+ 281 00b6 9FED0B7A 		vldr.32	s14, .L24+24
+ 282 00ba F4EEC77A 		vcmpe.f32	s15, s14
+ 283 00be F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 284 00c2 DEDD     		ble	.L18
+ 275:Core/Src/freertos.c ****     }
+ 285              		.loc 1 275 7 is_stmt 1 view .LVU62
+ 275:Core/Src/freertos.c ****     }
+ 286              		.loc 1 275 11 is_stmt 0 view .LVU63
+ 287 00c4 034B     		ldr	r3, .L24+8
+ 288 00c6 084A     		ldr	r2, .L24+28
+ 289 00c8 1A60     		str	r2, [r3]	@ float
+ 290 00ca DAE7     		b	.L18
+ 291              	.L25:
+ 292              		.align	2
+ 293              	.L24:
+ 294 00cc 00000000 		.word	test_table
+ 295 00d0 00003441 		.word	1093926912
+ 296 00d4 00000000 		.word	rpm.1
+ 297 00d8 00000000 		.word	table_value
+ 298 00dc 00000000 		.word	load.0
+ 299 00e0 00003441 		.word	1093926912
+ 300 00e4 00409C45 		.word	1167867904
+ 301 00e8 00007AC4 		.word	-998637568
+ 302              	.LBE8:
+ 303              		.cfi_endproc
+ 304              	.LFE240:
+ 306              		.section	.text.sensors_task,"ax",%progbits
+ 307              		.align	1
+ 308              		.global	sensors_task
+ 309              		.syntax unified
+ 310              		.thumb
+ 311              		.thumb_func
+ 313              	sensors_task:
+ 314              	.LFB241:
+ 278:Core/Src/freertos.c **** 
+ 279:Core/Src/freertos.c ****     
+ 280:Core/Src/freertos.c ****   }
+ 281:Core/Src/freertos.c ****   /* USER CODE END controller_init_task */
+ 282:Core/Src/freertos.c **** }
+ 283:Core/Src/freertos.c **** 
+ 284:Core/Src/freertos.c **** /* USER CODE BEGIN Header_sensors_task */
+ 285:Core/Src/freertos.c **** /**
+ 286:Core/Src/freertos.c **** * @brief Function implementing the sensor_task thread.
+ 287:Core/Src/freertos.c **** * @param argument: Not used
+ 288:Core/Src/freertos.c **** * @retval None
+ 289:Core/Src/freertos.c **** */
+ 290:Core/Src/freertos.c **** /* USER CODE END Header_sensors_task */
+ 291:Core/Src/freertos.c **** void sensors_task(void *argument)
+ 292:Core/Src/freertos.c **** {
+ 315              		.loc 1 292 1 is_stmt 1 view -0
+ 316              		.cfi_startproc
+ 317              		@ Volatile: function does not return.
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 12
+
+
+ 318              		@ args = 0, pretend = 0, frame = 0
+ 319              		@ frame_needed = 0, uses_anonymous_args = 0
+ 320              	.LVL24:
+ 321              		.loc 1 292 1 is_stmt 0 view .LVU65
+ 322 0000 08B5     		push	{r3, lr}
+ 323              		.cfi_def_cfa_offset 8
+ 324              		.cfi_offset 3, -8
+ 325              		.cfi_offset 14, -4
+ 326              	.LVL25:
+ 327              	.L27:
+ 293:Core/Src/freertos.c ****   /* USER CODE BEGIN sensors_task */
+ 294:Core/Src/freertos.c ****   /* Infinite loop */
+ 295:Core/Src/freertos.c ****   for(;;)
+ 328              		.loc 1 295 3 is_stmt 1 view .LVU66
+ 296:Core/Src/freertos.c ****   {
+ 297:Core/Src/freertos.c ****     osDelay(1);
+ 329              		.loc 1 297 5 view .LVU67
+ 330 0002 0120     		movs	r0, #1
+ 331 0004 FFF7FEFF 		bl	osDelay
+ 332              	.LVL26:
+ 298:Core/Src/freertos.c ****     runtime.clt_degc = sensor_clt_get();
+ 333              		.loc 1 298 5 view .LVU68
+ 334              		.loc 1 298 24 is_stmt 0 view .LVU69
+ 335 0008 FFF7FEFF 		bl	sensor_clt_get
+ 336              	.LVL27:
+ 337              		.loc 1 298 22 discriminator 1 view .LVU70
+ 338 000c 054C     		ldr	r4, .L29
+ 339 000e 84ED0D0A 		vstr.32	s0, [r4, #52]
+ 299:Core/Src/freertos.c ****     runtime.iat_degc = sensor_iat_get();
+ 340              		.loc 1 299 5 is_stmt 1 view .LVU71
+ 341              		.loc 1 299 24 is_stmt 0 view .LVU72
+ 342 0012 FFF7FEFF 		bl	sensor_iat_get
+ 343              	.LVL28:
+ 344              		.loc 1 299 22 discriminator 1 view .LVU73
+ 345 0016 84ED0E0A 		vstr.32	s0, [r4, #56]
+ 300:Core/Src/freertos.c ****     runtime.oil_pressure_ok = sensor_ops_get();
+ 346              		.loc 1 300 5 is_stmt 1 discriminator 1 view .LVU74
+ 347              		.loc 1 300 31 is_stmt 0 discriminator 1 view .LVU75
+ 348 001a FFF7FEFF 		bl	sensor_ops_get
+ 349              	.LVL29:
+ 350              		.loc 1 300 29 discriminator 1 view .LVU76
+ 351 001e 84F84B00 		strb	r0, [r4, #75]
+ 295:Core/Src/freertos.c ****   {
+ 352              		.loc 1 295 3 is_stmt 1 view .LVU77
+ 353 0022 EEE7     		b	.L27
+ 354              	.L30:
+ 355              		.align	2
+ 356              	.L29:
+ 357 0024 00000000 		.word	runtime
+ 358              		.cfi_endproc
+ 359              	.LFE241:
+ 361              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 362              		.align	1
+ 363              		.global	MX_FREERTOS_Init
+ 364              		.syntax unified
+ 365              		.thumb
+ 366              		.thumb_func
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 13
+
+
+ 368              	MX_FREERTOS_Init:
+ 369              	.LFB236:
+ 120:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 370              		.loc 1 120 29 view -0
+ 371              		.cfi_startproc
  372              		@ args = 0, pretend = 0, frame = 0
  373              		@ frame_needed = 0, uses_anonymous_args = 0
- 374              	.LVL31:
- 375              		.loc 1 293 1 is_stmt 0 view .LVU80
- 376 0000 08B5     		push	{r3, lr}
- 377              		.cfi_def_cfa_offset 8
- 378              		.cfi_offset 3, -8
- 379              		.cfi_offset 14, -4
- 380              	.LVL32:
- 381              	.L29:
- 294:Core/Src/freertos.c ****   /* USER CODE BEGIN sensors_task */
- 295:Core/Src/freertos.c ****   /* Infinite loop */
- 296:Core/Src/freertos.c ****   for(;;)
- 382              		.loc 1 296 3 is_stmt 1 view .LVU81
- 297:Core/Src/freertos.c ****   {
- 298:Core/Src/freertos.c ****     osDelay(1);
- 383              		.loc 1 298 5 view .LVU82
- 384 0002 0120     		movs	r0, #1
- 385 0004 FFF7FEFF 		bl	osDelay
- 386              	.LVL33:
- 299:Core/Src/freertos.c ****     engine.clt = sensor_clt_get();
- 387              		.loc 1 299 5 view .LVU83
- 388              		.loc 1 299 18 is_stmt 0 view .LVU84
- 389 0008 FFF7FEFF 		bl	sensor_clt_get
- 390              	.LVL34:
- 391              		.loc 1 299 16 discriminator 1 view .LVU85
- 392 000c 054C     		ldr	r4, .L31
- 393 000e 84ED150A 		vstr.32	s0, [r4, #84]
- 300:Core/Src/freertos.c ****     engine.iat = sensor_iat_get();
- 394              		.loc 1 300 5 is_stmt 1 view .LVU86
- 395              		.loc 1 300 18 is_stmt 0 view .LVU87
- 396 0012 FFF7FEFF 		bl	sensor_iat_get
- 397              	.LVL35:
- 398              		.loc 1 300 16 discriminator 1 view .LVU88
- 399 0016 84ED160A 		vstr.32	s0, [r4, #88]
- 301:Core/Src/freertos.c ****     engine.oil_pressure = sensor_ops_get();
- 400              		.loc 1 301 5 is_stmt 1 discriminator 1 view .LVU89
- 401              		.loc 1 301 27 is_stmt 0 discriminator 1 view .LVU90
- 402 001a FFF7FEFF 		bl	sensor_ops_get
- 403              	.LVL36:
- 404              		.loc 1 301 25 discriminator 1 view .LVU91
- 405 001e 84F85C00 		strb	r0, [r4, #92]
- 296:Core/Src/freertos.c ****   {
- 406              		.loc 1 296 3 is_stmt 1 view .LVU92
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 15
+ 374 0000 08B5     		push	{r3, lr}
+ 375              		.cfi_def_cfa_offset 8
+ 376              		.cfi_offset 3, -8
+ 377              		.cfi_offset 14, -4
+ 143:Core/Src/freertos.c **** 
+ 378              		.loc 1 143 3 view .LVU79
+ 143:Core/Src/freertos.c **** 
+ 379              		.loc 1 143 23 is_stmt 0 view .LVU80
+ 380 0002 144A     		ldr	r2, .L33
+ 381 0004 0021     		movs	r1, #0
+ 382 0006 1448     		ldr	r0, .L33+4
+ 383 0008 FFF7FEFF 		bl	osThreadNew
+ 384              	.LVL30:
+ 143:Core/Src/freertos.c **** 
+ 385              		.loc 1 143 21 discriminator 1 view .LVU81
+ 386 000c 134B     		ldr	r3, .L33+8
+ 387 000e 1860     		str	r0, [r3]
+ 146:Core/Src/freertos.c **** 
+ 388              		.loc 1 146 3 is_stmt 1 view .LVU82
+ 146:Core/Src/freertos.c **** 
+ 389              		.loc 1 146 20 is_stmt 0 view .LVU83
+ 390 0010 134A     		ldr	r2, .L33+12
+ 391 0012 0021     		movs	r1, #0
+ 392 0014 1348     		ldr	r0, .L33+16
+ 393 0016 FFF7FEFF 		bl	osThreadNew
+ 394              	.LVL31:
+ 146:Core/Src/freertos.c **** 
+ 395              		.loc 1 146 18 discriminator 1 view .LVU84
+ 396 001a 134B     		ldr	r3, .L33+20
+ 397 001c 1860     		str	r0, [r3]
+ 149:Core/Src/freertos.c **** 
+ 398              		.loc 1 149 3 is_stmt 1 view .LVU85
+ 149:Core/Src/freertos.c **** 
+ 399              		.loc 1 149 21 is_stmt 0 view .LVU86
+ 400 001e 134A     		ldr	r2, .L33+24
+ 401 0020 0021     		movs	r1, #0
+ 402 0022 1348     		ldr	r0, .L33+28
+ 403 0024 FFF7FEFF 		bl	osThreadNew
+ 404              	.LVL32:
+ 149:Core/Src/freertos.c **** 
+ 405              		.loc 1 149 19 discriminator 1 view .LVU87
+ 406 0028 124B     		ldr	r3, .L33+32
+ 407 002a 1860     		str	r0, [r3]
+ 152:Core/Src/freertos.c **** 
+ 408              		.loc 1 152 3 is_stmt 1 view .LVU88
+ 152:Core/Src/freertos.c **** 
+ 409              		.loc 1 152 21 is_stmt 0 view .LVU89
+ 410 002c 124A     		ldr	r2, .L33+36
+ 411 002e 0021     		movs	r1, #0
+ 412 0030 1248     		ldr	r0, .L33+40
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 14
 
 
- 407 0022 EEE7     		b	.L29
- 408              	.L32:
- 409              		.align	2
- 410              	.L31:
- 411 0024 00000000 		.word	engine
- 412              		.cfi_endproc
- 413              	.LFE239:
- 415              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
- 416              		.align	1
- 417              		.global	MX_FREERTOS_Init
- 418              		.syntax unified
- 419              		.thumb
- 420              		.thumb_func
- 422              	MX_FREERTOS_Init:
- 423              	.LFB234:
- 116:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
- 424              		.loc 1 116 29 view -0
- 425              		.cfi_startproc
- 426              		@ args = 0, pretend = 0, frame = 0
- 427              		@ frame_needed = 0, uses_anonymous_args = 0
- 428 0000 08B5     		push	{r3, lr}
- 429              		.cfi_def_cfa_offset 8
- 430              		.cfi_offset 3, -8
- 431              		.cfi_offset 14, -4
- 139:Core/Src/freertos.c **** 
- 432              		.loc 1 139 3 view .LVU94
- 139:Core/Src/freertos.c **** 
- 433              		.loc 1 139 23 is_stmt 0 view .LVU95
- 434 0002 144A     		ldr	r2, .L35
- 435 0004 0021     		movs	r1, #0
- 436 0006 1448     		ldr	r0, .L35+4
- 437 0008 FFF7FEFF 		bl	osThreadNew
- 438              	.LVL37:
- 139:Core/Src/freertos.c **** 
- 439              		.loc 1 139 21 discriminator 1 view .LVU96
- 440 000c 134B     		ldr	r3, .L35+8
- 441 000e 1860     		str	r0, [r3]
- 142:Core/Src/freertos.c **** 
- 442              		.loc 1 142 3 is_stmt 1 view .LVU97
- 142:Core/Src/freertos.c **** 
- 443              		.loc 1 142 20 is_stmt 0 view .LVU98
- 444 0010 134A     		ldr	r2, .L35+12
- 445 0012 0021     		movs	r1, #0
- 446 0014 1348     		ldr	r0, .L35+16
- 447 0016 FFF7FEFF 		bl	osThreadNew
- 448              	.LVL38:
- 142:Core/Src/freertos.c **** 
- 449              		.loc 1 142 18 discriminator 1 view .LVU99
- 450 001a 134B     		ldr	r3, .L35+20
- 451 001c 1860     		str	r0, [r3]
- 145:Core/Src/freertos.c **** 
- 452              		.loc 1 145 3 is_stmt 1 view .LVU100
- 145:Core/Src/freertos.c **** 
- 453              		.loc 1 145 21 is_stmt 0 view .LVU101
- 454 001e 134A     		ldr	r2, .L35+24
- 455 0020 0021     		movs	r1, #0
- 456 0022 1348     		ldr	r0, .L35+28
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 16
+ 413 0032 FFF7FEFF 		bl	osThreadNew
+ 414              	.LVL33:
+ 152:Core/Src/freertos.c **** 
+ 415              		.loc 1 152 19 discriminator 1 view .LVU90
+ 416 0036 124B     		ldr	r3, .L33+44
+ 417 0038 1860     		str	r0, [r3]
+ 155:Core/Src/freertos.c **** 
+ 418              		.loc 1 155 3 is_stmt 1 view .LVU91
+ 155:Core/Src/freertos.c **** 
+ 419              		.loc 1 155 23 is_stmt 0 view .LVU92
+ 420 003a 124A     		ldr	r2, .L33+48
+ 421 003c 0021     		movs	r1, #0
+ 422 003e 1248     		ldr	r0, .L33+52
+ 423 0040 FFF7FEFF 		bl	osThreadNew
+ 424              	.LVL34:
+ 155:Core/Src/freertos.c **** 
+ 425              		.loc 1 155 21 discriminator 1 view .LVU93
+ 426 0044 114B     		ldr	r3, .L33+56
+ 427 0046 1860     		str	r0, [r3]
+ 163:Core/Src/freertos.c **** 
+ 428              		.loc 1 163 3 is_stmt 1 view .LVU94
+ 163:Core/Src/freertos.c **** 
+ 429              		.loc 1 163 24 is_stmt 0 view .LVU95
+ 430 0048 1148     		ldr	r0, .L33+60
+ 431 004a FFF7FEFF 		bl	osEventFlagsNew
+ 432              	.LVL35:
+ 163:Core/Src/freertos.c **** 
+ 433              		.loc 1 163 22 discriminator 1 view .LVU96
+ 434 004e 114B     		ldr	r3, .L33+64
+ 435 0050 1860     		str	r0, [r3]
+ 169:Core/Src/freertos.c **** 
+ 436              		.loc 1 169 1 view .LVU97
+ 437 0052 08BD     		pop	{r3, pc}
+ 438              	.L34:
+ 439              		.align	2
+ 440              	.L33:
+ 441 0054 00000000 		.word	defaultTask_attributes
+ 442 0058 00000000 		.word	StartDefaultTask
+ 443 005c 00000000 		.word	defaultTaskHandle
+ 444 0060 00000000 		.word	trig_sim_attributes
+ 445 0064 00000000 		.word	trigger_simulator_task
+ 446 0068 00000000 		.word	trig_simHandle
+ 447 006c 00000000 		.word	fuel_task_attributes
+ 448 0070 00000000 		.word	start_fuel_task
+ 449 0074 00000000 		.word	fuel_taskHandle
+ 450 0078 00000000 		.word	init_task_attributes
+ 451 007c 00000000 		.word	controller_init_task
+ 452 0080 00000000 		.word	init_taskHandle
+ 453 0084 00000000 		.word	sensor_task_attributes
+ 454 0088 00000000 		.word	sensors_task
+ 455 008c 00000000 		.word	sensor_taskHandle
+ 456 0090 00000000 		.word	engine_flags_attributes
+ 457 0094 00000000 		.word	engine_flagsHandle
+ 458              		.cfi_endproc
+ 459              	.LFE236:
+ 461              		.section	.text.toggle_led,"ax",%progbits
+ 462              		.align	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 15
 
 
- 457 0024 FFF7FEFF 		bl	osThreadNew
- 458              	.LVL39:
- 145:Core/Src/freertos.c **** 
- 459              		.loc 1 145 19 discriminator 1 view .LVU102
- 460 0028 124B     		ldr	r3, .L35+32
- 461 002a 1860     		str	r0, [r3]
- 148:Core/Src/freertos.c **** 
- 462              		.loc 1 148 3 is_stmt 1 view .LVU103
- 148:Core/Src/freertos.c **** 
- 463              		.loc 1 148 21 is_stmt 0 view .LVU104
- 464 002c 124A     		ldr	r2, .L35+36
- 465 002e 0021     		movs	r1, #0
- 466 0030 1248     		ldr	r0, .L35+40
- 467 0032 FFF7FEFF 		bl	osThreadNew
- 468              	.LVL40:
- 148:Core/Src/freertos.c **** 
- 469              		.loc 1 148 19 discriminator 1 view .LVU105
- 470 0036 124B     		ldr	r3, .L35+44
- 471 0038 1860     		str	r0, [r3]
- 151:Core/Src/freertos.c **** 
- 472              		.loc 1 151 3 is_stmt 1 view .LVU106
- 151:Core/Src/freertos.c **** 
- 473              		.loc 1 151 23 is_stmt 0 view .LVU107
- 474 003a 124A     		ldr	r2, .L35+48
- 475 003c 0021     		movs	r1, #0
- 476 003e 1248     		ldr	r0, .L35+52
- 477 0040 FFF7FEFF 		bl	osThreadNew
- 478              	.LVL41:
- 151:Core/Src/freertos.c **** 
- 479              		.loc 1 151 21 discriminator 1 view .LVU108
- 480 0044 114B     		ldr	r3, .L35+56
- 481 0046 1860     		str	r0, [r3]
- 159:Core/Src/freertos.c **** 
- 482              		.loc 1 159 3 is_stmt 1 view .LVU109
- 159:Core/Src/freertos.c **** 
- 483              		.loc 1 159 24 is_stmt 0 view .LVU110
- 484 0048 1148     		ldr	r0, .L35+60
- 485 004a FFF7FEFF 		bl	osEventFlagsNew
- 486              	.LVL42:
- 159:Core/Src/freertos.c **** 
- 487              		.loc 1 159 22 discriminator 1 view .LVU111
- 488 004e 114B     		ldr	r3, .L35+64
- 489 0050 1860     		str	r0, [r3]
- 165:Core/Src/freertos.c **** 
- 490              		.loc 1 165 1 view .LVU112
- 491 0052 08BD     		pop	{r3, pc}
- 492              	.L36:
+ 463              		.global	toggle_led
+ 464              		.syntax unified
+ 465              		.thumb
+ 466              		.thumb_func
+ 468              	toggle_led:
+ 469              	.LFB242:
+ 301:Core/Src/freertos.c ****     //runtime.map_kpa = sensor_map_get();
+ 302:Core/Src/freertos.c ****   }
+ 303:Core/Src/freertos.c ****   /* USER CODE END sensors_task */
+ 304:Core/Src/freertos.c **** }
+ 305:Core/Src/freertos.c **** 
+ 306:Core/Src/freertos.c **** /* Private application code --------------------------------------------------*/
+ 307:Core/Src/freertos.c **** /* USER CODE BEGIN Application */
+ 308:Core/Src/freertos.c **** void toggle_led()
+ 309:Core/Src/freertos.c **** {
+ 470              		.loc 1 309 1 is_stmt 1 view -0
+ 471              		.cfi_startproc
+ 472              		@ args = 0, pretend = 0, frame = 0
+ 473              		@ frame_needed = 0, uses_anonymous_args = 0
+ 474 0000 08B5     		push	{r3, lr}
+ 475              		.cfi_def_cfa_offset 8
+ 476              		.cfi_offset 3, -8
+ 477              		.cfi_offset 14, -4
+ 310:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+ 478              		.loc 1 310 3 view .LVU99
+ 479 0002 4FF40051 		mov	r1, #8192
+ 480 0006 0248     		ldr	r0, .L37
+ 481 0008 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 482              	.LVL36:
+ 311:Core/Src/freertos.c **** }
+ 483              		.loc 1 311 1 is_stmt 0 view .LVU100
+ 484 000c 08BD     		pop	{r3, pc}
+ 485              	.L38:
+ 486 000e 00BF     		.align	2
+ 487              	.L37:
+ 488 0010 00080240 		.word	1073874944
+ 489              		.cfi_endproc
+ 490              	.LFE242:
+ 492              		.section	.bss.load.0,"aw",%nobits
  493              		.align	2
- 494              	.L35:
- 495 0054 00000000 		.word	defaultTask_attributes
- 496 0058 00000000 		.word	StartDefaultTask
- 497 005c 00000000 		.word	defaultTaskHandle
- 498 0060 00000000 		.word	trig_sim_attributes
- 499 0064 00000000 		.word	trigger_simulator_task
- 500 0068 00000000 		.word	trig_simHandle
- 501 006c 00000000 		.word	fuel_task_attributes
- 502 0070 00000000 		.word	start_fuel_task
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 17
+ 496              	load.0:
+ 497 0000 00000000 		.space	4
+ 498              		.section	.bss.rpm.1,"aw",%nobits
+ 499              		.align	2
+ 502              	rpm.1:
+ 503 0000 00000000 		.space	4
+ 504              		.global	engine_flags_attributes
+ 505              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 506              		.align	2
+ 507              	.LC0:
+ 508 0000 656E6769 		.ascii	"engine_flags\000"
+ 508      6E655F66 
+ 508      6C616773 
+ 508      00
+ 509              		.section	.rodata.engine_flags_attributes,"a"
+ 510              		.align	2
+ 513              	engine_flags_attributes:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 16
 
 
- 503 0074 00000000 		.word	fuel_taskHandle
- 504 0078 00000000 		.word	init_task_attributes
- 505 007c 00000000 		.word	controller_init_task
- 506 0080 00000000 		.word	init_taskHandle
- 507 0084 00000000 		.word	sensor_task_attributes
- 508 0088 00000000 		.word	sensors_task
- 509 008c 00000000 		.word	sensor_taskHandle
- 510 0090 00000000 		.word	engine_flags_attributes
- 511 0094 00000000 		.word	engine_flagsHandle
- 512              		.cfi_endproc
- 513              	.LFE234:
- 515              		.section	.text.toggle_led,"ax",%progbits
- 516              		.align	1
- 517              		.global	toggle_led
- 518              		.syntax unified
- 519              		.thumb
- 520              		.thumb_func
- 522              	toggle_led:
- 523              	.LFB240:
- 302:Core/Src/freertos.c ****     //engine.map = sensor_map_get();
- 303:Core/Src/freertos.c ****   }
- 304:Core/Src/freertos.c ****   /* USER CODE END sensors_task */
- 305:Core/Src/freertos.c **** }
- 306:Core/Src/freertos.c **** 
- 307:Core/Src/freertos.c **** /* Private application code --------------------------------------------------*/
- 308:Core/Src/freertos.c **** /* USER CODE BEGIN Application */
- 309:Core/Src/freertos.c **** void toggle_led()
- 310:Core/Src/freertos.c **** {
- 524              		.loc 1 310 1 is_stmt 1 view -0
- 525              		.cfi_startproc
- 526              		@ args = 0, pretend = 0, frame = 0
- 527              		@ frame_needed = 0, uses_anonymous_args = 0
- 528 0000 08B5     		push	{r3, lr}
- 529              		.cfi_def_cfa_offset 8
- 530              		.cfi_offset 3, -8
- 531              		.cfi_offset 14, -4
- 311:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
- 532              		.loc 1 311 3 view .LVU114
- 533 0002 4FF40051 		mov	r1, #8192
- 534 0006 0248     		ldr	r0, .L39
- 535 0008 FFF7FEFF 		bl	HAL_GPIO_TogglePin
- 536              	.LVL43:
- 312:Core/Src/freertos.c **** }
- 537              		.loc 1 312 1 is_stmt 0 view .LVU115
- 538 000c 08BD     		pop	{r3, pc}
- 539              	.L40:
- 540 000e 00BF     		.align	2
- 541              	.L39:
- 542 0010 00080240 		.word	1073874944
- 543              		.cfi_endproc
- 544              	.LFE240:
- 546              		.section	.bss.load.0,"aw",%nobits
- 547              		.align	2
- 550              	load.0:
- 551 0000 00000000 		.space	4
- 552              		.section	.bss.rpm.1,"aw",%nobits
- 553              		.align	2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 18
-
-
- 556              	rpm.1:
- 557 0000 00000000 		.space	4
- 558              		.global	engine_flags_attributes
- 559              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 514 0000 00000000 		.word	.LC0
+ 515 0004 00000000 		.space	4
+ 516 0008 00000000 		.word	engine_flagsControlBlock
+ 517 000c 20000000 		.word	32
+ 518              		.global	engine_flagsControlBlock
+ 519              		.section	.bss.engine_flagsControlBlock,"aw",%nobits
+ 520              		.align	2
+ 523              	engine_flagsControlBlock:
+ 524 0000 00000000 		.space	32
+ 524      00000000 
+ 524      00000000 
+ 524      00000000 
+ 524      00000000 
+ 525              		.global	engine_flagsHandle
+ 526              		.section	.bss.engine_flagsHandle,"aw",%nobits
+ 527              		.align	2
+ 530              	engine_flagsHandle:
+ 531 0000 00000000 		.space	4
+ 532              		.global	sensor_task_attributes
+ 533              		.section	.rodata.str1.4
+ 534 000d 000000   		.align	2
+ 535              	.LC1:
+ 536 0010 73656E73 		.ascii	"sensor_task\000"
+ 536      6F725F74 
+ 536      61736B00 
+ 537              		.section	.rodata.sensor_task_attributes,"a"
+ 538              		.align	2
+ 541              	sensor_task_attributes:
+ 542 0000 10000000 		.word	.LC1
+ 543 0004 00000000 		.space	16
+ 543      00000000 
+ 543      00000000 
+ 543      00000000 
+ 544 0014 00020000 		.word	512
+ 545 0018 18000000 		.word	24
+ 546 001c 00000000 		.space	8
+ 546      00000000 
+ 547              		.global	sensor_taskHandle
+ 548              		.section	.bss.sensor_taskHandle,"aw",%nobits
+ 549              		.align	2
+ 552              	sensor_taskHandle:
+ 553 0000 00000000 		.space	4
+ 554              		.global	init_task_attributes
+ 555              		.section	.rodata.str1.4
+ 556              		.align	2
+ 557              	.LC2:
+ 558 001c 696E6974 		.ascii	"init_task\000"
+ 558      5F746173 
+ 558      6B00
+ 559              		.section	.rodata.init_task_attributes,"a"
  560              		.align	2
- 561              	.LC0:
- 562 0000 656E6769 		.ascii	"engine_flags\000"
- 562      6E655F66 
- 562      6C616773 
- 562      00
- 563              		.section	.rodata.engine_flags_attributes,"a"
- 564              		.align	2
- 567              	engine_flags_attributes:
- 568 0000 00000000 		.word	.LC0
- 569 0004 00000000 		.space	12
- 569      00000000 
- 569      00000000 
- 570              		.global	engine_flagsHandle
- 571              		.section	.bss.engine_flagsHandle,"aw",%nobits
- 572              		.align	2
- 575              	engine_flagsHandle:
- 576 0000 00000000 		.space	4
- 577              		.global	sensor_task_attributes
- 578              		.section	.rodata.str1.4
- 579 000d 000000   		.align	2
- 580              	.LC1:
- 581 0010 73656E73 		.ascii	"sensor_task\000"
- 581      6F725F74 
- 581      61736B00 
- 582              		.section	.rodata.sensor_task_attributes,"a"
- 583              		.align	2
- 586              	sensor_task_attributes:
- 587 0000 10000000 		.word	.LC1
- 588 0004 00000000 		.space	16
- 588      00000000 
- 588      00000000 
- 588      00000000 
- 589 0014 00020000 		.word	512
- 590 0018 18000000 		.word	24
- 591 001c 00000000 		.space	8
- 591      00000000 
- 592              		.global	sensor_taskHandle
- 593              		.section	.bss.sensor_taskHandle,"aw",%nobits
- 594              		.align	2
- 597              	sensor_taskHandle:
- 598 0000 00000000 		.space	4
- 599              		.global	init_task_attributes
- 600              		.section	.rodata.str1.4
- 601              		.align	2
- 602              	.LC2:
- 603 001c 696E6974 		.ascii	"init_task\000"
- 603      5F746173 
- 603      6B00
- 604              		.section	.rodata.init_task_attributes,"a"
- 605              		.align	2
- 608              	init_task_attributes:
- 609 0000 1C000000 		.word	.LC2
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 19
+ 563              	init_task_attributes:
+ 564 0000 1C000000 		.word	.LC2
+ 565 0004 00000000 		.space	16
+ 565      00000000 
+ 565      00000000 
+ 565      00000000 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 17
 
 
- 610 0004 00000000 		.space	16
- 610      00000000 
- 610      00000000 
- 610      00000000 
- 611 0014 00020000 		.word	512
- 612 0018 30000000 		.word	48
- 613 001c 00000000 		.space	8
- 613      00000000 
- 614              		.global	init_taskHandle
- 615              		.section	.bss.init_taskHandle,"aw",%nobits
- 616              		.align	2
- 619              	init_taskHandle:
- 620 0000 00000000 		.space	4
- 621              		.global	fuel_task_attributes
- 622              		.section	.rodata.str1.4
- 623 0026 0000     		.align	2
- 624              	.LC3:
- 625 0028 6675656C 		.ascii	"fuel_task\000"
- 625      5F746173 
- 625      6B00
- 626              		.section	.rodata.fuel_task_attributes,"a"
- 627              		.align	2
- 630              	fuel_task_attributes:
- 631 0000 28000000 		.word	.LC3
- 632 0004 00000000 		.space	16
- 632      00000000 
- 632      00000000 
- 632      00000000 
- 633 0014 00020000 		.word	512
- 634 0018 18000000 		.word	24
- 635 001c 00000000 		.space	8
- 635      00000000 
- 636              		.global	fuel_taskHandle
- 637              		.section	.bss.fuel_taskHandle,"aw",%nobits
- 638              		.align	2
- 641              	fuel_taskHandle:
- 642 0000 00000000 		.space	4
- 643              		.global	trig_sim_attributes
- 644              		.section	.rodata.str1.4
- 645 0032 0000     		.align	2
- 646              	.LC4:
- 647 0034 74726967 		.ascii	"trig_sim\000"
- 647      5F73696D 
- 647      00
- 648              		.section	.rodata.trig_sim_attributes,"a"
- 649              		.align	2
- 652              	trig_sim_attributes:
- 653 0000 34000000 		.word	.LC4
- 654 0004 00000000 		.space	16
- 654      00000000 
- 654      00000000 
- 654      00000000 
- 655 0014 00020000 		.word	512
- 656 0018 28000000 		.word	40
- 657 001c 00000000 		.space	8
- 657      00000000 
- 658              		.global	trig_simHandle
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 20
+ 566 0014 00020000 		.word	512
+ 567 0018 30000000 		.word	48
+ 568 001c 00000000 		.space	8
+ 568      00000000 
+ 569              		.global	init_taskHandle
+ 570              		.section	.bss.init_taskHandle,"aw",%nobits
+ 571              		.align	2
+ 574              	init_taskHandle:
+ 575 0000 00000000 		.space	4
+ 576              		.global	fuel_task_attributes
+ 577              		.section	.rodata.str1.4
+ 578 0026 0000     		.align	2
+ 579              	.LC3:
+ 580 0028 6675656C 		.ascii	"fuel_task\000"
+ 580      5F746173 
+ 580      6B00
+ 581              		.section	.rodata.fuel_task_attributes,"a"
+ 582              		.align	2
+ 585              	fuel_task_attributes:
+ 586 0000 28000000 		.word	.LC3
+ 587 0004 00000000 		.space	16
+ 587      00000000 
+ 587      00000000 
+ 587      00000000 
+ 588 0014 00020000 		.word	512
+ 589 0018 18000000 		.word	24
+ 590 001c 00000000 		.space	8
+ 590      00000000 
+ 591              		.global	fuel_taskHandle
+ 592              		.section	.bss.fuel_taskHandle,"aw",%nobits
+ 593              		.align	2
+ 596              	fuel_taskHandle:
+ 597 0000 00000000 		.space	4
+ 598              		.global	trig_sim_attributes
+ 599              		.section	.rodata.str1.4
+ 600 0032 0000     		.align	2
+ 601              	.LC4:
+ 602 0034 74726967 		.ascii	"trig_sim\000"
+ 602      5F73696D 
+ 602      00
+ 603              		.section	.rodata.trig_sim_attributes,"a"
+ 604              		.align	2
+ 607              	trig_sim_attributes:
+ 608 0000 34000000 		.word	.LC4
+ 609 0004 00000000 		.space	16
+ 609      00000000 
+ 609      00000000 
+ 609      00000000 
+ 610 0014 00020000 		.word	512
+ 611 0018 28000000 		.word	40
+ 612 001c 00000000 		.space	8
+ 612      00000000 
+ 613              		.global	trig_simHandle
+ 614              		.section	.bss.trig_simHandle,"aw",%nobits
+ 615              		.align	2
+ 618              	trig_simHandle:
+ 619 0000 00000000 		.space	4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 18
 
 
- 659              		.section	.bss.trig_simHandle,"aw",%nobits
- 660              		.align	2
- 663              	trig_simHandle:
- 664 0000 00000000 		.space	4
- 665              		.global	defaultTask_attributes
- 666              		.section	.rodata.str1.4
- 667 003d 000000   		.align	2
- 668              	.LC5:
- 669 0040 64656661 		.ascii	"defaultTask\000"
- 669      756C7454 
- 669      61736B00 
- 670              		.section	.rodata.defaultTask_attributes,"a"
- 671              		.align	2
- 674              	defaultTask_attributes:
- 675 0000 40000000 		.word	.LC5
- 676 0004 00000000 		.space	16
- 676      00000000 
- 676      00000000 
- 676      00000000 
- 677 0014 00020000 		.word	512
- 678 0018 30000000 		.word	48
- 679 001c 00000000 		.space	8
- 679      00000000 
- 680              		.global	defaultTaskHandle
- 681              		.section	.bss.defaultTaskHandle,"aw",%nobits
- 682              		.align	2
- 685              	defaultTaskHandle:
- 686 0000 00000000 		.space	4
- 687              		.global	table_value
- 688              		.section	.bss.table_value,"aw",%nobits
- 689              		.align	2
- 692              	table_value:
- 693 0000 00000000 		.space	4
- 694              		.global	test_table
- 695              		.section	.bss.test_table,"aw",%nobits
- 696              		.align	2
- 699              	test_table:
- 700 0000 00000000 		.space	1152
- 700      00000000 
- 700      00000000 
- 700      00000000 
- 700      00000000 
- 701              		.global	simulated_rpm
- 702              		.section	.data.simulated_rpm,"aw"
- 703              		.align	2
- 706              	simulated_rpm:
- 707 0000 00007A44 		.word	1148846080
- 708              		.text
- 709              	.Letext0:
- 710              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 711              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 712              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 713              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 714              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 715              		.file 8 "controller/types.h"
- 716              		.file 9 "controller/engine_cycle/trigger.h"
- 717              		.file 10 "controller/tables.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 21
-
-
- 718              		.file 11 "controller/IO/analog_inputs.h"
- 719              		.file 12 "controller/algorithm/governer.h"
- 720              		.file 13 "controller/controller.h"
- 721              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
- 722              		.file 15 "controller/IO/sensors.h"
- 723              		.file 16 "controller/utils/trigger_simulator.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 22
+ 620              		.global	defaultTask_attributes
+ 621              		.section	.rodata.str1.4
+ 622 003d 000000   		.align	2
+ 623              	.LC5:
+ 624 0040 64656661 		.ascii	"defaultTask\000"
+ 624      756C7454 
+ 624      61736B00 
+ 625              		.section	.rodata.defaultTask_attributes,"a"
+ 626              		.align	2
+ 629              	defaultTask_attributes:
+ 630 0000 40000000 		.word	.LC5
+ 631 0004 00000000 		.space	16
+ 631      00000000 
+ 631      00000000 
+ 631      00000000 
+ 632 0014 00020000 		.word	512
+ 633 0018 30000000 		.word	48
+ 634 001c 00000000 		.space	8
+ 634      00000000 
+ 635              		.global	defaultTaskHandle
+ 636              		.section	.bss.defaultTaskHandle,"aw",%nobits
+ 637              		.align	2
+ 640              	defaultTaskHandle:
+ 641 0000 00000000 		.space	4
+ 642              		.global	table_value
+ 643              		.section	.bss.table_value,"aw",%nobits
+ 644              		.align	2
+ 647              	table_value:
+ 648 0000 00000000 		.space	4
+ 649              		.global	test_table
+ 650              		.section	.bss.test_table,"aw",%nobits
+ 651              		.align	2
+ 654              	test_table:
+ 655 0000 00000000 		.space	1152
+ 655      00000000 
+ 655      00000000 
+ 655      00000000 
+ 655      00000000 
+ 656              		.text
+ 657              	.Letext0:
+ 658              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 659              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 660              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 661              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h"
+ 662              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h"
+ 663              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 664              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 665              		.file 9 "controller/types.h"
+ 666              		.file 10 "controller/tables.h"
+ 667              		.file 11 "controller/config_and_runtime.h"
+ 668              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 669              		.file 13 "controller/IO/sensors.h"
+ 670              		.file 14 "controller/controller.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 19
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 freertos.c
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:21     .text.StartDefaultTask:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:27     .text.StartDefaultTask:00000000 StartDefaultTask
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:59     .text.start_fuel_task:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:65     .text.start_fuel_task:00000000 start_fuel_task
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:91     .text.trigger_simulator_task:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:97     .text.trigger_simulator_task:00000000 trigger_simulator_task
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:169    .text.trigger_simulator_task:0000004c $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:706    .data.simulated_rpm:00000000 simulated_rpm
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:177    .text.controller_init_task:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:183    .text.controller_init_task:00000000 controller_init_task
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:348    .text.controller_init_task:000000cc $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:699    .bss.test_table:00000000 test_table
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:556    .bss.rpm.1:00000000 rpm.1
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:692    .bss.table_value:00000000 table_value
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:550    .bss.load.0:00000000 load.0
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:361    .text.sensors_task:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:367    .text.sensors_task:00000000 sensors_task
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:411    .text.sensors_task:00000024 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:416    .text.MX_FREERTOS_Init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:422    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:495    .text.MX_FREERTOS_Init:00000054 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:674    .rodata.defaultTask_attributes:00000000 defaultTask_attributes
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:685    .bss.defaultTaskHandle:00000000 defaultTaskHandle
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:652    .rodata.trig_sim_attributes:00000000 trig_sim_attributes
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:663    .bss.trig_simHandle:00000000 trig_simHandle
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:630    .rodata.fuel_task_attributes:00000000 fuel_task_attributes
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:641    .bss.fuel_taskHandle:00000000 fuel_taskHandle
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:608    .rodata.init_task_attributes:00000000 init_task_attributes
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:619    .bss.init_taskHandle:00000000 init_taskHandle
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:586    .rodata.sensor_task_attributes:00000000 sensor_task_attributes
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:597    .bss.sensor_taskHandle:00000000 sensor_taskHandle
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:567    .rodata.engine_flags_attributes:00000000 engine_flags_attributes
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:575    .bss.engine_flagsHandle:00000000 engine_flagsHandle
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:516    .text.toggle_led:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:522    .text.toggle_led:00000000 toggle_led
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:542    .text.toggle_led:00000010 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:547    .bss.load.0:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:553    .bss.rpm.1:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:560    .rodata.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:564    .rodata.engine_flags_attributes:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:572    .bss.engine_flagsHandle:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:583    .rodata.sensor_task_attributes:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:594    .bss.sensor_taskHandle:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:605    .rodata.init_task_attributes:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:616    .bss.init_taskHandle:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:627    .rodata.fuel_task_attributes:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:638    .bss.fuel_taskHandle:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:649    .rodata.trig_sim_attributes:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:660    .bss.trig_simHandle:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:671    .rodata.defaultTask_attributes:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:682    .bss.defaultTaskHandle:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:689    .bss.table_value:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:696    .bss.test_table:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s:703    .data.simulated_rpm:00000000 $d
-
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc4eC6dj.s 			page 23
-
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:21     .text.StartDefaultTask:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:27     .text.StartDefaultTask:00000000 StartDefaultTask
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:59     .text.trigger_simulator_task:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:65     .text.trigger_simulator_task:00000000 trigger_simulator_task
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:91     .text.start_fuel_task:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:97     .text.start_fuel_task:00000000 start_fuel_task
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:123    .text.controller_init_task:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:129    .text.controller_init_task:00000000 controller_init_task
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:294    .text.controller_init_task:000000cc $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:654    .bss.test_table:00000000 test_table
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:502    .bss.rpm.1:00000000 rpm.1
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:647    .bss.table_value:00000000 table_value
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:496    .bss.load.0:00000000 load.0
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:307    .text.sensors_task:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:313    .text.sensors_task:00000000 sensors_task
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:357    .text.sensors_task:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:362    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:368    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:441    .text.MX_FREERTOS_Init:00000054 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:629    .rodata.defaultTask_attributes:00000000 defaultTask_attributes
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:640    .bss.defaultTaskHandle:00000000 defaultTaskHandle
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:607    .rodata.trig_sim_attributes:00000000 trig_sim_attributes
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:618    .bss.trig_simHandle:00000000 trig_simHandle
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:585    .rodata.fuel_task_attributes:00000000 fuel_task_attributes
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:596    .bss.fuel_taskHandle:00000000 fuel_taskHandle
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:563    .rodata.init_task_attributes:00000000 init_task_attributes
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:574    .bss.init_taskHandle:00000000 init_taskHandle
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:541    .rodata.sensor_task_attributes:00000000 sensor_task_attributes
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:552    .bss.sensor_taskHandle:00000000 sensor_taskHandle
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:513    .rodata.engine_flags_attributes:00000000 engine_flags_attributes
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:530    .bss.engine_flagsHandle:00000000 engine_flagsHandle
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:462    .text.toggle_led:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:468    .text.toggle_led:00000000 toggle_led
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:488    .text.toggle_led:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:493    .bss.load.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:499    .bss.rpm.1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:506    .rodata.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:510    .rodata.engine_flags_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:523    .bss.engine_flagsControlBlock:00000000 engine_flagsControlBlock
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:520    .bss.engine_flagsControlBlock:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:527    .bss.engine_flagsHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:538    .rodata.sensor_task_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:549    .bss.sensor_taskHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:560    .rodata.init_task_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:571    .bss.init_taskHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:582    .rodata.fuel_task_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:593    .bss.fuel_taskHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:604    .rodata.trig_sim_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:615    .bss.trig_simHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:626    .rodata.defaultTask_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:637    .bss.defaultTaskHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:644    .bss.table_value:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s:651    .bss.test_table:00000000 $d
 
 UNDEFINED SYMBOLS
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLgp6El.s 			page 20
+
+
 MX_USB_DEVICE_Init
 osDelay
-trigger_simulator_init
-analog_inputs_get_data
-trigger_simulator_update
-trigger_tooth_handle
 controller_init_with_defaults
 table_2d_get_value
 sensor_clt_get
 sensor_iat_get
 sensor_ops_get
-engine
+runtime
 osThreadNew
 osEventFlagsNew
 HAL_GPIO_TogglePin

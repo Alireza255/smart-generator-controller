@@ -31,6 +31,7 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -47,7 +48,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-rpm_t simulated_rpm = 1000;
+
 table_2d_t test_table = {0};
 float table_value = 0.0f;
 /* USER CODE END Variables */
@@ -88,8 +89,11 @@ const osThreadAttr_t sensor_task_attributes = {
 };
 /* Definitions for engine_flags */
 osEventFlagsId_t engine_flagsHandle;
+osStaticEventGroupDef_t engine_flagsControlBlock;
 const osEventFlagsAttr_t engine_flags_attributes = {
-  .name = "engine_flags"
+  .name = "engine_flags",
+  .cb_mem = &engine_flagsControlBlock,
+  .cb_size = sizeof(engine_flagsControlBlock),
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -198,15 +202,10 @@ void StartDefaultTask(void *argument)
 void trigger_simulator_task(void *argument)
 {
   /* USER CODE BEGIN trigger_simulator_task */
-  osDelay(100);
-  trigger_simulator_init(60, 2, trigger_tooth_handle);
 
   /* Infinite loop */
   for(;;)
   {
-    simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
-    //simulated_rpm = 500;
-    trigger_simulator_update(simulated_rpm);
     osDelay(1);
 
   }
@@ -296,10 +295,10 @@ void sensors_task(void *argument)
   for(;;)
   {
     osDelay(1);
-    engine.clt = sensor_clt_get();
-    engine.iat = sensor_iat_get();
-    engine.oil_pressure = sensor_ops_get();
-    //engine.map = sensor_map_get();
+    runtime.clt_degc = sensor_clt_get();
+    runtime.iat_degc = sensor_iat_get();
+    runtime.oil_pressure_ok = sensor_ops_get();
+    //runtime.map_kpa = sensor_map_get();
   }
   /* USER CODE END sensors_task */
 }

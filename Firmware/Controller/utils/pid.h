@@ -57,13 +57,13 @@ typedef struct
     float limit_integrator_min;
     float limit_integrator_max;
     float derivative_filter_tau;
-} pid_configuration_s;
+} pid_configuration_t;
 
 void pid_init(pid_t *pid);
 
 void pid_set_setpoint(pid_t *pid, float setpoint);
 
-void pid_set_tuning(pid_t *pid, pid_configuration_s *conf);
+void pid_set_tuning(pid_t *pid, pid_configuration_t *conf);
 
 float pid_compute(pid_t *pid, time_us_t current_time_us, float input);
 

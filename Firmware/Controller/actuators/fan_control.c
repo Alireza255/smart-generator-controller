@@ -1,26 +1,59 @@
 #include "fan_control.h"
 
-void fan_control_update(fan_control_t *fan)
+static bool thermostat(temperature_t temp, temperature_t on_temp, temperature_t off_temp)
 {
-    if (fan->temp_off == fan->temp_on)
+    if (temp > on_temp)
     {
-        HAL_GPIO_WritePin(fan->pin.gpio, fan->pin.pin, GPIO_PIN_RESET);
-        osEventFlagsClear(engine.flags, ENGINE_FLAG_FAN_ON);
-        log_error("Fan off or on temperature is not set");
+        return true;
     }
-
+    else if (temp < off_temp)
+    {
+        return false;
+    }
+}
+void fan_control_update()
+{
     temperature_t current_temp = sensor_clt_get();
-    // Fan control logic here
-    if (current_temp > configuration.fan1_on_temp)
-    {
-        HAL_GPIO_WritePin(FAN1_GPIO_Port, FAN1_Pin, GPIO_PIN_SET);
-        osEventFlagsSet(engine.flags, fan->on_flag);
-    }
-    else if (current_temp < configuration.fan1_off_temp)
-    {
-        HAL_GPIO_WritePin(FAN1_GPIO_Port, FAN1_Pin, GPIO_PIN_RESET);
-        osEventFlagsClear(engine.flags, fan->on_flag);
-    }
 
+    bool fan1_command = false;
+    bool fan2_command = false;
+    
+    if (config.fan1_enabled)
+    {
+        if (current_temp > config.fan1_on_temp)
+        {
+            fan1_command = true;
+        }
+        else if (current_temp < config.fan1_off_temp)
+        {
+            fan1_command = false;
+        }
+    }
+    else
+    {
+        fan1_command = false;
+    }
+    
+    if (config.fan2_enabled)
+    {
+        if (current_temp > config.fan2_on_temp)
+        {
+            fan2_command = true;
+        }
+        else if (current_temp < config.fan2_off_temp)
+        {
+            fan2_command = false;
+        }
+    }
+    else
+    {
+       fan2_command = false;
+    }
+    
+    HAL_GPIO_WritePin(FAN_1_GPIO_Port, FAN_1_Pin, fan1_command);
+    change_bit(&runtime.status, STATUS_FAN1_ON, fan1_command);
+    
+    HAL_GPIO_WritePin(FAN_2_GPIO_Port, FAN_2_Pin, fan2_command);
+    change_bit(&runtime.status, STATUS_FAN2_ON, fan2_command);
 
 }

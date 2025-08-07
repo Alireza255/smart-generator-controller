@@ -76,7 +76,7 @@ float pid_compute(pid_t *pid, time_us_t current_time_us, float input)
     return pid->output;
 }
 
-void pid_set_tuning(pid_t *pid, pid_configuration_s *conf)
+void pid_set_tuning(pid_t *pid, pid_configuration_t *conf)
 {
     if (pid == NULL)
     {

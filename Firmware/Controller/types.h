@@ -18,18 +18,16 @@
  * we just have to make sure we use this type of math!
  */
 
-
- /**
+/**
  * integer time in milliseconds (1/1_000 of a second)
  * @note must use "delta = (current - start)" to handle overflows properly.
  */
 typedef uint32_t time_ms_t;
 
-
 /**
  * integer time is microseconds since MCU reset, used for precise timing
  * @note must use "delta = (current - start)" to handle overflows properly.
-*/
+ */
 typedef uint32_t time_us_t;
 
 /**
@@ -42,7 +40,8 @@ typedef float float_time_ms_t;
  */
 typedef float float_time_us_t;
 
-typedef struct {
+typedef struct
+{
     uint32_t year;
     uint8_t month;
     uint8_t day;
@@ -72,7 +71,7 @@ typedef float percent_t;
 typedef float voltage_t;
 
 typedef uint16_t pwm_freq_t;
- 
+
 #define CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS 1000000UL
 #define CONVERSION_FACTOR_SECONDS_TO_MILLISECONDS 1000U
 #define CONVERSION_FACTOR_MINUTES_TO_SECONDS 60U
@@ -83,60 +82,53 @@ typedef uint16_t pwm_freq_t;
 #define CONVERSION_FACTOR_DAYS_TO_SECONDS (CONVERSION_FACTOR_DAYS_TO_HOURS * CONVERSION_FACTOR_HOURS_TO_SECONDS)
 #define CONVERSION_FACTOR_MILLISECONDS_TO_MICROSECONDS 1000
 
-
-// Section for Coolant Temperature (CLT) Sensor
-#define SENSOR_CLT_FAIL_SAFE (temperature_t)30
-// Section for Intake Air Temperature (IAT) Sensor
-#define SENSOR_IAT_FAIL_SAFE (temperature_t)40
-
-#define SENSOR_MAP_FAIL_SAFE (pressure_t)0
-
-// Section for Manifold Absolute Pressure (MAP) Sensor
-typedef struct
-{
-    uint16_t adc_value_0_bar;
-    uint16_t adc_value_1_bar;
-} sensor_map_calib_s;
-
-// Section for Throttle Position Sensor (TPS)
-/**
- * @todo implement fail safe so that it uses the other sensor input when the main one fails
- */
-#define SENSOR_TPS_FAIL_SAFE (percent_t) NAN
-
-typedef struct
-{
-    uint16_t wide_open_throttle_adc_value;
-    uint16_t closed_throttle_adc_value;
-    analog_input_adc_channel_mapping_e analog_channel;
-    bool is_inverted;
-} sensor_tps_s;
-
-
 typedef enum
 {
-    ENGINE_FLAG_TRIGGER_EVENT = 1,
-    ENGINE_FLAG_ROTATION_EVENT = 2,
-    ENGINE_FLAG_OIL_PRESSURE_LOW = 4,
-    ENGINE_FLAG_COOLANT_TEMPERATURE_HIGH = 8,
-    ENGINE_FLAG_FAN_ON = 16,
-
-
-} engine_flags_t;
-
+    STATUS_CRITICAL_ERROR = 0,
+    STATUS_CHECK_ENGINE = 1,
+    STATUS_WARNING = 2,
+    STATUS_TRIGGER1_SYNCED = 3,
+    STATUS_TRIGGER2_SYNCED = 4,
+    STATUS_TRIGGER_ERROR = 5,
+    STATUS_FAN1_ON = 6,
+    STATUS_FAN2_ON = 7,
+    STATUS_NEED_BURN = 8,
+    STATUS_MAIN_RELAY_ON = 9,
+    STATUS_GAS_SOLENOID_ON = 10,
+    STATUS_FUEL_PUMP_ON = 11,
+    STATUS_O2_HEATER_ON = 12,
+    STATUS_TPS1_ERROR = 13,
+    STATUS_TPS2_ERROR = 14,
+    STATUS_MAP_ERROR = 15,
+    STATUS_CLT_ERROR = 16,
+    STATUS_IAT_ERROR = 17,
+    STATUS_IGNITION_ERROR = 18,
+    STATUS_INJECTOR_ERROR = 19,
+    STATUS_REV_LIMIT_IGNITION = 20,
+    STATUS_REV_LIMIT_ETB = 21,
+    STATUS_ETB1_OK = 22,
+    STATUS_ETB2_OK = 23,
+    STATUS_FUEL_PRESSURE_LOW_GAS = 24,
+    STATUS_FUEL_PRESSURE_LOW_PETROL = 25,
+    STATUS_CRANKING = 26,
+    STATUS_RUNNING = 27,
+    STATUS_RESERVED1 = 28,
+    STATUS_RESERVED2 = 29,
+    STATUS_RESERVED3 = 30,
+    STATUS_RESERVED4 = 31
+} status_t;
 
 typedef struct
 {
-    GPIO_TypeDef    *gpio;
-    uint32_t         pin;
+    GPIO_TypeDef *gpio;
+    uint32_t pin;
 } controller_output_pin_t;
-
-
 
 /**
  * @brief Trigger wheel type
  */
-typedef enum __attribute__ ((__packed__)) {
+typedef enum __attribute__((__packed__))
+{
     /**
      * 58 teeth with 2 missing tooth wheel
      */
@@ -146,12 +138,13 @@ typedef enum __attribute__ ((__packed__)) {
      */
     TW_29_TOOTH_1_MISSING = 1,
 
-} trigger_wheel_type_e;
+} trigger_wheel_type_t;
 
 /**
  * @brief Ignition Mode
  */
-typedef enum __attribute__ ((__packed__)) {
+typedef enum __attribute__((__packed__))
+{
     /**
      * in this mode the ecu won't produce any sparks
      */
@@ -168,13 +161,14 @@ typedef enum __attribute__ ((__packed__)) {
      * in this mode we use one coil for every two cylinders
      */
     IM_WASTED_SPARK = 3,
- 
+
 } ignition_mode_e;
 
 /**
  * @brief Injection Mode
  */
-typedef enum __attribute__ ((__packed__)) {
+typedef enum __attribute__((__packed__))
+{
     /**
      * each cylinder has it's own injector but they all works in parallel
      */
@@ -198,7 +192,8 @@ typedef enum __attribute__ ((__packed__)) {
 /**
  * @brief Fuel Type
  */
-typedef enum __attribute__ ((__packed__)) {
+typedef enum __attribute__((__packed__))
+{
     /**
      * Gaseus fuel
      */
@@ -215,9 +210,8 @@ typedef enum __attribute__ ((__packed__)) {
 
 } fuel_type_t;
 
-
-
-typedef enum __attribute__ ((__packed__)) {
+typedef enum __attribute__((__packed__))
+{
     /**
      * This is the default mode in which ECU controls timing dynamically
      */
@@ -227,10 +221,10 @@ typedef enum __attribute__ ((__packed__)) {
      * timing if you want to install your distributor at some specific angle
      */
     TM_FIXED = 1,
- 
+
 } ignition_timing_mode_e;
 
-typedef enum __attribute__ ((__packed__))
+typedef enum __attribute__((__packed__))
 {
     /**
      * Normal 4 cylinder firing order
@@ -238,109 +232,22 @@ typedef enum __attribute__ ((__packed__))
     FO_1342,
 } firing_order_e;
 
-typedef enum __attribute__ ((__packed__))
+typedef enum __attribute__((__packed__))
 {
     SENSOR_IAT_TYPE_TEST,
     SENSOR_IAT_TYPE_BOSCH_816,
 } sensor_iat_type_t;
 
-
-typedef enum __attribute__ ((__packed__))
+typedef enum __attribute__((__packed__))
 {
     SENSOR_MAP_TYPE_TEST,
     SENSOR_MAP_TYPE_BOSCH_816,
 } sensor_map_type_t;
 
-typedef enum __attribute__ ((__packed__))
+typedef enum __attribute__((__packed__))
 {
     SENSOR_CLT_TYPE_TEST,
     SENSOR_CLT_TYPE_NISSAN,
 } sensor_clt_type_t;
-
-
-
-
-
-
-typedef struct
-{
-    /**
-     * total number of revolutions from startup
-     */
-    uint32_t total_revolutions;
-    angle_t crankshaft_angle;
-    angle_t camshaft_angle;
-    rpm_t rpm;
-   
-    uint8_t cylinder_count;
-    
-    spinning_state_e spinning_state;
-
-    angle_t firing_interval;
-
-    trigger_s trigger;
-    
-    governer_status_e governer_status;
-
-    osEventFlagsId_t flags;
-} engine_s;
-
-extern engine_s engine;
-
-
-typedef struct
-{
-    volume_liter_t engine_displacment;
-    firing_order_e firing_order;
-    fuel_type_e fuel_type;
-    
-    
-    trigger_settings_s trigger;
-
-    rpm_t cranking_rpm_threshold;
-    angle_t cranking_advance;
-    percent_t cranking_throttle;
-
-
-    ignition_mode_e ignition_mode;
-    float_time_ms_t ignition_dwell;
-    bool ignition_is_multi_spark;
-    uint8_t ignition_multi_spark_number_of_sparks;
-    rpm_t ignition_multi_spark_rpm_threshold;
-    float_time_ms_t ignition_multi_spark_rest_time;
-
-    table_2d_t ignition_table;
-    table_2d_t ve_table;
-    
-    afr_t stoich_afr_gas;
-    afr_t stoich_afr_petrol;
-    
-    sensor_tps_s tps1;
-    sensor_tps_s tps2;
-
-    thermistor_conf_s clt_thermistor_calib;
-
-    sensor_iat_type_e iat_sensor_type;
-
-    sensor_map_type_e map_sensor_type;
-
-    rpm_t governer_target_rpm;
-    rpm_t governer_idle_rpm;
-
-    pid_configuration_s etb_pid;
-    pid_configuration_s governer_pid;
-
-    time_ms_t protection_oil_pressure_time;
-    bool protection_oil_pressure_enabled;
-
-    bool protection_clt_enabled;
-    bool protection_clt_load_disconnect_enabled;
-    temperature_t protection_clt_shutdown_temprature;
-    temperature_t protection_clt_load_disconnect_temprature;
-    
-    
-} configuration_s;
-
-extern configuration_s configuration;
 
 #endif // TYPES_H

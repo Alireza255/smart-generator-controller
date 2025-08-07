@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -28,7 +28,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 1
   25              		.thumb_func
   27              	ideal_gas_law:
   28              	.LVL0:
-  29              	.LFB230:
+  29              	.LFB232:
    1:controller/algorithm/fuel/fuel_math.c **** #include "fuel_math.h"
    2:controller/algorithm/fuel/fuel_math.c **** /**
    3:controller/algorithm/fuel/fuel_math.c ****  * Ideal gas law is PV = nRT
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 1
   27:controller/algorithm/fuel/fuel_math.c ****  */
   28:controller/algorithm/fuel/fuel_math.c **** mass_t air_mass_get(rpm_t rpm, percent_t ve, pressure_t map, temperature_t iat);
   29:controller/algorithm/fuel/fuel_math.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s 			page 2
 
 
   30:controller/algorithm/fuel/fuel_math.c **** mass_t ideal_gas_law(float volume, pressure_t pressure, temperature_t temperature)
@@ -86,7 +86,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 1
   48              	.L2:
   49 0014 38F8923E 		.word	1049819192
   50              		.cfi_endproc
-  51              	.LFE230:
+  51              	.LFE232:
   53              		.section	.text.air_mass_get,"ax",%progbits
   54              		.align	1
   55              		.global	air_mass_get
@@ -95,7 +95,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 1
   58              		.thumb_func
   60              	air_mass_get:
   61              	.LVL3:
-  62              	.LFB231:
+  62              	.LFB233:
   34:controller/algorithm/fuel/fuel_math.c **** 
   35:controller/algorithm/fuel/fuel_math.c **** mass_t air_mass_get(rpm_t rpm, percent_t ve, pressure_t map, temperature_t iat)
   36:controller/algorithm/fuel/fuel_math.c **** {
@@ -118,173 +118,201 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 1
   37:controller/algorithm/fuel/fuel_math.c ****     mass_t air_mass = 0;
   79              		.loc 1 37 5 is_stmt 1 view .LVU7
   38:controller/algorithm/fuel/fuel_math.c ****     // check if this is mathematically correct
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s 			page 3
 
 
-  39:controller/algorithm/fuel/fuel_math.c ****     air_mass = ve * ideal_gas_law(configuration.engine_displacment, map, CELSIUS_TO_KELVIN(iat));
+  39:controller/algorithm/fuel/fuel_math.c ****     air_mass = ve * ideal_gas_law(config.engine_displacement_cc, map, CELSIUS_TO_KELVIN(iat));
   80              		.loc 1 39 5 view .LVU8
-  81              		.loc 1 39 21 is_stmt 0 view .LVU9
-  82 000e 9FED071A 		vldr.32	s2, .L6
-  83              	.LVL5:
-  84              		.loc 1 39 21 view .LVU10
-  85 0012 31EE811A 		vadd.f32	s2, s3, s2
-  86 0016 064B     		ldr	r3, .L6+4
-  87 0018 93ED000A 		vldr.32	s0, [r3]
+  81              		.loc 1 39 41 is_stmt 0 view .LVU9
+  82 000e 094B     		ldr	r3, .L6
+  83 0010 B3F80E33 		ldrh	r3, [r3, #782]
+  84 0014 00EE103A 		vmov	s0, r3	@ int
+  85              	.LVL5:
+  86              		.loc 1 39 21 view .LVU10
+  87 0018 9FED071A 		vldr.32	s2, .L6+4
   88              	.LVL6:
   89              		.loc 1 39 21 view .LVU11
-  90 001c FFF7FEFF 		bl	ideal_gas_law
-  91              	.LVL7:
+  90 001c 31EE811A 		vadd.f32	s2, s3, s2
+  91 0020 B8EE400A 		vcvt.f32.u32	s0, s0
+  92 0024 FFF7FEFF 		bl	ideal_gas_law
+  93              	.LVL7:
   40:controller/algorithm/fuel/fuel_math.c ****     return air_mass;
-  92              		.loc 1 40 5 is_stmt 1 view .LVU12
+  94              		.loc 1 40 5 is_stmt 1 view .LVU12
   41:controller/algorithm/fuel/fuel_math.c **** }
-  93              		.loc 1 41 1 is_stmt 0 view .LVU13
-  94 0020 20EE080A 		vmul.f32	s0, s0, s16
-  95              	.LVL8:
-  96              		.loc 1 41 1 view .LVU14
-  97 0024 BDEC028B 		vldm	sp!, {d8}
-  98              		.cfi_restore 80
-  99              		.cfi_restore 81
- 100              		.cfi_def_cfa_offset 8
- 101              	.LVL9:
- 102              		.loc 1 41 1 view .LVU15
- 103 0028 08BD     		pop	{r3, pc}
- 104              	.L7:
- 105 002a 00BF     		.align	2
- 106              	.L6:
- 107 002c 33938843 		.word	1133024051
- 108 0030 00000000 		.word	configuration
- 109              		.cfi_endproc
- 110              	.LFE231:
- 112              		.section	.text.fuel_get_required_mass,"ax",%progbits
- 113              		.align	1
- 114              		.global	fuel_get_required_mass
- 115              		.syntax unified
- 116              		.thumb
- 117              		.thumb_func
- 119              	fuel_get_required_mass:
- 120              	.LVL10:
- 121              	.LFB232:
+  95              		.loc 1 41 1 is_stmt 0 view .LVU13
+  96 0028 20EE080A 		vmul.f32	s0, s0, s16
+  97              	.LVL8:
+  98              		.loc 1 41 1 view .LVU14
+  99 002c BDEC028B 		vldm	sp!, {d8}
+ 100              		.cfi_restore 80
+ 101              		.cfi_restore 81
+ 102              		.cfi_def_cfa_offset 8
+ 103              	.LVL9:
+ 104              		.loc 1 41 1 view .LVU15
+ 105 0030 08BD     		pop	{r3, pc}
+ 106              	.L7:
+ 107 0032 00BF     		.align	2
+ 108              	.L6:
+ 109 0034 00100000 		.word	config+4096
+ 110 0038 33938843 		.word	1133024051
+ 111              		.cfi_endproc
+ 112              	.LFE233:
+ 114              		.section	.rodata.fuel_get_required_mass.str1.4,"aMS",%progbits,1
+ 115              		.align	2
+ 116              	.LC0:
+ 117 0000 44656661 		.ascii	"Defaulting to natural gas as fuel.\000"
+ 117      756C7469 
+ 117      6E672074 
+ 117      6F206E61 
+ 117      74757261 
+ 118              		.section	.text.fuel_get_required_mass,"ax",%progbits
+ 119              		.align	1
+ 120              		.global	fuel_get_required_mass
+ 121              		.syntax unified
+ 122              		.thumb
+ 123              		.thumb_func
+ 125              	fuel_get_required_mass:
+ 126              	.LVL10:
+ 127              	.LFB234:
   42:controller/algorithm/fuel/fuel_math.c **** 
   43:controller/algorithm/fuel/fuel_math.c **** mass_t fuel_get_required_mass(mass_t air_mass, afr_t afr)
   44:controller/algorithm/fuel/fuel_math.c **** {
- 122              		.loc 1 44 1 is_stmt 1 view -0
- 123              		.cfi_startproc
- 124              		@ args = 0, pretend = 0, frame = 0
- 125              		@ frame_needed = 0, uses_anonymous_args = 0
- 126              		@ link register save eliminated.
- 127              		.loc 1 44 1 is_stmt 0 view .LVU17
- 128 0000 F0EE407A 		vmov.f32	s15, s0
-  45:controller/algorithm/fuel/fuel_math.c ****     switch (configuration.fuel_type)
- 129              		.loc 1 45 5 is_stmt 1 view .LVU18
- 130              		.loc 1 45 26 is_stmt 0 view .LVU19
- 131 0004 0C4B     		ldr	r3, .L13
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 4
+ 128              		.loc 1 44 1 is_stmt 1 view -0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s 			page 4
 
 
- 132 0006 5B79     		ldrb	r3, [r3, #5]	@ zero_extendqisi2
- 133              		.loc 1 45 5 view .LVU20
- 134 0008 012B     		cmp	r3, #1
- 135 000a 08D0     		beq	.L9
- 136 000c 022B     		cmp	r3, #2
- 137 000e 12D0     		beq	.L10
- 138 0010 5BB9     		cbnz	r3, .L11
+ 129              		.cfi_startproc
+ 130              		@ args = 0, pretend = 0, frame = 0
+ 131              		@ frame_needed = 0, uses_anonymous_args = 0
+ 132              		.loc 1 44 1 is_stmt 0 view .LVU17
+ 133 0000 08B5     		push	{r3, lr}
+ 134              		.cfi_def_cfa_offset 8
+ 135              		.cfi_offset 3, -8
+ 136              		.cfi_offset 14, -4
+ 137 0002 2DED028B 		vpush.64	{d8}
+ 138              		.cfi_def_cfa_offset 16
+ 139              		.cfi_offset 80, -16
+ 140              		.cfi_offset 81, -12
+  45:controller/algorithm/fuel/fuel_math.c ****     mass_t fuel_mass = 0;
+ 141              		.loc 1 45 5 is_stmt 1 view .LVU18
+ 142              	.LVL11:
+  46:controller/algorithm/fuel/fuel_math.c ****     switch (config.fuel_type)
+ 143              		.loc 1 46 5 view .LVU19
+ 144              		.loc 1 46 19 is_stmt 0 view .LVU20
+ 145 0006 124B     		ldr	r3, .L14
+ 146 0008 93F81933 		ldrb	r3, [r3, #793]	@ zero_extendqisi2
+ 147              		.loc 1 46 5 view .LVU21
+ 148 000c 012B     		cmp	r3, #1
+ 149 000e 08D0     		beq	.L9
+ 150 0010 022B     		cmp	r3, #2
+ 151 0012 15D0     		beq	.L12
+ 152 0014 5BB9     		cbnz	r3, .L11
+  47:controller/algorithm/fuel/fuel_math.c ****     {
+  48:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GAS:
+  49:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_gas;
+ 153              		.loc 1 49 9 is_stmt 1 view .LVU22
+ 154              		.loc 1 49 38 is_stmt 0 view .LVU23
+ 155 0016 0E4B     		ldr	r3, .L14
+ 156 0018 D3ED877A 		vldr.32	s15, [r3, #540]
+ 157              		.loc 1 49 19 view .LVU24
+ 158 001c 80EE278A 		vdiv.f32	s16, s0, s15
+ 159              	.LVL12:
+  50:controller/algorithm/fuel/fuel_math.c ****         break;
+ 160              		.loc 1 50 9 is_stmt 1 view .LVU25
+ 161 0020 10E0     		b	.L8
+ 162              	.LVL13:
+ 163              	.L9:
+  51:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GASOLINE:
+  52:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_petrol;
+ 164              		.loc 1 52 9 view .LVU26
+ 165              		.loc 1 52 38 is_stmt 0 view .LVU27
+ 166 0022 0B4B     		ldr	r3, .L14
+ 167 0024 D3ED887A 		vldr.32	s15, [r3, #544]
+ 168              		.loc 1 52 19 view .LVU28
+ 169 0028 80EE278A 		vdiv.f32	s16, s0, s15
+ 170              	.LVL14:
+  53:controller/algorithm/fuel/fuel_math.c ****         break;
+ 171              		.loc 1 53 9 is_stmt 1 view .LVU29
+ 172 002c 0AE0     		b	.L8
+ 173              	.LVL15:
+ 174              	.L11:
+  54:controller/algorithm/fuel/fuel_math.c **** 
+  55:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_DUAL_FUEL:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s 			page 5
+
+
+  56:controller/algorithm/fuel/fuel_math.c ****         /* @todo implement this*/
+  57:controller/algorithm/fuel/fuel_math.c ****         break;
+  58:controller/algorithm/fuel/fuel_math.c ****         
+  59:controller/algorithm/fuel/fuel_math.c ****     default:
+  60:controller/algorithm/fuel/fuel_math.c ****         /* Defults to natural gas */
+  61:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_gas;
+ 175              		.loc 1 61 9 view .LVU30
+ 176              		.loc 1 61 38 is_stmt 0 view .LVU31
+ 177 002e 084B     		ldr	r3, .L14
+ 178 0030 D3ED877A 		vldr.32	s15, [r3, #540]
+ 179              		.loc 1 61 19 view .LVU32
+ 180 0034 80EE278A 		vdiv.f32	s16, s0, s15
+ 181              	.LVL16:
+  62:controller/algorithm/fuel/fuel_math.c ****         log_warning("Defaulting to natural gas as fuel.");
+ 182              		.loc 1 62 9 is_stmt 1 view .LVU33
+ 183 0038 0648     		ldr	r0, .L14+4
+ 184 003a FFF7FEFF 		bl	log_warning
+ 185              	.LVL17:
+  63:controller/algorithm/fuel/fuel_math.c ****         break;
+ 186              		.loc 1 63 9 view .LVU34
+ 187 003e 01E0     		b	.L8
+ 188              	.LVL18:
+ 189              	.L12:
   46:controller/algorithm/fuel/fuel_math.c ****     {
-  47:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GAS:
-  48:controller/algorithm/fuel/fuel_math.c ****         return air_mass / configuration.stoich_afr_gas;
- 139              		.loc 1 48 9 is_stmt 1 view .LVU21
- 140              		.loc 1 48 40 is_stmt 0 view .LVU22
- 141 0012 0A4B     		ldr	r3, .L13+4
- 142 0014 93ED007A 		vldr.32	s14, [r3]
- 143              		.loc 1 48 25 view .LVU23
- 144 0018 87EE870A 		vdiv.f32	s0, s15, s14
- 145              	.LVL11:
- 146              		.loc 1 48 25 view .LVU24
- 147 001c 7047     		bx	lr
- 148              	.LVL12:
- 149              	.L9:
-  49:controller/algorithm/fuel/fuel_math.c ****         break;
- 150              		.loc 1 49 9 is_stmt 1 view .LVU25
-  50:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GASOLINE:
-  51:controller/algorithm/fuel/fuel_math.c ****         return air_mass / configuration.stoich_afr_petrol;
- 151              		.loc 1 51 9 view .LVU26
- 152              		.loc 1 51 40 is_stmt 0 view .LVU27
- 153 001e 084B     		ldr	r3, .L13+8
- 154 0020 93ED007A 		vldr.32	s14, [r3]
- 155              		.loc 1 51 25 view .LVU28
- 156 0024 87EE870A 		vdiv.f32	s0, s15, s14
- 157              	.LVL13:
- 158              		.loc 1 51 25 view .LVU29
- 159 0028 7047     		bx	lr
- 160              	.LVL14:
- 161              	.L11:
-  52:controller/algorithm/fuel/fuel_math.c ****         break;
-  53:controller/algorithm/fuel/fuel_math.c **** 
-  54:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_DUAL_FUEL:
-  55:controller/algorithm/fuel/fuel_math.c ****         /* @todo implement this*/
-  56:controller/algorithm/fuel/fuel_math.c ****         break;
-  57:controller/algorithm/fuel/fuel_math.c ****         
-  58:controller/algorithm/fuel/fuel_math.c ****     default:
-  59:controller/algorithm/fuel/fuel_math.c ****         /* Defults to natural gas */
-  60:controller/algorithm/fuel/fuel_math.c ****         return air_mass / configuration.stoich_afr_gas;
- 162              		.loc 1 60 9 is_stmt 1 view .LVU30
- 163              		.loc 1 60 40 is_stmt 0 view .LVU31
- 164 002a 044B     		ldr	r3, .L13+4
- 165 002c 93ED007A 		vldr.32	s14, [r3]
- 166              		.loc 1 60 25 view .LVU32
- 167 0030 87EE870A 		vdiv.f32	s0, s15, s14
- 168              	.LVL15:
- 169              		.loc 1 60 25 view .LVU33
- 170 0034 7047     		bx	lr
- 171              	.LVL16:
- 172              	.L10:
-  52:controller/algorithm/fuel/fuel_math.c ****         break;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 5
-
-
- 173              		.loc 1 52 9 is_stmt 1 view .LVU34
-  56:controller/algorithm/fuel/fuel_math.c ****         
- 174              		.loc 1 56 9 view .LVU35
-  61:controller/algorithm/fuel/fuel_math.c ****         break;
- 175              		.loc 1 61 9 view .LVU36
- 176              	.LVL17:
-  62:controller/algorithm/fuel/fuel_math.c ****     }
-  63:controller/algorithm/fuel/fuel_math.c ****     
-  64:controller/algorithm/fuel/fuel_math.c **** }
- 177              		.loc 1 64 1 is_stmt 0 view .LVU37
- 178 0036 7047     		bx	lr
- 179              	.L14:
- 180              		.align	2
- 181              	.L13:
- 182 0038 00000000 		.word	configuration
- 183 003c 2C090000 		.word	configuration+2348
- 184 0040 30090000 		.word	configuration+2352
- 185              		.cfi_endproc
- 186              	.LFE232:
- 188              		.text
- 189              	.Letext0:
- 190              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 191              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 192              		.file 4 "controller/types.h"
- 193              		.file 5 "controller/engine_cycle/trigger.h"
- 194              		.file 6 "controller/tables.h"
- 195              		.file 7 "controller/IO/analog_inputs.h"
- 196              		.file 8 "controller/IO/sensors.h"
- 197              		.file 9 "controller/utils/pid.h"
- 198              		.file 10 "controller/controller.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s 			page 6
+ 190              		.loc 1 46 5 is_stmt 0 view .LVU35
+ 191 0040 9FED058A 		vldr.32	s16, .L14+8
+  64:controller/algorithm/fuel/fuel_math.c ****     }
+  65:controller/algorithm/fuel/fuel_math.c **** 
+  66:controller/algorithm/fuel/fuel_math.c ****     return fuel_mass;
+ 192              		.loc 1 66 5 is_stmt 1 view .LVU36
+ 193              	.LVL19:
+ 194              	.L8:
+  67:controller/algorithm/fuel/fuel_math.c **** }
+ 195              		.loc 1 67 1 is_stmt 0 view .LVU37
+ 196 0044 B0EE480A 		vmov.f32	s0, s16
+ 197 0048 BDEC028B 		vldm	sp!, {d8}
+ 198              		.cfi_restore 80
+ 199              		.cfi_restore 81
+ 200              		.cfi_def_cfa_offset 8
+ 201 004c 08BD     		pop	{r3, pc}
+ 202              	.L15:
+ 203 004e 00BF     		.align	2
+ 204              	.L14:
+ 205 0050 00100000 		.word	config+4096
+ 206 0054 00000000 		.word	.LC0
+ 207 0058 00000000 		.word	0
+ 208              		.cfi_endproc
+ 209              	.LFE234:
+ 211              		.text
+ 212              	.Letext0:
+ 213              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 214              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 215              		.file 4 "controller/types.h"
+ 216              		.file 5 "controller/tables.h"
+ 217              		.file 6 "controller/config_and_runtime.h"
+ 218              		.file 7 "controller/utils/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s 			page 6
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 fuel_math.c
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:21     .text.ideal_gas_law:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:27     .text.ideal_gas_law:00000000 ideal_gas_law
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:49     .text.ideal_gas_law:00000014 $d
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:54     .text.air_mass_get:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:60     .text.air_mass_get:00000000 air_mass_get
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:107    .text.air_mass_get:0000002c $d
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:113    .text.fuel_get_required_mass:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:119    .text.fuel_get_required_mass:00000000 fuel_get_required_mass
-C:\Users\alireza\AppData\Local\Temp\cc7BQsZi.s:182    .text.fuel_get_required_mass:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:21     .text.ideal_gas_law:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:27     .text.ideal_gas_law:00000000 ideal_gas_law
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:49     .text.ideal_gas_law:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:54     .text.air_mass_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:60     .text.air_mass_get:00000000 air_mass_get
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:109    .text.air_mass_get:00000034 $d
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:115    .rodata.fuel_get_required_mass.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:119    .text.fuel_get_required_mass:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:125    .text.fuel_get_required_mass:00000000 fuel_get_required_mass
+C:\Users\alireza\AppData\Local\Temp\cc5GGb2l.s:205    .text.fuel_get_required_mass:00000050 $d
 
 UNDEFINED SYMBOLS
-configuration
+config
+log_warning

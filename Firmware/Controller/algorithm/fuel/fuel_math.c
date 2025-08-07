@@ -36,19 +36,20 @@ mass_t air_mass_get(rpm_t rpm, percent_t ve, pressure_t map, temperature_t iat)
 {
     mass_t air_mass = 0;
     // check if this is mathematically correct
-    air_mass = ve * ideal_gas_law(configuration.engine_displacment, map, CELSIUS_TO_KELVIN(iat));
+    air_mass = ve * ideal_gas_law(config.engine_displacement_cc, map, CELSIUS_TO_KELVIN(iat));
     return air_mass;
 }
 
 mass_t fuel_get_required_mass(mass_t air_mass, afr_t afr)
 {
-    switch (configuration.fuel_type)
+    mass_t fuel_mass = 0;
+    switch (config.fuel_type)
     {
     case FUEL_TYPE_GAS:
-        return air_mass / configuration.stoich_afr_gas;
+        fuel_mass = air_mass / config.stoich_afr_gas;
         break;
     case FUEL_TYPE_GASOLINE:
-        return air_mass / configuration.stoich_afr_petrol;
+        fuel_mass = air_mass / config.stoich_afr_petrol;
         break;
 
     case FUEL_TYPE_DUAL_FUEL:
@@ -57,8 +58,10 @@ mass_t fuel_get_required_mass(mass_t air_mass, afr_t afr)
         
     default:
         /* Defults to natural gas */
-        return air_mass / configuration.stoich_afr_gas;
+        fuel_mass = air_mass / config.stoich_afr_gas;
+        log_warning("Defaulting to natural gas as fuel.");
         break;
     }
-    
+
+    return fuel_mass;
 }

@@ -2,7 +2,6 @@
 #define TABLE2D_H
 
 #include "types.h"
-#include "tables.h"
 #include "constants.h"
 
 

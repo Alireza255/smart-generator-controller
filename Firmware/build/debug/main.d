@@ -58,16 +58,18 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  controller/controller.h controller/utils/timing.h controller/types.h \
  controller/types.h controller/utils/comms.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- controller/engine_cycle/trigger.h controller/utils/error_handling.h \
- controller/actuators/dc_motors.h controller/tables.h \
- controller/constants.h controller/IO/sensors.h \
- controller/IO/analog_inputs.h controller/utils/utils.h \
- controller/IO/resistor.h controller/IO/thermistor.h \
- controller/constants.h controller/engine_cycle/ignition.h \
- controller/IO/thermistor.h controller/utils/pid.h \
- controller/utils/timing.h controller/actuators/electronic_throttle.h \
+ controller/config_and_runtime.h controller/constants.h \
+ controller/tables.h controller/engine_cycle/trigger.h \
+ controller/utils/error_handling.h controller/actuators/dc_motors.h \
+ controller/IO/sensors.h controller/IO/analog_inputs.h \
+ controller/utils/utils.h controller/IO/resistor.h \
+ controller/IO/thermistor.h controller/constants.h \
+ controller/engine_cycle/ignition.h controller/IO/thermistor.h \
+ controller/utils/pid.h controller/utils/timing.h \
+ controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h controller/algorithm/governer.h \
- controller/actuators/fan_control.h
+ controller/actuators/fan_control.h controller/utils/trigger_simulator.h \
+ controller/utils/utils.h controller/config_and_runtime.h
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -139,11 +141,12 @@ controller/types.h:
 controller/types.h:
 controller/utils/comms.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+controller/config_and_runtime.h:
+controller/constants.h:
+controller/tables.h:
 controller/engine_cycle/trigger.h:
 controller/utils/error_handling.h:
 controller/actuators/dc_motors.h:
-controller/tables.h:
-controller/constants.h:
 controller/IO/sensors.h:
 controller/IO/analog_inputs.h:
 controller/utils/utils.h:
@@ -158,3 +161,6 @@ controller/actuators/electronic_throttle.h:
 controller/actuators/dc_motors.h:
 controller/algorithm/governer.h:
 controller/actuators/fan_control.h:
+controller/utils/trigger_simulator.h:
+controller/utils/utils.h:
+controller/config_and_runtime.h:
