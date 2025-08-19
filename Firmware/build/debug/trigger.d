@@ -44,9 +44,9 @@ build/debug/trigger.o: controller/engine_cycle/trigger.c \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- controller/controller.h controller/types.h controller/utils/comms.h \
  controller/config_and_runtime.h controller/constants.h \
- controller/tables.h controller/engine_cycle/trigger.h \
+ controller/types.h controller/tables.h controller/controller.h \
+ controller/utils/comms.h controller/engine_cycle/trigger.h \
  controller/actuators/dc_motors.h controller/IO/sensors.h \
  controller/IO/analog_inputs.h controller/utils/utils.h \
  controller/IO/resistor.h controller/IO/thermistor.h \
@@ -109,12 +109,12 @@ Core/Inc/main.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
-controller/controller.h:
-controller/types.h:
-controller/utils/comms.h:
 controller/config_and_runtime.h:
 controller/constants.h:
+controller/types.h:
 controller/tables.h:
+controller/controller.h:
+controller/utils/comms.h:
 controller/engine_cycle/trigger.h:
 controller/actuators/dc_motors.h:
 controller/IO/sensors.h:

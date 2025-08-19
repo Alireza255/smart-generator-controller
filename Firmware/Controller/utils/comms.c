@@ -253,6 +253,7 @@ void process_command(uint8_t *request, uint16_t size)
         break;
     case TS_CRC_CHECK_COMMAND:
         uint32_t page_crc = crc32_inc(0, (uint8_t *)&config, sizeof(config));
+        page_crc = swap_endian_uint32(page_crc);
         send_response(TS_RESPONSE_OK, (uint8_t *)&page_crc, sizeof(page_crc), TS_CRC);
         return;
         break;
@@ -299,7 +300,7 @@ void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count)
 	{
 		return;
 	}
-
+    
 	send_response(TS_RESPONSE_OK, (uint8_t*)&config + offset, count, TS_CRC);
 }
 

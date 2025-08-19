@@ -31,7 +31,6 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -89,11 +88,8 @@ const osThreadAttr_t sensor_task_attributes = {
 };
 /* Definitions for engine_flags */
 osEventFlagsId_t engine_flagsHandle;
-osStaticEventGroupDef_t engine_flagsControlBlock;
 const osEventFlagsAttr_t engine_flags_attributes = {
-  .name = "engine_flags",
-  .cb_mem = &engine_flagsControlBlock,
-  .cb_size = sizeof(engine_flagsControlBlock),
+  .name = "engine_flags"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -295,9 +291,7 @@ void sensors_task(void *argument)
   for(;;)
   {
     osDelay(1);
-    runtime.clt_degc = sensor_clt_get();
-    runtime.iat_degc = sensor_iat_get();
-    runtime.oil_pressure_ok = sensor_ops_get();
+
     //runtime.map_kpa = sensor_map_get();
   }
   /* USER CODE END sensors_task */

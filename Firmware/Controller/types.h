@@ -82,41 +82,6 @@ typedef uint16_t pwm_freq_t;
 #define CONVERSION_FACTOR_DAYS_TO_SECONDS (CONVERSION_FACTOR_DAYS_TO_HOURS * CONVERSION_FACTOR_HOURS_TO_SECONDS)
 #define CONVERSION_FACTOR_MILLISECONDS_TO_MICROSECONDS 1000
 
-typedef enum
-{
-    STATUS_CRITICAL_ERROR = 0,
-    STATUS_CHECK_ENGINE = 1,
-    STATUS_WARNING = 2,
-    STATUS_TRIGGER1_SYNCED = 3,
-    STATUS_TRIGGER2_SYNCED = 4,
-    STATUS_TRIGGER_ERROR = 5,
-    STATUS_FAN1_ON = 6,
-    STATUS_FAN2_ON = 7,
-    STATUS_NEED_BURN = 8,
-    STATUS_MAIN_RELAY_ON = 9,
-    STATUS_GAS_SOLENOID_ON = 10,
-    STATUS_FUEL_PUMP_ON = 11,
-    STATUS_O2_HEATER_ON = 12,
-    STATUS_TPS1_ERROR = 13,
-    STATUS_TPS2_ERROR = 14,
-    STATUS_MAP_ERROR = 15,
-    STATUS_CLT_ERROR = 16,
-    STATUS_IAT_ERROR = 17,
-    STATUS_IGNITION_ERROR = 18,
-    STATUS_INJECTOR_ERROR = 19,
-    STATUS_REV_LIMIT_IGNITION = 20,
-    STATUS_REV_LIMIT_ETB = 21,
-    STATUS_ETB1_OK = 22,
-    STATUS_ETB2_OK = 23,
-    STATUS_FUEL_PRESSURE_LOW_GAS = 24,
-    STATUS_FUEL_PRESSURE_LOW_PETROL = 25,
-    STATUS_CRANKING = 26,
-    STATUS_RUNNING = 27,
-    STATUS_RESERVED1 = 28,
-    STATUS_RESERVED2 = 29,
-    STATUS_RESERVED3 = 30,
-    STATUS_RESERVED4 = 31
-} status_t;
 
 typedef struct
 {
@@ -229,7 +194,8 @@ typedef enum __attribute__((__packed__))
     /**
      * Normal 4 cylinder firing order
      */
-    FO_1342,
+    FO_1342 = 0,
+    FO_153624 = 1,
 } firing_order_e;
 
 typedef enum __attribute__((__packed__))
@@ -249,5 +215,8 @@ typedef enum __attribute__((__packed__))
     SENSOR_CLT_TYPE_TEST,
     SENSOR_CLT_TYPE_NISSAN,
 } sensor_clt_type_t;
+
+
+
 
 #endif // TYPES_H

@@ -256,14 +256,14 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     PA7     ------> ADC1_IN7
     PC4     ------> ADC1_IN14
     */
-    GPIO_InitStruct.Pin = SENSOR_EGT_PIN_Pin|ETB1_SENSE1_Pin|ETB1_SENSE2_Pin|ETB2_SENSE1_Pin
-                          |AD_INPUT_3_Pin;
+    GPIO_InitStruct.Pin = AD_INPUT1_PIN_Pin|AD_INPUT2_PIN_Pin|AD_INPUT3_PIN_Pin|AD_INPUT4_PIN_Pin
+                          |VBAT_SENSE_PIN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = ETB2_SENSE2_Pin|SENSOR_MAP_PIN_Pin|SENSOR_IAT_PIN_Pin|SENSOR_CLT_PIN_Pin
-                          |SENSOR_OIL_PIN_Pin|VBAT_SENSE_PIN_Pin|AD_INPUT_1_Pin|AD_INPUT_2_Pin;
+    GPIO_InitStruct.Pin = ETB1_SENSE1_Pin|ETB1_SENSE2_Pin|ETB2_SENSE1_Pin|ETB2_SENSE2_Pin
+                          |SENSOR_MAP_PIN_Pin|SENSOR_IAT_PIN_Pin|SENSOR_CLT_PIN_Pin|SENSOR_OIL_PIN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -319,11 +319,11 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     PA7     ------> ADC1_IN7
     PC4     ------> ADC1_IN14
     */
-    HAL_GPIO_DeInit(GPIOC, SENSOR_EGT_PIN_Pin|ETB1_SENSE1_Pin|ETB1_SENSE2_Pin|ETB2_SENSE1_Pin
-                          |AD_INPUT_3_Pin);
+    HAL_GPIO_DeInit(GPIOC, AD_INPUT1_PIN_Pin|AD_INPUT2_PIN_Pin|AD_INPUT3_PIN_Pin|AD_INPUT4_PIN_Pin
+                          |VBAT_SENSE_PIN_Pin);
 
-    HAL_GPIO_DeInit(GPIOA, ETB2_SENSE2_Pin|SENSOR_MAP_PIN_Pin|SENSOR_IAT_PIN_Pin|SENSOR_CLT_PIN_Pin
-                          |SENSOR_OIL_PIN_Pin|VBAT_SENSE_PIN_Pin|AD_INPUT_1_Pin|AD_INPUT_2_Pin);
+    HAL_GPIO_DeInit(GPIOA, ETB1_SENSE1_Pin|ETB1_SENSE2_Pin|ETB2_SENSE1_Pin|ETB2_SENSE2_Pin
+                          |SENSOR_MAP_PIN_Pin|SENSOR_IAT_PIN_Pin|SENSOR_CLT_PIN_Pin|SENSOR_OIL_PIN_Pin);
 
     /* ADC1 DMA DeInit */
     HAL_DMA_DeInit(adcHandle->DMA_Handle);

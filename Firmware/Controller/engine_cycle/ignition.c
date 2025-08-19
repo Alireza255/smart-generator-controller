@@ -4,7 +4,7 @@ controller_output_pin_t *ignition_outputs = NULL;
 
 volatile ignition_coil_state_t ignition_coil_state[FIRMWARE_IGNITION_OUTPUT_COUNT] = {0};
 
-uint8_t ignition_order[FIRMWARE_IGNITION_OUTPUT_COUNT] = {0};
+uint8_t ignition_order[FIRMWARE_LIMIT_NUMBER_OF_CYLINDERS_MAX] = {0};
 
 static volatile bool spark_is_in_progress = false;
 
@@ -21,18 +21,74 @@ void ignition_init(controller_output_pin_t *outputs)
 
     switch (config.firing_order)
     {
-    case FO_1342:
+    case FO_1342: // Common inline-4
         number_of_cylinders = 4;
-        ignition_order[0] = 1;
-        ignition_order[1] = 3;
-        ignition_order[2] = 4;
-        ignition_order[3] = 2;
+        switch (config.ignition_mode)
+        {
+        case IM_ONE_COIL:
+            ignition_order[0] = 1;
+            ignition_order[1] = 1;
+            ignition_order[2] = 1;
+            ignition_order[3] = 1;
+            break;
+        case IM_WASTED_SPARK:
+            ignition_order[0] = 1;
+            ignition_order[1] = 2;
+            ignition_order[2] = 2;
+            ignition_order[3] = 1;
+            break;
+        case IM_INDIVIDUAL_COILS:
+            ignition_order[0] = 1;
+            ignition_order[1] = 3;
+            ignition_order[2] = 4;
+            ignition_order[3] = 2;
+            break;
+
+        default:
+            log_error("ignition init failed. unkown mode.");
+            return;
+        }
+
         break;
+    case FO_153624: // Common inline-6
+        number_of_cylinders = 6;
+        switch (config.ignition_mode)
+        {
+        case IM_ONE_COIL:
+            ignition_order[0] = 1;
+            ignition_order[1] = 1;
+            ignition_order[2] = 1;
+            ignition_order[3] = 1;
+            ignition_order[4] = 1;
+            ignition_order[5] = 1;
+            break;
+        case IM_WASTED_SPARK:
+            ignition_order[0] = 1;
+            ignition_order[1] = 2;
+            ignition_order[2] = 3;
+            ignition_order[3] = 3;
+            ignition_order[4] = 2;
+            ignition_order[5] = 1;
+            break;
+        case IM_INDIVIDUAL_COILS:
+            config.ignition_mode = IM_WASTED_SPARK;
+            ignition_order[0] = 1;
+            ignition_order[1] = 2;
+            ignition_order[2] = 3;
+            ignition_order[3] = 3;
+            ignition_order[4] = 2;
+            ignition_order[5] = 1;
+            log_warning("Coil on plug igntion not possible with 6 cylinders. Defaulted to wasted spark");
+            break;
+
+        default:
+            log_error("ignition init failed. unkown mode.");
+            return;
+        }
 
     default:
         log_error("ignition init failed. unkown firing order.");
         return;
-        break;
     }
 
     runtime.firing_interval_deg = (angle_t)720 / (angle_t)number_of_cylinders;
@@ -91,13 +147,16 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
     bool is_cam_phase_available = false;
 
     angle_t spark_advance = 0;
+
 #ifdef TEST_MODE
     spark_advance = (angle_t)30;
 #else
-    spark_advance = spark_logic_get_advance();
+    spark_advance = ignition_get_advance();
+    runtime.ignition_advance_deg = spark_advance;
 #endif
 
     spark_advance = CLAMP(spark_advance, IGNITION_MIN_ADVANCE, IGNITION_MAX_ADVANCE);
+    runtime.dwell_actual = config.ignition_dwell;
 
     /* First we have to detect the engine phase */
     uint8_t phase = (uint8_t)(crankshaft_angle / runtime.firing_interval_deg);
@@ -116,7 +175,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
         next_firing_cylinders[1] = ignition_order[phase + 2] - 1;
     }
 
-    bool is_synced = runtime.trigger_sync_status == TS_FULLY_SYNCED;
+    bool is_synced = get_bit(runtime.status, STATUS_TRIGGER1_SYNCED);
 
     if (is_synced && (next_dwell_angle - crankshaft_angle) < 10 && !spark_is_in_progress && (next_dwell_angle - crankshaft_angle) > 0)
     {
@@ -133,7 +192,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
             runtime.multi_spark_actual_spark_count = number_of_scheduled_sparks;
             return;
         }
-        
+
         while (number_of_scheduled_sparks < config.multi_spark_number_of_sparks)
         {
             if (rpm > config.multi_spark_rpm_threshold)
@@ -150,16 +209,20 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
             spark_start_time_us += duration_of_spark_and_dwell;
 
             // don't schedule events if there are no empty slots in the scheduler
-            if (!scheduler_schedule_event_with_arg(dwell_start_time_us, ignition_coil_begin_charge, (void *)next_firing_cylinders))
-            {
-                break;
-            }
             if (!scheduler_schedule_event_with_arg(spark_start_time_us, ignition_coil_fire_spark, (void *)next_firing_cylinders))
             {
+                // fire the spark right away to prevent ign coil damage
+                ignition_coil_fire_spark((void *)next_firing_cylinders);
+                break;
+            }
+            if (!scheduler_schedule_event_with_arg(dwell_start_time_us, ignition_coil_begin_charge, (void *)next_firing_cylinders))
+            {
+
                 break;
             }
             number_of_scheduled_sparks++;
         }
+        spark_is_in_progress = true;
         runtime.multi_spark_actual_spark_count = number_of_scheduled_sparks;
     }
 }

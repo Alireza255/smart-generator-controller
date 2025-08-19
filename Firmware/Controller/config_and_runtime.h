@@ -68,11 +68,6 @@ typedef struct
 
     /* ---------- uint16_t arrays and scalars (2-byte aligned) ---------- */
 
-    uint16_t ve_rpm_bins[TABLE_PRIMARY_SIZE_X];
-    uint16_t ve_load_bins[TABLE_PRIMARY_SIZE_X];
-
-    uint16_t ign_rpm_bins[TABLE_PRIMARY_SIZE_X];
-    uint16_t ign_load_bins[TABLE_PRIMARY_SIZE_X];
 
     uint16_t rpm_limiter;
     uint16_t engine_displacement_cc;
@@ -118,15 +113,19 @@ typedef struct
 
     uint8_t fan1_enabled;
     uint8_t fan2_enabled;
-
+    uint8_t tps1_type;
+    uint8_t tps2_type;
+    uint8_t _padding[3];
 } config_t;
+
+
 typedef struct
 {
     /* ---------- uint32_t (4 bytes) ---------- */
     uint32_t status;             // add current fuel type indicators too
     uint32_t sync_loss_counter;
     uint32_t total_revolutions;
-
+    uint32_t seconds;
     /* ---------- float (4 bytes) ---------- */
     float crankshaft_angle;
     float camshaft_angle;
@@ -140,18 +139,54 @@ typedef struct
     float baro_kpa;
     float clt_degc;
     float iat_degc;
+    float egt_degc;
     float lambda;
     float vbatt_volts;
     float dwell_actual;
 
     /* ---------- uint8_t (1 byte) ---------- */
-    uint8_t trigger_sync_status;
     uint8_t spinning_state;
     uint8_t governer_status;
-    uint8_t oil_pressure_ok;
     uint8_t multi_spark_actual_spark_count;
-    uint8_t __padding[3];
+    uint8_t __padding[1];
 } runtime_t;
+
+typedef enum
+{
+    STATUS_CRITICAL_ERROR = 0,
+    STATUS_CHECK_ENGINE = 1,
+    STATUS_WARNING = 2,
+    STATUS_TRIGGER1_SYNCED = 3,
+    STATUS_TRIGGER2_SYNCED = 4,
+    STATUS_TRIGGER_ERROR = 5,
+    STATUS_FAN1_ON = 6,
+    STATUS_FAN2_ON = 7,
+    STATUS_NEED_BURN = 8,
+    STATUS_MAIN_RELAY_ON = 9,
+    STATUS_GAS_SOLENOID_ON = 10,
+    STATUS_FUEL_PUMP_ON = 11,
+    STATUS_O2_HEATER_ON = 12,
+    STATUS_TPS1_ERROR = 13,
+    STATUS_TPS2_ERROR = 14,
+    STATUS_MAP_ERROR = 15,
+    STATUS_CLT_ERROR = 16,
+    STATUS_IAT_ERROR = 17,
+    STATUS_IGNITION_ERROR = 18,
+    STATUS_INJECTOR_ERROR = 19,
+    STATUS_REV_LIMIT_IGNITION = 20,
+    STATUS_REV_LIMIT_ETB = 21,
+    STATUS_ETB1_OK = 22,
+    STATUS_ETB2_OK = 23,
+    STATUS_FUEL_PRESSURE_LOW_GAS = 24,
+    STATUS_FUEL_PRESSURE_LOW_PETROL = 25,
+    STATUS_CRANKING = 26,
+    STATUS_RUNNING = 27,
+    STATUS_RESERVED1 = 28,
+    STATUS_RESERVED2 = 29,
+    STATUS_RESERVED3 = 30,
+    STATUS_RESERVED4 = 31
+} status_t;
+
 
 extern config_t config;
 extern runtime_t runtime;

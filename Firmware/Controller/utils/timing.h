@@ -5,7 +5,7 @@
 #include "tim.h"
 
 /* Maximum number of events that can be scheduled at any time*/
-#define SCHEDULER_MAX_EVENTS 50
+#define SCHEDULER_MAX_EVENTS 100
 
 typedef enum
 {

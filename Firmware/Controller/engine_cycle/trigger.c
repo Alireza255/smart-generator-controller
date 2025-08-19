@@ -57,10 +57,10 @@ void trigger_init(trigger_t *trigger, trigger_wheel_type_t wheel_type, uint8_t *
 
   switch (trigger_number)
   {
-  case 0:
+  case 1:
     trigger->status_synced_index = STATUS_TRIGGER1_SYNCED;
     break;
-  case 1:
+  case 2:
     trigger->status_synced_index = STATUS_TRIGGER2_SYNCED;
     break;
   default:
@@ -167,15 +167,15 @@ void trigger_tooth_handle(trigger_t *trigger)
   runtime.crankshaft_angle = 360.0f / (angle_t)trigger->_full_teeth * (angle_t)trigger->_counted_tooth;
   runtime.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SECONDS / trigger->_shorter_tooth_gap / trigger->_full_teeth);
 
-  if (get_bit(runtime.status, trigger->status_synced_index) == TS_FULLY_SYNCED && runtime.rpm >= config.cranking_rpm_threshold)
+  if (get_bit(runtime.status, STATUS_TRIGGER1_SYNCED) == TS_FULLY_SYNCED && runtime.rpm >= config.cranking_rpm_threshold)
   {
     runtime.spinning_state = SS_RUNNING;
   }
-  else if (get_bit(runtime.status, trigger->status_synced_index) == TS_FULLY_SYNCED && runtime.rpm < config.cranking_rpm_threshold)
+  else if (get_bit(runtime.status, STATUS_TRIGGER1_SYNCED) == TS_FULLY_SYNCED && runtime.rpm < config.cranking_rpm_threshold)
   {
     runtime.spinning_state = SS_CRANKING;
   }
-  else if (get_bit(runtime.status, trigger->status_synced_index) == TS_NOT_SYNCED)
+  else if (get_bit(runtime.status, STATUS_TRIGGER1_SYNCED) == TS_NOT_SYNCED)
   {
     runtime.spinning_state = SS_SPINNING_UP;
   }

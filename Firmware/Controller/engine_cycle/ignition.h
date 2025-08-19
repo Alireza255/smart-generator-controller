@@ -7,7 +7,7 @@
 #include "stm32f4xx_hal.h"
 #include "sensors.h"
 
-#define TEST_MODE
+//#define TEST_MODE
 
 #define IGNITION_MIN_DWELL_TIME_MS 0.5f
 #define IGNITION_MAX_DWELL_TIME_MS 4.0f

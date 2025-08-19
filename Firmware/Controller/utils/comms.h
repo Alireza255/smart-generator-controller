@@ -14,7 +14,7 @@
  */
 
 // ==================== Configuration ====================
-#define TS_PAGE_SIZE 2360
+#define TS_PAGE_SIZE 4792
 
 #define TS_BLOCKING_FACTOR 1024 // same blocking factor defined in the .ini file
 #define TS_TABLE_BLOCKING_FACTOR 1024 
@@ -43,6 +43,7 @@
 #define TS_TRIGGER_SCOPE_ENABLE 4
 #define TS_TRIGGER_SCOPE_READ 6
 #define TS_BLOCK_READ_TIMEOUT 3000
+#define TS_RESPONSE_BURN_OK 0x04
 
 #define ts_cic_idle false
 #define ts_command_e_TS_BENCH_CATEGORY 22
@@ -126,7 +127,6 @@
 #define TS_QUERY_COMMAND_char Q
 #define TS_READ_COMMAND 'r'
 #define TS_READ_COMMAND_char r
-#define TS_RESPONSE_BURN_OK 4
 #define TS_RESPONSE_CRC_FAILURE 0x82
 #define TS_RESPONSE_FRAMING_ERROR 0x8D
 #define TS_RESPONSE_OK 0
@@ -164,9 +164,5 @@ extern osMessageQueueId_t usb_rx_queue;
 void comms_init();
 void comms_task(void *argument);
 void process_command(uint8_t *cmd, uint16_t len);
-void write_calibration_page(void);
-void read_calibration_data(uint16_t offset, uint16_t len);
-void write_calibration_data(uint16_t offset, uint8_t *data, uint16_t len);
-void runtime_update_task(void *argument);
 
 #endif // COMMS_H

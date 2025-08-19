@@ -45,7 +45,9 @@ build/debug/trigger_simulator.o: controller/utils/trigger_simulator.c \
  USB_DEVICE/Target/usbd_conf.h Core/Inc/main.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
+ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
+ controller/config_and_runtime.h controller/constants.h \
+ controller/types.h controller/tables.h
 controller/utils/trigger_simulator.h:
 controller/types.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -101,3 +103,7 @@ Core/Inc/main.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
+controller/config_and_runtime.h:
+controller/constants.h:
+controller/types.h:
+controller/tables.h:

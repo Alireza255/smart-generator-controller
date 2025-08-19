@@ -3,7 +3,9 @@
 config_t config = {0};
 runtime_t runtime = {0};
 
+void controller_sensor_task(void *arg);
 void controller_test_task(void *arg);
+void controller_long_routines_task(void *arg);
 
 static sensor_tps_t tps1 = {
     .analog_channel = ANALOG_INPUT_ETB1_SENSE1,
@@ -30,10 +32,10 @@ static sensor_map_t sensor_map = {0};
 static sensor_ops_t sensor_ops = {0};
 
 static controller_output_pin_t injector_ouput_pins[FIRMWARE_INJECTOR_OUPUT_COUNT] = {
-    {.gpio = INJECTOR_OUPUT_1_GPIO_Port, .pin = INJECTOR_OUPUT_1_Pin},
-    {.gpio = INJECTOR_OUPUT_2_GPIO_Port, .pin = INJECTOR_OUPUT_2_Pin},
-    {.gpio = INJECTOR_OUPUT_3_GPIO_Port, .pin = INJECTOR_OUPUT_3_Pin},
-    {.gpio = INJECTOR_OUPUT_4_GPIO_Port, .pin = INJECTOR_OUPUT_4_Pin}};
+    {.gpio = INJECTOR_OUTPUT_1_GPIO_Port, .pin = INJECTOR_OUTPUT_1_Pin},
+    {.gpio = INJECTOR_OUTPUT_2_GPIO_Port, .pin = INJECTOR_OUTPUT_2_Pin},
+    {.gpio = INJECTOR_OUTPUT_3_GPIO_Port, .pin = INJECTOR_OUTPUT_3_Pin},
+    {.gpio = INJECTOR_OUTPUT_4_GPIO_Port, .pin = INJECTOR_OUTPUT_4_Pin}};
 static controller_output_pin_t ignition_output_pins[FIRMWARE_IGNITION_OUTPUT_COUNT] = {
     {.gpio = IGNITION_OUTPUT_1_GPIO_Port, .pin = IGNITION_OUTPUT_1_Pin},
     {.gpio = IGNITION_OUTPUT_2_GPIO_Port, .pin = IGNITION_OUTPUT_2_Pin},
@@ -53,9 +55,9 @@ void controller_load_test_configuration()
   config.cranking_advance = 8.0f;
   config.cranking_throttle = 10.0f;
 
-  config.ignition_dwell = 1.0f;
+  config.ignition_dwell = 2.0f;
   config.multi_spark_rpm_threshold = 3500.0f;
-  config.multi_spark_rest_time_ms = 0.5f;
+  config.multi_spark_rest_time_ms = 1.0f;
   config.multi_spark_max_trailing_angle = 15.0f;
 
   // Stoichiometric AFRs
@@ -110,8 +112,8 @@ void controller_load_test_configuration()
   // Firing order, fuel type, triggers
   config.firing_order = FO_1342;
   config.fuel_type = FUEL_TYPE_GAS;
-  config.trigger1_type = 0; // e.g. TRIGGER_TYPE_60_2
-  config.trigger1_filtering = TRIGGER_FILTERING_NONE;
+  config.trigger1_type = TW_58_TOOTH_2_MISSING; // e.g. TRIGGER_TYPE_60_2
+  config.trigger1_filtering = TRIGGER_FILTERING_LITE;
   config.trigger2_type = 0;
   config.trigger2_filtering = 0;
   config.trigger2_enabled = 0;
@@ -142,6 +144,39 @@ void controller_load_test_configuration()
 
   config.fan1_enabled = 1;
   config.fan2_enabled = 0;
+
+  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_X; i++)
+  {
+    config.ve_table_1.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+    config.ve_table_2.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+    config.ign_table_1.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+    config.ign_table_2.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+  }
+  
+  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_Y; i++)
+  {
+    config.ve_table_1.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+    config.ve_table_2.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+    config.ign_table_1.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+    config.ign_table_2.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+  }
+  const float table_init_data = 16;
+
+  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_X; i++)
+  {
+    for (size_t j = 0; j < TABLE_PRIMARY_SIZE_Y; j++)
+    {
+      config.ve_table_1.data[i][j] = table_init_data;
+      config.ve_table_2.data[i][j] = table_init_data;
+      config.ign_table_1.data[i][j] = table_init_data;
+      config.ign_table_2.data[i][j] = table_init_data;
+      
+    }
+    
+  }
+  
+  
+  
 }
 
 void controller_init_with_defaults()
@@ -160,8 +195,6 @@ void controller_init_with_defaults()
 
   trigger_init(&trigger1, config.trigger1_type, &config.trigger1_filtering, STATUS_TRIGGER1_SYNCED, 1);
 
-  // comms_init();
-
   /* Initialize analog sensors BEGIN*/
   /* TPS */
   dc_motor_init_simple_Hbridge(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_3, TIM_CHANNEL_4, 25000);
@@ -179,7 +212,7 @@ void controller_init_with_defaults()
   sensor_map_init(&sensor_map, config.sensor_map_type);
 
   /* OPS */
-  sensor_ops_init(&sensor_ops);
+  //sensor_ops_init(&sensor_ops);
 
   /* Initialize analog sensors END*/
 
@@ -196,9 +229,25 @@ void controller_init_with_defaults()
   const osThreadAttr_t controller_test_attr = {
       .name = "test_task",
       .stack_size = 1024,
+      .priority = osPriorityRealtime,
+  };
+  const osThreadAttr_t controller_sensor_task_attr = {
+      .name = "sensor_task",
+      .stack_size = 1024,
+      .priority = osPriorityAboveNormal,
+  };
+  
+  const osThreadAttr_t controller_long_routines_attr = {
+      .name = "sensor_task",
+      .stack_size = 128,
       .priority = osPriorityNormal,
   };
+  
+  
   osThreadNew(controller_test_task, NULL, &controller_test_attr);
+  osThreadNew(controller_sensor_task, NULL, &controller_sensor_task_attr);
+  osThreadNew(controller_long_routines_task, NULL, &controller_long_routines_attr);
+  
 }
 
 void controller_load_configuration()
@@ -209,6 +258,37 @@ void controller_save_configuration()
 {
 }
 
+void controller_long_routines_task(void *arg)
+{
+  //uint32_t next_routine_time_ticks = 1000;
+  for (;;)
+  {
+    runtime.seconds = get_time_ms() / 1000;
+
+
+
+
+
+    osDelay(1000);
+    //next_routine_time_ticks += 1000;
+    //osDelayUntil(next_routine_time_ticks);
+  }
+  
+}
+
+void controller_sensor_task(void *arg)
+{
+  for (;;)
+  {
+    runtime.tps1 = sensor_tps_get(&tps1);
+    runtime.clt_degc = sensor_clt_get();
+    runtime.iat_degc = sensor_iat_get();
+    //runtime.map_kpa = sensor_map_get();
+    //runtime.oil_pressure_ok = sensor_ops_get();
+    osDelay(1);
+  }
+  
+}
 void controller_test_task(void *arg)
 {
   osDelay(100);
@@ -216,8 +296,8 @@ void controller_test_task(void *arg)
   static rpm_t simulated_rpm = 1000;
   for (;;)
   {
-    simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
-    //simulated_rpm = 500;
+    //simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
+    simulated_rpm = 500;
     trigger_simulator_update(simulated_rpm);
     osDelay(1);
 

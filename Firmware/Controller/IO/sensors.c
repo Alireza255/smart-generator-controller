@@ -58,8 +58,8 @@ void sensor_map_init(sensor_map_t *sensor, sensor_map_type_t type)
         /**
          * @todo actually calculate these values!
          */
-        sensor->adc_value_0_bar = 100;
-        sensor->adc_value_1_bar = 3000;
+        sensor->adc_value_0_bar = 0;
+        sensor->adc_value_1_bar = 4095;
         sensor->analog_channel = ANALOG_INPUT_SENSOR_MAP_PIN;
         break;
     
@@ -86,7 +86,7 @@ pressure_t sensor_map_get()
 
     result = mapf((float)raw_adc_value, (float)map_sensor->adc_value_0_bar, (float)map_sensor->adc_value_1_bar, (pressure_t)0, (pressure_t)100);
 
-    if (IS_IN_RANGE(result, (pressure_t)0, FIRMWARE_LIMIT_MAX_MAP))
+    if (!IS_IN_RANGE(result, (pressure_t)0, FIRMWARE_LIMIT_MAX_MAP))
     {
         log_error("map sensor out of range!");
         return SENSOR_MAP_FAIL_SAFE;

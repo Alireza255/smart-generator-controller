@@ -5,6 +5,7 @@
 #include "types.h"
 #include "cmsis_os2.h"
 #include "error_handling.h"
+#include "config_and_runtime.h"
 
 typedef enum
 {
