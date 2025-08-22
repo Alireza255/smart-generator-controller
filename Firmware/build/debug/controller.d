@@ -56,7 +56,7 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/actuators/fan_control.h \
  controller/utils/trigger_simulator.h controller/utils/utils.h \
- controller/config_and_runtime.h
+ controller/config_and_runtime.h controller/utils/ee.h
 controller/controller.h:
 controller/utils/timing.h:
 controller/types.h:
@@ -135,3 +135,4 @@ controller/actuators/fan_control.h:
 controller/utils/trigger_simulator.h:
 controller/utils/utils.h:
 controller/config_and_runtime.h:
+controller/utils/ee.h:

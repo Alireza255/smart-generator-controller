@@ -47,7 +47,10 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  Core/Inc/adc.h Core/Inc/main.h Core/Inc/crc.h Core/Inc/dma.h \
  Core/Inc/i2c.h Core/Inc/tim.h USB_DEVICE/App/usb_device.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- USB_DEVICE/Target/usbd_conf.h Core/Inc/gpio.h \
+ USB_DEVICE/Target/usbd_conf.h Core/Inc/gpio.h controller/controller.h \
+ controller/utils/timing.h controller/types.h controller/types.h \
+ controller/utils/comms.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  USB_DEVICE/App/usbd_cdc_if.h \
  Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
@@ -55,9 +58,6 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- controller/controller.h controller/utils/timing.h controller/types.h \
- controller/types.h controller/utils/comms.h \
- Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  controller/config_and_runtime.h controller/constants.h \
  controller/tables.h controller/engine_cycle/trigger.h \
  controller/utils/error_handling.h controller/actuators/dc_motors.h \
@@ -69,7 +69,8 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h controller/algorithm/governer.h \
  controller/actuators/fan_control.h controller/utils/trigger_simulator.h \
- controller/utils/utils.h controller/config_and_runtime.h
+ controller/utils/utils.h controller/config_and_runtime.h \
+ controller/utils/ee.h
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -128,6 +129,12 @@ USB_DEVICE/App/usb_device.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 USB_DEVICE/Target/usbd_conf.h:
 Core/Inc/gpio.h:
+controller/controller.h:
+controller/utils/timing.h:
+controller/types.h:
+controller/types.h:
+controller/utils/comms.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 USB_DEVICE/App/usbd_cdc_if.h:
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
@@ -135,12 +142,6 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
-controller/controller.h:
-controller/utils/timing.h:
-controller/types.h:
-controller/types.h:
-controller/utils/comms.h:
-Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/config_and_runtime.h:
 controller/constants.h:
 controller/tables.h:
@@ -164,3 +165,4 @@ controller/actuators/fan_control.h:
 controller/utils/trigger_simulator.h:
 controller/utils/utils.h:
 controller/config_and_runtime.h:
+controller/utils/ee.h:

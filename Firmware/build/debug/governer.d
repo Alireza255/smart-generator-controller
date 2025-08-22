@@ -56,7 +56,8 @@ build/debug/governer.o: controller/algorithm/governer.c \
  controller/engine_cycle/ignition.h controller/IO/thermistor.h \
  Core/Inc/adc.h controller/algorithm/governer.h \
  controller/actuators/fan_control.h controller/utils/trigger_simulator.h \
- controller/utils/utils.h controller/config_and_runtime.h
+ controller/utils/utils.h controller/config_and_runtime.h \
+ controller/utils/ee.h
 controller/algorithm/governer.h:
 controller/actuators/electronic_throttle.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
@@ -135,3 +136,4 @@ controller/actuators/fan_control.h:
 controller/utils/trigger_simulator.h:
 controller/utils/utils.h:
 controller/config_and_runtime.h:
+controller/utils/ee.h:

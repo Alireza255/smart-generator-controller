@@ -1,9 +1,14 @@
 #ifndef ERROR_HANDLING_H
 #define ERROR_HANDLING_H
 
+#define ERROR_HANDLING_ENABLED true
+
+
 #include <stdio.h>
 #include <string.h>
+#if ERROR_HANDLING_ENABLED == true
 #include "usbd_cdc_if.h"
+#endif
 
 #define ERROR_HANDLING_BUFFER_SIZE 100
 

@@ -1,5 +1,6 @@
+#if COMMS_ENABLED == true
+
 #include "comms.h"
-#include "usbd_cdc_if.h"
 #include <string.h>
 #include "utils.h"
 #include "crc.h"
@@ -124,7 +125,7 @@ void comms_init(void)
     const osThreadAttr_t comms_task_attrs = {
         .name = "comms_task",
         .stack_size = 1024 * 4,
-        .priority = osPriorityNormal,
+        .priority = osPriorityHigh,
     };
     osThreadNew(comms_task, NULL, &comms_task_attrs);
 
@@ -281,7 +282,10 @@ void process_command(uint8_t *request, uint16_t size)
 
     case TS_BURN_COMMAND:
         // handle burn command and if it was ok, then send ok status
-        send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
+        if (controller_save_configuration())
+        {
+            send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
+        }
         return;
         break;
     default:
@@ -317,3 +321,4 @@ void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count)
 	
 }
 
+#endif

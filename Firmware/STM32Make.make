@@ -145,6 +145,7 @@ controller/engine_cycle/ignition.c \
 controller/engine_cycle/trigger.c \
 controller/tables.c \
 controller/utils/comms.c \
+controller/utils/ee.c \
 controller/utils/error_handling.c \
 controller/utils/pid.c \
 controller/utils/timing.c \

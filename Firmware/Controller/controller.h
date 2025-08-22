@@ -16,19 +16,18 @@
 #include "electronic_throttle.h"
 #include "adc.h"
 #include "governer.h"
-#include "comms.h"
 #include "fan_control.h"
 #include "trigger_simulator.h"
 #include "config_and_runtime.h"
-
+#include "ee.h"
 
 extern trigger_t trigger1;
 
-void controller_init_with_defaults();
+void controller_init();
 
 void controller_load_configuration();
 
-void controller_save_configuration();
+bool controller_save_configuration();
 
 void controller_load_test_configuration();
 

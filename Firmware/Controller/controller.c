@@ -44,13 +44,50 @@ static controller_output_pin_t ignition_output_pins[FIRMWARE_IGNITION_OUTPUT_COU
 
 trigger_t trigger1;
 
-
-
 void controller_load_test_configuration()
 {
-  // VE and ignition tables: zeroed by default, or set up as needed elsewhere
 
-  // Cranking & ignition floats
+  // ---------- VE & ignition tables (realistic torque curve + RPM/load) ----------
+  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_X; i++)
+  {
+    float rpm_factor = (float)i / (TABLE_PRIMARY_SIZE_X - 1); // 0..1 across RPM
+
+    // Approximate torque curve: peak around mid-RPM
+    float ve_rpm_scale = 0.8f * sinf(rpm_factor * 3.14159f) + 0.2f; // 0.2..1.0
+
+    for (size_t j = 0; j < TABLE_PRIMARY_SIZE_Y; j++)
+    {
+      float map_factor = (float)j / (TABLE_PRIMARY_SIZE_Y - 1); // 0..1 across MAP/load
+
+      // VE table: scales with torque curve and load
+      config.ve_table_1.data[i][j] = 20.0f + 70.0f * ve_rpm_scale * map_factor;
+      config.ve_table_2.data[i][j] = 20.0f + 70.0f * ve_rpm_scale * map_factor;
+
+      // Ignition table: base 10° at idle, +20° with RPM, -10° with load
+      config.ign_table_1.data[i][j] = 10.0f + 20.0f * rpm_factor - 10.0f * map_factor;
+      config.ign_table_2.data[i][j] = 10.0f + 20.0f * rpm_factor - 10.0f * map_factor;
+    }
+  }
+
+  // x_bins: RPM axis
+  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_X; i++)
+  {
+    config.ve_table_1.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+    config.ve_table_2.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+    config.ign_table_1.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+    config.ign_table_2.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
+  }
+
+  // y_bins: MAP/load axis
+  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_Y; i++)
+  {
+    config.ve_table_1.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+    config.ve_table_2.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+    config.ign_table_1.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+    config.ign_table_2.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
+  }
+
+  // ---------- Cranking & ignition floats ----------
   config.cranking_rpm_threshold = 400.0f;
   config.cranking_advance = 8.0f;
   config.cranking_throttle = 10.0f;
@@ -60,11 +97,11 @@ void controller_load_test_configuration()
   config.multi_spark_rest_time_ms = 1.0f;
   config.multi_spark_max_trailing_angle = 15.0f;
 
-  // Stoichiometric AFRs
+  // ---------- Stoichiometric AFRs ----------
   config.stoich_afr_gas = 14.7f;
   config.stoich_afr_petrol = 14.7f;
 
-  // Governer (PID) floats
+  // ---------- Governer (PID) floats ----------
   config.governer_target_rpm = 1500.0f;
   config.governer_idle_rpm = 850.0f;
   config.governer_pid_Kp = 10.0f;
@@ -74,7 +111,7 @@ void controller_load_test_configuration()
   config.governer_pid_limit_integrator_max = 100.0f;
   config.governer_pid_derivative_filter_tau = 0.1f;
 
-  // ETB1 PID floats
+  // ---------- ETB1 PID floats ----------
   config.etb1_pid_Kp = 20.0f;
   config.etb1_pid_Ki = 1.0f;
   config.etb1_pid_Kd = 0.0f;
@@ -82,7 +119,7 @@ void controller_load_test_configuration()
   config.etb1_pid_limit_integrator_max = 255.0f;
   config.etb1_pid_derivative_filter_tau = 0.1f;
 
-  // ETB2 PID floats
+  // ---------- ETB2 PID floats ----------
   config.etb2_pid_Kp = 20.0f;
   config.etb2_pid_Ki = 1.0f;
   config.etb2_pid_Kd = 0.0f;
@@ -90,7 +127,7 @@ void controller_load_test_configuration()
   config.etb2_pid_limit_integrator_max = 255.0f;
   config.etb2_pid_derivative_filter_tau = 0.1f;
 
-  // Protection & fan floats
+  // ---------- Protection & fan floats ----------
   config.protection_clt_shutdown_temprature = 110.0f;
   config.protection_clt_load_disconnect_temprature = 100.0f;
 
@@ -99,8 +136,7 @@ void controller_load_test_configuration()
   config.fan2_on_temp = 100.0f;
   config.fan2_off_temp = 95.0f;
 
-  // RPM/load/ignition bins: can be set up elsewhere or left zeroed for now
-
+  // ---------- uint16_t scalars ----------
   config.rpm_limiter = 4000;
   config.engine_displacement_cc = 2400;
 
@@ -109,10 +145,10 @@ void controller_load_test_configuration()
   config.tps2_calib_wide_open_throttle_adc_value = 3000;
   config.tps2_calib_closed_throttle_adc_value = 1700;
 
-  // Firing order, fuel type, triggers
+  // ---------- uint8_t scalars and flags ----------
   config.firing_order = FO_1342;
   config.fuel_type = FUEL_TYPE_GAS;
-  config.trigger1_type = TW_58_TOOTH_2_MISSING; // e.g. TRIGGER_TYPE_60_2
+  config.trigger1_type = TW_58_TOOTH_2_MISSING;
   config.trigger1_filtering = TRIGGER_FILTERING_LITE;
   config.trigger2_type = 0;
   config.trigger2_filtering = 0;
@@ -121,8 +157,8 @@ void controller_load_test_configuration()
   config.number_of_injectors = 4;
   config.injection_mode = IM_SIMULTANEOUS;
 
-  config.ignition_mode = IM_WASTED_SPARK;
-  config.multi_spark_enabled = 1;
+  config.ignition_mode = IM_INDIVIDUAL_COILS;
+  config.multi_spark_enabled = 0;
   config.multi_spark_number_of_sparks = 5;
 
   config.tps1_calib_is_inverted = 0;
@@ -142,65 +178,50 @@ void controller_load_test_configuration()
   config.etb1_motor_inverted = 0;
   config.etb2_motor_inverted = 0;
 
-  config.fan1_enabled = 1;
+  config.fan1_enabled = 0;
   config.fan2_enabled = 0;
 
-  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_X; i++)
-  {
-    config.ve_table_1.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
-    config.ve_table_2.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
-    config.ign_table_1.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
-    config.ign_table_2.x_bins[i] = i * FIRMWARE_LIMIT_MAX_RPM / TABLE_PRIMARY_SIZE_X;
-  }
-  
-  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_Y; i++)
-  {
-    config.ve_table_1.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
-    config.ve_table_2.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
-    config.ign_table_1.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
-    config.ign_table_2.y_bins[i] = i * FIRMWARE_LIMIT_MAX_MAP / TABLE_PRIMARY_SIZE_Y;
-  }
-  const float table_init_data = 16;
+  config.tps1_type = 0;
+  config.tps2_type = 0;
 
-  for (size_t i = 0; i < TABLE_PRIMARY_SIZE_X; i++)
-  {
-    for (size_t j = 0; j < TABLE_PRIMARY_SIZE_Y; j++)
-    {
-      config.ve_table_1.data[i][j] = table_init_data;
-      config.ve_table_2.data[i][j] = table_init_data;
-      config.ign_table_1.data[i][j] = table_init_data;
-      config.ign_table_2.data[i][j] = table_init_data;
-      
-    }
-    
-  }
-  
-  
-  
+  // ---------- Padding ----------
+  config._padding[0] = 0;
+  config._padding[1] = 0;
+  config._padding[2] = 0;
+
+  // ---------- Checksum ----------
+  config.checksum = 0;
 }
 
-void controller_init_with_defaults()
+void controller_init()
 {
 
   /* Initialize engine stats to 0 */
   memset(&runtime, 0, sizeof(runtime));
+  memset(&config, 0, sizeof(config));
   
+  if (EE_Init(&config, sizeof(config_t)) != true)
+  {
+    controller_load_test_configuration();
+    log_error("Not able to init eeprom");
+  }
+  controller_load_configuration();
+  if (config.checksum != CONFIG_CHECKSUM) // check the data and if it is wrong, throw an error and load defaults-- add a better check
+  {
+    controller_load_test_configuration();
+    log_error("EEPROM data is invalid");
+  }
+  
+  //controller_load_test_configuration();
   /* Start controller timing */
   controller_timing_start(&htim2);
 
   /* Init analog inputs*/
   analog_inputs_init(&hadc1);
 
-  controller_load_test_configuration();
-
   trigger_init(&trigger1, config.trigger1_type, &config.trigger1_filtering, STATUS_TRIGGER1_SYNCED, 1);
 
   /* Initialize analog sensors BEGIN*/
-  /* TPS */
-  dc_motor_init_simple_Hbridge(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_3, TIM_CHANNEL_4, 25000);
-  pid_init(&etb1_pid);
-  electronic_throttle_init(&etb1, &etb1_pid, &tps1, &etb1_motor);
-  electronic_throttle_set(&etb1, 70);
 
   /* CLT */
   sensor_clt_init(&sensor_clt, config.sensor_clt_type);
@@ -212,7 +233,7 @@ void controller_init_with_defaults()
   sensor_map_init(&sensor_map, config.sensor_map_type);
 
   /* OPS */
-  //sensor_ops_init(&sensor_ops);
+  // sensor_ops_init(&sensor_ops);
 
   /* Initialize analog sensors END*/
 
@@ -224,7 +245,41 @@ void controller_init_with_defaults()
 
   ignition_init(ignition_output_pins);
 
+  // Electronic Throttle Body 1
+  if (config.etb1_enabled)
+  {
+    dc_motor_init(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 25000);
+    pid_init(&etb1_pid);
+    electronic_throttle_init(&etb1, &etb1_pid, &tps1, &etb1_motor);
+    electronic_throttle_set(&etb1, 0);
+
+    static osTimerId_t etb1_software_timer;
+    etb1_software_timer = osTimerNew(electronic_throttle_update, osTimerPeriodic, &etb1, NULL);
+    if (etb1_software_timer != NULL)
+    {
+      osTimerStart(etb1_software_timer, 1);
+    }
+    
+  }
+  if (config.etb2_enabled)
+  {
+    /*
+    dc_motor_init_simple_Hbridge(&etb2_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_3, TIM_CHANNEL_4, 25000);
+    pid_init(&etb2_pid);
+    electronic_throttle_init(&etb2, &etb2_pid, &tps2, &etb2_motor);
+    electronic_throttle_set(&etb2, 0);
+    
+    static osTimerId_t etb2_software_timer;
+    etb2_software_timer = osTimerNew(electronic_throttle_update, osTimerPeriodic, &etb2, NULL);
+    if (etb2_software_timer != NULL)
+    {
+      osTimerStart(etb2_software_timer, 1);
+    }
+    */
+  }
+
   comms_init();
+
 
   const osThreadAttr_t controller_test_attr = {
       .name = "test_task",
@@ -236,44 +291,47 @@ void controller_init_with_defaults()
       .stack_size = 1024,
       .priority = osPriorityAboveNormal,
   };
-  
+
   const osThreadAttr_t controller_long_routines_attr = {
-      .name = "sensor_task",
+      .name = "long_routines",
       .stack_size = 128,
       .priority = osPriorityNormal,
   };
-  
-  
-  osThreadNew(controller_test_task, NULL, &controller_test_attr);
+
+
   osThreadNew(controller_sensor_task, NULL, &controller_sensor_task_attr);
   osThreadNew(controller_long_routines_task, NULL, &controller_long_routines_attr);
-  
+  osThreadNew(controller_test_task, NULL, &controller_test_attr);
+
+
 }
 
 void controller_load_configuration()
 {
+  EE_Read();
+  // Validate loaded data (checksum)
 }
 
-void controller_save_configuration()
+bool controller_save_configuration()
 {
+  bool state = false;
+  config.checksum = CONFIG_CHECKSUM; // implement a proper checksum later
+  state = EE_Write();
+  return state;
 }
+
 
 void controller_long_routines_task(void *arg)
 {
-  //uint32_t next_routine_time_ticks = 1000;
+  // uint32_t next_routine_time_ticks = 1000;
   for (;;)
   {
     runtime.seconds = get_time_ms() / 1000;
-
-
-
-
-
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     osDelay(1000);
-    //next_routine_time_ticks += 1000;
-    //osDelayUntil(next_routine_time_ticks);
+    // next_routine_time_ticks += 1000;
+    // osDelayUntil(next_routine_time_ticks);
   }
-  
 }
 
 void controller_sensor_task(void *arg)
@@ -283,11 +341,10 @@ void controller_sensor_task(void *arg)
     runtime.tps1 = sensor_tps_get(&tps1);
     runtime.clt_degc = sensor_clt_get();
     runtime.iat_degc = sensor_iat_get();
-    //runtime.map_kpa = sensor_map_get();
-    //runtime.oil_pressure_ok = sensor_ops_get();
+    // runtime.map_kpa = sensor_map_get();
+    // runtime.oil_pressure_ok = sensor_ops_get();
     osDelay(1);
   }
-  
 }
 void controller_test_task(void *arg)
 {
@@ -296,7 +353,7 @@ void controller_test_task(void *arg)
   static rpm_t simulated_rpm = 1000;
   for (;;)
   {
-    //simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
+    // simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
     simulated_rpm = 500;
     trigger_simulator_update(simulated_rpm);
     osDelay(1);
@@ -321,4 +378,3 @@ void controller_test_task(void *arg)
     */
   }
 }
-

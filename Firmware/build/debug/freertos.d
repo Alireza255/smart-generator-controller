@@ -68,7 +68,7 @@ build/debug/freertos.o: Core/Src/freertos.c \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/actuators/fan_control.h \
  controller/utils/trigger_simulator.h controller/utils/utils.h \
- controller/config_and_runtime.h
+ controller/config_and_runtime.h controller/utils/ee.h
 Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 Core/Inc/FreeRTOSConfig.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -157,3 +157,4 @@ controller/actuators/fan_control.h:
 controller/utils/trigger_simulator.h:
 controller/utils/utils.h:
 controller/config_and_runtime.h:
+controller/utils/ee.h:

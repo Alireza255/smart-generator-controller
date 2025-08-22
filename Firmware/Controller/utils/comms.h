@@ -1,6 +1,8 @@
 #ifndef COMMS_H
 #define COMMS_H
+#define COMMS_ENABLED true
 
+#if COMMS_ENABLED == true
 #include "stm32f4xx_hal.h"
 #include "cmsis_os2.h"
 #include <stdint.h>
@@ -14,7 +16,7 @@
  */
 
 // ==================== Configuration ====================
-#define TS_PAGE_SIZE 4792
+#define TS_PAGE_SIZE sizeof(config_t)
 
 #define TS_BLOCKING_FACTOR 1024 // same blocking factor defined in the .ini file
 #define TS_TABLE_BLOCKING_FACTOR 1024 
@@ -165,4 +167,5 @@ void comms_init();
 void comms_task(void *argument);
 void process_command(uint8_t *cmd, uint16_t len);
 
+#endif
 #endif // COMMS_H

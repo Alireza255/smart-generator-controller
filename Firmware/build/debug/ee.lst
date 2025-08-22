@@ -1,0 +1,954 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"ee.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/utils/ee.c"
+  20              		.section	.text.EE_Init,"ax",%progbits
+  21              		.align	1
+  22              		.global	EE_Init
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	EE_Init:
+  28              	.LVL0:
+  29              	.LFB220:
+   1:controller/utils/ee.c **** 
+   2:controller/utils/ee.c **** /**************************************************************************************************
+   3:controller/utils/ee.c **** **************    Include Headers
+   4:controller/utils/ee.c **** ***************************************************************************************************
+   5:controller/utils/ee.c **** 
+   6:controller/utils/ee.c **** #include "ee.h"
+   7:controller/utils/ee.c **** #include "ee_config.h"
+   8:controller/utils/ee.c **** #include <string.h>
+   9:controller/utils/ee.c **** 
+  10:controller/utils/ee.c **** /**************************************************************************************************
+  11:controller/utils/ee.c **** **************    Private Definitions
+  12:controller/utils/ee.c **** ***************************************************************************************************
+  13:controller/utils/ee.c **** 
+  14:controller/utils/ee.c **** #define EE_ERASE_PAGE_ADDRESS               0
+  15:controller/utils/ee.c **** #define EE_ERASE_PAGE_NUMBER                1
+  16:controller/utils/ee.c **** #define EE_ERASE_SECTOR_NUMBER              2
+  17:controller/utils/ee.c **** 
+  18:controller/utils/ee.c **** #ifdef  STM32F0
+  19:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_ADDRESS
+  20:controller/utils/ee.c **** #define FLASH_SIZE                          ((((uint32_t)(*((uint16_t *)FLASHSIZE_BASE)) & (0xFFFFU
+  21:controller/utils/ee.c **** #endif
+  22:controller/utils/ee.c **** 
+  23:controller/utils/ee.c **** #ifdef  STM32F1
+  24:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_ADDRESS
+  25:controller/utils/ee.c **** #define FLASH_SIZE                          ((((uint32_t)(*((uint16_t *)FLASHSIZE_BASE)) & (0xFFFFU
+  26:controller/utils/ee.c **** #endif
+  27:controller/utils/ee.c **** 
+  28:controller/utils/ee.c **** #ifdef  STM32F2
+  29:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_SECTOR_NUMBER
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 2
+
+
+  30:controller/utils/ee.c **** #define FLASH_SIZE                          ((((uint32_t)(*((uint16_t *)FLASHSIZE_BASE)) & (0xFFFFU
+  31:controller/utils/ee.c **** #endif
+  32:controller/utils/ee.c **** 
+  33:controller/utils/ee.c **** #ifdef  STM32F3
+  34:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_ADDRESS
+  35:controller/utils/ee.c **** #define FLASH_SIZE                          ((((uint32_t)(*((uint16_t *)FLASHSIZE_BASE)) & (0xFFFFU
+  36:controller/utils/ee.c **** #endif
+  37:controller/utils/ee.c **** 
+  38:controller/utils/ee.c **** #ifdef  STM32F4
+  39:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_SECTOR_NUMBER
+  40:controller/utils/ee.c **** #define FLASH_SIZE                          ((((uint32_t)(*((uint16_t *)FLASHSIZE_BASE)) & (0xFFFFU
+  41:controller/utils/ee.c **** #endif
+  42:controller/utils/ee.c **** 
+  43:controller/utils/ee.c **** #ifdef  STM32F7
+  44:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_SECTOR_NUMBER
+  45:controller/utils/ee.c **** #endif
+  46:controller/utils/ee.c **** 
+  47:controller/utils/ee.c **** #ifdef  STM32H5
+  48:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_SECTOR_NUMBER
+  49:controller/utils/ee.c **** #endif
+  50:controller/utils/ee.c **** 
+  51:controller/utils/ee.c **** #ifdef  STM32H7
+  52:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_SECTOR_NUMBER
+  53:controller/utils/ee.c **** #endif
+  54:controller/utils/ee.c **** 
+  55:controller/utils/ee.c **** #ifdef  STM32G0
+  56:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  57:controller/utils/ee.c **** #endif
+  58:controller/utils/ee.c **** 
+  59:controller/utils/ee.c **** #ifdef  STM32G4
+  60:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  61:controller/utils/ee.c **** #endif
+  62:controller/utils/ee.c **** 
+  63:controller/utils/ee.c **** #ifdef  STM32U0
+  64:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  65:controller/utils/ee.c **** #endif
+  66:controller/utils/ee.c **** 
+  67:controller/utils/ee.c **** #ifdef  STM32U5
+  68:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  69:controller/utils/ee.c **** #endif
+  70:controller/utils/ee.c **** 
+  71:controller/utils/ee.c **** #ifdef  STM32L0
+  72:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_ADDRESS
+  73:controller/utils/ee.c **** #endif
+  74:controller/utils/ee.c **** 
+  75:controller/utils/ee.c **** #ifdef  STM32L1
+  76:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_ADDRESS
+  77:controller/utils/ee.c **** #endif
+  78:controller/utils/ee.c **** 
+  79:controller/utils/ee.c **** #ifdef  STM32L4
+  80:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  81:controller/utils/ee.c **** #endif
+  82:controller/utils/ee.c **** 
+  83:controller/utils/ee.c **** #ifdef  STM32L5
+  84:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  85:controller/utils/ee.c **** #endif
+  86:controller/utils/ee.c **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 3
+
+
+  87:controller/utils/ee.c **** #ifdef  STM32WB
+  88:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  89:controller/utils/ee.c **** #endif
+  90:controller/utils/ee.c **** 
+  91:controller/utils/ee.c **** #ifdef  STM32WBA
+  92:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  93:controller/utils/ee.c **** #undef  FLASH_BANK_1
+  94:controller/utils/ee.c **** #endif
+  95:controller/utils/ee.c **** 
+  96:controller/utils/ee.c **** #ifdef  STM32WL
+  97:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+  98:controller/utils/ee.c **** #endif
+  99:controller/utils/ee.c **** 
+ 100:controller/utils/ee.c **** #ifdef  STM32C0
+ 101:controller/utils/ee.c **** #define EE_ERASE                            EE_ERASE_PAGE_NUMBER
+ 102:controller/utils/ee.c **** #endif
+ 103:controller/utils/ee.c **** 
+ 104:controller/utils/ee.c **** #ifndef EE_ERASE
+ 105:controller/utils/ee.c **** #error "Not Supported MCU!"
+ 106:controller/utils/ee.c **** #endif
+ 107:controller/utils/ee.c **** 
+ 108:controller/utils/ee.c **** /**************************************************************************************************
+ 109:controller/utils/ee.c **** **************    Private Variables
+ 110:controller/utils/ee.c **** ***************************************************************************************************
+ 111:controller/utils/ee.c **** 
+ 112:controller/utils/ee.c **** EE_HandleTypeDef eeHandle;
+ 113:controller/utils/ee.c **** 
+ 114:controller/utils/ee.c **** /**************************************************************************************************
+ 115:controller/utils/ee.c **** **************    Private Functions
+ 116:controller/utils/ee.c **** ***************************************************************************************************
+ 117:controller/utils/ee.c **** 
+ 118:controller/utils/ee.c **** /**************************************************************************************************
+ 119:controller/utils/ee.c **** **************    Public Functions
+ 120:controller/utils/ee.c **** ***************************************************************************************************
+ 121:controller/utils/ee.c **** 
+ 122:controller/utils/ee.c **** /**
+ 123:controller/utils/ee.c ****   * @brief Initializes the EEPROM emulation module.
+ 124:controller/utils/ee.c ****   * @note This function initializes the EEPROM emulation module to enable read and write operations
+ 125:controller/utils/ee.c ****   * @param pData: Pointer to the start address of the EEPROM emulation area.
+ 126:controller/utils/ee.c ****   * @param Size: Size of the EEPROM emulation area in bytes.
+ 127:controller/utils/ee.c ****   * @return Boolean value indicating the success of the initialization:
+ 128:controller/utils/ee.c ****   *       - true: Initialization successful.
+ 129:controller/utils/ee.c ****   *       - false: Initialization failed.
+ 130:controller/utils/ee.c ****   */
+ 131:controller/utils/ee.c **** bool EE_Init(void *pData, uint32_t Size)
+ 132:controller/utils/ee.c **** {
+  30              		.loc 1 132 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+ 133:controller/utils/ee.c ****   bool answer = false;
+  35              		.loc 1 133 3 view .LVU1
+ 134:controller/utils/ee.c ****   do
+  36              		.loc 1 134 3 view .LVU2
+ 135:controller/utils/ee.c ****   {
+ 136:controller/utils/ee.c ****     if ((pData == NULL) || (Size == 0))
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 4
+
+
+  37              		.loc 1 136 5 view .LVU3
+  38              		.loc 1 136 8 is_stmt 0 view .LVU4
+  39 0000 0246     		mov	r2, r0
+  40 0002 B8B1     		cbz	r0, .L4
+  41              		.loc 1 136 25 discriminator 1 view .LVU5
+  42 0004 C1B1     		cbz	r1, .L5
+ 137:controller/utils/ee.c ****     {
+ 138:controller/utils/ee.c ****       break;    
+ 139:controller/utils/ee.c ****     }
+ 140:controller/utils/ee.c **** #if EE_MANUAL_CONFIG == false
+ 141:controller/utils/ee.c **** #if (EE_ERASE == EE_ERASE_PAGE_NUMBER) || (EE_ERASE == EE_ERASE_PAGE_ADDRESS)
+ 142:controller/utils/ee.c **** #ifdef FLASH_PAGE_SIZE
+ 143:controller/utils/ee.c ****     eeHandle.PageSectorSize = FLASH_PAGE_SIZE;
+ 144:controller/utils/ee.c **** #endif
+ 145:controller/utils/ee.c **** #elif (EE_ERASE == EE_ERASE_SECTOR_NUMBER)
+ 146:controller/utils/ee.c **** #if defined FLASH_SECTOR_SIZE
+ 147:controller/utils/ee.c ****     eeHandle.PageSectorSize = FLASH_SECTOR_SIZE;
+ 148:controller/utils/ee.c **** #else
+ 149:controller/utils/ee.c **** #error EE Library should be set manually for your MCU!
+ 150:controller/utils/ee.c **** #endif
+ 151:controller/utils/ee.c **** #endif
+ 152:controller/utils/ee.c **** #if defined FLASH_BANK_2
+ 153:controller/utils/ee.c ****     eeHandle.BankNumber = FLASH_BANK_2;
+ 154:controller/utils/ee.c ****     eeHandle.PageSectorNumber = ((FLASH_SIZE / eeHandle.PageSectorSize / 2) - 1);
+ 155:controller/utils/ee.c ****     eeHandle.Address = (FLASH_BASE + eeHandle.PageSectorSize * (eeHandle.PageSectorNumber * 2 + 1))
+ 156:controller/utils/ee.c **** #elif defined FLASH_BANK_1
+ 157:controller/utils/ee.c ****     eeHandle.BankNumber = FLASH_BANK_1;
+ 158:controller/utils/ee.c ****     eeHandle.PageSectorNumber = ((FLASH_SIZE / eeHandle.PageSectorSize) - 1);
+ 159:controller/utils/ee.c ****     eeHandle.Address = (FLASH_BASE + eeHandle.PageSectorSize * eeHandle.PageSectorNumber);
+ 160:controller/utils/ee.c **** #else
+ 161:controller/utils/ee.c ****     eeHandle.PageSectorNumber = ((FLASH_SIZE / eeHandle.PageSectorSize) - 1);
+ 162:controller/utils/ee.c ****     eeHandle.Address = (FLASH_BASE + eeHandle.PageSectorSize * eeHandle.PageSectorNumber);
+ 163:controller/utils/ee.c **** #endif
+ 164:controller/utils/ee.c **** #else // manual
+ 165:controller/utils/ee.c **** #if (defined FLASH_BANK_1) || (defined FLASH_BANK_2)
+ 166:controller/utils/ee.c ****     eeHandle.BankNumber = EE_SELECTED_BANK;
+  43              		.loc 1 166 5 is_stmt 1 view .LVU6
+  44              		.loc 1 166 25 is_stmt 0 view .LVU7
+  45 0006 0D4B     		ldr	r3, .L6
+  46 0008 0120     		movs	r0, #1
+  47              	.LVL1:
+  48              		.loc 1 166 25 view .LVU8
+  49 000a 5874     		strb	r0, [r3, #17]
+ 167:controller/utils/ee.c **** #endif
+ 168:controller/utils/ee.c ****     eeHandle.PageSectorNumber = EE_SELECTED_PAGE_SECTOR_NUMBER;
+  50              		.loc 1 168 5 is_stmt 1 view .LVU9
+  51              		.loc 1 168 31 is_stmt 0 view .LVU10
+  52 000c 0520     		movs	r0, #5
+  53 000e 1874     		strb	r0, [r3, #16]
+ 169:controller/utils/ee.c ****     eeHandle.PageSectorSize = EE_SELECTED_PAGE_SECTOR_SIZE;
+  54              		.loc 1 169 5 is_stmt 1 view .LVU11
+  55              		.loc 1 169 29 is_stmt 0 view .LVU12
+  56 0010 4FF40030 		mov	r0, #131072
+  57 0014 9860     		str	r0, [r3, #8]
+ 170:controller/utils/ee.c ****     eeHandle.Address = EE_SELECTED_ADDRESS;
+  58              		.loc 1 170 5 is_stmt 1 view .LVU13
+  59              		.loc 1 170 22 is_stmt 0 view .LVU14
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 5
+
+
+  60 0016 00F10060 		add	r0, r0, #134217728
+  61 001a D860     		str	r0, [r3, #12]
+ 171:controller/utils/ee.c **** #endif
+ 172:controller/utils/ee.c ****     /* checking size of eeprom area*/
+ 173:controller/utils/ee.c ****     if (Size > eeHandle.PageSectorSize)
+  62              		.loc 1 173 5 is_stmt 1 view .LVU15
+  63              		.loc 1 173 8 is_stmt 0 view .LVU16
+  64 001c B1F5003F 		cmp	r1, #131072
+  65 0020 03D9     		bls	.L3
+ 174:controller/utils/ee.c ****     {
+ 175:controller/utils/ee.c ****       eeHandle.Size = 0;
+  66              		.loc 1 175 7 is_stmt 1 view .LVU17
+  67              		.loc 1 175 21 is_stmt 0 view .LVU18
+  68 0022 0020     		movs	r0, #0
+  69 0024 5860     		str	r0, [r3, #4]
+ 176:controller/utils/ee.c ****       eeHandle.pData = NULL;
+  70              		.loc 1 176 7 is_stmt 1 view .LVU19
+  71              		.loc 1 176 22 is_stmt 0 view .LVU20
+  72 0026 1860     		str	r0, [r3]
+ 177:controller/utils/ee.c ****       break;
+  73              		.loc 1 177 7 is_stmt 1 view .LVU21
+  74 0028 7047     		bx	lr
+  75              	.L3:
+ 178:controller/utils/ee.c ****     }
+ 179:controller/utils/ee.c ****     eeHandle.Size = Size;
+  76              		.loc 1 179 5 view .LVU22
+  77              		.loc 1 179 19 is_stmt 0 view .LVU23
+  78 002a 044B     		ldr	r3, .L6
+  79 002c 5960     		str	r1, [r3, #4]
+ 180:controller/utils/ee.c ****     eeHandle.pData = (uint8_t*)pData;
+  80              		.loc 1 180 5 is_stmt 1 view .LVU24
+  81              		.loc 1 180 20 is_stmt 0 view .LVU25
+  82 002e 1A60     		str	r2, [r3]
+ 181:controller/utils/ee.c ****     answer = true;
+  83              		.loc 1 181 5 is_stmt 1 view .LVU26
+  84              	.LVL2:
+  85              		.loc 1 181 12 is_stmt 0 view .LVU27
+  86 0030 0120     		movs	r0, #1
+  87 0032 7047     		bx	lr
+  88              	.LVL3:
+  89              	.L4:
+ 133:controller/utils/ee.c ****   do
+  90              		.loc 1 133 8 view .LVU28
+  91 0034 0020     		movs	r0, #0
+  92              	.LVL4:
+ 133:controller/utils/ee.c ****   do
+  93              		.loc 1 133 8 view .LVU29
+  94 0036 7047     		bx	lr
+  95              	.LVL5:
+  96              	.L5:
+ 133:controller/utils/ee.c ****   do
+  97              		.loc 1 133 8 view .LVU30
+  98 0038 0020     		movs	r0, #0
+  99              	.LVL6:
+ 135:controller/utils/ee.c ****     if ((pData == NULL) || (Size == 0))
+ 100              		.loc 1 135 3 is_stmt 1 view .LVU31
+ 182:controller/utils/ee.c **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 6
+
+
+ 183:controller/utils/ee.c ****   } while (0);
+ 184:controller/utils/ee.c **** 
+ 185:controller/utils/ee.c ****   return answer;
+ 101              		.loc 1 185 3 view .LVU32
+ 186:controller/utils/ee.c **** }
+ 102              		.loc 1 186 1 is_stmt 0 view .LVU33
+ 103 003a 7047     		bx	lr
+ 104              	.L7:
+ 105              		.align	2
+ 106              	.L6:
+ 107 003c 00000000 		.word	eeHandle
+ 108              		.cfi_endproc
+ 109              	.LFE220:
+ 111              		.section	.text.EE_Capacity,"ax",%progbits
+ 112              		.align	1
+ 113              		.global	EE_Capacity
+ 114              		.syntax unified
+ 115              		.thumb
+ 116              		.thumb_func
+ 118              	EE_Capacity:
+ 119              	.LFB221:
+ 187:controller/utils/ee.c **** 
+ 188:controller/utils/ee.c **** /**************************************************************************************************
+ 189:controller/utils/ee.c **** 
+ 190:controller/utils/ee.c **** /**
+ 191:controller/utils/ee.c ****   * @brief Retrieves the capacity of the EEPROM emulation area.
+ 192:controller/utils/ee.c ****   * @note This function returns the total capacity of the EEPROM emulation area in bytes.
+ 193:controller/utils/ee.c ****   * @return Capacity of the EEPROM emulation area in bytes.
+ 194:controller/utils/ee.c ****   */
+ 195:controller/utils/ee.c **** uint32_t EE_Capacity(void)
+ 196:controller/utils/ee.c **** {
+ 120              		.loc 1 196 1 is_stmt 1 view -0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 124              		@ link register save eliminated.
+ 197:controller/utils/ee.c ****   return eeHandle.PageSectorSize;
+ 125              		.loc 1 197 3 view .LVU35
+ 198:controller/utils/ee.c **** }
+ 126              		.loc 1 198 1 is_stmt 0 view .LVU36
+ 127 0000 014B     		ldr	r3, .L9
+ 128 0002 9868     		ldr	r0, [r3, #8]
+ 129 0004 7047     		bx	lr
+ 130              	.L10:
+ 131 0006 00BF     		.align	2
+ 132              	.L9:
+ 133 0008 00000000 		.word	eeHandle
+ 134              		.cfi_endproc
+ 135              	.LFE221:
+ 137              		.section	.text.EE_Format,"ax",%progbits
+ 138              		.align	1
+ 139              		.global	EE_Format
+ 140              		.syntax unified
+ 141              		.thumb
+ 142              		.thumb_func
+ 144              	EE_Format:
+ 145              	.LFB222:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 7
+
+
+ 199:controller/utils/ee.c **** 
+ 200:controller/utils/ee.c **** /**************************************************************************************************
+ 201:controller/utils/ee.c **** 
+ 202:controller/utils/ee.c **** /**
+ 203:controller/utils/ee.c ****   * @brief Formats the EEPROM emulation area.
+ 204:controller/utils/ee.c ****   * @note This function formats the EEPROM emulation area,
+ 205:controller/utils/ee.c ****   * @return bool Boolean value indicating the success of the operation:
+ 206:controller/utils/ee.c ****   *     - true: Formatting successful.
+ 207:controller/utils/ee.c ****   *     - false: Formatting failed.
+ 208:controller/utils/ee.c ****   */
+ 209:controller/utils/ee.c **** bool EE_Format(void)
+ 210:controller/utils/ee.c **** {
+ 146              		.loc 1 210 1 is_stmt 1 view -0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 24
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150 0000 10B5     		push	{r4, lr}
+ 151              		.cfi_def_cfa_offset 8
+ 152              		.cfi_offset 4, -8
+ 153              		.cfi_offset 14, -4
+ 154 0002 86B0     		sub	sp, sp, #24
+ 155              		.cfi_def_cfa_offset 32
+ 211:controller/utils/ee.c ****   bool answer = false;
+ 156              		.loc 1 211 3 view .LVU38
+ 157              	.LVL7:
+ 212:controller/utils/ee.c ****   uint32_t error;
+ 158              		.loc 1 212 3 view .LVU39
+ 213:controller/utils/ee.c ****   FLASH_EraseInitTypeDef flashErase;
+ 159              		.loc 1 213 3 view .LVU40
+ 214:controller/utils/ee.c ****   do
+ 160              		.loc 1 214 3 view .LVU41
+ 215:controller/utils/ee.c ****   {
+ 216:controller/utils/ee.c ****     HAL_FLASH_Unlock();
+ 161              		.loc 1 216 5 view .LVU42
+ 162 0004 FFF7FEFF 		bl	HAL_FLASH_Unlock
+ 163              	.LVL8:
+ 217:controller/utils/ee.c **** #ifdef HAL_ICACHE_MODULE_ENABLED
+ 218:controller/utils/ee.c ****     /* disabling ICACHE if enabled*/
+ 219:controller/utils/ee.c ****     HAL_ICACHE_Disable();
+ 220:controller/utils/ee.c **** #endif
+ 221:controller/utils/ee.c **** #if EE_ERASE == EE_ERASE_PAGE_ADDRESS
+ 222:controller/utils/ee.c ****     flashErase.TypeErase = FLASH_TYPEERASE_PAGES;
+ 223:controller/utils/ee.c ****     flashErase.PageAddress = eeHandle.Address;
+ 224:controller/utils/ee.c ****     flashErase.NbPages = 1;
+ 225:controller/utils/ee.c **** #elif EE_ERASE == EE_ERASE_PAGE_NUMBER
+ 226:controller/utils/ee.c ****     flashErase.TypeErase = FLASH_TYPEERASE_PAGES;
+ 227:controller/utils/ee.c ****     flashErase.Page = eeHandle.PageSectorNumber;
+ 228:controller/utils/ee.c ****     flashErase.NbPages = 1;
+ 229:controller/utils/ee.c **** #else
+ 230:controller/utils/ee.c ****     flashErase.TypeErase = FLASH_TYPEERASE_SECTORS;
+ 164              		.loc 1 230 5 view .LVU43
+ 165              		.loc 1 230 26 is_stmt 0 view .LVU44
+ 166 0008 0023     		movs	r3, #0
+ 167 000a 0093     		str	r3, [sp]
+ 231:controller/utils/ee.c ****     flashErase.Sector = eeHandle.PageSectorNumber;
+ 168              		.loc 1 231 5 is_stmt 1 view .LVU45
+ 169              		.loc 1 231 33 is_stmt 0 view .LVU46
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 8
+
+
+ 170 000c 0D4B     		ldr	r3, .L16
+ 171 000e 1A7C     		ldrb	r2, [r3, #16]	@ zero_extendqisi2
+ 172              		.loc 1 231 23 view .LVU47
+ 173 0010 0292     		str	r2, [sp, #8]
+ 232:controller/utils/ee.c ****     flashErase.NbSectors = 1;
+ 174              		.loc 1 232 5 is_stmt 1 view .LVU48
+ 175              		.loc 1 232 26 is_stmt 0 view .LVU49
+ 176 0012 0122     		movs	r2, #1
+ 177 0014 0392     		str	r2, [sp, #12]
+ 233:controller/utils/ee.c **** #endif
+ 234:controller/utils/ee.c **** #if (defined FLASH_BANK_1) || (defined FLASH_BANK_2)
+ 235:controller/utils/ee.c ****     flashErase.Banks = eeHandle.BankNumber;
+ 178              		.loc 1 235 5 is_stmt 1 view .LVU50
+ 179              		.loc 1 235 32 is_stmt 0 view .LVU51
+ 180 0016 5B7C     		ldrb	r3, [r3, #17]	@ zero_extendqisi2
+ 181              		.loc 1 235 22 view .LVU52
+ 182 0018 0193     		str	r3, [sp, #4]
+ 236:controller/utils/ee.c **** #endif
+ 237:controller/utils/ee.c **** #ifdef FLASH_VOLTAGE_RANGE_3
+ 238:controller/utils/ee.c ****     flashErase.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+ 183              		.loc 1 238 5 is_stmt 1 view .LVU53
+ 184              		.loc 1 238 29 is_stmt 0 view .LVU54
+ 185 001a 0223     		movs	r3, #2
+ 186 001c 0493     		str	r3, [sp, #16]
+ 239:controller/utils/ee.c **** #endif
+ 240:controller/utils/ee.c ****     /* erasing page/sector */
+ 241:controller/utils/ee.c ****     if (HAL_FLASHEx_Erase(&flashErase, &error) != HAL_OK)
+ 187              		.loc 1 241 5 is_stmt 1 view .LVU55
+ 188              		.loc 1 241 9 is_stmt 0 view .LVU56
+ 189 001e 05A9     		add	r1, sp, #20
+ 190 0020 6846     		mov	r0, sp
+ 191 0022 FFF7FEFF 		bl	HAL_FLASHEx_Erase
+ 192              	.LVL9:
+ 193              		.loc 1 241 8 discriminator 1 view .LVU57
+ 194 0026 28B9     		cbnz	r0, .L13
+ 242:controller/utils/ee.c ****     {
+ 243:controller/utils/ee.c ****       break;
+ 244:controller/utils/ee.c ****     }
+ 245:controller/utils/ee.c ****     /* checking result */
+ 246:controller/utils/ee.c ****     if (error != 0xFFFFFFFF)
+ 195              		.loc 1 246 5 is_stmt 1 view .LVU58
+ 196              		.loc 1 246 15 is_stmt 0 view .LVU59
+ 197 0028 059B     		ldr	r3, [sp, #20]
+ 198              		.loc 1 246 8 view .LVU60
+ 199 002a B3F1FF3F 		cmp	r3, #-1
+ 200 002e 07D0     		beq	.L14
+ 211:controller/utils/ee.c ****   uint32_t error;
+ 201              		.loc 1 211 8 view .LVU61
+ 202 0030 0024     		movs	r4, #0
+ 203 0032 00E0     		b	.L12
+ 204              	.L13:
+ 205 0034 0024     		movs	r4, #0
+ 206              	.L12:
+ 207              	.LVL10:
+ 215:controller/utils/ee.c ****     HAL_FLASH_Unlock();
+ 208              		.loc 1 215 3 is_stmt 1 view .LVU62
+ 247:controller/utils/ee.c ****     {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 9
+
+
+ 248:controller/utils/ee.c ****       break;
+ 249:controller/utils/ee.c ****     }
+ 250:controller/utils/ee.c ****     answer = true;
+ 251:controller/utils/ee.c **** 
+ 252:controller/utils/ee.c ****   } while (0);
+ 253:controller/utils/ee.c **** 
+ 254:controller/utils/ee.c ****   HAL_FLASH_Lock();
+ 209              		.loc 1 254 3 view .LVU63
+ 210 0036 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 211              	.LVL11:
+ 255:controller/utils/ee.c **** #ifdef HAL_ICACHE_MODULE_ENABLED
+ 256:controller/utils/ee.c ****   HAL_ICACHE_Enable();
+ 257:controller/utils/ee.c **** #endif
+ 258:controller/utils/ee.c ****   return answer;
+ 212              		.loc 1 258 3 view .LVU64
+ 259:controller/utils/ee.c **** }
+ 213              		.loc 1 259 1 is_stmt 0 view .LVU65
+ 214 003a 2046     		mov	r0, r4
+ 215 003c 06B0     		add	sp, sp, #24
+ 216              		.cfi_remember_state
+ 217              		.cfi_def_cfa_offset 8
+ 218              		@ sp needed
+ 219 003e 10BD     		pop	{r4, pc}
+ 220              	.LVL12:
+ 221              	.L14:
+ 222              		.cfi_restore_state
+ 250:controller/utils/ee.c **** 
+ 223              		.loc 1 250 12 view .LVU66
+ 224 0040 0124     		movs	r4, #1
+ 225 0042 F8E7     		b	.L12
+ 226              	.L17:
+ 227              		.align	2
+ 228              	.L16:
+ 229 0044 00000000 		.word	eeHandle
+ 230              		.cfi_endproc
+ 231              	.LFE222:
+ 233              		.section	.text.EE_Read,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	EE_Read
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ 240              	EE_Read:
+ 241              	.LFB223:
+ 260:controller/utils/ee.c **** 
+ 261:controller/utils/ee.c **** /**************************************************************************************************
+ 262:controller/utils/ee.c **** 
+ 263:controller/utils/ee.c **** /**
+ 264:controller/utils/ee.c ****   * @brief Reads data from the EEPROM emulation area.
+ 265:controller/utils/ee.c ****   * @note This function reads data from the EEPROM emulation area
+ 266:controller/utils/ee.c ****   *  and loads it into the specified storage pointer.
+ 267:controller/utils/ee.c ****   */
+ 268:controller/utils/ee.c **** void EE_Read(void)
+ 269:controller/utils/ee.c **** {
+ 242              		.loc 1 269 1 is_stmt 1 view -0
+ 243              		.cfi_startproc
+ 244              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 10
+
+
+ 245              		@ frame_needed = 0, uses_anonymous_args = 0
+ 246              		@ link register save eliminated.
+ 270:controller/utils/ee.c ****   uint8_t *data = eeHandle.pData;
+ 247              		.loc 1 270 3 view .LVU68
+ 248              		.loc 1 270 12 is_stmt 0 view .LVU69
+ 249 0000 084B     		ldr	r3, .L24
+ 250 0002 1A68     		ldr	r2, [r3]
+ 251              	.LVL13:
+ 271:controller/utils/ee.c **** #ifdef HAL_ICACHE_MODULE_ENABLED
+ 272:controller/utils/ee.c ****     /* disabling ICACHE if enabled*/
+ 273:controller/utils/ee.c ****     HAL_ICACHE_Disable();
+ 274:controller/utils/ee.c **** #endif
+ 275:controller/utils/ee.c ****   if (data != NULL)
+ 252              		.loc 1 275 3 is_stmt 1 view .LVU70
+ 253              		.loc 1 275 6 is_stmt 0 view .LVU71
+ 254 0004 0AB1     		cbz	r2, .L23
+ 255              	.LBB2:
+ 276:controller/utils/ee.c ****   {
+ 277:controller/utils/ee.c ****     /* reading flash */
+ 278:controller/utils/ee.c ****     for (uint32_t i = 0; i < eeHandle.Size; i++)
+ 256              		.loc 1 278 19 view .LVU72
+ 257 0006 0023     		movs	r3, #0
+ 258 0008 06E0     		b	.L19
+ 259              	.L23:
+ 260 000a 7047     		bx	lr
+ 261              	.LVL14:
+ 262              	.L21:
+ 279:controller/utils/ee.c ****     {
+ 280:controller/utils/ee.c ****       *data = (*(__IO uint8_t*) (eeHandle.Address + i));
+ 263              		.loc 1 280 7 is_stmt 1 view .LVU73
+ 264              		.loc 1 280 42 is_stmt 0 view .LVU74
+ 265 000c 0549     		ldr	r1, .L24
+ 266 000e C968     		ldr	r1, [r1, #12]
+ 267              		.loc 1 280 16 view .LVU75
+ 268 0010 C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 269              		.loc 1 280 13 view .LVU76
+ 270 0012 02F8011B 		strb	r1, [r2], #1
+ 271              	.LVL15:
+ 281:controller/utils/ee.c ****       data++;
+ 272              		.loc 1 281 7 is_stmt 1 view .LVU77
+ 278:controller/utils/ee.c ****     {
+ 273              		.loc 1 278 46 discriminator 3 view .LVU78
+ 274 0016 0133     		adds	r3, r3, #1
+ 275              	.LVL16:
+ 276              	.L19:
+ 278:controller/utils/ee.c ****     {
+ 277              		.loc 1 278 28 discriminator 1 view .LVU79
+ 278:controller/utils/ee.c ****     {
+ 278              		.loc 1 278 38 is_stmt 0 discriminator 1 view .LVU80
+ 279 0018 0249     		ldr	r1, .L24
+ 280 001a 4968     		ldr	r1, [r1, #4]
+ 278:controller/utils/ee.c ****     {
+ 281              		.loc 1 278 28 discriminator 1 view .LVU81
+ 282 001c 9942     		cmp	r1, r3
+ 283 001e F5D8     		bhi	.L21
+ 278:controller/utils/ee.c ****     {
+ 284              		.loc 1 278 28 discriminator 1 view .LVU82
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 11
+
+
+ 285              	.LBE2:
+ 282:controller/utils/ee.c ****     }
+ 283:controller/utils/ee.c ****   }
+ 284:controller/utils/ee.c **** #ifdef HAL_ICACHE_MODULE_ENABLED
+ 285:controller/utils/ee.c ****     /* disabling ICACHE if enabled*/
+ 286:controller/utils/ee.c ****     HAL_ICACHE_Enable();
+ 287:controller/utils/ee.c **** #endif
+ 288:controller/utils/ee.c **** }
+ 286              		.loc 1 288 1 view .LVU83
+ 287 0020 7047     		bx	lr
+ 288              	.L25:
+ 289 0022 00BF     		.align	2
+ 290              	.L24:
+ 291 0024 00000000 		.word	eeHandle
+ 292              		.cfi_endproc
+ 293              	.LFE223:
+ 295              		.section	.text.EE_Write,"ax",%progbits
+ 296              		.align	1
+ 297              		.global	EE_Write
+ 298              		.syntax unified
+ 299              		.thumb
+ 300              		.thumb_func
+ 302              	EE_Write:
+ 303              	.LFB224:
+ 289:controller/utils/ee.c **** 
+ 290:controller/utils/ee.c **** /**************************************************************************************************
+ 291:controller/utils/ee.c **** 
+ 292:controller/utils/ee.c **** /**
+ 293:controller/utils/ee.c ****   * @brief Writes data to the EEPROM emulation area.
+ 294:controller/utils/ee.c ****   * @note This function writes data to the EEPROM emulation area.
+ 295:controller/utils/ee.c ****   * @retval true if the write operation is successful, false otherwise.
+ 296:controller/utils/ee.c ****   */
+ 297:controller/utils/ee.c **** bool EE_Write(void)
+ 298:controller/utils/ee.c **** {
+ 304              		.loc 1 298 1 is_stmt 1 view -0
+ 305              		.cfi_startproc
+ 306              		@ args = 0, pretend = 0, frame = 0
+ 307              		@ frame_needed = 0, uses_anonymous_args = 0
+ 308 0000 70B5     		push	{r4, r5, r6, lr}
+ 309              		.cfi_def_cfa_offset 16
+ 310              		.cfi_offset 4, -16
+ 311              		.cfi_offset 5, -12
+ 312              		.cfi_offset 6, -8
+ 313              		.cfi_offset 14, -4
+ 299:controller/utils/ee.c ****   bool answer = true;
+ 314              		.loc 1 299 3 view .LVU85
+ 315              	.LVL17:
+ 300:controller/utils/ee.c ****   uint8_t *data = eeHandle.pData;
+ 316              		.loc 1 300 3 view .LVU86
+ 317              		.loc 1 300 12 is_stmt 0 view .LVU87
+ 318 0002 194B     		ldr	r3, .L38
+ 319 0004 1C68     		ldr	r4, [r3]
+ 320              	.LVL18:
+ 301:controller/utils/ee.c ****   do
+ 321              		.loc 1 301 3 is_stmt 1 view .LVU88
+ 302:controller/utils/ee.c ****   {
+ 303:controller/utils/ee.c ****     /* checking eeprom is initialize correctly */
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 12
+
+
+ 304:controller/utils/ee.c ****     if (data == NULL)
+ 322              		.loc 1 304 5 view .LVU89
+ 323              		.loc 1 304 8 is_stmt 0 view .LVU90
+ 324 0006 3CB3     		cbz	r4, .L34
+ 305:controller/utils/ee.c ****     {
+ 306:controller/utils/ee.c ****       answer = false;
+ 307:controller/utils/ee.c ****       break;
+ 308:controller/utils/ee.c ****     }
+ 309:controller/utils/ee.c ****     /* formating flash area before writing */
+ 310:controller/utils/ee.c ****     if (EE_Format() == false)
+ 325              		.loc 1 310 5 is_stmt 1 view .LVU91
+ 326              		.loc 1 310 9 is_stmt 0 view .LVU92
+ 327 0008 FFF7FEFF 		bl	EE_Format
+ 328              	.LVL19:
+ 329              		.loc 1 310 8 discriminator 1 view .LVU93
+ 330 000c 0646     		mov	r6, r0
+ 331 000e 20B3     		cbz	r0, .L27
+ 311:controller/utils/ee.c ****     {
+ 312:controller/utils/ee.c ****       answer = false;
+ 313:controller/utils/ee.c ****       break;
+ 314:controller/utils/ee.c ****     }
+ 315:controller/utils/ee.c ****     HAL_FLASH_Unlock();
+ 332              		.loc 1 315 5 is_stmt 1 view .LVU94
+ 333 0010 FFF7FEFF 		bl	HAL_FLASH_Unlock
+ 334              	.LVL20:
+ 316:controller/utils/ee.c **** #ifdef HAL_ICACHE_MODULE_ENABLED
+ 317:controller/utils/ee.c ****     /* disabling ICACHE if enabled*/
+ 318:controller/utils/ee.c ****     HAL_ICACHE_Disable();
+ 319:controller/utils/ee.c **** #endif
+ 320:controller/utils/ee.c **** #if (defined FLASH_TYPEPROGRAM_HALFWORD)
+ 321:controller/utils/ee.c ****     /* writing buffer to flash */
+ 322:controller/utils/ee.c ****     for (uint32_t i = 0; i < eeHandle.Size ; i += 2)
+ 335              		.loc 1 322 5 view .LVU95
+ 336              	.LBB3:
+ 337              		.loc 1 322 10 view .LVU96
+ 338              		.loc 1 322 19 is_stmt 0 view .LVU97
+ 339 0014 0025     		movs	r5, #0
+ 340              	.LVL21:
+ 341              	.L28:
+ 342              		.loc 1 322 28 is_stmt 1 discriminator 1 view .LVU98
+ 343              		.loc 1 322 38 is_stmt 0 discriminator 1 view .LVU99
+ 344 0016 144B     		ldr	r3, .L38
+ 345 0018 5B68     		ldr	r3, [r3, #4]
+ 346              		.loc 1 322 28 discriminator 1 view .LVU100
+ 347 001a AB42     		cmp	r3, r5
+ 348 001c 0CD9     		bls	.L30
+ 349              	.LBB4:
+ 323:controller/utils/ee.c ****     {
+ 324:controller/utils/ee.c ****       uint64_t halfWord;
+ 350              		.loc 1 324 7 is_stmt 1 view .LVU101
+ 325:controller/utils/ee.c ****       memcpy((uint8_t*)&halfWord, data, 2);
+ 351              		.loc 1 325 7 view .LVU102
+ 326:controller/utils/ee.c ****       if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, eeHandle.Address + i, halfWord) != HAL_OK)
+ 352              		.loc 1 326 7 view .LVU103
+ 353              		.loc 1 326 65 is_stmt 0 view .LVU104
+ 354 001e 124B     		ldr	r3, .L38
+ 355 0020 D968     		ldr	r1, [r3, #12]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 13
+
+
+ 356              		.loc 1 326 11 view .LVU105
+ 357 0022 2288     		ldrh	r2, [r4]	@ unaligned
+ 358 0024 0023     		movs	r3, #0
+ 359 0026 2944     		add	r1, r1, r5
+ 360 0028 0120     		movs	r0, #1
+ 361 002a FFF7FEFF 		bl	HAL_FLASH_Program
+ 362              	.LVL22:
+ 363              		.loc 1 326 10 discriminator 1 view .LVU106
+ 364 002e 10B9     		cbnz	r0, .L37
+ 327:controller/utils/ee.c ****       {
+ 328:controller/utils/ee.c ****         answer = false;
+ 329:controller/utils/ee.c ****         break;
+ 330:controller/utils/ee.c ****       }
+ 331:controller/utils/ee.c ****       data += 2;
+ 365              		.loc 1 331 7 is_stmt 1 view .LVU107
+ 366              		.loc 1 331 12 is_stmt 0 view .LVU108
+ 367 0030 0234     		adds	r4, r4, #2
+ 368              	.LVL23:
+ 369              		.loc 1 331 12 view .LVU109
+ 370              	.LBE4:
+ 322:controller/utils/ee.c ****     {
+ 371              		.loc 1 322 48 is_stmt 1 discriminator 2 view .LVU110
+ 372 0032 0235     		adds	r5, r5, #2
+ 373              	.LVL24:
+ 322:controller/utils/ee.c ****     {
+ 374              		.loc 1 322 48 is_stmt 0 discriminator 2 view .LVU111
+ 375 0034 EFE7     		b	.L28
+ 376              	.LVL25:
+ 377              	.L37:
+ 378              	.LBB5:
+ 328:controller/utils/ee.c ****         break;
+ 379              		.loc 1 328 9 is_stmt 1 view .LVU112
+ 329:controller/utils/ee.c ****       }
+ 380              		.loc 1 329 9 view .LVU113
+ 328:controller/utils/ee.c ****         break;
+ 381              		.loc 1 328 16 is_stmt 0 view .LVU114
+ 382 0036 0026     		movs	r6, #0
+ 383              	.LVL26:
+ 384              	.L30:
+ 328:controller/utils/ee.c ****         break;
+ 385              		.loc 1 328 16 view .LVU115
+ 386              	.LBE5:
+ 387              	.LBE3:
+ 332:controller/utils/ee.c ****     }
+ 333:controller/utils/ee.c **** #elif (defined FLASH_TYPEPROGRAM_DOUBLEWORD)
+ 334:controller/utils/ee.c ****     /* writing buffer to flash */
+ 335:controller/utils/ee.c ****     for (uint32_t i = 0; i < eeHandle.Size; i += 8)
+ 336:controller/utils/ee.c ****     {
+ 337:controller/utils/ee.c ****       uint64_t doubleWord;
+ 338:controller/utils/ee.c ****       memcpy((uint8_t*)&doubleWord, data, 8);
+ 339:controller/utils/ee.c ****       if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, eeHandle.Address + i, doubleWord) != HAL_
+ 340:controller/utils/ee.c ****       {
+ 341:controller/utils/ee.c ****         answer = false;
+ 342:controller/utils/ee.c ****         break;
+ 343:controller/utils/ee.c ****       }
+ 344:controller/utils/ee.c ****       data += 8;
+ 345:controller/utils/ee.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 14
+
+
+ 346:controller/utils/ee.c **** #elif (defined FLASH_TYPEPROGRAM_QUADWORD)
+ 347:controller/utils/ee.c ****     /* writing buffer to flash */
+ 348:controller/utils/ee.c ****     for (uint32_t i = 0; i < eeHandle.Size; i += 16)
+ 349:controller/utils/ee.c ****     {
+ 350:controller/utils/ee.c ****       if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_QUADWORD, eeHandle.Address + i, (uint32_t)data) != HA
+ 351:controller/utils/ee.c ****       {
+ 352:controller/utils/ee.c ****         answer = false;
+ 353:controller/utils/ee.c ****         break;
+ 354:controller/utils/ee.c ****       }
+ 355:controller/utils/ee.c ****       data += 16;
+ 356:controller/utils/ee.c ****     }
+ 357:controller/utils/ee.c **** #elif (defined FLASH_TYPEPROGRAM_FLASHWORD)
+ 358:controller/utils/ee.c ****     /* writing buffer to flash */
+ 359:controller/utils/ee.c ****     for (uint32_t i = 0; i < eeHandle.Size; i += FLASH_NB_32BITWORD_IN_FLASHWORD * 4)
+ 360:controller/utils/ee.c ****     {
+ 361:controller/utils/ee.c ****       if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, eeHandle.Address + i, (uint32_t)data) != H
+ 362:controller/utils/ee.c ****       {
+ 363:controller/utils/ee.c ****         answer = false;
+ 364:controller/utils/ee.c ****         break;
+ 365:controller/utils/ee.c ****       }
+ 366:controller/utils/ee.c ****       data += FLASH_NB_32BITWORD_IN_FLASHWORD * 4;
+ 367:controller/utils/ee.c ****     }
+ 368:controller/utils/ee.c **** #endif
+ 369:controller/utils/ee.c ****     /* verifying Flash content */
+ 370:controller/utils/ee.c ****     data = eeHandle.pData;
+ 388              		.loc 1 370 5 is_stmt 1 view .LVU116
+ 389              		.loc 1 370 10 is_stmt 0 view .LVU117
+ 390 0038 0B4B     		ldr	r3, .L38
+ 391 003a 1A68     		ldr	r2, [r3]
+ 392              	.LVL27:
+ 371:controller/utils/ee.c ****     for (uint32_t i = 0; i < eeHandle.Size; i++)
+ 393              		.loc 1 371 5 is_stmt 1 view .LVU118
+ 394              	.LBB6:
+ 395              		.loc 1 371 10 view .LVU119
+ 396              		.loc 1 371 19 is_stmt 0 view .LVU120
+ 397 003c 0023     		movs	r3, #0
+ 398              	.LVL28:
+ 399              	.L32:
+ 400              		.loc 1 371 28 is_stmt 1 discriminator 1 view .LVU121
+ 401              		.loc 1 371 38 is_stmt 0 discriminator 1 view .LVU122
+ 402 003e 0A49     		ldr	r1, .L38
+ 403 0040 4968     		ldr	r1, [r1, #4]
+ 404              		.loc 1 371 28 discriminator 1 view .LVU123
+ 405 0042 9942     		cmp	r1, r3
+ 406 0044 09D9     		bls	.L27
+ 372:controller/utils/ee.c ****     {
+ 373:controller/utils/ee.c ****       if (*data != (*(__IO uint8_t*) (eeHandle.Address + i)))
+ 407              		.loc 1 373 7 is_stmt 1 view .LVU124
+ 408              		.loc 1 373 11 is_stmt 0 view .LVU125
+ 409 0046 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 410              		.loc 1 373 47 view .LVU126
+ 411 0048 0748     		ldr	r0, .L38
+ 412 004a C068     		ldr	r0, [r0, #12]
+ 413              		.loc 1 373 21 view .LVU127
+ 414 004c C05C     		ldrb	r0, [r0, r3]	@ zero_extendqisi2
+ 415              		.loc 1 373 10 view .LVU128
+ 416 004e 8842     		cmp	r0, r1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 15
+
+
+ 417 0050 07D1     		bne	.L35
+ 374:controller/utils/ee.c ****       {
+ 375:controller/utils/ee.c ****         answer = false;
+ 376:controller/utils/ee.c ****         break;
+ 377:controller/utils/ee.c ****       }
+ 378:controller/utils/ee.c ****       data++;
+ 418              		.loc 1 378 7 is_stmt 1 view .LVU129
+ 419              		.loc 1 378 11 is_stmt 0 view .LVU130
+ 420 0052 0132     		adds	r2, r2, #1
+ 421              	.LVL29:
+ 371:controller/utils/ee.c ****     {
+ 422              		.loc 1 371 46 is_stmt 1 discriminator 2 view .LVU131
+ 423 0054 0133     		adds	r3, r3, #1
+ 424              	.LVL30:
+ 371:controller/utils/ee.c ****     {
+ 425              		.loc 1 371 46 is_stmt 0 discriminator 2 view .LVU132
+ 426 0056 F2E7     		b	.L32
+ 427              	.LVL31:
+ 428              	.L34:
+ 371:controller/utils/ee.c ****     {
+ 429              		.loc 1 371 46 discriminator 2 view .LVU133
+ 430              	.LBE6:
+ 306:controller/utils/ee.c ****       break;
+ 431              		.loc 1 306 14 view .LVU134
+ 432 0058 0026     		movs	r6, #0
+ 433              	.LVL32:
+ 434              	.L27:
+ 302:controller/utils/ee.c ****     /* checking eeprom is initialize correctly */
+ 435              		.loc 1 302 3 is_stmt 1 view .LVU135
+ 379:controller/utils/ee.c ****     }
+ 380:controller/utils/ee.c **** 
+ 381:controller/utils/ee.c ****   } while (0);
+ 382:controller/utils/ee.c **** 
+ 383:controller/utils/ee.c ****   HAL_FLASH_Lock();
+ 436              		.loc 1 383 3 view .LVU136
+ 437 005a FFF7FEFF 		bl	HAL_FLASH_Lock
+ 438              	.LVL33:
+ 384:controller/utils/ee.c **** #ifdef HAL_ICACHE_MODULE_ENABLED
+ 385:controller/utils/ee.c ****   HAL_ICACHE_Enable();
+ 386:controller/utils/ee.c **** #endif
+ 387:controller/utils/ee.c ****   return answer;
+ 439              		.loc 1 387 3 view .LVU137
+ 388:controller/utils/ee.c **** }
+ 440              		.loc 1 388 1 is_stmt 0 view .LVU138
+ 441 005e 3046     		mov	r0, r6
+ 442 0060 70BD     		pop	{r4, r5, r6, pc}
+ 443              	.LVL34:
+ 444              	.L35:
+ 445              	.LBB7:
+ 375:controller/utils/ee.c ****         break;
+ 446              		.loc 1 375 16 view .LVU139
+ 447 0062 0026     		movs	r6, #0
+ 448              	.LVL35:
+ 375:controller/utils/ee.c ****         break;
+ 449              		.loc 1 375 16 view .LVU140
+ 450 0064 F9E7     		b	.L27
+ 451              	.L39:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 16
+
+
+ 452 0066 00BF     		.align	2
+ 453              	.L38:
+ 454 0068 00000000 		.word	eeHandle
+ 455              	.LBE7:
+ 456              		.cfi_endproc
+ 457              	.LFE224:
+ 459              		.global	eeHandle
+ 460              		.section	.bss.eeHandle,"aw",%nobits
+ 461              		.align	2
+ 464              	eeHandle:
+ 465 0000 00000000 		.space	20
+ 465      00000000 
+ 465      00000000 
+ 465      00000000 
+ 465      00000000 
+ 466              		.text
+ 467              	.Letext0:
+ 468              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 469              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 470              		.file 4 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 471              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h"
+ 472              		.file 6 "controller/utils/ee.h"
+ 473              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s 			page 17
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ee.c
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:21     .text.EE_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:27     .text.EE_Init:00000000 EE_Init
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:107    .text.EE_Init:0000003c $d
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:464    .bss.eeHandle:00000000 eeHandle
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:112    .text.EE_Capacity:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:118    .text.EE_Capacity:00000000 EE_Capacity
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:133    .text.EE_Capacity:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:138    .text.EE_Format:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:144    .text.EE_Format:00000000 EE_Format
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:229    .text.EE_Format:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:234    .text.EE_Read:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:240    .text.EE_Read:00000000 EE_Read
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:291    .text.EE_Read:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:296    .text.EE_Write:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:302    .text.EE_Write:00000000 EE_Write
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:454    .text.EE_Write:00000068 $d
+C:\Users\alireza\AppData\Local\Temp\cc2Cs3Zr.s:461    .bss.eeHandle:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_FLASH_Unlock
+HAL_FLASHEx_Erase
+HAL_FLASH_Lock
+HAL_FLASH_Program

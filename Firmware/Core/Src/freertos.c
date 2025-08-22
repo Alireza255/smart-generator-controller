@@ -31,6 +31,7 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -55,41 +56,23 @@ float table_value = 0.0f;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityRealtime,
-};
-/* Definitions for trig_sim */
-osThreadId_t trig_simHandle;
-const osThreadAttr_t trig_sim_attributes = {
-  .name = "trig_sim",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
-};
-/* Definitions for fuel_task */
-osThreadId_t fuel_taskHandle;
-const osThreadAttr_t fuel_task_attributes = {
-  .name = "fuel_task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for init_task */
 osThreadId_t init_taskHandle;
 const osThreadAttr_t init_task_attributes = {
   .name = "init_task",
-  .stack_size = 128 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityRealtime,
-};
-/* Definitions for sensor_task */
-osThreadId_t sensor_taskHandle;
-const osThreadAttr_t sensor_task_attributes = {
-  .name = "sensor_task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for engine_flags */
 osEventFlagsId_t engine_flagsHandle;
+osStaticEventGroupDef_t engine_flagsControlBlock;
 const osEventFlagsAttr_t engine_flags_attributes = {
-  .name = "engine_flags"
+  .name = "engine_flags",
+  .cb_mem = &engine_flagsControlBlock,
+  .cb_size = sizeof(engine_flagsControlBlock),
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,10 +83,7 @@ void toggle_led();
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-void trigger_simulator_task(void *argument);
-void start_fuel_task(void *argument);
 void controller_init_task(void *argument);
-void sensors_task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -138,17 +118,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of trig_sim */
-  trig_simHandle = osThreadNew(trigger_simulator_task, NULL, &trig_sim_attributes);
-
-  /* creation of fuel_task */
-  fuel_taskHandle = osThreadNew(start_fuel_task, NULL, &fuel_task_attributes);
-
   /* creation of init_task */
   init_taskHandle = osThreadNew(controller_init_task, NULL, &init_task_attributes);
-
-  /* creation of sensor_task */
-  sensor_taskHandle = osThreadNew(sensors_task, NULL, &sensor_task_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -188,46 +159,6 @@ void StartDefaultTask(void *argument)
   /* USER CODE END StartDefaultTask */
 }
 
-/* USER CODE BEGIN Header_trigger_simulator_task */
-/**
-* @brief Function implementing the trig_sim thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_trigger_simulator_task */
-void trigger_simulator_task(void *argument)
-{
-  /* USER CODE BEGIN trigger_simulator_task */
-
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-
-  }
-  /* USER CODE END trigger_simulator_task */
-}
-
-/* USER CODE BEGIN Header_start_fuel_task */
-/**
-* @brief Function implementing the fuel_task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_start_fuel_task */
-void start_fuel_task(void *argument)
-{
-  /* USER CODE BEGIN start_fuel_task */
-
-
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END start_fuel_task */
-}
-
 /* USER CODE BEGIN Header_controller_init_task */
 /**
 * @brief Function implementing the init_task thread.
@@ -239,62 +170,17 @@ void controller_init_task(void *argument)
 {
   /* USER CODE BEGIN controller_init_task */
 
-  controller_init_with_defaults();
+  controller_init();
 
 
-  for (size_t i = 0; i < (sizeof(test_table.x_bins) / sizeof(test_table.x_bins[0])); i++)
-  {
-    test_table.x_bins[i] = i * 100;  // Example values
-  }
-  for (size_t i = 0; i < (sizeof(test_table.y_bins) / sizeof(test_table.y_bins[0])); i++)
-  {
-    test_table.y_bins[i] = i * 10;  // Example values
-  }
-  for (size_t i = 0; i < (sizeof(test_table.data) / sizeof(test_table.data[0])); i++)
-  {
-    for (size_t j = 0; j < (sizeof(test_table.data[0]) / sizeof(test_table.data[0][0])); j++)
-    {
-      test_table.data[i][j] = (i + 1) * (j + 1);  // Example values
-    }
-  }
 
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
-    static float rpm = 0;
-    static float load = 0;
-    rpm += 10;  // Simulate RPM increase
-    load = 11.25f;  // Simulate load increase
-    if (rpm > 5000)
-    {
-      rpm = -1000;
-    }
-    table_value = table_2d_get_value(&test_table, rpm, load);
+    osDelay(100);
 
-    
   }
   /* USER CODE END controller_init_task */
-}
-
-/* USER CODE BEGIN Header_sensors_task */
-/**
-* @brief Function implementing the sensor_task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_sensors_task */
-void sensors_task(void *argument)
-{
-  /* USER CODE BEGIN sensors_task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-
-    //runtime.map_kpa = sensor_map_get();
-  }
-  /* USER CODE END sensors_task */
 }
 
 /* Private application code --------------------------------------------------*/

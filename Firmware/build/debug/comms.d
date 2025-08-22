@@ -56,7 +56,8 @@ build/debug/comms.o: controller/utils/comms.c controller/utils/comms.h \
  controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/actuators/fan_control.h \
- controller/utils/trigger_simulator.h controller/config_and_runtime.h
+ controller/utils/trigger_simulator.h controller/config_and_runtime.h \
+ controller/utils/ee.h
 controller/utils/comms.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -136,3 +137,4 @@ controller/algorithm/governer.h:
 controller/actuators/fan_control.h:
 controller/utils/trigger_simulator.h:
 controller/config_and_runtime.h:
+controller/utils/ee.h:

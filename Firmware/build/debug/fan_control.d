@@ -57,7 +57,7 @@ build/debug/fan_control.o: controller/actuators/fan_control.c \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/actuators/fan_control.h \
  controller/utils/trigger_simulator.h controller/utils/utils.h \
- controller/config_and_runtime.h
+ controller/config_and_runtime.h controller/utils/ee.h
 controller/actuators/fan_control.h:
 controller/types.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -136,3 +136,4 @@ controller/actuators/fan_control.h:
 controller/utils/trigger_simulator.h:
 controller/utils/utils.h:
 controller/config_and_runtime.h:
+controller/utils/ee.h:

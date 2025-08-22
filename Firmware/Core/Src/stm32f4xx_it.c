@@ -90,7 +90,39 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
+  uint32_t *stacked_regs;
 
+  /* Figure out which stack pointer was active */
+  if (__get_CONTROL() & 2) {
+      /* Process Stack Pointer was in use */
+      __asm volatile("MRS %0, PSP" : "=r"(stacked_regs));
+  } else {
+      /* Main Stack Pointer was in use */
+      __asm volatile("MRS %0, MSP" : "=r"(stacked_regs));
+  }
+
+  /* CPU stacked registers (automatically pushed on exception entry) */
+  volatile uint32_t stacked_r0  = stacked_regs[0];
+  volatile uint32_t stacked_r1  = stacked_regs[1];
+  volatile uint32_t stacked_r2  = stacked_regs[2];
+  volatile uint32_t stacked_r3  = stacked_regs[3];
+  volatile uint32_t stacked_r12 = stacked_regs[4];
+  volatile uint32_t stacked_lr  = stacked_regs[5]; // LR (R14)
+  volatile uint32_t stacked_pc  = stacked_regs[6]; // PC at time of fault
+  volatile uint32_t stacked_psr = stacked_regs[7]; // xPSR
+
+  /* System fault status registers */
+  volatile uint32_t cfsr  = SCB->CFSR;   // Configurable Fault Status
+  volatile uint32_t hfsr  = SCB->HFSR;   // HardFault Status
+  volatile uint32_t mmfar = SCB->MMFAR;  // MemManage Fault Address
+  volatile uint32_t bfar  = SCB->BFAR;   // BusFault Address
+
+  /* Optional: peek a few words below SP to see if stack is filled with 0xA5 */
+  volatile uint32_t s_m1 = stacked_regs[-1];
+  volatile uint32_t s_m2 = stacked_regs[-2];
+  volatile uint32_t s_m3 = stacked_regs[-3];
+
+  __NOP();  // <-- Set a breakpoint here and inspect variables above
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
@@ -172,7 +204,7 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
   /* USER CODE END EXTI9_5_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
+  HAL_GPIO_EXTI_IRQHandler(SENSOR_VR2_Pin);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */

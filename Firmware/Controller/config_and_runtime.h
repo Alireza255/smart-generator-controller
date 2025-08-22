@@ -6,6 +6,9 @@
 #include <stdint.h>
 #include "constants.h"
 #include "tables.h"
+
+#define CONFIG_CHECKSUM 140051411009
+
 typedef struct
 {
     /* ---------- All floats & float arrays first (4-byte aligned) ---------- */
@@ -116,6 +119,8 @@ typedef struct
     uint8_t tps1_type;
     uint8_t tps2_type;
     uint8_t _padding[3];
+
+    uint64_t checksum;
 } config_t;
 
 

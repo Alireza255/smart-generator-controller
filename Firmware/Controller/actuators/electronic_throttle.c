@@ -24,13 +24,7 @@ void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps
     //electronic_throttle_auto_tune(etb);
 
     //electronic_throttle_update(etb);
-    osTimerId_t timer_id = osTimerNew(
-        electronic_throttle_update,
-        osTimerPeriodic,
-        etb,
-        NULL
-    );
-    osTimerStart(timer_id, 1); // every 1 tick = every 1ms = 1000Hz
+
     etb->state = ETB_STATE_NORMAL;
 
 }

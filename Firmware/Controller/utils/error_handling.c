@@ -1,6 +1,6 @@
 #include "error_handling.h"
 
-
+#if ERROR_HANDLING_ENABLED == true
 void log_error(const char* message)
 {
     if (message == NULL) return;
@@ -22,3 +22,14 @@ void log_warning(const char* message)
 
     CDC_Transmit_FS(buffer, strlen((char*)buffer));
 }
+#else
+void log_error(const char* message)
+{
+    
+}
+
+void log_warning(const char* message)
+{
+    
+}
+#endif
