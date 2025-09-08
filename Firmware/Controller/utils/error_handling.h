@@ -1,12 +1,12 @@
 #ifndef ERROR_HANDLING_H
 #define ERROR_HANDLING_H
 
-#define ERROR_HANDLING_ENABLED true
+#define ERROR_HANDLING_ENABLED
 
 
 #include <stdio.h>
 #include <string.h>
-#if ERROR_HANDLING_ENABLED == true
+#ifdef ERROR_HANDLING_ENABLED
 #include "usbd_cdc_if.h"
 #endif
 

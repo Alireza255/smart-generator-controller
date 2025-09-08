@@ -25,7 +25,13 @@ typedef enum
     IGNITION_COIL_STATE_CHARGING = 1,
 } ignition_coil_state_t;
 
-void ignition_init(controller_output_pin_t *outputs);
+/**
+ * @brief Initializes the ignition system.
+ * 
+ * @param outputs Pointer to the controller output pins.
+ * @return true if initialization was successful, false otherwise.
+ */
+bool ignition_init(controller_output_pin_t *outputs);
 
 /**
  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.
@@ -33,6 +39,7 @@ void ignition_init(controller_output_pin_t *outputs);
  * @param crankshaft_angle The current angle of the crankshaft.
  * @param rpm The current revolutions per minute of the engine.
  * @param current_time_us The current time in microseconds.
+ * @return true if the event was handled successfully, false otherwise.
  */
 void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us);
 
@@ -40,6 +47,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
  * @brief Charges the ignition coil at the specified index.
  * 
  * @param coil_index The index of the coil to be charged.
+ * @return true if charging started successfully, false otherwise.
  */
 void ignition_coil_begin_charge(void *arg);
 
@@ -47,6 +55,7 @@ void ignition_coil_begin_charge(void *arg);
  * @brief Fires a spark from the ignition coil at the specified index.
  * 
  * @param coil_index The index of the coil to fire the spark from.
+ * @return true if the spark was fired successfully, false otherwise.
  */
 void ignition_coil_fire_spark(void *arg);
 
@@ -57,6 +66,11 @@ void ignition_coil_fire_spark(void *arg);
  */
 percent_t ignition_get_coil_duty_cycle();
 
+/**
+ * @brief Gets the current ignition advance angle.
+ * 
+ * @return The current ignition advance angle.
+ */
 angle_t ignition_get_advance();
 
 #endif // IGNITION_H

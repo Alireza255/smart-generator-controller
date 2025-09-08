@@ -21,9 +21,15 @@ typedef enum
     TS_FULLY_SYNCED = 1,
 } trigger_sync_status_t;
 
+typedef enum
+{
+    TRIGGER_NUMBER_1,
+    TRIGGER_NUMBER_2,
+} trigger_number_t;
 
 typedef struct
 {
+    trigger_number_t trigger_number;
     bool initialized;
     uint8_t status_synced_index; // which of the status bits in runtime we are using
     uint8_t *filtering;

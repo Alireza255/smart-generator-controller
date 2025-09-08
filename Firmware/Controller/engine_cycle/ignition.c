@@ -10,12 +10,13 @@ static volatile bool spark_is_in_progress = false;
 
 static uint8_t number_of_cylinders = 0;
 
-void ignition_init(controller_output_pin_t *outputs)
+bool ignition_init(controller_output_pin_t *outputs)
 {
     if (outputs == NULL)
     {
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
         log_error("ignition init failed. No output config");
-        return;
+        return false;
     }
     ignition_outputs = outputs;
 
@@ -45,8 +46,9 @@ void ignition_init(controller_output_pin_t *outputs)
             break;
 
         default:
+            change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
             log_error("ignition init failed. unkown mode.");
-            return;
+            return false;
         }
 
         break;
@@ -82,13 +84,15 @@ void ignition_init(controller_output_pin_t *outputs)
             break;
 
         default:
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
             log_error("ignition init failed. unkown mode.");
-            return;
+            return false;
         }
-
+        break;
     default:
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
         log_error("ignition init failed. unkown firing order.");
-        return;
+        return false;
     }
 
     runtime.firing_interval_deg = (angle_t)720 / (angle_t)number_of_cylinders;
@@ -108,6 +112,7 @@ void ignition_init(controller_output_pin_t *outputs)
     {
         log_warning("Multi spark is enabled but number of sparks are 0.");
     }
+    return true;
 }
 
 /**
@@ -125,10 +130,12 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
     if (config.ignition_mode == IM_NO_IGNITION)
     {
         // obviously, there is no need to do any furthure processing
+        //ignition_coil_fire_spark()????
         return;
     }
     if (runtime.firing_interval_deg == 0)
     {
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
         log_error("ignition not initialized.");
         return;
     }
@@ -139,7 +146,8 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
         /**
          * @todo throw an error
          */
-        log_error("ignition dwell out of bounds.");
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
+         log_error("ignition dwell out of bounds.");
 
         return;
     }
@@ -225,6 +233,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
         spark_is_in_progress = true;
         runtime.multi_spark_actual_spark_count = number_of_scheduled_sparks;
     }
+    change_bit(&runtime.status, STATUS_IGNITION_ERROR, false);
 }
 
 /**
@@ -242,6 +251,7 @@ void ignition_coil_begin_charge(void *arg)
 
     if (coil_index[1] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1 || coil_index[0] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1)
     {
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
         log_error("Unkown ignition output");
         return;
     }
@@ -266,6 +276,7 @@ void ignition_coil_fire_spark(void *arg)
     uint8_t *coil_index = (uint8_t *)arg;
     if (coil_index[1] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1 || coil_index[0] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1)
     {
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
         log_error("Unkown ignition output");
         return;
     }
@@ -297,7 +308,7 @@ angle_t ignition_get_advance()
     rpm_t rpm = crankshaft_get_rpm();
     pressure_t map = sensor_map_get();
 
-    final_advance += table_2d_get_value(&config.ign_table_1, rpm, map); // expand and allow the use of table2 in the future
+    final_advance = table_2d_get_value(&config.ign_table_1, rpm, map); // expand and allow the use of table2 in the future
 
     /* Here we can apply all kinds of correction to the table */
 

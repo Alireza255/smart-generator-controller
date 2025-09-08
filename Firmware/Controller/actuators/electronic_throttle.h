@@ -25,6 +25,12 @@ typedef enum
     ETB_STATE_ERROR,
 } electronic_throttle_state_t;
 
+typedef enum
+{
+    ETB_NUMBER_1,
+    ETB_NUMBER_2,
+} electronic_throttle_number_t;
+
 typedef struct
 {
     electronic_throttle_state_t state;
@@ -35,17 +41,18 @@ typedef struct
     percent_t current_position;
     percent_t duty_cycle_limiting_lower;
     percent_t duty_cycle_limiting_upper;
+    electronic_throttle_number_t etb_number;
     bool is_duty_cycle_limiting_enabled;
 } electronic_throttle_t;
 
 /**
  * @note sensor and motor have to be initialized before calling this function
  */
-void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor);
+bool electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor);
 
-void electronic_throttle_auto_tune(electronic_throttle_t *etb);
+bool electronic_throttle_auto_tune(electronic_throttle_t *etb);
 
-void electronic_throttle_set(electronic_throttle_t *etb, percent_t position);
+bool electronic_throttle_set(electronic_throttle_t *etb, percent_t position);
 
 void electronic_throttle_update(void *arg);
  

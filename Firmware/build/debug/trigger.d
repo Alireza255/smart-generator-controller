@@ -47,8 +47,8 @@ build/debug/trigger.o: controller/engine_cycle/trigger.c \
  controller/config_and_runtime.h controller/constants.h \
  controller/types.h controller/tables.h controller/controller.h \
  controller/utils/comms.h controller/engine_cycle/trigger.h \
- controller/actuators/dc_motors.h controller/IO/sensors.h \
- controller/IO/analog_inputs.h controller/utils/utils.h \
+ controller/actuators/dc_motors.h controller/utils/utils.h \
+ controller/IO/sensors.h controller/IO/analog_inputs.h \
  controller/IO/resistor.h controller/IO/thermistor.h \
  controller/constants.h controller/engine_cycle/ignition.h \
  controller/IO/thermistor.h controller/utils/pid.h \
@@ -117,9 +117,9 @@ controller/controller.h:
 controller/utils/comms.h:
 controller/engine_cycle/trigger.h:
 controller/actuators/dc_motors.h:
+controller/utils/utils.h:
 controller/IO/sensors.h:
 controller/IO/analog_inputs.h:
-controller/utils/utils.h:
 controller/IO/resistor.h:
 controller/IO/thermistor.h:
 controller/constants.h:

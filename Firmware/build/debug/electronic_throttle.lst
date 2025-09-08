@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -42,800 +42,1332 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 1
    3:controller/actuators/electronic_throttle.c **** void electronic_throttle_tone_fail(electronic_throttle_t *etb);
    4:controller/actuators/electronic_throttle.c **** void electronic_throttle_tone_success(electronic_throttle_t *etb);
    5:controller/actuators/electronic_throttle.c **** 
-   6:controller/actuators/electronic_throttle.c **** void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_moto
+   6:controller/actuators/electronic_throttle.c **** bool electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_moto
    7:controller/actuators/electronic_throttle.c **** {
   34              		.loc 1 7 1 view -0
   35              		.cfi_startproc
   36              		@ args = 0, pretend = 0, frame = 0
   37              		@ frame_needed = 0, uses_anonymous_args = 0
   38              		.loc 1 7 1 is_stmt 0 view .LVU1
-  39 0000 08B5     		push	{r3, lr}
+  39 0000 10B5     		push	{r4, lr}
   40              		.cfi_def_cfa_offset 8
-  41              		.cfi_offset 3, -8
+  41              		.cfi_offset 4, -8
   42              		.cfi_offset 14, -4
    8:controller/actuators/electronic_throttle.c ****     if (etb == NULL || sensor == NULL || motor == NULL)
   43              		.loc 1 8 5 is_stmt 1 view .LVU2
   44              		.loc 1 8 8 is_stmt 0 view .LVU3
-  45 0002 A0B1     		cbz	r0, .L2
-  46              		.loc 1 8 21 discriminator 1 view .LVU4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 2
+  45 0002 0446     		mov	r4, r0
+  46 0004 E8B1     		cbz	r0, .L2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 2
 
 
-  47 0004 9AB1     		cbz	r2, .L2
-  48              		.loc 1 8 39 discriminator 2 view .LVU5
-  49 0006 93B1     		cbz	r3, .L2
+  47              		.loc 1 8 21 discriminator 1 view .LVU4
+  48 0006 E2B1     		cbz	r2, .L2
+  49              		.loc 1 8 39 discriminator 2 view .LVU5
+  50 0008 DBB1     		cbz	r3, .L2
    9:controller/actuators/electronic_throttle.c ****     {
   10:controller/actuators/electronic_throttle.c ****         log_error("Electronic throttle init failed");
-  11:controller/actuators/electronic_throttle.c ****         return;
-  12:controller/actuators/electronic_throttle.c ****     }
-  13:controller/actuators/electronic_throttle.c ****     
-  14:controller/actuators/electronic_throttle.c ****     etb->pid = pid;
-  50              		.loc 1 14 5 is_stmt 1 view .LVU6
-  51              		.loc 1 14 14 is_stmt 0 view .LVU7
-  52 0008 8160     		str	r1, [r0, #8]
-  15:controller/actuators/electronic_throttle.c ****     etb->sensor = sensor;
-  53              		.loc 1 15 5 is_stmt 1 view .LVU8
-  54              		.loc 1 15 17 is_stmt 0 view .LVU9
-  55 000a C260     		str	r2, [r0, #12]
-  16:controller/actuators/electronic_throttle.c ****     etb->motor = motor;
-  56              		.loc 1 16 5 is_stmt 1 view .LVU10
-  57              		.loc 1 16 16 is_stmt 0 view .LVU11
-  58 000c 4360     		str	r3, [r0, #4]
-  17:controller/actuators/electronic_throttle.c ****     etb->target_position = ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION;
-  59              		.loc 1 17 5 is_stmt 1 view .LVU12
-  60              		.loc 1 17 26 is_stmt 0 view .LVU13
-  61 000e 0023     		movs	r3, #0
-  62              	.LVL1:
-  63              		.loc 1 17 26 view .LVU14
-  64 0010 0361     		str	r3, [r0, #16]	@ float
-  18:controller/actuators/electronic_throttle.c **** 
-  19:controller/actuators/electronic_throttle.c ****     etb->pid->limit_output_max = (float)255;
-  65              		.loc 1 19 5 is_stmt 1 view .LVU15
-  66              		.loc 1 19 32 is_stmt 0 view .LVU16
-  67 0012 094B     		ldr	r3, .L6
-  68 0014 4B61     		str	r3, [r1, #20]	@ float
-  69              	.LVL2:
-  20:controller/actuators/electronic_throttle.c ****     etb->pid->limit_output_min = (float)-255;
-  70              		.loc 1 20 5 is_stmt 1 view .LVU17
-  71              		.loc 1 20 8 is_stmt 0 view .LVU18
-  72 0016 8368     		ldr	r3, [r0, #8]
-  73              		.loc 1 20 32 view .LVU19
-  74 0018 084A     		ldr	r2, .L6+4
-  75              	.LVL3:
-  76              		.loc 1 20 32 view .LVU20
-  77 001a 1A61     		str	r2, [r3, #16]	@ float
-  21:controller/actuators/electronic_throttle.c ****     etb->pid->limit_integrator_max = (float)250;
-  78              		.loc 1 21 5 is_stmt 1 view .LVU21
-  79              		.loc 1 21 8 is_stmt 0 view .LVU22
-  80 001c 8368     		ldr	r3, [r0, #8]
-  81              		.loc 1 21 36 view .LVU23
-  82 001e 084A     		ldr	r2, .L6+8
-  83 0020 DA61     		str	r2, [r3, #28]	@ float
-  22:controller/actuators/electronic_throttle.c ****     etb->pid->limit_integrator_min = (float)-250;
-  84              		.loc 1 22 5 is_stmt 1 view .LVU24
-  85              		.loc 1 22 8 is_stmt 0 view .LVU25
-  86 0022 8368     		ldr	r3, [r0, #8]
-  87              		.loc 1 22 36 view .LVU26
-  88 0024 074A     		ldr	r2, .L6+12
-  89 0026 9A61     		str	r2, [r3, #24]	@ float
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 3
-
-
-  23:controller/actuators/electronic_throttle.c ****     
-  24:controller/actuators/electronic_throttle.c ****     //electronic_throttle_auto_tune(etb);
-  25:controller/actuators/electronic_throttle.c **** 
-  26:controller/actuators/electronic_throttle.c ****     //electronic_throttle_update(etb);
-  27:controller/actuators/electronic_throttle.c **** 
-  28:controller/actuators/electronic_throttle.c ****     etb->state = ETB_STATE_NORMAL;
-  90              		.loc 1 28 5 is_stmt 1 view .LVU27
-  91              		.loc 1 28 16 is_stmt 0 view .LVU28
-  92 0028 0123     		movs	r3, #1
-  93 002a 0370     		strb	r3, [r0]
-  94              	.LVL4:
-  95              	.L1:
-  29:controller/actuators/electronic_throttle.c **** 
-  30:controller/actuators/electronic_throttle.c **** }
-  96              		.loc 1 30 1 view .LVU29
-  97 002c 08BD     		pop	{r3, pc}
-  98              	.LVL5:
-  99              	.L2:
-  10:controller/actuators/electronic_throttle.c ****         return;
- 100              		.loc 1 10 9 is_stmt 1 view .LVU30
- 101 002e 0648     		ldr	r0, .L6+16
- 102              	.LVL6:
-  10:controller/actuators/electronic_throttle.c ****         return;
- 103              		.loc 1 10 9 is_stmt 0 view .LVU31
- 104 0030 FFF7FEFF 		bl	log_error
- 105              	.LVL7:
-  11:controller/actuators/electronic_throttle.c ****     }
- 106              		.loc 1 11 9 is_stmt 1 view .LVU32
- 107 0034 FAE7     		b	.L1
- 108              	.L7:
- 109 0036 00BF     		.align	2
- 110              	.L6:
- 111 0038 00007F43 		.word	1132396544
- 112 003c 00007FC3 		.word	-1015087104
- 113 0040 00007A43 		.word	1132068864
- 114 0044 00007AC3 		.word	-1015414784
- 115 0048 00000000 		.word	.LC0
- 116              		.cfi_endproc
- 117              	.LFE232:
- 119              		.section	.text.electronic_throttle_set,"ax",%progbits
- 120              		.align	1
- 121              		.global	electronic_throttle_set
- 122              		.syntax unified
- 123              		.thumb
- 124              		.thumb_func
- 126              	electronic_throttle_set:
- 127              	.LVL8:
- 128              	.LFB233:
+  11:controller/actuators/electronic_throttle.c ****         if (etb->etb_number == ETB_NUMBER_1)
+  12:controller/actuators/electronic_throttle.c ****         {
+  13:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB1_OK, false);
+  14:controller/actuators/electronic_throttle.c ****         }
+  15:controller/actuators/electronic_throttle.c ****         else if (etb->etb_number == ETB_NUMBER_2)
+  16:controller/actuators/electronic_throttle.c ****         {
+  17:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+  18:controller/actuators/electronic_throttle.c ****         }
+  19:controller/actuators/electronic_throttle.c ****         else
+  20:controller/actuators/electronic_throttle.c ****         {
+  21:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB1_OK, false);
+  22:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+  23:controller/actuators/electronic_throttle.c ****         }
+  24:controller/actuators/electronic_throttle.c ****         return false;
+  25:controller/actuators/electronic_throttle.c ****     }
+  26:controller/actuators/electronic_throttle.c **** 
+  27:controller/actuators/electronic_throttle.c ****     etb->pid = pid;
+  51              		.loc 1 27 5 is_stmt 1 view .LVU6
+  52              		.loc 1 27 14 is_stmt 0 view .LVU7
+  53 000a 8160     		str	r1, [r0, #8]
+  28:controller/actuators/electronic_throttle.c ****     etb->sensor = sensor;
+  54              		.loc 1 28 5 is_stmt 1 view .LVU8
+  55              		.loc 1 28 17 is_stmt 0 view .LVU9
+  56 000c C260     		str	r2, [r0, #12]
+  29:controller/actuators/electronic_throttle.c ****     etb->motor = motor;
+  57              		.loc 1 29 5 is_stmt 1 view .LVU10
+  58              		.loc 1 29 16 is_stmt 0 view .LVU11
+  59 000e 4360     		str	r3, [r0, #4]
+  30:controller/actuators/electronic_throttle.c ****     etb->target_position = ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION;
+  60              		.loc 1 30 5 is_stmt 1 view .LVU12
+  61              		.loc 1 30 26 is_stmt 0 view .LVU13
+  62 0010 0023     		movs	r3, #0
+  63              	.LVL1:
+  64              		.loc 1 30 26 view .LVU14
+  65 0012 0361     		str	r3, [r0, #16]	@ float
   31:controller/actuators/electronic_throttle.c **** 
-  32:controller/actuators/electronic_throttle.c **** void electronic_throttle_set(electronic_throttle_t *etb, percent_t position)
-  33:controller/actuators/electronic_throttle.c **** {
- 129              		.loc 1 33 1 view -0
- 130              		.cfi_startproc
- 131              		@ args = 0, pretend = 0, frame = 0
- 132              		@ frame_needed = 0, uses_anonymous_args = 0
- 133              		@ link register save eliminated.
-  34:controller/actuators/electronic_throttle.c ****     if (!IS_IN_RANGE(position, (percent_t)0, (percent_t)100))
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 4
+  32:controller/actuators/electronic_throttle.c ****     etb->pid->limit_output_max = (float)255;
+  66              		.loc 1 32 5 is_stmt 1 view .LVU15
+  67              		.loc 1 32 32 is_stmt 0 view .LVU16
+  68 0014 1F4B     		ldr	r3, .L13
+  69 0016 4B61     		str	r3, [r1, #20]	@ float
+  70              	.LVL2:
+  33:controller/actuators/electronic_throttle.c ****     etb->pid->limit_output_min = (float)-255;
+  71              		.loc 1 33 5 is_stmt 1 view .LVU17
+  72              		.loc 1 33 8 is_stmt 0 view .LVU18
+  73 0018 8368     		ldr	r3, [r0, #8]
+  74              		.loc 1 33 32 view .LVU19
+  75 001a 1F4A     		ldr	r2, .L13+4
+  76              	.LVL3:
+  77              		.loc 1 33 32 view .LVU20
+  78 001c 1A61     		str	r2, [r3, #16]	@ float
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 3
 
 
- 134              		.loc 1 34 5 view .LVU34
- 135              		.loc 1 34 8 is_stmt 0 view .LVU35
- 136 0000 B5EEC00A 		vcmpe.f32	s0, #0
- 137 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 138 0008 06DB     		blt	.L9
- 139              		.loc 1 34 9 discriminator 1 view .LVU36
- 140 000a DFED067A 		vldr.32	s15, .L13
- 141 000e B4EEE70A 		vcmpe.f32	s0, s15
- 142 0012 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 143 0016 01D9     		bls	.L11
- 144              	.L9:
-  35:controller/actuators/electronic_throttle.c ****     {
-  36:controller/actuators/electronic_throttle.c ****         etb->target_position = ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION;
- 145              		.loc 1 36 9 is_stmt 1 view .LVU37
- 146              		.loc 1 36 30 is_stmt 0 view .LVU38
- 147 0018 0023     		movs	r3, #0
- 148 001a 0361     		str	r3, [r0, #16]	@ float
- 149              	.L11:
-  37:controller/actuators/electronic_throttle.c ****     }
-  38:controller/actuators/electronic_throttle.c ****     etb->target_position = position;
- 150              		.loc 1 38 5 is_stmt 1 view .LVU39
- 151              		.loc 1 38 26 is_stmt 0 view .LVU40
- 152 001c 80ED040A 		vstr.32	s0, [r0, #16]
-  39:controller/actuators/electronic_throttle.c **** }
- 153              		.loc 1 39 1 view .LVU41
- 154 0020 7047     		bx	lr
- 155              	.L14:
- 156 0022 00BF     		.align	2
- 157              	.L13:
- 158 0024 0000C842 		.word	1120403456
- 159              		.cfi_endproc
- 160              	.LFE233:
- 162              		.section	.rodata.electronic_throttle_update.str1.4,"aMS",%progbits,1
- 163              		.align	2
- 164              	.LC1:
- 165 0000 456C6563 		.ascii	"Electronic throttle not initialized\000"
- 165      74726F6E 
- 165      69632074 
- 165      68726F74 
- 165      746C6520 
- 166              		.section	.text.electronic_throttle_update,"ax",%progbits
- 167              		.align	1
- 168              		.global	electronic_throttle_update
- 169              		.syntax unified
- 170              		.thumb
- 171              		.thumb_func
- 173              	electronic_throttle_update:
- 174              	.LVL9:
- 175              	.LFB234:
+  34:controller/actuators/electronic_throttle.c ****     etb->pid->limit_integrator_max = (float)250;
+  79              		.loc 1 34 5 is_stmt 1 view .LVU21
+  80              		.loc 1 34 8 is_stmt 0 view .LVU22
+  81 001e 8368     		ldr	r3, [r0, #8]
+  82              		.loc 1 34 36 view .LVU23
+  83 0020 1E4A     		ldr	r2, .L13+8
+  84 0022 DA61     		str	r2, [r3, #28]	@ float
+  35:controller/actuators/electronic_throttle.c ****     etb->pid->limit_integrator_min = (float)-250;
+  85              		.loc 1 35 5 is_stmt 1 view .LVU24
+  86              		.loc 1 35 8 is_stmt 0 view .LVU25
+  87 0024 8368     		ldr	r3, [r0, #8]
+  88              		.loc 1 35 36 view .LVU26
+  89 0026 1E4A     		ldr	r2, .L13+12
+  90 0028 9A61     		str	r2, [r3, #24]	@ float
+  36:controller/actuators/electronic_throttle.c **** 
+  37:controller/actuators/electronic_throttle.c ****     // electronic_throttle_auto_tune(etb);
+  38:controller/actuators/electronic_throttle.c **** 
+  39:controller/actuators/electronic_throttle.c ****     // electronic_throttle_update(etb);
   40:controller/actuators/electronic_throttle.c **** 
-  41:controller/actuators/electronic_throttle.c **** void electronic_throttle_update(void *arg)
-  42:controller/actuators/electronic_throttle.c **** {
- 176              		.loc 1 42 1 is_stmt 1 view -0
- 177              		.cfi_startproc
- 178              		@ args = 0, pretend = 0, frame = 8
- 179              		@ frame_needed = 0, uses_anonymous_args = 0
- 180              		.loc 1 42 1 is_stmt 0 view .LVU43
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 5
+  41:controller/actuators/electronic_throttle.c ****     etb->state = ETB_STATE_NORMAL;
+  91              		.loc 1 41 5 is_stmt 1 view .LVU27
+  92              		.loc 1 41 16 is_stmt 0 view .LVU28
+  93 002a 0123     		movs	r3, #1
+  94 002c 0370     		strb	r3, [r0]
+  42:controller/actuators/electronic_throttle.c ****     if (etb->etb_number == ETB_NUMBER_1)
+  95              		.loc 1 42 5 is_stmt 1 view .LVU29
+  96              		.loc 1 42 12 is_stmt 0 view .LVU30
+  97 002e 90F82030 		ldrb	r3, [r0, #32]	@ zero_extendqisi2
+  98              		.loc 1 42 8 view .LVU31
+  99 0032 23BB     		cbnz	r3, .L8
+  43:controller/actuators/electronic_throttle.c ****     {
+  44:controller/actuators/electronic_throttle.c ****         change_bit(&runtime.status, STATUS_ETB1_OK, true);
+ 100              		.loc 1 44 9 is_stmt 1 view .LVU32
+ 101              	.LVL4:
+ 102              	.LBB34:
+ 103              	.LBI34:
+ 104              		.file 2 "controller/utils/utils.h"
+   1:controller/utils/utils.h **** /**
+   2:controller/utils/utils.h ****  * @file utils.h
+   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
+   4:controller/utils/utils.h ****  *
+   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
+   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
+   7:controller/utils/utils.h ****  *
+   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
+   9:controller/utils/utils.h ****  */
+  10:controller/utils/utils.h **** #ifndef UTILS_H
+  11:controller/utils/utils.h **** #define UTILS_H
+  12:controller/utils/utils.h **** 
+  13:controller/utils/utils.h **** #include "types.h"
+  14:controller/utils/utils.h **** #include "math.h"
+  15:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  18:controller/utils/utils.h **** 
+  19:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
+ 105              		.loc 2 19 20 view .LVU33
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 4
 
 
- 181 0000 30B5     		push	{r4, r5, lr}
- 182              		.cfi_def_cfa_offset 12
- 183              		.cfi_offset 4, -12
- 184              		.cfi_offset 5, -8
- 185              		.cfi_offset 14, -4
- 186 0002 2DED028B 		vpush.64	{d8}
- 187              		.cfi_def_cfa_offset 20
- 188              		.cfi_offset 80, -20
- 189              		.cfi_offset 81, -16
- 190 0006 83B0     		sub	sp, sp, #12
- 191              		.cfi_def_cfa_offset 32
-  43:controller/actuators/electronic_throttle.c ****     
-  44:controller/actuators/electronic_throttle.c ****     electronic_throttle_t *etb = (electronic_throttle_t *)arg;
- 192              		.loc 1 44 5 is_stmt 1 view .LVU44
- 193              	.LVL10:
-  45:controller/actuators/electronic_throttle.c ****     if (etb == NULL || etb->pid == NULL || etb->sensor == NULL || etb->motor == NULL)
- 194              		.loc 1 45 5 view .LVU45
- 195              		.loc 1 45 8 is_stmt 0 view .LVU46
- 196 0008 0028     		cmp	r0, #0
- 197 000a 4AD0     		beq	.L16
- 198 000c 0446     		mov	r4, r0
- 199              		.loc 1 45 27 discriminator 1 view .LVU47
- 200 000e 8368     		ldr	r3, [r0, #8]
- 201              		.loc 1 45 21 discriminator 1 view .LVU48
- 202 0010 002B     		cmp	r3, #0
- 203 0012 46D0     		beq	.L16
- 204              		.loc 1 45 47 discriminator 2 view .LVU49
- 205 0014 C068     		ldr	r0, [r0, #12]
- 206              	.LVL11:
- 207              		.loc 1 45 41 discriminator 2 view .LVU50
- 208 0016 0028     		cmp	r0, #0
- 209 0018 43D0     		beq	.L16
- 210              		.loc 1 45 70 discriminator 3 view .LVU51
- 211 001a 6368     		ldr	r3, [r4, #4]
- 212              		.loc 1 45 64 discriminator 3 view .LVU52
- 213 001c 002B     		cmp	r3, #0
- 214 001e 40D0     		beq	.L16
-  46:controller/actuators/electronic_throttle.c ****     {
-  47:controller/actuators/electronic_throttle.c ****         log_error("Electronic throttle not initialized");
-  48:controller/actuators/electronic_throttle.c ****         return;
+ 106              	.LBB35:
+  20:controller/utils/utils.h **** {
+  21:controller/utils/utils.h ****     if (bit > 31)
+ 107              		.loc 2 21 5 view .LVU34
+  22:controller/utils/utils.h ****     {
+  23:controller/utils/utils.h ****         return;
+  24:controller/utils/utils.h ****     }
+  25:controller/utils/utils.h ****     if (state)
+ 108              		.loc 2 25 5 view .LVU35
+  26:controller/utils/utils.h ****     {
+  27:controller/utils/utils.h ****         *var |= (1u << bit);
+ 109              		.loc 2 27 9 view .LVU36
+ 110 0034 1B4A     		ldr	r2, .L13+16
+ 111 0036 1368     		ldr	r3, [r2]
+ 112              		.loc 2 27 14 is_stmt 0 view .LVU37
+ 113 0038 43F48003 		orr	r3, r3, #4194304
+ 114 003c 1360     		str	r3, [r2]
+ 115              	.LVL5:
+ 116              		.loc 2 27 14 view .LVU38
+ 117              	.LBE35:
+ 118              	.LBE34:
+  45:controller/actuators/electronic_throttle.c ****     }
+  46:controller/actuators/electronic_throttle.c ****     else if (etb->etb_number == ETB_NUMBER_2)
+  47:controller/actuators/electronic_throttle.c ****     {
+  48:controller/actuators/electronic_throttle.c ****         change_bit(&runtime.status, STATUS_ETB2_OK, true);
   49:controller/actuators/electronic_throttle.c ****     }
-  50:controller/actuators/electronic_throttle.c ****     percent_t position = sensor_tps_get(etb->sensor);
- 215              		.loc 1 50 5 is_stmt 1 view .LVU53
- 216              		.loc 1 50 26 is_stmt 0 view .LVU54
- 217 0020 FFF7FEFF 		bl	sensor_tps_get
- 218              	.LVL12:
- 219 0024 B0EE408A 		vmov.f32	s16, s0
- 220              	.LVL13:
-  51:controller/actuators/electronic_throttle.c ****     etb->current_position = position;
- 221              		.loc 1 51 5 is_stmt 1 view .LVU55
- 222              		.loc 1 51 27 is_stmt 0 view .LVU56
- 223 0028 84ED050A 		vstr.32	s0, [r4, #20]
-  52:controller/actuators/electronic_throttle.c ****     pid_set_setpoint(etb->pid, etb->target_position);
- 224              		.loc 1 52 5 is_stmt 1 view .LVU57
- 225 002c 94ED040A 		vldr.32	s0, [r4, #16]
- 226              	.LVL14:
- 227              		.loc 1 52 5 is_stmt 0 view .LVU58
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 6
+  50:controller/actuators/electronic_throttle.c ****     return true;
+ 119              		.loc 1 50 12 view .LVU39
+ 120 003e 0120     		movs	r0, #1
+ 121              	.LVL6:
+ 122              		.loc 1 50 12 view .LVU40
+ 123 0040 0BE0     		b	.L7
+ 124              	.LVL7:
+ 125              	.L2:
+  10:controller/actuators/electronic_throttle.c ****         if (etb->etb_number == ETB_NUMBER_1)
+ 126              		.loc 1 10 9 is_stmt 1 view .LVU41
+ 127 0042 1948     		ldr	r0, .L13+20
+ 128              	.LVL8:
+  10:controller/actuators/electronic_throttle.c ****         if (etb->etb_number == ETB_NUMBER_1)
+ 129              		.loc 1 10 9 is_stmt 0 view .LVU42
+ 130 0044 FFF7FEFF 		bl	log_error
+ 131              	.LVL9:
+  11:controller/actuators/electronic_throttle.c ****         {
+ 132              		.loc 1 11 9 is_stmt 1 view .LVU43
+  11:controller/actuators/electronic_throttle.c ****         {
+ 133              		.loc 1 11 16 is_stmt 0 view .LVU44
+ 134 0048 94F82030 		ldrb	r3, [r4, #32]	@ zero_extendqisi2
+  11:controller/actuators/electronic_throttle.c ****         {
+ 135              		.loc 1 11 12 view .LVU45
+ 136 004c 33B9     		cbnz	r3, .L4
+  13:controller/actuators/electronic_throttle.c ****         }
+ 137              		.loc 1 13 13 is_stmt 1 view .LVU46
+ 138              	.LVL10:
+ 139              	.LBB36:
+ 140              	.LBI36:
+  19:controller/utils/utils.h **** {
+ 141              		.loc 2 19 20 view .LVU47
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 5
 
 
- 228 0030 A068     		ldr	r0, [r4, #8]
- 229 0032 FFF7FEFF 		bl	pid_set_setpoint
- 230              	.LVL15:
-  53:controller/actuators/electronic_throttle.c ****     percent_t motor_effort = pid_compute(etb->pid, get_time_us(), position);
- 231              		.loc 1 53 5 is_stmt 1 view .LVU59
- 232              		.loc 1 53 30 is_stmt 0 view .LVU60
- 233 0036 A568     		ldr	r5, [r4, #8]
- 234 0038 FFF7FEFF 		bl	get_time_us
- 235              	.LVL16:
- 236 003c 0146     		mov	r1, r0
- 237              		.loc 1 53 30 discriminator 1 view .LVU61
- 238 003e B0EE480A 		vmov.f32	s0, s16
- 239 0042 2846     		mov	r0, r5
- 240 0044 FFF7FEFF 		bl	pid_compute
- 241              	.LVL17:
-  54:controller/actuators/electronic_throttle.c ****     dc_motor_direction_t dir = motor_effort > 0 ? MOTOR_DIRECTION_FORWARD : MOTOR_DIRECTION_REVERSE
- 242              		.loc 1 54 5 is_stmt 1 view .LVU62
- 243              		.loc 1 54 45 is_stmt 0 view .LVU63
- 244 0048 B5EEC00A 		vcmpe.f32	s0, #0
- 245 004c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 246              		.loc 1 54 75 view .LVU64
- 247 0050 D4BF     		ite	le
- 248 0052 0121     		movle	r1, #1
- 249 0054 0021     		movgt	r1, #0
- 250              	.LVL18:
-  55:controller/actuators/electronic_throttle.c ****     /* Limiting the end of travel duty cycle for protection */
-  56:controller/actuators/electronic_throttle.c ****     if (etb->is_duty_cycle_limiting_enabled)
- 251              		.loc 1 56 5 is_stmt 1 view .LVU65
- 252              		.loc 1 56 12 is_stmt 0 view .LVU66
- 253 0056 94F82030 		ldrb	r3, [r4, #32]	@ zero_extendqisi2
- 254              		.loc 1 56 8 view .LVU67
- 255 005a 002B     		cmp	r3, #0
- 256 005c 51D0     		beq	.L19
-  57:controller/actuators/electronic_throttle.c ****     {
-  58:controller/actuators/electronic_throttle.c ****         if (ABS(position - 100.0f) < ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD)
- 257              		.loc 1 58 9 is_stmt 1 view .LVU68
- 258              		.loc 1 58 13 is_stmt 0 view .LVU69
- 259 005e DFED3C7A 		vldr.32	s15, .L47
- 260 0062 78EE677A 		vsub.f32	s15, s16, s15
- 261              		.loc 1 58 36 view .LVU70
- 262 0066 F5EEC07A 		vcmpe.f32	s15, #0
- 263 006a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 264 006e 1FD4     		bmi	.L43
- 265              		.loc 1 58 36 discriminator 2 view .LVU71
- 266 0070 B6EE007A 		vmov.f32	s14, #5.0e-1
- 267 0074 F4EEC77A 		vcmpe.f32	s15, s14
- 268 0078 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 269 007c 4CBF     		ite	mi
- 270 007e 0123     		movmi	r3, #1
- 271 0080 0023     		movpl	r3, #0
- 272              	.L22:
- 273              		.loc 1 58 12 discriminator 4 view .LVU72
- 274 0082 0BB3     		cbz	r3, .L23
-  59:controller/actuators/electronic_throttle.c ****         {
-  60:controller/actuators/electronic_throttle.c ****             motor_effort = CLAMP(motor_effort, 0, etb->duty_cycle_limiting_upper);
- 275              		.loc 1 60 13 is_stmt 1 view .LVU73
- 276              		.loc 1 60 28 is_stmt 0 view .LVU74
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 7
+ 142              	.LBB37:
+  21:controller/utils/utils.h ****     {
+ 143              		.loc 2 21 5 view .LVU48
+  25:controller/utils/utils.h ****     {
+ 144              		.loc 2 25 5 view .LVU49
+  28:controller/utils/utils.h ****     }
+  29:controller/utils/utils.h ****     else
+  30:controller/utils/utils.h ****     {
+  31:controller/utils/utils.h ****         *var &= ~(1u << bit);
+ 145              		.loc 2 31 9 view .LVU50
+ 146 004e 154A     		ldr	r2, .L13+16
+ 147 0050 1368     		ldr	r3, [r2]
+ 148              		.loc 2 31 14 is_stmt 0 view .LVU51
+ 149 0052 23F48003 		bic	r3, r3, #4194304
+ 150 0056 1360     		str	r3, [r2]
+ 151              	.LVL11:
+ 152              	.L5:
+ 153              		.loc 2 31 14 view .LVU52
+ 154              	.LBE37:
+ 155              	.LBE36:
+  24:controller/actuators/electronic_throttle.c ****     }
+ 156              		.loc 1 24 9 is_stmt 1 view .LVU53
+  24:controller/actuators/electronic_throttle.c ****     }
+ 157              		.loc 1 24 16 is_stmt 0 view .LVU54
+ 158 0058 0020     		movs	r0, #0
+ 159              	.L7:
+  51:controller/actuators/electronic_throttle.c **** }
+ 160              		.loc 1 51 1 view .LVU55
+ 161 005a 10BD     		pop	{r4, pc}
+ 162              	.LVL12:
+ 163              	.L4:
+  15:controller/actuators/electronic_throttle.c ****         {
+ 164              		.loc 1 15 14 is_stmt 1 view .LVU56
+  15:controller/actuators/electronic_throttle.c ****         {
+ 165              		.loc 1 15 17 is_stmt 0 view .LVU57
+ 166 005c 012B     		cmp	r3, #1
+ 167 005e 08D0     		beq	.L11
+  21:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+ 168              		.loc 1 21 13 is_stmt 1 view .LVU58
+ 169              	.LVL13:
+ 170              	.LBB38:
+ 171              	.LBI38:
+  19:controller/utils/utils.h **** {
+ 172              		.loc 2 19 20 view .LVU59
+ 173              	.LBB39:
+  21:controller/utils/utils.h ****     {
+ 174              		.loc 2 21 5 view .LVU60
+  25:controller/utils/utils.h ****     {
+ 175              		.loc 2 25 5 view .LVU61
+ 176              		.loc 2 31 9 view .LVU62
+ 177 0060 104A     		ldr	r2, .L13+16
+ 178 0062 1368     		ldr	r3, [r2]
+ 179              		.loc 2 31 14 is_stmt 0 view .LVU63
+ 180 0064 23F48001 		bic	r1, r3, #4194304
+ 181 0068 1160     		str	r1, [r2]
+ 182              	.LVL14:
+ 183              		.loc 2 31 14 view .LVU64
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 6
 
 
- 277 0084 B5EEC00A 		vcmpe.f32	s0, #0
- 278 0088 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 279 008c 1AD4     		bmi	.L32
- 280              		.loc 1 60 28 discriminator 2 view .LVU75
- 281 008e D4ED077A 		vldr.32	s15, [r4, #28]
- 282 0092 F4EEC07A 		vcmpe.f32	s15, s0
- 283 0096 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 284 009a 15D5     		bpl	.L23
- 285              		.loc 1 60 28 discriminator 4 view .LVU76
- 286 009c B0EE670A 		vmov.f32	s0, s15
- 287              	.LVL19:
- 288              		.loc 1 60 28 discriminator 4 view .LVU77
- 289 00a0 12E0     		b	.L23
- 290              	.LVL20:
- 291              	.L16:
-  47:controller/actuators/electronic_throttle.c ****         return;
- 292              		.loc 1 47 9 is_stmt 1 view .LVU78
- 293 00a2 2C48     		ldr	r0, .L47+4
- 294 00a4 FFF7FEFF 		bl	log_error
- 295              	.LVL21:
+ 184              	.LBE39:
+ 185              	.LBE38:
+  22:controller/actuators/electronic_throttle.c ****         }
+ 186              		.loc 1 22 13 is_stmt 1 view .LVU65
+ 187              	.LBB40:
+ 188              	.LBI40:
+  19:controller/utils/utils.h **** {
+ 189              		.loc 2 19 20 view .LVU66
+ 190              	.LBB41:
+  21:controller/utils/utils.h ****     {
+ 191              		.loc 2 21 5 view .LVU67
+  25:controller/utils/utils.h ****     {
+ 192              		.loc 2 25 5 view .LVU68
+ 193              		.loc 2 31 9 view .LVU69
+ 194              		.loc 2 31 14 is_stmt 0 view .LVU70
+ 195 006a 23F44003 		bic	r3, r3, #12582912
+ 196 006e 1360     		str	r3, [r2]
+ 197              	.LVL15:
+ 198              		.loc 2 31 14 view .LVU71
+ 199 0070 F2E7     		b	.L5
+ 200              	.L11:
+ 201              	.LBE41:
+ 202              	.LBE40:
+  17:controller/actuators/electronic_throttle.c ****         }
+ 203              		.loc 1 17 13 is_stmt 1 view .LVU72
+ 204              	.LVL16:
+ 205              	.LBB42:
+ 206              	.LBI42:
+  19:controller/utils/utils.h **** {
+ 207              		.loc 2 19 20 view .LVU73
+ 208              	.LBB43:
+  21:controller/utils/utils.h ****     {
+ 209              		.loc 2 21 5 view .LVU74
+  25:controller/utils/utils.h ****     {
+ 210              		.loc 2 25 5 view .LVU75
+ 211              		.loc 2 31 9 view .LVU76
+ 212 0072 0C4A     		ldr	r2, .L13+16
+ 213 0074 1368     		ldr	r3, [r2]
+ 214              		.loc 2 31 14 is_stmt 0 view .LVU77
+ 215 0076 23F40003 		bic	r3, r3, #8388608
+ 216 007a 1360     		str	r3, [r2]
+ 217              	.LVL17:
+ 218              		.loc 2 31 14 view .LVU78
+ 219 007c ECE7     		b	.L5
+ 220              	.LVL18:
+ 221              	.L8:
+ 222              		.loc 2 31 14 view .LVU79
+ 223              	.LBE43:
+ 224              	.LBE42:
+  46:controller/actuators/electronic_throttle.c ****     {
+ 225              		.loc 1 46 10 is_stmt 1 view .LVU80
+  46:controller/actuators/electronic_throttle.c ****     {
+ 226              		.loc 1 46 13 is_stmt 0 view .LVU81
+ 227 007e 012B     		cmp	r3, #1
+ 228 0080 01D0     		beq	.L12
+  50:controller/actuators/electronic_throttle.c **** }
+ 229              		.loc 1 50 12 view .LVU82
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 7
+
+
+ 230 0082 0120     		movs	r0, #1
+ 231              	.LVL19:
+  50:controller/actuators/electronic_throttle.c **** }
+ 232              		.loc 1 50 12 view .LVU83
+ 233 0084 E9E7     		b	.L7
+ 234              	.LVL20:
+ 235              	.L12:
   48:controller/actuators/electronic_throttle.c ****     }
- 296              		.loc 1 48 9 view .LVU79
- 297              	.L15:
-  61:controller/actuators/electronic_throttle.c ****         }
-  62:controller/actuators/electronic_throttle.c ****         if (ABS(position - 0.0f) < ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD)
-  63:controller/actuators/electronic_throttle.c ****         {
-  64:controller/actuators/electronic_throttle.c ****             motor_effort = CLAMP(motor_effort, 0, etb->duty_cycle_limiting_lower);
-  65:controller/actuators/electronic_throttle.c ****         }
-  66:controller/actuators/electronic_throttle.c ****     }
-  67:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, dir ,  (uint8_t)ABS(motor_effort));
-  68:controller/actuators/electronic_throttle.c **** }
- 298              		.loc 1 68 1 is_stmt 0 view .LVU80
- 299 00a8 03B0     		add	sp, sp, #12
- 300              		.cfi_remember_state
- 301              		.cfi_def_cfa_offset 20
- 302              		@ sp needed
- 303 00aa BDEC028B 		vldm	sp!, {d8}
- 304              		.cfi_restore 80
- 305              		.cfi_restore 81
- 306              		.cfi_def_cfa_offset 12
- 307 00ae 30BD     		pop	{r4, r5, pc}
- 308              	.LVL22:
- 309              	.L43:
- 310              		.cfi_restore_state
-  58:controller/actuators/electronic_throttle.c ****         {
- 311              		.loc 1 58 36 discriminator 1 view .LVU81
- 312 00b0 BEEE007A 		vmov.f32	s14, #-5.0e-1
- 313 00b4 F4EEC77A 		vcmpe.f32	s15, s14
- 314 00b8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 315 00bc CCBF     		ite	gt
- 316 00be 0123     		movgt	r3, #1
- 317 00c0 0023     		movle	r3, #0
- 318 00c2 DEE7     		b	.L22
- 319              	.L32:
-  60:controller/actuators/electronic_throttle.c ****         }
- 320              		.loc 1 60 28 discriminator 1 view .LVU82
- 321 00c4 9FED240A 		vldr.32	s0, .L47+8
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 8
+ 236              		.loc 1 48 9 is_stmt 1 view .LVU84
+ 237              	.LBB44:
+ 238              	.LBI44:
+  19:controller/utils/utils.h **** {
+ 239              		.loc 2 19 20 view .LVU85
+ 240              	.LBB45:
+  21:controller/utils/utils.h ****     {
+ 241              		.loc 2 21 5 view .LVU86
+  25:controller/utils/utils.h ****     {
+ 242              		.loc 2 25 5 view .LVU87
+  27:controller/utils/utils.h ****     }
+ 243              		.loc 2 27 9 view .LVU88
+ 244 0086 074A     		ldr	r2, .L13+16
+ 245 0088 1368     		ldr	r3, [r2]
+  27:controller/utils/utils.h ****     }
+ 246              		.loc 2 27 14 is_stmt 0 view .LVU89
+ 247 008a 43F40003 		orr	r3, r3, #8388608
+ 248 008e 1360     		str	r3, [r2]
+ 249              	.LVL21:
+  27:controller/utils/utils.h ****     }
+ 250              		.loc 2 27 14 view .LVU90
+ 251              	.LBE45:
+ 252              	.LBE44:
+  50:controller/actuators/electronic_throttle.c **** }
+ 253              		.loc 1 50 12 view .LVU91
+ 254 0090 0120     		movs	r0, #1
+ 255              	.LVL22:
+  50:controller/actuators/electronic_throttle.c **** }
+ 256              		.loc 1 50 12 view .LVU92
+ 257 0092 E2E7     		b	.L7
+ 258              	.L14:
+ 259              		.align	2
+ 260              	.L13:
+ 261 0094 00007F43 		.word	1132396544
+ 262 0098 00007FC3 		.word	-1015087104
+ 263 009c 00007A43 		.word	1132068864
+ 264 00a0 00007AC3 		.word	-1015414784
+ 265 00a4 00000000 		.word	runtime
+ 266 00a8 00000000 		.word	.LC0
+ 267              		.cfi_endproc
+ 268              	.LFE232:
+ 270              		.section	.text.electronic_throttle_set,"ax",%progbits
+ 271              		.align	1
+ 272              		.global	electronic_throttle_set
+ 273              		.syntax unified
+ 274              		.thumb
+ 275              		.thumb_func
+ 277              	electronic_throttle_set:
+ 278              	.LVL23:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 8
 
 
- 322              	.LVL23:
- 323              	.L23:
-  62:controller/actuators/electronic_throttle.c ****         {
- 324              		.loc 1 62 9 is_stmt 1 view .LVU83
-  62:controller/actuators/electronic_throttle.c ****         {
- 325              		.loc 1 62 34 is_stmt 0 view .LVU84
- 326 00c8 B5EEC08A 		vcmpe.f32	s16, #0
- 327 00cc F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 328 00d0 26D4     		bmi	.L44
-  62:controller/actuators/electronic_throttle.c ****         {
- 329              		.loc 1 62 34 discriminator 2 view .LVU85
- 330 00d2 F6EE007A 		vmov.f32	s15, #5.0e-1
- 331 00d6 B4EEE78A 		vcmpe.f32	s16, s15
- 332 00da F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 333 00de 4CBF     		ite	mi
- 334 00e0 0123     		movmi	r3, #1
- 335 00e2 0023     		movpl	r3, #0
- 336              	.L26:
-  62:controller/actuators/electronic_throttle.c ****         {
- 337              		.loc 1 62 12 discriminator 4 view .LVU86
- 338 00e4 6BB1     		cbz	r3, .L19
-  64:controller/actuators/electronic_throttle.c ****         }
- 339              		.loc 1 64 13 is_stmt 1 view .LVU87
-  64:controller/actuators/electronic_throttle.c ****         }
- 340              		.loc 1 64 28 is_stmt 0 view .LVU88
- 341 00e6 B5EEC00A 		vcmpe.f32	s0, #0
- 342 00ea F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 343 00ee 21D4     		bmi	.L45
-  64:controller/actuators/electronic_throttle.c ****         }
- 344              		.loc 1 64 28 discriminator 2 view .LVU89
- 345 00f0 D4ED067A 		vldr.32	s15, [r4, #24]
- 346 00f4 F4EEC07A 		vcmpe.f32	s15, s0
- 347 00f8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 348 00fc 01D5     		bpl	.L19
-  64:controller/actuators/electronic_throttle.c ****         }
- 349              		.loc 1 64 28 discriminator 4 view .LVU90
- 350 00fe B0EE670A 		vmov.f32	s0, s15
- 351              	.LVL24:
- 352              	.L19:
-  67:controller/actuators/electronic_throttle.c **** }
- 353              		.loc 1 67 5 is_stmt 1 view .LVU91
- 354 0102 6068     		ldr	r0, [r4, #4]
- 355 0104 B5EEC00A 		vcmpe.f32	s0, #0
- 356 0108 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 357 010c 16D4     		bmi	.L46
- 358              	.LVL25:
- 359              	.L29:
-  67:controller/actuators/electronic_throttle.c **** }
- 360              		.loc 1 67 5 is_stmt 0 discriminator 2 view .LVU92
- 361 010e FCEEC07A 		vcvt.u32.f32	s15, s0
- 362 0112 CDED017A 		vstr.32	s15, [sp, #4]	@ int
- 363 0116 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
- 364              	.L31:
-  67:controller/actuators/electronic_throttle.c **** }
- 365              		.loc 1 67 5 discriminator 4 view .LVU93
- 366 011a FFF7FEFF 		bl	dc_motor_set
- 367              	.LVL26:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 9
+ 279              	.LFB233:
+  52:controller/actuators/electronic_throttle.c **** 
+  53:controller/actuators/electronic_throttle.c **** bool electronic_throttle_set(electronic_throttle_t *etb, percent_t position)
+  54:controller/actuators/electronic_throttle.c **** {
+ 280              		.loc 1 54 1 is_stmt 1 view -0
+ 281              		.cfi_startproc
+ 282              		@ args = 0, pretend = 0, frame = 0
+ 283              		@ frame_needed = 0, uses_anonymous_args = 0
+ 284              		@ link register save eliminated.
+  55:controller/actuators/electronic_throttle.c ****     if (!IS_IN_RANGE(position, (percent_t)0, (percent_t)100))
+ 285              		.loc 1 55 5 view .LVU94
+ 286              		.loc 1 55 8 is_stmt 0 view .LVU95
+ 287 0000 B5EEC00A 		vcmpe.f32	s0, #0
+ 288 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 289 0008 0ADB     		blt	.L16
+ 290              		.loc 1 55 9 discriminator 1 view .LVU96
+ 291 000a DFED077A 		vldr.32	s15, .L21
+ 292 000e B4EEE70A 		vcmpe.f32	s0, s15
+ 293 0012 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 294 0016 03D8     		bhi	.L16
+  56:controller/actuators/electronic_throttle.c ****     {
+  57:controller/actuators/electronic_throttle.c ****         etb->target_position = ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION;
+  58:controller/actuators/electronic_throttle.c ****         return false;
+  59:controller/actuators/electronic_throttle.c ****     }
+  60:controller/actuators/electronic_throttle.c ****     etb->target_position = position;
+ 295              		.loc 1 60 5 is_stmt 1 view .LVU97
+ 296              		.loc 1 60 26 is_stmt 0 view .LVU98
+ 297 0018 80ED040A 		vstr.32	s0, [r0, #16]
+  61:controller/actuators/electronic_throttle.c ****     return true;
+ 298              		.loc 1 61 5 is_stmt 1 view .LVU99
+ 299              		.loc 1 61 12 is_stmt 0 view .LVU100
+ 300 001c 0120     		movs	r0, #1
+ 301              	.LVL24:
+  62:controller/actuators/electronic_throttle.c **** }
+ 302              		.loc 1 62 1 view .LVU101
+ 303 001e 7047     		bx	lr
+ 304              	.LVL25:
+ 305              	.L16:
+  57:controller/actuators/electronic_throttle.c ****         return false;
+ 306              		.loc 1 57 9 is_stmt 1 view .LVU102
+  57:controller/actuators/electronic_throttle.c ****         return false;
+ 307              		.loc 1 57 30 is_stmt 0 view .LVU103
+ 308 0020 0023     		movs	r3, #0
+ 309 0022 0361     		str	r3, [r0, #16]	@ float
+  58:controller/actuators/electronic_throttle.c ****     }
+ 310              		.loc 1 58 9 is_stmt 1 view .LVU104
+  58:controller/actuators/electronic_throttle.c ****     }
+ 311              		.loc 1 58 16 is_stmt 0 view .LVU105
+ 312 0024 0020     		movs	r0, #0
+ 313              	.LVL26:
+  58:controller/actuators/electronic_throttle.c ****     }
+ 314              		.loc 1 58 16 view .LVU106
+ 315 0026 7047     		bx	lr
+ 316              	.L22:
+ 317              		.align	2
+ 318              	.L21:
+ 319 0028 0000C842 		.word	1120403456
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 9
 
 
-  67:controller/actuators/electronic_throttle.c **** }
- 368              		.loc 1 67 5 discriminator 4 view .LVU94
- 369 011e C3E7     		b	.L15
- 370              	.LVL27:
- 371              	.L44:
-  62:controller/actuators/electronic_throttle.c ****         {
- 372              		.loc 1 62 34 discriminator 1 view .LVU95
- 373 0120 FEEE007A 		vmov.f32	s15, #-5.0e-1
- 374 0124 B4EEE78A 		vcmpe.f32	s16, s15
- 375 0128 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 376 012c CCBF     		ite	gt
- 377 012e 0123     		movgt	r3, #1
- 378 0130 0023     		movle	r3, #0
- 379 0132 D7E7     		b	.L26
- 380              	.L45:
- 381              	.LVL28:
-  67:controller/actuators/electronic_throttle.c **** }
- 382              		.loc 1 67 5 is_stmt 1 view .LVU96
- 383 0134 6068     		ldr	r0, [r4, #4]
-  64:controller/actuators/electronic_throttle.c ****         }
- 384              		.loc 1 64 26 is_stmt 0 discriminator 8 view .LVU97
- 385 0136 9FED080A 		vldr.32	s0, .L47+8
- 386 013a E8E7     		b	.L29
- 387              	.LVL29:
- 388              	.L46:
-  67:controller/actuators/electronic_throttle.c **** }
- 389              		.loc 1 67 46 discriminator 1 view .LVU98
- 390 013c B1EE400A 		vneg.f32	s0, s0
- 391              	.LVL30:
-  67:controller/actuators/electronic_throttle.c **** }
- 392              		.loc 1 67 5 discriminator 1 view .LVU99
- 393 0140 FCEEC07A 		vcvt.u32.f32	s15, s0
- 394 0144 CDED017A 		vstr.32	s15, [sp, #4]	@ int
- 395 0148 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
- 396 014c E5E7     		b	.L31
- 397              	.L48:
- 398 014e 00BF     		.align	2
- 399              	.L47:
- 400 0150 0000C842 		.word	1120403456
- 401 0154 00000000 		.word	.LC1
- 402 0158 00000000 		.word	0
- 403              		.cfi_endproc
- 404              	.LFE234:
- 406              		.section	.rodata.electronic_throttle_auto_tune.str1.4,"aMS",%progbits,1
- 407              		.align	2
- 408              	.LC2:
- 409 0000 45544220 		.ascii	"ETB Auto-Tune failed. ETB is null!\000"
- 409      4175746F 
- 409      2D54756E 
- 409      65206661 
- 409      696C6564 
- 410              		.section	.text.electronic_throttle_auto_tune,"ax",%progbits
- 411              		.align	1
- 412              		.global	electronic_throttle_auto_tune
- 413              		.syntax unified
- 414              		.thumb
- 415              		.thumb_func
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 10
+ 320              		.cfi_endproc
+ 321              	.LFE233:
+ 323              		.section	.rodata.electronic_throttle_update.str1.4,"aMS",%progbits,1
+ 324              		.align	2
+ 325              	.LC1:
+ 326 0000 456C6563 		.ascii	"Electronic throttle not initialized\000"
+ 326      74726F6E 
+ 326      69632074 
+ 326      68726F74 
+ 326      746C6520 
+ 327              		.section	.text.electronic_throttle_update,"ax",%progbits
+ 328              		.align	1
+ 329              		.global	electronic_throttle_update
+ 330              		.syntax unified
+ 331              		.thumb
+ 332              		.thumb_func
+ 334              	electronic_throttle_update:
+ 335              	.LVL27:
+ 336              	.LFB234:
+  63:controller/actuators/electronic_throttle.c **** 
+  64:controller/actuators/electronic_throttle.c **** void electronic_throttle_update(void *arg)
+  65:controller/actuators/electronic_throttle.c **** {
+ 337              		.loc 1 65 1 is_stmt 1 view -0
+ 338              		.cfi_startproc
+ 339              		@ args = 0, pretend = 0, frame = 8
+ 340              		@ frame_needed = 0, uses_anonymous_args = 0
+ 341              		.loc 1 65 1 is_stmt 0 view .LVU108
+ 342 0000 30B5     		push	{r4, r5, lr}
+ 343              		.cfi_def_cfa_offset 12
+ 344              		.cfi_offset 4, -12
+ 345              		.cfi_offset 5, -8
+ 346              		.cfi_offset 14, -4
+ 347 0002 2DED028B 		vpush.64	{d8}
+ 348              		.cfi_def_cfa_offset 20
+ 349              		.cfi_offset 80, -20
+ 350              		.cfi_offset 81, -16
+ 351 0006 83B0     		sub	sp, sp, #12
+ 352              		.cfi_def_cfa_offset 32
+  66:controller/actuators/electronic_throttle.c ****     electronic_throttle_t *etb = (electronic_throttle_t *)arg;
+ 353              		.loc 1 66 5 is_stmt 1 view .LVU109
+ 354              	.LVL28:
+  67:controller/actuators/electronic_throttle.c ****     if (etb == NULL || etb->pid == NULL || etb->sensor == NULL || etb->motor == NULL)
+ 355              		.loc 1 67 5 view .LVU110
+ 356              		.loc 1 67 8 is_stmt 0 view .LVU111
+ 357 0008 0446     		mov	r4, r0
+ 358 000a 0028     		cmp	r0, #0
+ 359 000c 4AD0     		beq	.L24
+ 360              		.loc 1 67 27 discriminator 1 view .LVU112
+ 361 000e 8368     		ldr	r3, [r0, #8]
+ 362              		.loc 1 67 21 discriminator 1 view .LVU113
+ 363 0010 002B     		cmp	r3, #0
+ 364 0012 47D0     		beq	.L24
+ 365              		.loc 1 67 47 discriminator 2 view .LVU114
+ 366 0014 C068     		ldr	r0, [r0, #12]
+ 367              	.LVL29:
+ 368              		.loc 1 67 41 discriminator 2 view .LVU115
+ 369 0016 0028     		cmp	r0, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 10
 
 
- 417              	electronic_throttle_auto_tune:
- 418              	.LVL31:
- 419              	.LFB235:
-  69:controller/actuators/electronic_throttle.c **** 
-  70:controller/actuators/electronic_throttle.c **** 
-  71:controller/actuators/electronic_throttle.c **** void electronic_throttle_auto_tune(electronic_throttle_t *etb)
-  72:controller/actuators/electronic_throttle.c **** {
- 420              		.loc 1 72 1 is_stmt 1 view -0
- 421              		.cfi_startproc
- 422              		@ args = 0, pretend = 0, frame = 0
- 423              		@ frame_needed = 0, uses_anonymous_args = 0
- 424              		.loc 1 72 1 is_stmt 0 view .LVU101
- 425 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
- 426              		.cfi_def_cfa_offset 24
- 427              		.cfi_offset 3, -24
- 428              		.cfi_offset 4, -20
- 429              		.cfi_offset 5, -16
- 430              		.cfi_offset 6, -12
- 431              		.cfi_offset 7, -8
- 432              		.cfi_offset 14, -4
-  73:controller/actuators/electronic_throttle.c ****     if (etb == NULL)
- 433              		.loc 1 73 5 is_stmt 1 view .LVU102
- 434              		.loc 1 73 8 is_stmt 0 view .LVU103
- 435 0002 A0B1     		cbz	r0, .L57
- 436 0004 0546     		mov	r5, r0
-  74:controller/actuators/electronic_throttle.c ****     {
-  75:controller/actuators/electronic_throttle.c ****         log_error("ETB Auto-Tune failed. ETB is null!");
-  76:controller/actuators/electronic_throttle.c ****         return;
-  77:controller/actuators/electronic_throttle.c ****     }
-  78:controller/actuators/electronic_throttle.c ****     
-  79:controller/actuators/electronic_throttle.c ****     /* First, we will try to find the end of travel for open and closed positions*/
-  80:controller/actuators/electronic_throttle.c ****     uint8_t opening_duty_cycle = 180; // 0 to 255
- 437              		.loc 1 80 5 is_stmt 1 view .LVU104
- 438              	.LVL32:
-  81:controller/actuators/electronic_throttle.c ****     uint8_t closing_duty_cycle = 180; // 0 to 255
- 439              		.loc 1 81 5 view .LVU105
-  82:controller/actuators/electronic_throttle.c ****     uint16_t settling_time_delay = 1000; // time it takes for the etb to move and settle
- 440              		.loc 1 82 5 view .LVU106
-  83:controller/actuators/electronic_throttle.c ****     uint8_t number_of_samples = 10;
- 441              		.loc 1 83 5 view .LVU107
-  84:controller/actuators/electronic_throttle.c **** 
-  85:controller/actuators/electronic_throttle.c ****     uint16_t open_adc_value = 0;
- 442              		.loc 1 85 5 view .LVU108
-  86:controller/actuators/electronic_throttle.c ****     uint16_t closed_adc_value = 0;
- 443              		.loc 1 86 5 view .LVU109
-  87:controller/actuators/electronic_throttle.c ****     uint32_t temp = 0;
- 444              		.loc 1 87 5 view .LVU110
-  88:controller/actuators/electronic_throttle.c ****     
-  89:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, MOTOR_DIRECTION_FORWARD, opening_duty_cycle);
- 445              		.loc 1 89 5 view .LVU111
- 446 0006 B422     		movs	r2, #180
- 447 0008 0021     		movs	r1, #0
- 448 000a 4068     		ldr	r0, [r0, #4]
- 449              	.LVL33:
- 450              		.loc 1 89 5 is_stmt 0 view .LVU112
- 451 000c FFF7FEFF 		bl	dc_motor_set
- 452              	.LVL34:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 11
+ 370 0018 44D0     		beq	.L24
+ 371              		.loc 1 67 70 discriminator 3 view .LVU116
+ 372 001a 6368     		ldr	r3, [r4, #4]
+ 373              		.loc 1 67 64 discriminator 3 view .LVU117
+ 374 001c 002B     		cmp	r3, #0
+ 375 001e 41D0     		beq	.L24
+  68:controller/actuators/electronic_throttle.c ****     {
+  69:controller/actuators/electronic_throttle.c ****         if (etb->etb_number == ETB_NUMBER_1)
+  70:controller/actuators/electronic_throttle.c ****         {
+  71:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB1_OK, false);
+  72:controller/actuators/electronic_throttle.c ****         }
+  73:controller/actuators/electronic_throttle.c ****         else if (etb->etb_number == ETB_NUMBER_2)
+  74:controller/actuators/electronic_throttle.c ****         {
+  75:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+  76:controller/actuators/electronic_throttle.c ****         }
+  77:controller/actuators/electronic_throttle.c ****         else
+  78:controller/actuators/electronic_throttle.c ****         {
+  79:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB1_OK, false);
+  80:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+  81:controller/actuators/electronic_throttle.c ****         }
+  82:controller/actuators/electronic_throttle.c ****         log_error("Electronic throttle not initialized");
+  83:controller/actuators/electronic_throttle.c ****         return;
+  84:controller/actuators/electronic_throttle.c ****     }
+  85:controller/actuators/electronic_throttle.c ****     percent_t position = sensor_tps_get(etb->sensor);
+ 376              		.loc 1 85 5 is_stmt 1 view .LVU118
+ 377              		.loc 1 85 26 is_stmt 0 view .LVU119
+ 378 0020 FFF7FEFF 		bl	sensor_tps_get
+ 379              	.LVL30:
+ 380 0024 B0EE408A 		vmov.f32	s16, s0
+ 381              	.LVL31:
+  86:controller/actuators/electronic_throttle.c ****     etb->current_position = position;
+ 382              		.loc 1 86 5 is_stmt 1 view .LVU120
+ 383              		.loc 1 86 27 is_stmt 0 view .LVU121
+ 384 0028 84ED050A 		vstr.32	s0, [r4, #20]
+  87:controller/actuators/electronic_throttle.c ****     pid_set_setpoint(etb->pid, etb->target_position);
+ 385              		.loc 1 87 5 is_stmt 1 view .LVU122
+ 386 002c 94ED040A 		vldr.32	s0, [r4, #16]
+ 387              	.LVL32:
+ 388              		.loc 1 87 5 is_stmt 0 view .LVU123
+ 389 0030 A068     		ldr	r0, [r4, #8]
+ 390 0032 FFF7FEFF 		bl	pid_set_setpoint
+ 391              	.LVL33:
+  88:controller/actuators/electronic_throttle.c ****     percent_t motor_effort = pid_compute(etb->pid, get_time_us(), position);
+ 392              		.loc 1 88 5 is_stmt 1 view .LVU124
+ 393              		.loc 1 88 30 is_stmt 0 view .LVU125
+ 394 0036 A568     		ldr	r5, [r4, #8]
+ 395 0038 FFF7FEFF 		bl	get_time_us
+ 396              	.LVL34:
+ 397 003c 0146     		mov	r1, r0
+ 398              		.loc 1 88 30 discriminator 1 view .LVU126
+ 399 003e B0EE480A 		vmov.f32	s0, s16
+ 400 0042 2846     		mov	r0, r5
+ 401 0044 FFF7FEFF 		bl	pid_compute
+ 402              	.LVL35:
+  89:controller/actuators/electronic_throttle.c ****     dc_motor_direction_t dir = motor_effort > 0 ? MOTOR_DIRECTION_FORWARD : MOTOR_DIRECTION_REVERSE
+ 403              		.loc 1 89 5 is_stmt 1 view .LVU127
+ 404              		.loc 1 89 45 is_stmt 0 view .LVU128
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 11
 
 
-  90:controller/actuators/electronic_throttle.c ****     osDelay(settling_time_delay);
- 453              		.loc 1 90 5 is_stmt 1 view .LVU113
- 454 0010 4FF47A70 		mov	r0, #1000
- 455 0014 FFF7FEFF 		bl	osDelay
- 456              	.LVL35:
-  91:controller/actuators/electronic_throttle.c ****     temp = 0;
- 457              		.loc 1 91 5 view .LVU114
-  92:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 458              		.loc 1 92 5 view .LVU115
- 459              	.LBB2:
- 460              		.loc 1 92 10 view .LVU116
- 461              		.loc 1 92 17 is_stmt 0 view .LVU117
- 462 0018 0024     		movs	r4, #0
- 463              	.LBE2:
-  91:controller/actuators/electronic_throttle.c ****     temp = 0;
- 464              		.loc 1 91 10 view .LVU118
- 465 001a 2646     		mov	r6, r4
- 466              	.LVL36:
- 467              	.L52:
- 468              	.LBB4:
- 469              		.loc 1 92 26 is_stmt 1 discriminator 1 view .LVU119
- 470 001c 092C     		cmp	r4, #9
- 471 001e 0AD8     		bhi	.L58
- 472              	.LBB3:
-  93:controller/actuators/electronic_throttle.c ****     {
-  94:controller/actuators/electronic_throttle.c ****         uint16_t adc_value = analog_inputs_get_data(etb->sensor->analog_channel);
- 473              		.loc 1 94 9 view .LVU120
- 474              		.loc 1 94 56 is_stmt 0 view .LVU121
- 475 0020 EB68     		ldr	r3, [r5, #12]
- 476              		.loc 1 94 30 view .LVU122
- 477 0022 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
- 478 0024 FFF7FEFF 		bl	analog_inputs_get_data
- 479              	.LVL37:
-  95:controller/actuators/electronic_throttle.c ****         temp += adc_value;
- 480              		.loc 1 95 9 is_stmt 1 view .LVU123
- 481              		.loc 1 95 14 is_stmt 0 view .LVU124
- 482 0028 0644     		add	r6, r6, r0
- 483              	.LVL38:
- 484              		.loc 1 95 14 view .LVU125
- 485              	.LBE3:
-  92:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 486              		.loc 1 92 48 is_stmt 1 discriminator 3 view .LVU126
- 487 002a 0134     		adds	r4, r4, #1
- 488              	.LVL39:
-  92:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 489              		.loc 1 92 48 is_stmt 0 discriminator 3 view .LVU127
- 490 002c F6E7     		b	.L52
- 491              	.LVL40:
- 492              	.L57:
-  92:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 493              		.loc 1 92 48 discriminator 3 view .LVU128
- 494              	.LBE4:
-  75:controller/actuators/electronic_throttle.c ****         return;
- 495              		.loc 1 75 9 is_stmt 1 view .LVU129
- 496 002e 1848     		ldr	r0, .L60
- 497              	.LVL41:
-  75:controller/actuators/electronic_throttle.c ****         return;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 12
+ 405 0048 B5EEC00A 		vcmpe.f32	s0, #0
+ 406 004c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 407              		.loc 1 89 75 view .LVU129
+ 408 0050 D4BF     		ite	le
+ 409 0052 0121     		movle	r1, #1
+ 410 0054 0021     		movgt	r1, #0
+ 411              	.LVL36:
+  90:controller/actuators/electronic_throttle.c ****     /* Limiting the end of travel duty cycle for protection */
+  91:controller/actuators/electronic_throttle.c ****     if (etb->is_duty_cycle_limiting_enabled)
+ 412              		.loc 1 91 5 is_stmt 1 view .LVU130
+ 413              		.loc 1 91 12 is_stmt 0 view .LVU131
+ 414 0056 94F82130 		ldrb	r3, [r4, #33]	@ zero_extendqisi2
+ 415              		.loc 1 91 8 view .LVU132
+ 416 005a 002B     		cmp	r3, #0
+ 417 005c 6BD0     		beq	.L30
+  92:controller/actuators/electronic_throttle.c ****     {
+  93:controller/actuators/electronic_throttle.c ****         if (ABS(position - 100.0f) < ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD)
+ 418              		.loc 1 93 9 is_stmt 1 view .LVU133
+ 419              		.loc 1 93 13 is_stmt 0 view .LVU134
+ 420 005e DFED497A 		vldr.32	s15, .L59
+ 421 0062 78EE677A 		vsub.f32	s15, s16, s15
+ 422              		.loc 1 93 36 view .LVU135
+ 423 0066 F5EEC07A 		vcmpe.f32	s15, #0
+ 424 006a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 425 006e 39D4     		bmi	.L54
+ 426              		.loc 1 93 36 discriminator 2 view .LVU136
+ 427 0070 B6EE007A 		vmov.f32	s14, #5.0e-1
+ 428 0074 F4EEC77A 		vcmpe.f32	s15, s14
+ 429 0078 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 430 007c 4CBF     		ite	mi
+ 431 007e 0123     		movmi	r3, #1
+ 432 0080 0023     		movpl	r3, #0
+ 433              	.L33:
+ 434              		.loc 1 93 12 discriminator 4 view .LVU137
+ 435 0082 002B     		cmp	r3, #0
+ 436 0084 3AD0     		beq	.L34
+  94:controller/actuators/electronic_throttle.c ****         {
+  95:controller/actuators/electronic_throttle.c ****             motor_effort = CLAMP(motor_effort, 0, etb->duty_cycle_limiting_upper);
+ 437              		.loc 1 95 13 is_stmt 1 view .LVU138
+ 438              		.loc 1 95 28 is_stmt 0 view .LVU139
+ 439 0086 B5EEC00A 		vcmpe.f32	s0, #0
+ 440 008a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 441 008e 33D4     		bmi	.L43
+ 442              		.loc 1 95 28 discriminator 2 view .LVU140
+ 443 0090 D4ED077A 		vldr.32	s15, [r4, #28]
+ 444 0094 F4EEC07A 		vcmpe.f32	s15, s0
+ 445 0098 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 446 009c 2ED5     		bpl	.L34
+ 447              		.loc 1 95 28 discriminator 4 view .LVU141
+ 448 009e B0EE670A 		vmov.f32	s0, s15
+ 449              	.LVL37:
+ 450              		.loc 1 95 28 discriminator 4 view .LVU142
+ 451 00a2 2BE0     		b	.L34
+ 452              	.LVL38:
+ 453              	.L24:
+  69:controller/actuators/electronic_throttle.c ****         {
+ 454              		.loc 1 69 9 is_stmt 1 view .LVU143
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 12
 
 
- 498              		.loc 1 75 9 is_stmt 0 view .LVU130
- 499 0030 FFF7FEFF 		bl	log_error
- 500              	.LVL42:
-  76:controller/actuators/electronic_throttle.c ****     }
- 501              		.loc 1 76 9 is_stmt 1 view .LVU131
- 502 0034 2AE0     		b	.L49
- 503              	.LVL43:
- 504              	.L58:
-  96:controller/actuators/electronic_throttle.c ****     }
-  97:controller/actuators/electronic_throttle.c ****     open_adc_value = temp / number_of_samples;
- 505              		.loc 1 97 5 view .LVU132
- 506              		.loc 1 97 27 is_stmt 0 view .LVU133
- 507 0036 174B     		ldr	r3, .L60+4
- 508 0038 A3FB0636 		umull	r3, r6, r3, r6
- 509              	.LVL44:
- 510              		.loc 1 97 20 view .LVU134
- 511 003c C6F3CF07 		ubfx	r7, r6, #3, #16
- 512              	.LVL45:
-  98:controller/actuators/electronic_throttle.c **** 
-  99:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, MOTOR_DIRECTION_REVERSE, 50);
- 513              		.loc 1 99 5 is_stmt 1 view .LVU135
- 514 0040 3222     		movs	r2, #50
- 515 0042 0121     		movs	r1, #1
- 516 0044 6868     		ldr	r0, [r5, #4]
- 517 0046 FFF7FEFF 		bl	dc_motor_set
- 518              	.LVL46:
- 100:controller/actuators/electronic_throttle.c ****     osDelay(settling_time_delay);
- 519              		.loc 1 100 5 view .LVU136
- 520 004a 4FF47A70 		mov	r0, #1000
- 521 004e FFF7FEFF 		bl	osDelay
- 522              	.LVL47:
- 101:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, MOTOR_DIRECTION_REVERSE, closing_duty_cycle);
- 523              		.loc 1 101 5 view .LVU137
- 524 0052 B422     		movs	r2, #180
- 525 0054 0121     		movs	r1, #1
- 526 0056 6868     		ldr	r0, [r5, #4]
- 527 0058 FFF7FEFF 		bl	dc_motor_set
- 528              	.LVL48:
- 102:controller/actuators/electronic_throttle.c ****     osDelay(settling_time_delay);
- 529              		.loc 1 102 5 view .LVU138
- 530 005c 4FF47A70 		mov	r0, #1000
- 531 0060 FFF7FEFF 		bl	osDelay
- 532              	.LVL49:
- 103:controller/actuators/electronic_throttle.c ****     temp = 0;
- 533              		.loc 1 103 5 view .LVU139
- 104:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 534              		.loc 1 104 5 view .LVU140
- 535              	.LBB5:
- 536              		.loc 1 104 10 view .LVU141
- 537              		.loc 1 104 17 is_stmt 0 view .LVU142
- 538 0064 0024     		movs	r4, #0
- 539              	.LVL50:
- 540              		.loc 1 104 17 view .LVU143
- 541              	.LBE5:
- 103:controller/actuators/electronic_throttle.c ****     temp = 0;
- 542              		.loc 1 103 10 view .LVU144
- 543 0066 2646     		mov	r6, r4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 13
+  69:controller/actuators/electronic_throttle.c ****         {
+ 455              		.loc 1 69 16 is_stmt 0 view .LVU144
+ 456 00a4 94F82030 		ldrb	r3, [r4, #32]	@ zero_extendqisi2
+  69:controller/actuators/electronic_throttle.c ****         {
+ 457              		.loc 1 69 12 view .LVU145
+ 458 00a8 5BB9     		cbnz	r3, .L26
+  71:controller/actuators/electronic_throttle.c ****         }
+ 459              		.loc 1 71 13 is_stmt 1 view .LVU146
+ 460              	.LVL39:
+ 461              	.LBB46:
+ 462              	.LBI46:
+  19:controller/utils/utils.h **** {
+ 463              		.loc 2 19 20 view .LVU147
+ 464              	.LBB47:
+  21:controller/utils/utils.h ****     {
+ 465              		.loc 2 21 5 view .LVU148
+  25:controller/utils/utils.h ****     {
+ 466              		.loc 2 25 5 view .LVU149
+ 467              		.loc 2 31 9 view .LVU150
+ 468 00aa 374A     		ldr	r2, .L59+4
+ 469 00ac 1368     		ldr	r3, [r2]
+ 470              		.loc 2 31 14 is_stmt 0 view .LVU151
+ 471 00ae 23F48003 		bic	r3, r3, #4194304
+ 472 00b2 1360     		str	r3, [r2]
+ 473              	.LVL40:
+ 474              	.L27:
+ 475              		.loc 2 31 14 view .LVU152
+ 476              	.LBE47:
+ 477              	.LBE46:
+  82:controller/actuators/electronic_throttle.c ****         return;
+ 478              		.loc 1 82 9 is_stmt 1 view .LVU153
+ 479 00b4 3548     		ldr	r0, .L59+8
+ 480 00b6 FFF7FEFF 		bl	log_error
+ 481              	.LVL41:
+  83:controller/actuators/electronic_throttle.c ****     }
+ 482              		.loc 1 83 9 view .LVU154
+ 483              	.L23:
+  96:controller/actuators/electronic_throttle.c ****         }
+  97:controller/actuators/electronic_throttle.c ****         if (ABS(position - 0.0f) < ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD)
+  98:controller/actuators/electronic_throttle.c ****         {
+  99:controller/actuators/electronic_throttle.c ****             motor_effort = CLAMP(motor_effort, 0, etb->duty_cycle_limiting_lower);
+ 100:controller/actuators/electronic_throttle.c ****         }
+ 101:controller/actuators/electronic_throttle.c ****     }
+ 102:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, dir, (uint8_t)ABS(motor_effort));
+ 103:controller/actuators/electronic_throttle.c ****     return;
+ 104:controller/actuators/electronic_throttle.c **** }
+ 484              		.loc 1 104 1 is_stmt 0 view .LVU155
+ 485 00ba 03B0     		add	sp, sp, #12
+ 486              		.cfi_remember_state
+ 487              		.cfi_def_cfa_offset 20
+ 488              		@ sp needed
+ 489 00bc BDEC028B 		vldm	sp!, {d8}
+ 490              		.cfi_restore 80
+ 491              		.cfi_restore 81
+ 492              		.cfi_def_cfa_offset 12
+ 493 00c0 30BD     		pop	{r4, r5, pc}
+ 494              	.LVL42:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 13
 
 
- 544              	.LVL51:
- 545              	.L54:
- 546              	.LBB7:
- 547              		.loc 1 104 26 is_stmt 1 discriminator 1 view .LVU145
- 548 0068 092C     		cmp	r4, #9
- 549 006a 06D8     		bhi	.L59
- 550              	.LBB6:
- 105:controller/actuators/electronic_throttle.c ****     {
- 106:controller/actuators/electronic_throttle.c ****         uint16_t adc_value = analog_inputs_get_data(etb->sensor->analog_channel);
- 551              		.loc 1 106 9 view .LVU146
- 552              		.loc 1 106 56 is_stmt 0 view .LVU147
- 553 006c EB68     		ldr	r3, [r5, #12]
- 554              		.loc 1 106 30 view .LVU148
- 555 006e 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
- 556 0070 FFF7FEFF 		bl	analog_inputs_get_data
- 557              	.LVL52:
- 107:controller/actuators/electronic_throttle.c ****         temp += adc_value;
- 558              		.loc 1 107 9 is_stmt 1 view .LVU149
- 559              		.loc 1 107 14 is_stmt 0 view .LVU150
- 560 0074 0644     		add	r6, r6, r0
- 561              	.LVL53:
- 562              		.loc 1 107 14 view .LVU151
- 563              	.LBE6:
- 104:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 564              		.loc 1 104 48 is_stmt 1 discriminator 3 view .LVU152
- 565 0076 0134     		adds	r4, r4, #1
- 566              	.LVL54:
- 104:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 567              		.loc 1 104 48 is_stmt 0 discriminator 3 view .LVU153
- 568 0078 F6E7     		b	.L54
- 569              	.LVL55:
- 570              	.L59:
- 104:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
- 571              		.loc 1 104 48 discriminator 3 view .LVU154
- 572              	.LBE7:
- 108:controller/actuators/electronic_throttle.c ****     }
- 109:controller/actuators/electronic_throttle.c ****     closed_adc_value = temp / number_of_samples;
- 573              		.loc 1 109 5 is_stmt 1 view .LVU155
- 574              		.loc 1 109 29 is_stmt 0 view .LVU156
- 575 007a 064B     		ldr	r3, .L60+4
- 576 007c A3FB0636 		umull	r3, r6, r3, r6
- 577              	.LVL56:
- 578              		.loc 1 109 22 view .LVU157
- 579 0080 C6F3CF06 		ubfx	r6, r6, #3, #16
- 580              	.LVL57:
- 110:controller/actuators/electronic_throttle.c ****     
- 111:controller/actuators/electronic_throttle.c ****     etb->sensor->closed_throttle_adc_value = closed_adc_value;
- 581              		.loc 1 111 5 is_stmt 1 view .LVU158
- 582              		.loc 1 111 8 is_stmt 0 view .LVU159
- 583 0084 EB68     		ldr	r3, [r5, #12]
- 584              		.loc 1 111 44 view .LVU160
- 585 0086 5E80     		strh	r6, [r3, #2]	@ movhi
- 112:controller/actuators/electronic_throttle.c ****     etb->sensor->wide_open_throttle_adc_value = open_adc_value;
- 586              		.loc 1 112 5 is_stmt 1 view .LVU161
- 587              		.loc 1 112 8 is_stmt 0 view .LVU162
- 588 0088 EB68     		ldr	r3, [r5, #12]
- 589              		.loc 1 112 47 view .LVU163
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 14
+ 495              	.L26:
+ 496              		.cfi_restore_state
+  73:controller/actuators/electronic_throttle.c ****         {
+ 497              		.loc 1 73 14 is_stmt 1 view .LVU156
+  73:controller/actuators/electronic_throttle.c ****         {
+ 498              		.loc 1 73 17 is_stmt 0 view .LVU157
+ 499 00c2 012B     		cmp	r3, #1
+ 500 00c4 08D0     		beq	.L55
+  79:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+ 501              		.loc 1 79 13 is_stmt 1 view .LVU158
+ 502              	.LVL43:
+ 503              	.LBB48:
+ 504              	.LBI48:
+  19:controller/utils/utils.h **** {
+ 505              		.loc 2 19 20 view .LVU159
+ 506              	.LBB49:
+  21:controller/utils/utils.h ****     {
+ 507              		.loc 2 21 5 view .LVU160
+  25:controller/utils/utils.h ****     {
+ 508              		.loc 2 25 5 view .LVU161
+ 509              		.loc 2 31 9 view .LVU162
+ 510 00c6 304A     		ldr	r2, .L59+4
+ 511 00c8 1368     		ldr	r3, [r2]
+ 512              		.loc 2 31 14 is_stmt 0 view .LVU163
+ 513 00ca 23F48001 		bic	r1, r3, #4194304
+ 514 00ce 1160     		str	r1, [r2]
+ 515              	.LVL44:
+ 516              		.loc 2 31 14 view .LVU164
+ 517              	.LBE49:
+ 518              	.LBE48:
+  80:controller/actuators/electronic_throttle.c ****         }
+ 519              		.loc 1 80 13 is_stmt 1 view .LVU165
+ 520              	.LBB50:
+ 521              	.LBI50:
+  19:controller/utils/utils.h **** {
+ 522              		.loc 2 19 20 view .LVU166
+ 523              	.LBB51:
+  21:controller/utils/utils.h ****     {
+ 524              		.loc 2 21 5 view .LVU167
+  25:controller/utils/utils.h ****     {
+ 525              		.loc 2 25 5 view .LVU168
+ 526              		.loc 2 31 9 view .LVU169
+ 527              		.loc 2 31 14 is_stmt 0 view .LVU170
+ 528 00d0 23F44003 		bic	r3, r3, #12582912
+ 529 00d4 1360     		str	r3, [r2]
+ 530              	.LVL45:
+ 531              		.loc 2 31 14 view .LVU171
+ 532 00d6 EDE7     		b	.L27
+ 533              	.L55:
+ 534              	.LBE51:
+ 535              	.LBE50:
+  75:controller/actuators/electronic_throttle.c ****         }
+ 536              		.loc 1 75 13 is_stmt 1 view .LVU172
+ 537              	.LVL46:
+ 538              	.LBB52:
+ 539              	.LBI52:
+  19:controller/utils/utils.h **** {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 14
 
 
- 590 008a 1F80     		strh	r7, [r3]	@ movhi
- 591              	.LVL58:
- 592              	.L49:
- 113:controller/actuators/electronic_throttle.c **** 
- 114:controller/actuators/electronic_throttle.c **** }...
- 593              		.loc 1 114 1 view .LVU164
- 594 008c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
- 595              	.L61:
- 596 008e 00BF     		.align	2
- 597              	.L60:
- 598 0090 00000000 		.word	.LC2
- 599 0094 CDCCCCCC 		.word	-858993459
- 600              		.cfi_endproc
- 601              	.LFE235:
- 603              		.text
- 604              	.Letext0:
- 605              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 606              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 607              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 608              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 609              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 610              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 611              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 612              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 613              		.file 10 "controller/types.h"
- 614              		.file 11 "controller/actuators/dc_motors.h"
- 615              		.file 12 "controller/utils/pid.h"
- 616              		.file 13 "controller/IO/analog_inputs.h"
- 617              		.file 14 "controller/IO/sensors.h"
- 618              		.file 15 "controller/actuators/electronic_throttle.h"
- 619              		.file 16 "controller/utils/error_handling.h"
- 620              		.file 17 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s 			page 15
+ 540              		.loc 2 19 20 view .LVU173
+ 541              	.LBB53:
+  21:controller/utils/utils.h ****     {
+ 542              		.loc 2 21 5 view .LVU174
+  25:controller/utils/utils.h ****     {
+ 543              		.loc 2 25 5 view .LVU175
+ 544              		.loc 2 31 9 view .LVU176
+ 545 00d8 2B4A     		ldr	r2, .L59+4
+ 546 00da 1368     		ldr	r3, [r2]
+ 547              		.loc 2 31 14 is_stmt 0 view .LVU177
+ 548 00dc 23F40003 		bic	r3, r3, #8388608
+ 549 00e0 1360     		str	r3, [r2]
+ 550              	.LVL47:
+ 551              		.loc 2 31 14 view .LVU178
+ 552 00e2 E7E7     		b	.L27
+ 553              	.LVL48:
+ 554              	.L54:
+ 555              		.loc 2 31 14 view .LVU179
+ 556              	.LBE53:
+ 557              	.LBE52:
+  93:controller/actuators/electronic_throttle.c ****         {
+ 558              		.loc 1 93 36 discriminator 1 view .LVU180
+ 559 00e4 BEEE007A 		vmov.f32	s14, #-5.0e-1
+ 560 00e8 F4EEC77A 		vcmpe.f32	s15, s14
+ 561 00ec F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 562 00f0 CCBF     		ite	gt
+ 563 00f2 0123     		movgt	r3, #1
+ 564 00f4 0023     		movle	r3, #0
+ 565 00f6 C4E7     		b	.L33
+ 566              	.L43:
+  95:controller/actuators/electronic_throttle.c ****         }
+ 567              		.loc 1 95 28 discriminator 1 view .LVU181
+ 568 00f8 9FED250A 		vldr.32	s0, .L59+12
+ 569              	.LVL49:
+ 570              	.L34:
+  97:controller/actuators/electronic_throttle.c ****         {
+ 571              		.loc 1 97 9 is_stmt 1 view .LVU182
+  97:controller/actuators/electronic_throttle.c ****         {
+ 572              		.loc 1 97 34 is_stmt 0 view .LVU183
+ 573 00fc B5EEC08A 		vcmpe.f32	s16, #0
+ 574 0100 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 575 0104 26D4     		bmi	.L56
+  97:controller/actuators/electronic_throttle.c ****         {
+ 576              		.loc 1 97 34 discriminator 2 view .LVU184
+ 577 0106 F6EE007A 		vmov.f32	s15, #5.0e-1
+ 578 010a B4EEE78A 		vcmpe.f32	s16, s15
+ 579 010e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 580 0112 4CBF     		ite	mi
+ 581 0114 0123     		movmi	r3, #1
+ 582 0116 0023     		movpl	r3, #0
+ 583              	.L37:
+  97:controller/actuators/electronic_throttle.c ****         {
+ 584              		.loc 1 97 12 discriminator 4 view .LVU185
+ 585 0118 6BB1     		cbz	r3, .L30
+  99:controller/actuators/electronic_throttle.c ****         }
+ 586              		.loc 1 99 13 is_stmt 1 view .LVU186
+  99:controller/actuators/electronic_throttle.c ****         }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 15
+
+
+ 587              		.loc 1 99 28 is_stmt 0 view .LVU187
+ 588 011a B5EEC00A 		vcmpe.f32	s0, #0
+ 589 011e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 590 0122 21D4     		bmi	.L57
+  99:controller/actuators/electronic_throttle.c ****         }
+ 591              		.loc 1 99 28 discriminator 2 view .LVU188
+ 592 0124 D4ED067A 		vldr.32	s15, [r4, #24]
+ 593 0128 F4EEC07A 		vcmpe.f32	s15, s0
+ 594 012c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 595 0130 01D5     		bpl	.L30
+  99:controller/actuators/electronic_throttle.c ****         }
+ 596              		.loc 1 99 28 discriminator 4 view .LVU189
+ 597 0132 B0EE670A 		vmov.f32	s0, s15
+ 598              	.LVL50:
+ 599              	.L30:
+ 102:controller/actuators/electronic_throttle.c ****     return;
+ 600              		.loc 1 102 5 is_stmt 1 view .LVU190
+ 601 0136 6068     		ldr	r0, [r4, #4]
+ 602 0138 B5EEC00A 		vcmpe.f32	s0, #0
+ 603 013c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 604 0140 16D4     		bmi	.L58
+ 605              	.LVL51:
+ 606              	.L40:
+ 102:controller/actuators/electronic_throttle.c ****     return;
+ 607              		.loc 1 102 5 is_stmt 0 discriminator 2 view .LVU191
+ 608 0142 FCEEC07A 		vcvt.u32.f32	s15, s0
+ 609 0146 CDED017A 		vstr.32	s15, [sp, #4]	@ int
+ 610 014a 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+ 611              	.L42:
+ 102:controller/actuators/electronic_throttle.c ****     return;
+ 612              		.loc 1 102 5 discriminator 4 view .LVU192
+ 613 014e FFF7FEFF 		bl	dc_motor_set
+ 614              	.LVL52:
+ 103:controller/actuators/electronic_throttle.c **** }
+ 615              		.loc 1 103 5 is_stmt 1 view .LVU193
+ 616 0152 B2E7     		b	.L23
+ 617              	.LVL53:
+ 618              	.L56:
+  97:controller/actuators/electronic_throttle.c ****         {
+ 619              		.loc 1 97 34 is_stmt 0 discriminator 1 view .LVU194
+ 620 0154 FEEE007A 		vmov.f32	s15, #-5.0e-1
+ 621 0158 B4EEE78A 		vcmpe.f32	s16, s15
+ 622 015c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 623 0160 CCBF     		ite	gt
+ 624 0162 0123     		movgt	r3, #1
+ 625 0164 0023     		movle	r3, #0
+ 626 0166 D7E7     		b	.L37
+ 627              	.L57:
+ 628              	.LVL54:
+ 102:controller/actuators/electronic_throttle.c ****     return;
+ 629              		.loc 1 102 5 is_stmt 1 view .LVU195
+ 630 0168 6068     		ldr	r0, [r4, #4]
+  99:controller/actuators/electronic_throttle.c ****         }
+ 631              		.loc 1 99 26 is_stmt 0 discriminator 8 view .LVU196
+ 632 016a 9FED090A 		vldr.32	s0, .L59+12
+ 633 016e E8E7     		b	.L40
+ 634              	.LVL55:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 16
+
+
+ 635              	.L58:
+ 102:controller/actuators/electronic_throttle.c ****     return;
+ 636              		.loc 1 102 44 discriminator 1 view .LVU197
+ 637 0170 B1EE400A 		vneg.f32	s0, s0
+ 638              	.LVL56:
+ 102:controller/actuators/electronic_throttle.c ****     return;
+ 639              		.loc 1 102 5 discriminator 1 view .LVU198
+ 640 0174 FCEEC07A 		vcvt.u32.f32	s15, s0
+ 641 0178 CDED017A 		vstr.32	s15, [sp, #4]	@ int
+ 642 017c 9DF80420 		ldrb	r2, [sp, #4]	@ zero_extendqisi2
+ 643 0180 E5E7     		b	.L42
+ 644              	.L60:
+ 645 0182 00BF     		.align	2
+ 646              	.L59:
+ 647 0184 0000C842 		.word	1120403456
+ 648 0188 00000000 		.word	runtime
+ 649 018c 00000000 		.word	.LC1
+ 650 0190 00000000 		.word	0
+ 651              		.cfi_endproc
+ 652              	.LFE234:
+ 654              		.section	.rodata.electronic_throttle_auto_tune.str1.4,"aMS",%progbits,1
+ 655              		.align	2
+ 656              	.LC2:
+ 657 0000 45544220 		.ascii	"ETB Auto-Tune failed. ETB is null!\000"
+ 657      4175746F 
+ 657      2D54756E 
+ 657      65206661 
+ 657      696C6564 
+ 658              		.section	.text.electronic_throttle_auto_tune,"ax",%progbits
+ 659              		.align	1
+ 660              		.global	electronic_throttle_auto_tune
+ 661              		.syntax unified
+ 662              		.thumb
+ 663              		.thumb_func
+ 665              	electronic_throttle_auto_tune:
+ 666              	.LVL57:
+ 667              	.LFB235:
+ 105:controller/actuators/electronic_throttle.c **** 
+ 106:controller/actuators/electronic_throttle.c **** bool electronic_throttle_auto_tune(electronic_throttle_t *etb)
+ 107:controller/actuators/electronic_throttle.c **** {
+ 668              		.loc 1 107 1 is_stmt 1 view -0
+ 669              		.cfi_startproc
+ 670              		@ args = 0, pretend = 0, frame = 0
+ 671              		@ frame_needed = 0, uses_anonymous_args = 0
+ 672              		.loc 1 107 1 is_stmt 0 view .LVU200
+ 673 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 674              		.cfi_def_cfa_offset 24
+ 675              		.cfi_offset 3, -24
+ 676              		.cfi_offset 4, -20
+ 677              		.cfi_offset 5, -16
+ 678              		.cfi_offset 6, -12
+ 679              		.cfi_offset 7, -8
+ 680              		.cfi_offset 14, -4
+ 108:controller/actuators/electronic_throttle.c ****     if (etb == NULL)
+ 681              		.loc 1 108 5 is_stmt 1 view .LVU201
+ 682              		.loc 1 108 8 is_stmt 0 view .LVU202
+ 683 0002 0546     		mov	r5, r0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 17
+
+
+ 684 0004 98B1     		cbz	r0, .L72
+ 109:controller/actuators/electronic_throttle.c ****     {
+ 110:controller/actuators/electronic_throttle.c ****         log_error("ETB Auto-Tune failed. ETB is null!");
+ 111:controller/actuators/electronic_throttle.c ****         if (etb->etb_number == ETB_NUMBER_1)
+ 112:controller/actuators/electronic_throttle.c ****         {
+ 113:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB1_OK, false);
+ 114:controller/actuators/electronic_throttle.c ****         }
+ 115:controller/actuators/electronic_throttle.c ****         else if (etb->etb_number == ETB_NUMBER_2)
+ 116:controller/actuators/electronic_throttle.c ****         {
+ 117:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+ 118:controller/actuators/electronic_throttle.c ****         }
+ 119:controller/actuators/electronic_throttle.c ****         else
+ 120:controller/actuators/electronic_throttle.c ****         {
+ 121:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB1_OK, false);
+ 122:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+ 123:controller/actuators/electronic_throttle.c ****         }
+ 124:controller/actuators/electronic_throttle.c ****         return false;
+ 125:controller/actuators/electronic_throttle.c ****     }
+ 126:controller/actuators/electronic_throttle.c **** 
+ 127:controller/actuators/electronic_throttle.c ****     /* First, we will try to find the end of travel for open and closed positions*/
+ 128:controller/actuators/electronic_throttle.c ****     uint8_t opening_duty_cycle = 180;    // 0 to 255
+ 685              		.loc 1 128 5 is_stmt 1 view .LVU203
+ 686              	.LVL58:
+ 129:controller/actuators/electronic_throttle.c ****     uint8_t closing_duty_cycle = 180;    // 0 to 255
+ 687              		.loc 1 129 5 view .LVU204
+ 130:controller/actuators/electronic_throttle.c ****     uint16_t settling_time_delay = 1000; // time it takes for the etb to move and settle
+ 688              		.loc 1 130 5 view .LVU205
+ 131:controller/actuators/electronic_throttle.c ****     uint8_t number_of_samples = 10;
+ 689              		.loc 1 131 5 view .LVU206
+ 132:controller/actuators/electronic_throttle.c **** 
+ 133:controller/actuators/electronic_throttle.c ****     uint16_t open_adc_value = 0;
+ 690              		.loc 1 133 5 view .LVU207
+ 134:controller/actuators/electronic_throttle.c ****     uint16_t closed_adc_value = 0;
+ 691              		.loc 1 134 5 view .LVU208
+ 135:controller/actuators/electronic_throttle.c ****     uint32_t temp = 0;
+ 692              		.loc 1 135 5 view .LVU209
+ 136:controller/actuators/electronic_throttle.c **** 
+ 137:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, MOTOR_DIRECTION_FORWARD, opening_duty_cycle);
+ 693              		.loc 1 137 5 view .LVU210
+ 694 0006 B422     		movs	r2, #180
+ 695 0008 0021     		movs	r1, #0
+ 696 000a 4068     		ldr	r0, [r0, #4]
+ 697              	.LVL59:
+ 698              		.loc 1 137 5 is_stmt 0 view .LVU211
+ 699 000c FFF7FEFF 		bl	dc_motor_set
+ 700              	.LVL60:
+ 138:controller/actuators/electronic_throttle.c ****     osDelay(settling_time_delay);
+ 701              		.loc 1 138 5 is_stmt 1 view .LVU212
+ 702 0010 4FF47A70 		mov	r0, #1000
+ 703 0014 FFF7FEFF 		bl	osDelay
+ 704              	.LVL61:
+ 139:controller/actuators/electronic_throttle.c ****     temp = 0;
+ 705              		.loc 1 139 5 view .LVU213
+ 140:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 706              		.loc 1 140 5 view .LVU214
+ 707              	.LBB54:
+ 708              		.loc 1 140 10 view .LVU215
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 18
+
+
+ 709              		.loc 1 140 17 is_stmt 0 view .LVU216
+ 710 0018 0024     		movs	r4, #0
+ 711              	.LBE54:
+ 139:controller/actuators/electronic_throttle.c ****     temp = 0;
+ 712              		.loc 1 139 10 view .LVU217
+ 713 001a 2646     		mov	r6, r4
+ 714              	.LVL62:
+ 715              	.L67:
+ 716              	.LBB56:
+ 717              		.loc 1 140 26 is_stmt 1 discriminator 1 view .LVU218
+ 718 001c 092C     		cmp	r4, #9
+ 719 001e 24D8     		bhi	.L73
+ 720              	.LBB55:
+ 141:controller/actuators/electronic_throttle.c ****     {
+ 142:controller/actuators/electronic_throttle.c ****         uint16_t adc_value = analog_inputs_get_data(etb->sensor->analog_channel);
+ 721              		.loc 1 142 9 view .LVU219
+ 722              		.loc 1 142 56 is_stmt 0 view .LVU220
+ 723 0020 EB68     		ldr	r3, [r5, #12]
+ 724              		.loc 1 142 30 view .LVU221
+ 725 0022 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
+ 726 0024 FFF7FEFF 		bl	analog_inputs_get_data
+ 727              	.LVL63:
+ 143:controller/actuators/electronic_throttle.c ****         temp += adc_value;
+ 728              		.loc 1 143 9 is_stmt 1 view .LVU222
+ 729              		.loc 1 143 14 is_stmt 0 view .LVU223
+ 730 0028 0644     		add	r6, r6, r0
+ 731              	.LVL64:
+ 732              		.loc 1 143 14 view .LVU224
+ 733              	.LBE55:
+ 140:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 734              		.loc 1 140 48 is_stmt 1 discriminator 3 view .LVU225
+ 735 002a 0134     		adds	r4, r4, #1
+ 736              	.LVL65:
+ 140:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 737              		.loc 1 140 48 is_stmt 0 discriminator 3 view .LVU226
+ 738 002c F6E7     		b	.L67
+ 739              	.LVL66:
+ 740              	.L72:
+ 140:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 741              		.loc 1 140 48 discriminator 3 view .LVU227
+ 742              	.LBE56:
+ 110:controller/actuators/electronic_throttle.c ****         if (etb->etb_number == ETB_NUMBER_1)
+ 743              		.loc 1 110 9 is_stmt 1 view .LVU228
+ 744 002e 2548     		ldr	r0, .L76
+ 745              	.LVL67:
+ 110:controller/actuators/electronic_throttle.c ****         if (etb->etb_number == ETB_NUMBER_1)
+ 746              		.loc 1 110 9 is_stmt 0 view .LVU229
+ 747 0030 FFF7FEFF 		bl	log_error
+ 748              	.LVL68:
+ 111:controller/actuators/electronic_throttle.c ****         {
+ 749              		.loc 1 111 9 is_stmt 1 view .LVU230
+ 111:controller/actuators/electronic_throttle.c ****         {
+ 750              		.loc 1 111 16 is_stmt 0 view .LVU231
+ 751 0034 95F82030 		ldrb	r3, [r5, #32]	@ zero_extendqisi2
+ 111:controller/actuators/electronic_throttle.c ****         {
+ 752              		.loc 1 111 12 view .LVU232
+ 753 0038 33B9     		cbnz	r3, .L63
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 19
+
+
+ 113:controller/actuators/electronic_throttle.c ****         }
+ 754              		.loc 1 113 13 is_stmt 1 view .LVU233
+ 755              	.LVL69:
+ 756              	.LBB57:
+ 757              	.LBI57:
+  19:controller/utils/utils.h **** {
+ 758              		.loc 2 19 20 view .LVU234
+ 759              	.LBB58:
+  21:controller/utils/utils.h ****     {
+ 760              		.loc 2 21 5 view .LVU235
+  25:controller/utils/utils.h ****     {
+ 761              		.loc 2 25 5 view .LVU236
+ 762              		.loc 2 31 9 view .LVU237
+ 763 003a 234A     		ldr	r2, .L76+4
+ 764 003c 1368     		ldr	r3, [r2]
+ 765              		.loc 2 31 14 is_stmt 0 view .LVU238
+ 766 003e 23F48003 		bic	r3, r3, #4194304
+ 767 0042 1360     		str	r3, [r2]
+ 768              	.LVL70:
+ 769              	.L64:
+ 770              		.loc 2 31 14 view .LVU239
+ 771              	.LBE58:
+ 772              	.LBE57:
+ 124:controller/actuators/electronic_throttle.c ****     }
+ 773              		.loc 1 124 9 is_stmt 1 view .LVU240
+ 124:controller/actuators/electronic_throttle.c ****     }
+ 774              		.loc 1 124 16 is_stmt 0 view .LVU241
+ 775 0044 0020     		movs	r0, #0
+ 776 0046 3CE0     		b	.L66
+ 777              	.L63:
+ 115:controller/actuators/electronic_throttle.c ****         {
+ 778              		.loc 1 115 14 is_stmt 1 view .LVU242
+ 115:controller/actuators/electronic_throttle.c ****         {
+ 779              		.loc 1 115 17 is_stmt 0 view .LVU243
+ 780 0048 012B     		cmp	r3, #1
+ 781 004a 08D0     		beq	.L74
+ 121:controller/actuators/electronic_throttle.c ****             change_bit(&runtime.status, STATUS_ETB2_OK, false);
+ 782              		.loc 1 121 13 is_stmt 1 view .LVU244
+ 783              	.LVL71:
+ 784              	.LBB59:
+ 785              	.LBI59:
+  19:controller/utils/utils.h **** {
+ 786              		.loc 2 19 20 view .LVU245
+ 787              	.LBB60:
+  21:controller/utils/utils.h ****     {
+ 788              		.loc 2 21 5 view .LVU246
+  25:controller/utils/utils.h ****     {
+ 789              		.loc 2 25 5 view .LVU247
+ 790              		.loc 2 31 9 view .LVU248
+ 791 004c 1E4A     		ldr	r2, .L76+4
+ 792 004e 1368     		ldr	r3, [r2]
+ 793              		.loc 2 31 14 is_stmt 0 view .LVU249
+ 794 0050 23F48001 		bic	r1, r3, #4194304
+ 795 0054 1160     		str	r1, [r2]
+ 796              	.LVL72:
+ 797              		.loc 2 31 14 view .LVU250
+ 798              	.LBE60:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 20
+
+
+ 799              	.LBE59:
+ 122:controller/actuators/electronic_throttle.c ****         }
+ 800              		.loc 1 122 13 is_stmt 1 view .LVU251
+ 801              	.LBB61:
+ 802              	.LBI61:
+  19:controller/utils/utils.h **** {
+ 803              		.loc 2 19 20 view .LVU252
+ 804              	.LBB62:
+  21:controller/utils/utils.h ****     {
+ 805              		.loc 2 21 5 view .LVU253
+  25:controller/utils/utils.h ****     {
+ 806              		.loc 2 25 5 view .LVU254
+ 807              		.loc 2 31 9 view .LVU255
+ 808              		.loc 2 31 14 is_stmt 0 view .LVU256
+ 809 0056 23F44003 		bic	r3, r3, #12582912
+ 810 005a 1360     		str	r3, [r2]
+ 811              	.LVL73:
+ 812              		.loc 2 31 14 view .LVU257
+ 813 005c F2E7     		b	.L64
+ 814              	.L74:
+ 815              	.LBE62:
+ 816              	.LBE61:
+ 117:controller/actuators/electronic_throttle.c ****         }
+ 817              		.loc 1 117 13 is_stmt 1 view .LVU258
+ 818              	.LVL74:
+ 819              	.LBB63:
+ 820              	.LBI63:
+  19:controller/utils/utils.h **** {
+ 821              		.loc 2 19 20 view .LVU259
+ 822              	.LBB64:
+  21:controller/utils/utils.h ****     {
+ 823              		.loc 2 21 5 view .LVU260
+  25:controller/utils/utils.h ****     {
+ 824              		.loc 2 25 5 view .LVU261
+ 825              		.loc 2 31 9 view .LVU262
+ 826 005e 1A4A     		ldr	r2, .L76+4
+ 827 0060 1368     		ldr	r3, [r2]
+ 828              		.loc 2 31 14 is_stmt 0 view .LVU263
+ 829 0062 23F40003 		bic	r3, r3, #8388608
+ 830 0066 1360     		str	r3, [r2]
+ 831              	.LVL75:
+ 832              		.loc 2 31 14 view .LVU264
+ 833 0068 ECE7     		b	.L64
+ 834              	.LVL76:
+ 835              	.L73:
+ 836              		.loc 2 31 14 view .LVU265
+ 837              	.LBE64:
+ 838              	.LBE63:
+ 144:controller/actuators/electronic_throttle.c ****     }
+ 145:controller/actuators/electronic_throttle.c ****     open_adc_value = temp / number_of_samples;
+ 839              		.loc 1 145 5 is_stmt 1 view .LVU266
+ 840              		.loc 1 145 27 is_stmt 0 view .LVU267
+ 841 006a 184B     		ldr	r3, .L76+8
+ 842 006c A3FB0636 		umull	r3, r6, r3, r6
+ 843              	.LVL77:
+ 844              		.loc 1 145 20 view .LVU268
+ 845 0070 C6F3CF07 		ubfx	r7, r6, #3, #16
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 21
+
+
+ 846              	.LVL78:
+ 146:controller/actuators/electronic_throttle.c **** 
+ 147:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, MOTOR_DIRECTION_REVERSE, 50);
+ 847              		.loc 1 147 5 is_stmt 1 view .LVU269
+ 848 0074 3222     		movs	r2, #50
+ 849 0076 0121     		movs	r1, #1
+ 850 0078 6868     		ldr	r0, [r5, #4]
+ 851 007a FFF7FEFF 		bl	dc_motor_set
+ 852              	.LVL79:
+ 148:controller/actuators/electronic_throttle.c ****     osDelay(settling_time_delay);
+ 853              		.loc 1 148 5 view .LVU270
+ 854 007e 4FF47A70 		mov	r0, #1000
+ 855 0082 FFF7FEFF 		bl	osDelay
+ 856              	.LVL80:
+ 149:controller/actuators/electronic_throttle.c ****     dc_motor_set(etb->motor, MOTOR_DIRECTION_REVERSE, closing_duty_cycle);
+ 857              		.loc 1 149 5 view .LVU271
+ 858 0086 B422     		movs	r2, #180
+ 859 0088 0121     		movs	r1, #1
+ 860 008a 6868     		ldr	r0, [r5, #4]
+ 861 008c FFF7FEFF 		bl	dc_motor_set
+ 862              	.LVL81:
+ 150:controller/actuators/electronic_throttle.c ****     osDelay(settling_time_delay);
+ 863              		.loc 1 150 5 view .LVU272
+ 864 0090 4FF47A70 		mov	r0, #1000
+ 865 0094 FFF7FEFF 		bl	osDelay
+ 866              	.LVL82:
+ 151:controller/actuators/electronic_throttle.c ****     temp = 0;
+ 867              		.loc 1 151 5 view .LVU273
+ 152:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 868              		.loc 1 152 5 view .LVU274
+ 869              	.LBB65:
+ 870              		.loc 1 152 10 view .LVU275
+ 871              		.loc 1 152 17 is_stmt 0 view .LVU276
+ 872 0098 0024     		movs	r4, #0
+ 873              	.LVL83:
+ 874              		.loc 1 152 17 view .LVU277
+ 875              	.LBE65:
+ 151:controller/actuators/electronic_throttle.c ****     temp = 0;
+ 876              		.loc 1 151 10 view .LVU278
+ 877 009a 2646     		mov	r6, r4
+ 878              	.LVL84:
+ 879              	.L69:
+ 880              	.LBB67:
+ 881              		.loc 1 152 26 is_stmt 1 discriminator 1 view .LVU279
+ 882 009c 092C     		cmp	r4, #9
+ 883 009e 06D8     		bhi	.L75
+ 884              	.LBB66:
+ 153:controller/actuators/electronic_throttle.c ****     {
+ 154:controller/actuators/electronic_throttle.c ****         uint16_t adc_value = analog_inputs_get_data(etb->sensor->analog_channel);
+ 885              		.loc 1 154 9 view .LVU280
+ 886              		.loc 1 154 56 is_stmt 0 view .LVU281
+ 887 00a0 EB68     		ldr	r3, [r5, #12]
+ 888              		.loc 1 154 30 view .LVU282
+ 889 00a2 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
+ 890 00a4 FFF7FEFF 		bl	analog_inputs_get_data
+ 891              	.LVL85:
+ 155:controller/actuators/electronic_throttle.c ****         temp += adc_value;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 22
+
+
+ 892              		.loc 1 155 9 is_stmt 1 view .LVU283
+ 893              		.loc 1 155 14 is_stmt 0 view .LVU284
+ 894 00a8 0644     		add	r6, r6, r0
+ 895              	.LVL86:
+ 896              		.loc 1 155 14 view .LVU285
+ 897              	.LBE66:
+ 152:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 898              		.loc 1 152 48 is_stmt 1 discriminator 3 view .LVU286
+ 899 00aa 0134     		adds	r4, r4, #1
+ 900              	.LVL87:
+ 152:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 901              		.loc 1 152 48 is_stmt 0 discriminator 3 view .LVU287
+ 902 00ac F6E7     		b	.L69
+ 903              	.LVL88:
+ 904              	.L75:
+ 152:controller/actuators/electronic_throttle.c ****     for (size_t i = 0; i < number_of_samples; i++)
+ 905              		.loc 1 152 48 discriminator 3 view .LVU288
+ 906              	.LBE67:
+ 156:controller/actuators/electronic_throttle.c ****     }
+ 157:controller/actuators/electronic_throttle.c ****     closed_adc_value = temp / number_of_samples;
+ 907              		.loc 1 157 5 is_stmt 1 view .LVU289
+ 908              		.loc 1 157 29 is_stmt 0 view .LVU290
+ 909 00ae 074B     		ldr	r3, .L76+8
+ 910 00b0 A3FB0636 		umull	r3, r6, r3, r6
+ 911              	.LVL89:
+ 912              		.loc 1 157 22 view .LVU291
+ 913 00b4 C6F3CF06 		ubfx	r6, r6, #3, #16
+ 914              	.LVL90:
+ 158:controller/actuators/electronic_throttle.c **** 
+ 159:controller/actuators/electronic_throttle.c ****     etb->sensor->closed_throttle_adc_value = closed_adc_value;
+ 915              		.loc 1 159 5 is_stmt 1 view .LVU292
+ 916              		.loc 1 159 8 is_stmt 0 view .LVU293
+ 917 00b8 EB68     		ldr	r3, [r5, #12]
+ 918              		.loc 1 159 44 view .LVU294
+ 919 00ba 5E80     		strh	r6, [r3, #2]	@ movhi
+ 160:controller/actuators/electronic_throttle.c ****     etb->sensor->wide_open_throttle_adc_value = open_adc_value;
+ 920              		.loc 1 160 5 is_stmt 1 view .LVU295
+ 921              		.loc 1 160 8 is_stmt 0 view .LVU296
+ 922 00bc EB68     		ldr	r3, [r5, #12]
+ 923              		.loc 1 160 47 view .LVU297
+ 924 00be 1F80     		strh	r7, [r3]	@ movhi
+ 161:controller/actuators/electronic_throttle.c **** 
+ 162:controller/actuators/electronic_throttle.c ****     return true;
+ 925              		.loc 1 162 5 is_stmt 1 view .LVU298
+ 926              		.loc 1 162 12 is_stmt 0 view .LVU299
+ 927 00c0 0120     		movs	r0, #1
+ 928              	.LVL91:
+ 929              	.L66:
+ 163:controller/actuators/electronic_throttle.c **** }...
+ 930              		.loc 1 163 1 view .LVU300
+ 931 00c2 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 932              	.LVL92:
+ 933              	.L77:
+ 934              		.loc 1 163 1 view .LVU301
+ 935              		.align	2
+ 936              	.L76:
+ 937 00c4 00000000 		.word	.LC2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 23
+
+
+ 938 00c8 00000000 		.word	runtime
+ 939 00cc CDCCCCCC 		.word	-858993459
+ 940              		.cfi_endproc
+ 941              	.LFE235:
+ 943              		.text
+ 944              	.Letext0:
+ 945              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 946              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 947              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 948              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 949              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 950              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 951              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 952              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 953              		.file 11 "controller/types.h"
+ 954              		.file 12 "controller/actuators/dc_motors.h"
+ 955              		.file 13 "controller/utils/pid.h"
+ 956              		.file 14 "controller/IO/analog_inputs.h"
+ 957              		.file 15 "controller/config_and_runtime.h"
+ 958              		.file 16 "controller/IO/sensors.h"
+ 959              		.file 17 "controller/actuators/electronic_throttle.h"
+ 960              		.file 18 "controller/utils/error_handling.h"
+ 961              		.file 19 "controller/utils/timing.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s 			page 24
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 electronic_throttle.c
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:21     .rodata.electronic_throttle_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:25     .text.electronic_throttle_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:31     .text.electronic_throttle_init:00000000 electronic_throttle_init
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:111    .text.electronic_throttle_init:00000038 $d
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:120    .text.electronic_throttle_set:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:126    .text.electronic_throttle_set:00000000 electronic_throttle_set
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:158    .text.electronic_throttle_set:00000024 $d
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:163    .rodata.electronic_throttle_update.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:167    .text.electronic_throttle_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:173    .text.electronic_throttle_update:00000000 electronic_throttle_update
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:400    .text.electronic_throttle_update:00000150 $d
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:407    .rodata.electronic_throttle_auto_tune.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:411    .text.electronic_throttle_auto_tune:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:417    .text.electronic_throttle_auto_tune:00000000 electronic_throttle_auto_tune
-C:\Users\alireza\AppData\Local\Temp\cckkjRzx.s:598    .text.electronic_throttle_auto_tune:00000090 $d
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:21     .rodata.electronic_throttle_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:25     .text.electronic_throttle_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:31     .text.electronic_throttle_init:00000000 electronic_throttle_init
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:261    .text.electronic_throttle_init:00000094 $d
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:271    .text.electronic_throttle_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:277    .text.electronic_throttle_set:00000000 electronic_throttle_set
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:319    .text.electronic_throttle_set:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:324    .rodata.electronic_throttle_update.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:328    .text.electronic_throttle_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:334    .text.electronic_throttle_update:00000000 electronic_throttle_update
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:647    .text.electronic_throttle_update:00000184 $d
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:655    .rodata.electronic_throttle_auto_tune.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:659    .text.electronic_throttle_auto_tune:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:665    .text.electronic_throttle_auto_tune:00000000 electronic_throttle_auto_tune
+C:\Users\alireza\AppData\Local\Temp\ccSRp8Tr.s:937    .text.electronic_throttle_auto_tune:000000c4 $d
 
 UNDEFINED SYMBOLS
 log_error
+runtime
 sensor_tps_get
 pid_set_setpoint
 get_time_us

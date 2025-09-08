@@ -9,11 +9,11 @@
  * @param timer_channel_output_2 which timer channel is connected to the second input of the driver
  * @param frequency the desired pwm frequency
  */
-void dc_motor_init(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, pwm_freq_t frequency)
+bool dc_motor_init(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, pwm_freq_t frequency)
 {
     if (motor == NULL || timer == NULL)
     {
-        return;
+        return false;
         /**
          * @todo throw an error
          */
@@ -39,13 +39,14 @@ void dc_motor_init(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_c
 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_1);
 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2);
 	motor->current_duty_cycle = 0;
+	return true;
 }
 
-void dc_motor_init_simple_Hbridge(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, uint32_t timer_channel_output_3, uint32_t timer_channel_output_4, pwm_freq_t frequency)
+bool dc_motor_init_simple_Hbridge(dc_motor_t *motor, TIM_HandleTypeDef *timer, uint32_t timer_channel_output_1, uint32_t timer_channel_output_2, uint32_t timer_channel_output_3, uint32_t timer_channel_output_4, pwm_freq_t frequency)
 {
     if (motor == NULL || timer == NULL)
     {
-        return;
+        return false;
         /**
          * @todo throw an error
          */
@@ -76,6 +77,7 @@ void dc_motor_init_simple_Hbridge(dc_motor_t *motor, TIM_HandleTypeDef *timer, u
 	HAL_TIM_PWM_Start((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_4);
 
 	motor->current_duty_cycle = 0;
+	return true;
 }
 /**
  * @brief sets the pwm duty cycle of the motor
@@ -83,11 +85,11 @@ void dc_motor_init_simple_Hbridge(dc_motor_t *motor, TIM_HandleTypeDef *timer, u
  * @param dir the desired direction of the motor
  * @param duty_cycle a number between 0 and 255 not a percentage
  */
-void dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycle)
+bool dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycle)
 {
 	if (motor == NULL || motor->timer == NULL)
 	{
-		return;
+		return false;
 		/**
 		 * @todo throw an error
 		 */
@@ -95,7 +97,7 @@ void dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycl
 
 	if (duty_cycle < 0 || duty_cycle > 255)
 	{
-		return;
+		return false;
 	}
 	// Map duty cycle (0-255) to timer compare value
 	uint32_t compare_value = (uint32_t)((duty_cycle / 255.0) * __HAL_TIM_GET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer));
@@ -133,23 +135,24 @@ void dc_motor_set(dc_motor_t *motor, dc_motor_direction_t dir, uint8_t duty_cycl
 	}
 	motor->current_duty_cycle = duty_cycle;
 	motor->current_direction = dir;
+	return true;
 }
 
 /**
  * @brief sets the pwm frequency
  * @note this changes the frequency of the entire timer, this includes all four channels
  */
-void dc_motor_set_timer_freq(dc_motor_t *motor, pwm_freq_t frequency)
+bool dc_motor_set_timer_freq(dc_motor_t *motor, pwm_freq_t frequency)
 {
 	if (frequency == 0)
 	{
 		// Invalid frequency, return or handle error
 		dc_motor_disable(motor);
-		return;
+		return false;
 	}
-	if (frequency > DC_MOTOR_MAX_FREQUENCY)
+	if (!IS_IN_RANGE(frequency, DC_MOTOR_MIN_FREQUENCY, DC_MOTOR_MAX_FREQUENCY))
 	{
-		frequency = DC_MOTOR_MAX_FREQUENCY;
+		frequency = DC_MOTOR_MIN_FREQUENCY;
 	}
 	
 	uint32_t timer_clock = HAL_RCC_GetSysClockFreq(); // Get the timer clock frequency
@@ -171,7 +174,7 @@ void dc_motor_set_timer_freq(dc_motor_t *motor, pwm_freq_t frequency)
 	if (prescaler > 0xFFFF || auto_reload > 0xFFFF)
 	{
 		// Frequency is too low, cannot configure timer
-		return;
+		return false;
 	}
 	
 	// Set the prescaler and auto-reload values
@@ -179,16 +182,17 @@ void dc_motor_set_timer_freq(dc_motor_t *motor, pwm_freq_t frequency)
 	__HAL_TIM_SET_AUTORELOAD((TIM_HandleTypeDef *)motor->timer, auto_reload);
 
 	dc_motor_set(motor, motor->current_direction, motor->current_duty_cycle);
+	return true;
 }
 
 /**
  * @brief disables the motor.
  */
-void dc_motor_disable(dc_motor_t *motor)
+bool dc_motor_disable(dc_motor_t *motor)
 {
 	if (motor == NULL || motor->timer == NULL)
 	{
-		return;
+		return false;
 		/**
 		 * @todo throw an error
 		 */
@@ -199,24 +203,25 @@ void dc_motor_disable(dc_motor_t *motor)
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
 	motor->current_duty_cycle = 0;
 	motor->status = MOTOR_STATE_DISABLED;
+	return true;
 }
 
 /**
  * @brief enables the motor.
  * @note sets the duty cycle to 0 for safety
  */
-void dc_motor_enable(dc_motor_t *motor)
+bool dc_motor_enable(dc_motor_t *motor)
 {
 	if (motor == NULL || motor->timer == NULL)
 	{
-		return;
+		return false;
 		/**
 		 * @todo throw an error
 		 */
 	}
 	if (motor->status == MOTOR_STATE_NORMAL || motor->status == MOTOR_STATE_FAULT || motor == NULL)
 	{
-		return;
+		return false;
 		/**
 		 * @todo throw an error
 		 */
@@ -227,4 +232,5 @@ void dc_motor_enable(dc_motor_t *motor)
 	__HAL_TIM_SET_COMPARE((TIM_HandleTypeDef *)motor->timer, motor->timer_channel_output_2, 0);
 	motor->current_duty_cycle = 0;
 	motor->status = MOTOR_STATE_NORMAL;
+	return true;
 }

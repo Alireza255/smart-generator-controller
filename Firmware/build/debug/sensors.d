@@ -46,7 +46,9 @@ build/debug/sensors.o: controller/IO/sensors.c controller/IO/sensors.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/IO/thermistor.h controller/constants.h controller/types.h \
- controller/utils/timing.h Core/Inc/tim.h Core/Inc/main.h
+ controller/utils/timing.h Core/Inc/tim.h Core/Inc/main.h \
+ controller/config_and_runtime.h controller/constants.h \
+ controller/tables.h
 controller/IO/sensors.h:
 controller/IO/analog_inputs.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -105,3 +107,6 @@ controller/types.h:
 controller/utils/timing.h:
 Core/Inc/tim.h:
 Core/Inc/main.h:
+controller/config_and_runtime.h:
+controller/constants.h:
+controller/tables.h:

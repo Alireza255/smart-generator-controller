@@ -1,6 +1,6 @@
 #include "error_handling.h"
 
-#if ERROR_HANDLING_ENABLED == true
+#ifdef ERROR_HANDLING_ENABLED
 void log_error(const char* message)
 {
     if (message == NULL) return;

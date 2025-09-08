@@ -68,16 +68,5 @@ temperature_t thermistor_get_temp(thermistor_t *thermistor)
 
 	float celsius = KELVIN_TO_CELSIUS(kelvin);
 
-	// bounds check result - please don't try to run this SGC when it is colder than -50C :)
-	if (celsius < -50) {
-		log_error("Thermistor temp bound check failed!");
-        return NAN;
-	}
-
-	if (celsius > 250) {
-		log_error("Thermistor temp bound check failed!");
-        return NAN;
-	}
-
 	return celsius;
 }

@@ -25,6 +25,7 @@ void analog_inputs_init(ADC_HandleTypeDef *adc_handle)
 {
     if (adc_handle == NULL)
     {
+        
         log_error("Analog input init failed! adc handle is null.");
         return;
     }
@@ -96,6 +97,6 @@ voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index)
     voltage_t v = 0;
     uint16_t raw_data = 0;
     raw_data = analog_inputs_get_data(input_index);
-    v = mapf((float)raw_data, (float)0, (float)4095, 0, ADC_REF_VOLTAGE);
+    v = mapf((float)raw_data, (float)0, (float)4095, 0, CONTROLLER_REF_VOLTAGE);
     return v;
 }

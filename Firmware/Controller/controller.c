@@ -6,21 +6,21 @@ runtime_t runtime = {0};
 void controller_sensor_task(void *arg);
 void controller_test_task(void *arg);
 void controller_long_routines_task(void *arg);
-
+void controller_test2_task(void *arg);
 static sensor_tps_t tps1 = {
     .analog_channel = ANALOG_INPUT_ETB1_SENSE1,
-    .closed_throttle_adc_value = 1700,
-    .wide_open_throttle_adc_value = 3000,
+    .closed_throttle_adc_value = 1613,
+    .wide_open_throttle_adc_value = 3170,
     .is_inverted = false};
 static sensor_tps_t tps2 = {
     .analog_channel = ANALOG_INPUT_ETB2_SENSE1,
-    .closed_throttle_adc_value = 1700,
-    .wide_open_throttle_adc_value = 3000,
+    .closed_throttle_adc_value = 1613,
+    .wide_open_throttle_adc_value = 3170,
     .is_inverted = false};
 
 static electronic_throttle_t etb1 = {0};
 static dc_motor_t etb1_motor = {0};
-static pid_t etb1_pid = {.derivative_filter_tau = 0.1f, .Kp = 20.0f, .Ki = 1, .Kd = 0, .limit_output_min = -100, .limit_output_max = 100, .limit_integrator_min = -255, .limit_integrator_max = 255, .setpoint = 50};
+static pid_t etb1_pid = {.derivative_filter_tau = 0.01f, .Kp = 15.0f, .Ki = 5, .Kd = 0.001, .limit_output_min = -100, .limit_output_max = 100, .limit_integrator_min = -50, .limit_integrator_max = 50, .setpoint = 0};
 
 static electronic_throttle_t etb2 = {0};
 static dc_motor_t etb2_motor = {0};
@@ -92,9 +92,9 @@ void controller_load_test_configuration()
   config.cranking_advance = 8.0f;
   config.cranking_throttle = 10.0f;
 
-  config.ignition_dwell = 2.0f;
+  config.ignition_dwell = 2.5f;
   config.multi_spark_rpm_threshold = 3500.0f;
-  config.multi_spark_rest_time_ms = 1.0f;
+  config.multi_spark_rest_time_ms = 0.5f;
   config.multi_spark_max_trailing_angle = 15.0f;
 
   // ---------- Stoichiometric AFRs ----------
@@ -157,7 +157,7 @@ void controller_load_test_configuration()
   config.number_of_injectors = 4;
   config.injection_mode = IM_SIMULTANEOUS;
 
-  config.ignition_mode = IM_INDIVIDUAL_COILS;
+  config.ignition_mode = IM_WASTED_SPARK;
   config.multi_spark_enabled = 0;
   config.multi_spark_number_of_sparks = 5;
 
@@ -238,8 +238,6 @@ void controller_init()
   /* Initialize analog sensors END*/
 
   /* Initialize fan*/
-  // static fan_control_t fan1 = {.on_flag = ENGINE_FLAG_FAN_ON, .pin = {FAN1_GPIO_Port, FAN1_Pin}, .temp_off = 80.0f, .temp_on = 85.0f};
-  // fan_control_update(&fan1);
 
   /* Initialize ignition */
 
@@ -248,7 +246,8 @@ void controller_init()
   // Electronic Throttle Body 1
   if (config.etb1_enabled)
   {
-    dc_motor_init(&etb1_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, 25000);
+    etb1.etb_number = ETB_NUMBER_1;
+    dc_motor_init(&etb1_motor, &htim3, TIM_CHANNEL_4, TIM_CHANNEL_3, 20000);
     pid_init(&etb1_pid);
     electronic_throttle_init(&etb1, &etb1_pid, &tps1, &etb1_motor);
     electronic_throttle_set(&etb1, 0);
@@ -264,6 +263,7 @@ void controller_init()
   if (config.etb2_enabled)
   {
     /*
+    etb2.etb_number = ETB_NUMBER_2;
     dc_motor_init_simple_Hbridge(&etb2_motor, &htim3, TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_3, TIM_CHANNEL_4, 25000);
     pid_init(&etb2_pid);
     electronic_throttle_init(&etb2, &etb2_pid, &tps2, &etb2_motor);
@@ -286,6 +286,11 @@ void controller_init()
       .stack_size = 1024,
       .priority = osPriorityRealtime,
   };
+  const osThreadAttr_t controller_test2_attr = {
+      .name = "test2_task",
+      .stack_size = 1024,
+      .priority = osPriorityNormal,
+  };
   const osThreadAttr_t controller_sensor_task_attr = {
       .name = "sensor_task",
       .stack_size = 1024,
@@ -294,7 +299,7 @@ void controller_init()
 
   const osThreadAttr_t controller_long_routines_attr = {
       .name = "long_routines",
-      .stack_size = 128,
+      .stack_size = 1024,
       .priority = osPriorityNormal,
   };
 
@@ -302,6 +307,7 @@ void controller_init()
   osThreadNew(controller_sensor_task, NULL, &controller_sensor_task_attr);
   osThreadNew(controller_long_routines_task, NULL, &controller_long_routines_attr);
   osThreadNew(controller_test_task, NULL, &controller_test_attr);
+  osThreadNew(controller_test2_task, NULL, &controller_test2_attr);
 
 
 }
@@ -327,6 +333,7 @@ void controller_long_routines_task(void *arg)
   for (;;)
   {
     runtime.seconds = get_time_ms() / 1000;
+    fan_control_update();
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     osDelay(1000);
     // next_routine_time_ticks += 1000;
@@ -343,6 +350,8 @@ void controller_sensor_task(void *arg)
     runtime.iat_degc = sensor_iat_get();
     // runtime.map_kpa = sensor_map_get();
     // runtime.oil_pressure_ok = sensor_ops_get();
+    runtime.egt_degc = sensor_egt_get();
+    runtime.vbatt_volts = vbat_get();
     osDelay(1);
   }
 }
@@ -353,28 +362,32 @@ void controller_test_task(void *arg)
   static rpm_t simulated_rpm = 1000;
   for (;;)
   {
-    // simulated_rpm = (rpm_t)mapf((float)analog_inputs_get_data(ANALOG_INPUT_ETB2_SENSE2), 0.0f, 4095.0f, 10.0f, 1000.0f);
     simulated_rpm = 500;
     trigger_simulator_update(simulated_rpm);
     osDelay(1);
+  }
+}
 
-    /*
+void controller_test2_task(void *arg)
+{
+  osDelay(100);
+  static rpm_t simulated_rpm = 1000;
+  for (;;)
+  {
     percent_t etb_test_target_pos = 20;
     const percent_t etb_test_min = 0;
-    const percent_t etb_test_max = 95;
-    const percent_t etb_test_resolution = 0.02;
-    const float_time_ms_t etb_test_period = 10000;
-    time_ms_t etb_update_period = etb_test_period / ((float)2 * (etb_test_max - etb_test_min)) * etb_test_resolution;
-    for (etb_test_target_pos = 20; etb_test_target_pos < 80; etb_test_target_pos += etb_test_resolution)
+    const percent_t etb_test_max = 100;
+    const percent_t etb_test_resolution = 0.1;
+    for (etb_test_target_pos = etb_test_min; etb_test_target_pos < etb_test_max; etb_test_target_pos += etb_test_resolution)
     {
-      osDelay((uint32_t)etb_update_period);
+      osDelay(1);
       electronic_throttle_set(&etb1, etb_test_target_pos);
     }
-    for (etb_test_target_pos = 80; etb_test_target_pos > 20; etb_test_target_pos -= etb_test_resolution)
+    for (etb_test_target_pos = etb_test_max; etb_test_target_pos > etb_test_min; etb_test_target_pos -= etb_test_resolution)
     {
-      osDelay((uint32_t)etb_update_period);
+      osDelay(1);
       electronic_throttle_set(&etb1, etb_test_target_pos);
     }
-    */
+    
   }
 }

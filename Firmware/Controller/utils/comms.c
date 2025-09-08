@@ -284,8 +284,8 @@ void process_command(uint8_t *request, uint16_t size)
         // handle burn command and if it was ok, then send ok status
         if (controller_save_configuration())
         {
-            send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
         }
+        send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
         return;
         break;
     default:

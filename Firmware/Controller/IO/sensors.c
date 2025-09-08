@@ -14,7 +14,7 @@ percent_t sensor_tps_get(sensor_tps_t *sensor)
     }
      if (sensor->wide_open_throttle_adc_value == 0 && sensor->closed_throttle_adc_value == 0)
     {
-        log_error("tps wrong sensor calib");
+        change_bit(&runtime.status, sensor->status_bit, true);
         return SENSOR_TPS_FAIL_SAFE;
     }
     percent_t result = 0;
@@ -28,6 +28,7 @@ percent_t sensor_tps_get(sensor_tps_t *sensor)
         result = mapf((float)raw_data, (float)sensor->closed_throttle_adc_value, (float)sensor->wide_open_throttle_adc_value, (float)0, (float)100);
     }
     result = CLAMP(result, (percent_t)0, (percent_t)100);
+    change_bit(&runtime.status, sensor->status_bit, false);
     return result;
 }
 
@@ -50,6 +51,7 @@ void sensor_map_init(sensor_map_t *sensor, sensor_map_type_t type)
         sensor->adc_value_0_bar = 100;
         sensor->adc_value_1_bar = 3000;
         sensor->analog_channel = ANALOG_INPUT_SENSOR_MAP_PIN;
+        change_bit(&runtime.status, STATUS_MAP_ERROR, false);
         break;
     case SENSOR_MAP_TYPE_TEST:
         /**
@@ -61,12 +63,15 @@ void sensor_map_init(sensor_map_t *sensor, sensor_map_type_t type)
         sensor->adc_value_0_bar = 0;
         sensor->adc_value_1_bar = 4095;
         sensor->analog_channel = ANALOG_INPUT_SENSOR_MAP_PIN;
+        change_bit(&runtime.status, STATUS_MAP_ERROR, false);
         break;
     
     default:
-        log_error("map sensor type not configured!");
+        //log_error("map sensor type not configured!");
+        change_bit(&runtime.status, STATUS_MAP_ERROR, true);
         break;
     }
+    
     map_sensor = sensor;
 }
 
@@ -75,7 +80,8 @@ pressure_t sensor_map_get()
 {
     if (map_sensor->adc_value_0_bar == 0 && map_sensor->adc_value_1_bar == 0)
     {
-        log_error("map sensor no init!");
+        //log_error("map sensor no init!");
+        change_bit(&runtime.status, STATUS_MAP_ERROR, true);
         return SENSOR_MAP_FAIL_SAFE;
     }
     
@@ -88,9 +94,12 @@ pressure_t sensor_map_get()
 
     if (!IS_IN_RANGE(result, (pressure_t)0, FIRMWARE_LIMIT_MAX_MAP))
     {
-        log_error("map sensor out of range!");
+        //log_error("map sensor out of range!");
+        change_bit(&runtime.status, STATUS_MAP_ERROR, true);
+
         return SENSOR_MAP_FAIL_SAFE;
     }
+    change_bit(&runtime.status, STATUS_MAP_ERROR, false);
     return result;
 }
 
@@ -111,6 +120,8 @@ void sensor_iat_init(thermistor_t *sensor, sensor_iat_type_t type)
             };
             thermistor_init(sensor, bosch_816_iat_conf);
             sensor_iat = sensor;
+            change_bit(&runtime.status, STATUS_IAT_ERROR, false);
+
             break;
         case SENSOR_IAT_TYPE_TEST:
             resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_IAT_PIN);
@@ -125,9 +136,12 @@ void sensor_iat_init(thermistor_t *sensor, sensor_iat_type_t type)
             };
             thermistor_init(sensor, genric_5k);
             sensor_iat = sensor;
+            change_bit(&runtime.status, STATUS_IAT_ERROR, false);
+
             break;
     default:
-        log_error("iat sensor type not configured!");
+        //log_error("iat sensor type not configured!");
+        change_bit(&runtime.status, STATUS_IAT_ERROR, true);
         break;
     }
 }
@@ -137,14 +151,18 @@ temperature_t sensor_iat_get()
     if (sensor_iat == NULL)
     {
         log_error("iat sensor is null");
+        change_bit(&runtime.status, STATUS_IAT_ERROR, true);
         return SENSOR_IAT_FAIL_SAFE;
     }
     temperature_t temperature = thermistor_get_temp(sensor_iat);
     if (!IS_IN_RANGE(temperature, FIRMWARE_LIMIT_MIN_TEMP, FIRMWARE_LIMIT_MAX_TEMP))
     {
-        log_error("iat sensor out of range!");
+        //log_error("iat sensor out of range!");
+        change_bit(&runtime.status, STATUS_IAT_ERROR, true);
+
         return SENSOR_IAT_FAIL_SAFE;
     }
+    change_bit(&runtime.status, STATUS_IAT_ERROR, false);
     return temperature;
 }
 
@@ -153,6 +171,7 @@ void sensor_clt_init(thermistor_t *sensor, sensor_clt_type_t type)
     if (sensor == NULL)
     {
         log_error("clt sensor is null");
+        change_bit(&runtime.status, STATUS_CLT_ERROR, true);
         return;
     }
     switch (type)
@@ -171,6 +190,7 @@ void sensor_clt_init(thermistor_t *sensor, sensor_clt_type_t type)
         };
         thermistor_init(sensor, nissan_clt_conf);
         sensor_clt = sensor;
+        change_bit(&runtime.status, STATUS_CLT_ERROR, false);
         break;
     case SENSOR_CLT_TYPE_TEST:
         resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_CLT_PIN);
@@ -185,9 +205,11 @@ void sensor_clt_init(thermistor_t *sensor, sensor_clt_type_t type)
         };
         thermistor_init(sensor, genric_5k);
         sensor_clt = sensor;
+        change_bit(&runtime.status, STATUS_CLT_ERROR, false);
         break;
     default:
-        log_error("clt sensor type not configured!");
+        //log_error("clt sensor type not configured!");
+        change_bit(&runtime.status, STATUS_CLT_ERROR, true);
         break;
     }
 }
@@ -196,15 +218,18 @@ temperature_t sensor_clt_get()
 {
     if (sensor_clt == NULL)
     {
+        change_bit(&runtime.status, STATUS_CLT_ERROR, true);
         log_error("clt sensor is null");
         return SENSOR_CLT_FAIL_SAFE;
     }
     temperature_t temperature = thermistor_get_temp(sensor_clt);
     if (!IS_IN_RANGE(temperature, FIRMWARE_LIMIT_MIN_TEMP, FIRMWARE_LIMIT_MAX_TEMP))
     {
-        log_error("clt sensor out of range!");
+        change_bit(&runtime.status, STATUS_CLT_ERROR, true);
+        //log_error("clt sensor out of range!");
         return SENSOR_CLT_FAIL_SAFE;
     }
+    change_bit(&runtime.status, STATUS_CLT_ERROR, false);
     return temperature;
 }
 
@@ -213,12 +238,14 @@ void sensor_ops_init(sensor_ops_t *sensor)
     if (sensor == NULL)
     {
         log_error("ops sensor is null");
+        change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, true);
         return;
     }
     sensor->adc_value_threshold = 4095 / 2;
     sensor->debounce_time_ms = 200;
     sensor->analog_channel = ANALOG_INPUT_SENSOR_OIL_PIN;
     sensor_ops = sensor;
+    
 }
 
 bool sensor_ops_get()
@@ -230,6 +257,7 @@ bool sensor_ops_get()
     if (sensor_ops == NULL)
     {
         log_error("ops sensor is null");
+        change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, true);
         return false;
     }
 
@@ -250,6 +278,29 @@ bool sensor_ops_get()
         /* Debounce period passed, accept new state */
         debounced_state = current_state;
     }
-
+    
+    change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, !debounced_state);
     return debounced_state;
+}
+
+temperature_t sensor_egt_get()
+{
+    uint16_t adc_value = analog_inputs_get_data(ANALOG_INPUT_SENSOR_EGT);
+    /*
+     * Type K thermocouple: ~41uV/°C
+     * With gain 100: 4.1mV/°C
+     * ADC: 12-bit, 3.3V ref => 3.3V/4095 ≈ 0.000805V/LSB
+     * So, each °C = 4.1mV / 0.000805V ≈ 5.09 ADC counts/°C
+     * Temperature (°C) = (adc_value * 3.3 / 4095) / 0.0041
+     */
+    voltage_t voltage = ((float)adc_value * ADC_REF_VOLTAGE) / ADC_MAX_VALUE;
+    temperature_t temperature = (temperature_t)(voltage / SENSOR_EGT_THERMOCOUPLE_CONSTANT);
+    return temperature;
+
+}
+voltage_t vbat_get()
+{
+    uint16_t adc_value = analog_inputs_get_data(ANALOG_INPUT_VBAT_SENSE_PIN);
+    voltage_t voltage = ((float)adc_value * ADC_REF_VOLTAGE) / ADC_MAX_VALUE * VBAT_DIVIDER_RATIO;
+    return voltage;
 }

@@ -31,6 +31,7 @@ void trigger_init(trigger_t *trigger, trigger_wheel_type_t wheel_type, uint8_t *
   bool temp_status = true;
   if (trigger == NULL)
   {
+    change_bit(&runtime.status, STATUS_TRIGGER_ERROR, true);
     log_error("Trigger initialization failed. Trigger is NULL.");
     return;
   }
@@ -51,25 +52,26 @@ void trigger_init(trigger_t *trigger, trigger_wheel_type_t wheel_type, uint8_t *
 
   default:
     trigger->initialized = temp_status;
+    change_bit(&runtime.status, STATUS_TRIGGER_ERROR, true);
     log_error("Trigger initialization failed. Wheel type not recognized.");
     break;
   }
 
-  switch (trigger_number)
+  switch (trigger->trigger_number)
   {
-  case 1:
-    trigger->status_synced_index = STATUS_TRIGGER1_SYNCED;
+  case TRIGGER_NUMBER_1:
+    change_bit(&runtime.status, STATUS_TRIGGER1_SYNCED, true);
     break;
-  case 2:
-    trigger->status_synced_index = STATUS_TRIGGER2_SYNCED;
+  case TRIGGER_NUMBER_2:
+    change_bit(&runtime.status, STATUS_TRIGGER2_SYNCED, true);
     break;
   default:
     log_error("Trigger initialization failed. unknown trigger number.");
+    change_bit(&runtime.status, STATUS_TRIGGER_ERROR, true);
     trigger->initialized = false;
     return;
   }
 
-  change_bit(&runtime.status, trigger->status_synced_index, false);
   set_filtering(trigger);
   trigger->_trigger_actual_teeth = trigger->_full_teeth - trigger->_missing_teeth;
   trigger->initialized = true;
@@ -80,6 +82,7 @@ void trigger_tooth_handle(trigger_t *trigger)
 
   if (!trigger->initialized)
   {
+    change_bit(&runtime.status, STATUS_TRIGGER_ERROR, true);
     log_error("Trigger is not initialized.");
     return;
   }
@@ -166,8 +169,9 @@ void trigger_tooth_handle(trigger_t *trigger)
 
   runtime.crankshaft_angle = 360.0f / (angle_t)trigger->_full_teeth * (angle_t)trigger->_counted_tooth;
   runtime.rpm = (rpm_t)(CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * CONVERSION_FACTOR_MINUTES_TO_SECONDS / trigger->_shorter_tooth_gap / trigger->_full_teeth);
-
-  if (get_bit(runtime.status, STATUS_TRIGGER1_SYNCED) == TS_FULLY_SYNCED && runtime.rpm >= config.cranking_rpm_threshold)
+  if (trigger->trigger_number == TRIGGER_NUMBER_1)
+  {
+      if (get_bit(runtime.status, STATUS_TRIGGER1_SYNCED) == TS_FULLY_SYNCED && runtime.rpm >= config.cranking_rpm_threshold)
   {
     runtime.spinning_state = SS_RUNNING;
   }
@@ -183,6 +187,9 @@ void trigger_tooth_handle(trigger_t *trigger)
   {
     runtime.spinning_state = SS_STOPPED;
   }
+  }
+  
+
 
   /**
    * @todo make sure the filter cannot get stuck in any condition

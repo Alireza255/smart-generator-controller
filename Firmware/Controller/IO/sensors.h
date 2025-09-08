@@ -10,18 +10,20 @@
 #include "constants.h"
 #include "timing.h"
 #include "types.h"
+#include "config_and_runtime.h"
 
 #define SENSOR_TPS_FAIL_SAFE (percent_t) NAN
 #define SENSOR_MAP_FAIL_SAFE (pressure_t)0
 #define SENSOR_IAT_FAIL_SAFE (temperature_t)40
-#define SENSOR_CLT_FAIL_SAFE (temperature_t)30
-
-
+#define SENSOR_CLT_FAIL_SAFE (temperature_t)60
+#define SENSOR_EGT_THERMOCOUPLE_CONSTANT (float)41e-6
+#define VBAT_DIVIDER_RATIO (float)10.4
 typedef struct
 {
     uint16_t wide_open_throttle_adc_value;
     uint16_t closed_throttle_adc_value;
     analog_input_channel_t analog_channel;
+    status_t status_bit;
     bool is_inverted;
 } sensor_tps_t;
 
@@ -54,5 +56,7 @@ temperature_t sensor_clt_get();
 void sensor_ops_init(sensor_ops_t *sensor);
 bool sensor_ops_get();
 
+temperature_t sensor_egt_get();
 
+voltage_t vbat_get();
 #endif // SENSORS_H

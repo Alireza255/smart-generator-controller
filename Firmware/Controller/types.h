@@ -119,13 +119,14 @@ typedef enum __attribute__((__packed__))
      */
     IM_ONE_COIL = 1,
     /**
-     * in this mode we use as many coils as we have cylinders
-     */
-    IM_INDIVIDUAL_COILS = 2,
-    /**
      * in this mode we use one coil for every two cylinders
      */
-    IM_WASTED_SPARK = 3,
+    IM_WASTED_SPARK = 2,
+    /**
+     * in this mode we use as many coils as we have cylinders
+     */
+    IM_INDIVIDUAL_COILS = 3,
+    
 
 } ignition_mode_e;
 
