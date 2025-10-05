@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 1
   47              		.cfi_offset 14, -4
   48 0004 9AB0     		sub	sp, sp, #104
   49              		.cfi_def_cfa_offset 120
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 2
 
 
   50 0006 0646     		mov	r6, r0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 1
   97              		.cfi_endproc
   98              	.LFE224:
  100              		.section	.rodata.log_warning.str1.4,"aMS",%progbits,1
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 3
 
 
  101              		.align	2
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 1
  144 0018 074A     		ldr	r2, .L17
  145 001a 2946     		mov	r1, r5
  146 001c 2046     		mov	r0, r4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 4
 
 
  147 001e FFF7FEFF 		bl	snprintf
@@ -216,31 +216,193 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 1
  176 0038 00000000 		.word	.LC1
  177              		.cfi_endproc
  178              	.LFE225:
- 180              		.text
- 181              	.Letext0:
- 182              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 183              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 184              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 185              		.file 5 "USB_DEVICE/App/usbd_cdc_if.h"
- 186              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 187              		.file 7 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 188              		.file 8 "<built-in>"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s 			page 5
+ 180              		.section	.rodata.log_debug.str1.4,"aMS",%progbits,1
+ 181              		.align	2
+ 182              	.LC2:
+ 183 0000 44656275 		.ascii	"Debug: \000"
+ 183      673A2000 
+ 184              		.section	.text.log_debug,"ax",%progbits
+ 185              		.align	1
+ 186              		.global	log_debug
+ 187              		.syntax unified
+ 188              		.thumb
+ 189              		.thumb_func
+ 191              	log_debug:
+ 192              	.LVL14:
+ 193              	.LFB226:
+  25:controller/utils/error_handling.c **** 
+  26:controller/utils/error_handling.c **** void log_debug(const char* format, ...)
+  27:controller/utils/error_handling.c **** {
+ 194              		.loc 1 27 1 is_stmt 1 view -0
+ 195              		.cfi_startproc
+ 196              		@ args = 4, pretend = 16, frame = 104
+ 197              		@ frame_needed = 0, uses_anonymous_args = 1
+ 198              		.loc 1 27 1 is_stmt 0 view .LVU27
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 5
+
+
+ 199 0000 0FB4     		push	{r0, r1, r2, r3}
+ 200              		.cfi_def_cfa_offset 16
+ 201              		.cfi_offset 0, -16
+ 202              		.cfi_offset 1, -12
+ 203              		.cfi_offset 2, -8
+ 204              		.cfi_offset 3, -4
+ 205 0002 30B5     		push	{r4, r5, lr}
+ 206              		.cfi_def_cfa_offset 28
+ 207              		.cfi_offset 4, -28
+ 208              		.cfi_offset 5, -24
+ 209              		.cfi_offset 14, -20
+ 210 0004 9BB0     		sub	sp, sp, #108
+ 211              		.cfi_def_cfa_offset 136
+ 212 0006 1E9D     		ldr	r5, [sp, #120]
+  28:controller/utils/error_handling.c ****     if (format == NULL) return;
+ 213              		.loc 1 28 5 is_stmt 1 view .LVU28
+ 214              		.loc 1 28 8 is_stmt 0 view .LVU29
+ 215 0008 65B3     		cbz	r5, .L19
+  29:controller/utils/error_handling.c **** 
+  30:controller/utils/error_handling.c ****     uint8_t buffer[ERROR_HANDLING_BUFFER_SIZE] = {0};
+ 216              		.loc 1 30 5 is_stmt 1 view .LVU30
+ 217              		.loc 1 30 13 is_stmt 0 view .LVU31
+ 218 000a 01AC     		add	r4, sp, #4
+ 219 000c 6422     		movs	r2, #100
+ 220 000e 0021     		movs	r1, #0
+ 221 0010 2046     		mov	r0, r4
+ 222 0012 FFF7FEFF 		bl	memset
+ 223              	.LVL15:
+  31:controller/utils/error_handling.c ****     va_list args;
+ 224              		.loc 1 31 5 is_stmt 1 view .LVU32
+  32:controller/utils/error_handling.c ****     va_start(args, format);
+ 225              		.loc 1 32 5 view .LVU33
+ 226 0016 1FAB     		add	r3, sp, #124
+ 227 0018 0093     		str	r3, [sp]
+  33:controller/utils/error_handling.c **** 
+  34:controller/utils/error_handling.c ****     // Add prefix and format the rest
+  35:controller/utils/error_handling.c ****     int prefix_len = snprintf((char*)buffer, ERROR_HANDLING_BUFFER_SIZE, "Debug: ");
+ 228              		.loc 1 35 5 view .LVU34
+ 229              		.loc 1 35 22 is_stmt 0 view .LVU35
+ 230 001a 154A     		ldr	r2, .L24
+ 231 001c 92E80300 		ldm	r2, {r0, r1}
+ 232 0020 84E80300 		stm	r4, {r0, r1}
+ 233              	.LVL16:
+  36:controller/utils/error_handling.c ****     if (prefix_len > 0 && prefix_len < ERROR_HANDLING_BUFFER_SIZE) {
+ 234              		.loc 1 36 5 is_stmt 1 view .LVU36
+  37:controller/utils/error_handling.c ****         vsnprintf((char*)buffer + prefix_len, ERROR_HANDLING_BUFFER_SIZE - prefix_len, format, args
+ 235              		.loc 1 37 9 view .LVU37
+ 236 0024 2A46     		mov	r2, r5
+ 237 0026 5D21     		movs	r1, #93
+ 238 0028 0DF10B00 		add	r0, sp, #11
+ 239 002c FFF7FEFF 		bl	vsnprintf
+ 240              	.LVL17:
+  38:controller/utils/error_handling.c ****     }
+  39:controller/utils/error_handling.c ****     // Append newline if space allows
+  40:controller/utils/error_handling.c ****     size_t len = strlen((char*)buffer);
+ 241              		.loc 1 40 5 view .LVU38
+ 242              		.loc 1 40 18 is_stmt 0 view .LVU39
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 6
+
+
+ 243 0030 2046     		mov	r0, r4
+ 244 0032 FFF7FEFF 		bl	strlen
+ 245              	.LVL18:
+  41:controller/utils/error_handling.c ****     if (len < ERROR_HANDLING_BUFFER_SIZE - 1) {
+ 246              		.loc 1 41 5 is_stmt 1 view .LVU40
+ 247              		.loc 1 41 8 is_stmt 0 view .LVU41
+ 248 0036 6228     		cmp	r0, #98
+ 249 0038 0CD8     		bhi	.L22
+  42:controller/utils/error_handling.c ****         buffer[len] = '\n';
+ 250              		.loc 1 42 9 is_stmt 1 view .LVU42
+ 251              		.loc 1 42 21 is_stmt 0 view .LVU43
+ 252 003a 00F16803 		add	r3, r0, #104
+ 253 003e 6B44     		add	r3, sp, r3
+ 254 0040 0A22     		movs	r2, #10
+ 255 0042 03F8642C 		strb	r2, [r3, #-100]
+  43:controller/utils/error_handling.c ****         buffer[len + 1] = '\0';
+ 256              		.loc 1 43 9 is_stmt 1 view .LVU44
+ 257              		.loc 1 43 25 is_stmt 0 view .LVU45
+ 258 0046 00F16903 		add	r3, r0, #105
+ 259 004a 0DEB0300 		add	r0, sp, r3
+ 260              	.LVL19:
+ 261              		.loc 1 43 25 view .LVU46
+ 262 004e 0023     		movs	r3, #0
+ 263              	.LVL20:
+ 264              		.loc 1 43 25 view .LVU47
+ 265 0050 00F8643C 		strb	r3, [r0, #-100]
+ 266              	.L22:
+  44:controller/utils/error_handling.c ****     }
+  45:controller/utils/error_handling.c **** 
+  46:controller/utils/error_handling.c ****     va_end(args);
+ 267              		.loc 1 46 5 is_stmt 1 view .LVU48
+  47:controller/utils/error_handling.c **** 
+  48:controller/utils/error_handling.c ****     CDC_Transmit_FS(buffer, strlen((char*)buffer));
+ 268              		.loc 1 48 5 view .LVU49
+ 269              		.loc 1 48 29 is_stmt 0 view .LVU50
+ 270 0054 01AC     		add	r4, sp, #4
+ 271 0056 2046     		mov	r0, r4
+ 272 0058 FFF7FEFF 		bl	strlen
+ 273              	.LVL21:
+ 274              		.loc 1 48 5 discriminator 1 view .LVU51
+ 275 005c 81B2     		uxth	r1, r0
+ 276 005e 2046     		mov	r0, r4
+ 277 0060 FFF7FEFF 		bl	CDC_Transmit_FS
+ 278              	.LVL22:
+ 279              	.L19:
+  49:controller/utils/error_handling.c **** }
+ 280              		.loc 1 49 1 view .LVU52
+ 281 0064 1BB0     		add	sp, sp, #108
+ 282              		.cfi_def_cfa_offset 28
+ 283              		@ sp needed
+ 284 0066 BDE83040 		pop	{r4, r5, lr}
+ 285              		.cfi_restore 14
+ 286              		.cfi_restore 5
+ 287              		.cfi_restore 4
+ 288              		.cfi_def_cfa_offset 16
+ 289 006a 04B0     		add	sp, sp, #16
+ 290              		.cfi_restore 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 7
+
+
+ 291              		.cfi_restore 2
+ 292              		.cfi_restore 1
+ 293              		.cfi_restore 0
+ 294              		.cfi_def_cfa_offset 0
+ 295 006c 7047     		bx	lr
+ 296              	.L25:
+ 297 006e 00BF     		.align	2
+ 298              	.L24:
+ 299 0070 00000000 		.word	.LC2
+ 300              		.cfi_endproc
+ 301              	.LFE226:
+ 303              		.text
+ 304              	.Letext0:
+ 305              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 306              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 307              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 308              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 309              		.file 6 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 310              		.file 7 "USB_DEVICE/App/usbd_cdc_if.h"
+ 311              		.file 8 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 312              		.file 9 "<built-in>"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 error_handling.c
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:21     .rodata.log_error.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:25     .text.log_error:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:31     .text.log_error:00000000 log_error
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:96     .text.log_error:00000038 $d
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:101    .rodata.log_warning.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:105    .text.log_warning:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:111    .text.log_warning:00000000 log_warning
-C:\Users\alireza\AppData\Local\Temp\ccI0HOjy.s:176    .text.log_warning:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:21     .rodata.log_error.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:25     .text.log_error:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:31     .text.log_error:00000000 log_error
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:96     .text.log_error:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:101    .rodata.log_warning.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:105    .text.log_warning:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:111    .text.log_warning:00000000 log_warning
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:176    .text.log_warning:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:181    .rodata.log_debug.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:185    .text.log_debug:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:191    .text.log_debug:00000000 log_debug
+C:\Users\alireza\AppData\Local\Temp\ccYPJDXa.s:299    .text.log_debug:00000070 $d
 
 UNDEFINED SYMBOLS
 memset
 snprintf
 strlen
 CDC_Transmit_FS
+vsnprintf

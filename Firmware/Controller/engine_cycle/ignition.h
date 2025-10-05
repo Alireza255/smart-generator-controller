@@ -1,29 +1,52 @@
 #ifndef IGNITION_H
 #define IGNITION_H
 
-#include "controller.h"
-#include "main.h"
-#include "utils.h"
-#include "stm32f4xx_hal.h"
-#include "sensors.h"
 
-//#define TEST_MODE
+#include "types.h"
+#include "config_and_runtime.h"
+#include "tables.h"
+#include "timing.h"
+#include "utils.h"
+#include "sensors.h"
+#include "trigger.h"
 
 #define IGNITION_MIN_DWELL_TIME_MS 0.5f
 #define IGNITION_MAX_DWELL_TIME_MS 4.0f
-#define IGNITION_MULTI_SPARK_MAX_SPARKS 8
+#define IGNITION_MULTI_SPARK_MAX_SPARKS 3
 
 #define IGNITION_MIN_ADVANCE (angle_t)0
 #define IGNITION_MAX_ADVANCE (angle_t)40
 
+#define IGNITION_CLT_CORRECTION_MIN_ADVANCE (angle_t)-15
+#define IGNITION_CLT_CORRECTION_MAX_ADVANCE (angle_t)15
+
+
 #define IGNITION_ADVANCE_FAIL_SAFE (angle_t)10
 
+#define IGNITION_WATCHDOG_TIMER_EXTRA_TIME_MS (float_time_ms_t)1
 
 typedef enum
 {
-    IGNITION_COIL_STATE_NOT_CHARGING = 0,
-    IGNITION_COIL_STATE_CHARGING = 1,
-} ignition_coil_state_t;
+    IGNITION_EVENT_INACTIVE = 0,
+    IGNITION_EVENT_PENDING = 1,
+    IGNITION_EVENT_DWELL = 2,
+    IGNITION_EVENT_FIRED = 3,
+} ignition_event_status_t;
+
+typedef struct
+{
+    time_us_t dwell_start_time;
+    time_us_t fire_spark_time;
+    controller_output_pin_t *primary_output;
+    controller_output_pin_t *secondary_output;
+    angle_t crank_angle_at_tdc; // The angle from 0 to 720 in which the cylinder would fire with 0 deg of advance
+    ignition_event_status_t status;
+} ignition_event_t;
+
+typedef struct
+{
+    controller_output_pin_t pin[FIRMWARE_IGNITION_OUTPUT_MAX];
+} ignition_output_pin_conf_t;
 
 /**
  * @brief Initializes the ignition system.
@@ -31,7 +54,7 @@ typedef enum
  * @param outputs Pointer to the controller output pins.
  * @return true if initialization was successful, false otherwise.
  */
-bool ignition_init(controller_output_pin_t *outputs);
+bool ignition_init(ignition_output_pin_conf_t *output_pin_conf);
 
 /**
  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.
@@ -43,20 +66,10 @@ bool ignition_init(controller_output_pin_t *outputs);
  */
 void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us);
 
-/**
- * @brief Charges the ignition coil at the specified index.
- * 
- * @param coil_index The index of the coil to be charged.
- * @return true if charging started successfully, false otherwise.
- */
+
 void ignition_coil_begin_charge(void *arg);
 
-/**
- * @brief Fires a spark from the ignition coil at the specified index.
- * 
- * @param coil_index The index of the coil to fire the spark from.
- * @return true if the spark was fired successfully, false otherwise.
- */
+
 void ignition_coil_fire_spark(void *arg);
 
 /**

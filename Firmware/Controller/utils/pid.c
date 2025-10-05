@@ -22,6 +22,12 @@ void pid_set_setpoint(pid_t *pid, float setpoint)
     pid->setpoint = setpoint;
 }
 
+float pid_get_error(pid_t *pid)
+{
+    return pid->prev_error;
+}
+
+
 float pid_compute(pid_t *pid, time_us_t current_time_us, float input)
 {
     /* Compute the time between the function calls to determine T */

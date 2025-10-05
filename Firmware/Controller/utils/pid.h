@@ -65,6 +65,8 @@ void pid_set_setpoint(pid_t *pid, float setpoint);
 
 void pid_set_tuning(pid_t *pid, pid_configuration_t *conf);
 
+float pid_get_error(pid_t *pid);
+
 float pid_compute(pid_t *pid, time_us_t current_time_us, float input);
 
 #endif // PID_H

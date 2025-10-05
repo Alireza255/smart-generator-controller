@@ -1,0 +1,304 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"gas_injection.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/engine_cycle/gas_injection.c"
+  20              		.section	.rodata.gas_injection_init.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 67617320 		.ascii	"gas injection init failed!\000"
+  23      696E6A65 
+  23      6374696F 
+  23      6E20696E 
+  23      69742066 
+  24              		.section	.text.gas_injection_init,"ax",%progbits
+  25              		.align	1
+  26              		.global	gas_injection_init
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  31              	gas_injection_init:
+  32              	.LVL0:
+  33              	.LFB238:
+   1:controller/engine_cycle/gas_injection.c **** #include "gas_injection.h"
+   2:controller/engine_cycle/gas_injection.c **** 
+   3:controller/engine_cycle/gas_injection.c **** 
+   4:controller/engine_cycle/gas_injection.c **** static electronic_throttle_t *etb = NULL;
+   5:controller/engine_cycle/gas_injection.c **** 
+   6:controller/engine_cycle/gas_injection.c **** 
+   7:controller/engine_cycle/gas_injection.c **** void gas_injection_init(electronic_throttle_t *gas_control_etb)
+   8:controller/engine_cycle/gas_injection.c **** {
+  34              		.loc 1 8 1 view -0
+  35              		.cfi_startproc
+  36              		@ args = 0, pretend = 0, frame = 0
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+  38              		.loc 1 8 1 is_stmt 0 view .LVU1
+  39 0000 08B5     		push	{r3, lr}
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 3, -8
+  42              		.cfi_offset 14, -4
+   9:controller/engine_cycle/gas_injection.c ****     if (gas_control_etb == NULL)
+  43              		.loc 1 9 5 is_stmt 1 view .LVU2
+  44              		.loc 1 9 8 is_stmt 0 view .LVU3
+  45 0002 10B1     		cbz	r0, .L5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s 			page 2
+
+
+  10:controller/engine_cycle/gas_injection.c ****     {
+  11:controller/engine_cycle/gas_injection.c ****         log_error("gas injection init failed!");
+  12:controller/engine_cycle/gas_injection.c ****         return;
+  13:controller/engine_cycle/gas_injection.c ****     }
+  14:controller/engine_cycle/gas_injection.c ****     
+  15:controller/engine_cycle/gas_injection.c ****     etb = gas_control_etb;
+  46              		.loc 1 15 5 is_stmt 1 view .LVU4
+  47              		.loc 1 15 9 is_stmt 0 view .LVU5
+  48 0004 034A     		ldr	r2, .L6
+  49 0006 1060     		str	r0, [r2]
+  50              	.LVL1:
+  51              	.L1:
+  16:controller/engine_cycle/gas_injection.c **** 
+  17:controller/engine_cycle/gas_injection.c **** }
+  52              		.loc 1 17 1 view .LVU6
+  53 0008 08BD     		pop	{r3, pc}
+  54              	.LVL2:
+  55              	.L5:
+  11:controller/engine_cycle/gas_injection.c ****         return;
+  56              		.loc 1 11 9 is_stmt 1 view .LVU7
+  57 000a 0348     		ldr	r0, .L6+4
+  58              	.LVL3:
+  11:controller/engine_cycle/gas_injection.c ****         return;
+  59              		.loc 1 11 9 is_stmt 0 view .LVU8
+  60 000c FFF7FEFF 		bl	log_error
+  61              	.LVL4:
+  12:controller/engine_cycle/gas_injection.c ****     }
+  62              		.loc 1 12 9 is_stmt 1 view .LVU9
+  63 0010 FAE7     		b	.L1
+  64              	.L7:
+  65 0012 00BF     		.align	2
+  66              	.L6:
+  67 0014 00000000 		.word	etb
+  68 0018 00000000 		.word	.LC0
+  69              		.cfi_endproc
+  70              	.LFE238:
+  72              		.section	.text.gas_injection_update,"ax",%progbits
+  73              		.align	1
+  74              		.global	gas_injection_update
+  75              		.syntax unified
+  76              		.thumb
+  77              		.thumb_func
+  79              	gas_injection_update:
+  80              	.LVL5:
+  81              	.LFB239:
+  18:controller/engine_cycle/gas_injection.c **** 
+  19:controller/engine_cycle/gas_injection.c **** void gas_injection_update(void *arg)
+  20:controller/engine_cycle/gas_injection.c **** {
+  82              		.loc 1 20 1 view -0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 0
+  85              		@ frame_needed = 0, uses_anonymous_args = 0
+  86              		.loc 1 20 1 is_stmt 0 view .LVU11
+  87 0000 08B5     		push	{r3, lr}
+  88              		.cfi_def_cfa_offset 8
+  89              		.cfi_offset 3, -8
+  90              		.cfi_offset 14, -4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s 			page 3
+
+
+  21:controller/engine_cycle/gas_injection.c ****     if (etb == NULL)
+  91              		.loc 1 21 5 is_stmt 1 view .LVU12
+  92              		.loc 1 21 13 is_stmt 0 view .LVU13
+  93 0002 244B     		ldr	r3, .L19
+  94 0004 1B68     		ldr	r3, [r3]
+  95              		.loc 1 21 8 view .LVU14
+  96 0006 002B     		cmp	r3, #0
+  97 0008 42D0     		beq	.L8
+  22:controller/engine_cycle/gas_injection.c ****     {
+  23:controller/engine_cycle/gas_injection.c ****         return;
+  24:controller/engine_cycle/gas_injection.c ****     }
+  25:controller/engine_cycle/gas_injection.c **** 
+  26:controller/engine_cycle/gas_injection.c ****     percent_t etb_opening = 0;
+  98              		.loc 1 26 5 is_stmt 1 view .LVU15
+  99              	.LVL6:
+  27:controller/engine_cycle/gas_injection.c ****     mass_t gas_mass = 0;
+ 100              		.loc 1 27 5 view .LVU16
+  28:controller/engine_cycle/gas_injection.c ****     pressure_t gas_inlet_pressure = 2.0f;
+ 101              		.loc 1 28 5 view .LVU17
+  29:controller/engine_cycle/gas_injection.c **** 
+  30:controller/engine_cycle/gas_injection.c **** 
+  31:controller/engine_cycle/gas_injection.c ****     gas_mass = fuel_get_required_mass_gas();
+ 102              		.loc 1 31 5 view .LVU18
+ 103              		.loc 1 31 16 is_stmt 0 view .LVU19
+ 104 000a FFF7FEFF 		bl	fuel_get_required_mass_gas
+ 105              	.LVL7:
+  32:controller/engine_cycle/gas_injection.c **** 
+  33:controller/engine_cycle/gas_injection.c ****     if (gas_inlet_pressure < FIRMWARE_LIMIT_GAS_PRESSURE_MIN)
+ 106              		.loc 1 33 5 is_stmt 1 view .LVU20
+  34:controller/engine_cycle/gas_injection.c ****     {
+  35:controller/engine_cycle/gas_injection.c ****         change_bit(&runtime.status, STATUS_FUEL_PRESSURE_LOW_GAS, true);
+  36:controller/engine_cycle/gas_injection.c ****         electronic_throttle_set(etb, (percent_t)0);
+  37:controller/engine_cycle/gas_injection.c ****         return;
+  38:controller/engine_cycle/gas_injection.c ****     }
+  39:controller/engine_cycle/gas_injection.c ****     
+  40:controller/engine_cycle/gas_injection.c ****     etb_opening = gas_mass / config.gas_control_etb_flowrate_grams_per_sec * config.gas_reference_p
+ 107              		.loc 1 40 5 view .LVU21
+ 108              		.loc 1 40 36 is_stmt 0 view .LVU22
+ 109 000e 224B     		ldr	r3, .L19+4
+ 110 0010 03F2AC62 		addw	r2, r3, #1708
+ 111 0014 92ED007A 		vldr.32	s14, [r2]
+ 112              		.loc 1 40 28 view .LVU23
+ 113 0018 C0EE077A 		vdiv.f32	s15, s0, s14
+ 114              		.loc 1 40 84 view .LVU24
+ 115 001c 03F5D663 		add	r3, r3, #1712
+ 116 0020 93ED007A 		vldr.32	s14, [r3]
+ 117              		.loc 1 40 76 view .LVU25
+ 118 0024 27EE870A 		vmul.f32	s0, s15, s14
+ 119              	.LVL8:
+ 120              		.loc 1 40 17 view .LVU26
+ 121 0028 F6EE007A 		vmov.f32	s15, #5.0e-1
+ 122 002c 20EE270A 		vmul.f32	s0, s0, s15
+ 123              	.LVL9:
+  41:controller/engine_cycle/gas_injection.c ****     etb_opening = CLAMP(etb_opening, (float)0, (float)1);
+ 124              		.loc 1 41 5 is_stmt 1 view .LVU27
+ 125              		.loc 1 41 19 is_stmt 0 view .LVU28
+ 126 0030 B5EEC00A 		vcmpe.f32	s0, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s 			page 4
+
+
+ 127 0034 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 128 0038 09D4     		bmi	.L14
+ 129              		.loc 1 41 19 discriminator 2 view .LVU29
+ 130 003a F7EE007A 		vmov.f32	s15, #1.0e+0
+ 131 003e B4EEE70A 		vcmpe.f32	s0, s15
+ 132 0042 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 133 0046 04DD     		ble	.L10
+ 134              		.loc 1 41 19 discriminator 4 view .LVU30
+ 135 0048 B0EE670A 		vmov.f32	s0, s15
+ 136              	.LVL10:
+ 137              		.loc 1 41 19 discriminator 4 view .LVU31
+ 138 004c 01E0     		b	.L10
+ 139              	.LVL11:
+ 140              	.L14:
+ 141              		.loc 1 41 19 discriminator 1 view .LVU32
+ 142 004e 9FED130A 		vldr.32	s0, .L19+8
+ 143              	.LVL12:
+ 144              	.L10:
+  42:controller/engine_cycle/gas_injection.c ****     etb_opening = asinf(etb_opening) / PI * (float)200; // convert to percentage
+ 145              		.loc 1 42 5 is_stmt 1 view .LVU33
+ 146              		.loc 1 42 19 is_stmt 0 view .LVU34
+ 147 0052 FFF7FEFF 		bl	asinf
+ 148              	.LVL13:
+ 149              		.loc 1 42 38 discriminator 1 view .LVU35
+ 150 0056 9FED127A 		vldr.32	s14, .L19+12
+ 151 005a C0EE077A 		vdiv.f32	s15, s0, s14
+ 152              		.loc 1 42 17 discriminator 1 view .LVU36
+ 153 005e 9FED117A 		vldr.32	s14, .L19+16
+ 154 0062 27EE870A 		vmul.f32	s0, s15, s14
+ 155              	.LVL14:
+  43:controller/engine_cycle/gas_injection.c ****     etb_opening = CLAMP(etb_opening, (float)0, (float)100);
+ 156              		.loc 1 43 5 is_stmt 1 view .LVU37
+ 157              		.loc 1 43 19 is_stmt 0 view .LVU38
+ 158 0066 B5EEC00A 		vcmpe.f32	s0, #0
+ 159 006a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 160 006e 09D4     		bmi	.L15
+ 161              		.loc 1 43 19 discriminator 2 view .LVU39
+ 162 0070 DFED0D7A 		vldr.32	s15, .L19+20
+ 163 0074 B4EEE70A 		vcmpe.f32	s0, s15
+ 164 0078 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 165 007c 04DD     		ble	.L12
+ 166              		.loc 1 43 19 discriminator 4 view .LVU40
+ 167 007e B0EE670A 		vmov.f32	s0, s15
+ 168              	.LVL15:
+ 169              		.loc 1 43 19 discriminator 4 view .LVU41
+ 170 0082 01E0     		b	.L12
+ 171              	.LVL16:
+ 172              	.L15:
+ 173              		.loc 1 43 19 discriminator 1 view .LVU42
+ 174 0084 9FED050A 		vldr.32	s0, .L19+8
+ 175              	.LVL17:
+ 176              	.L12:
+  44:controller/engine_cycle/gas_injection.c ****     electronic_throttle_set(etb, etb_opening);
+ 177              		.loc 1 44 5 is_stmt 1 view .LVU43
+ 178 0088 024B     		ldr	r3, .L19
+ 179 008a 1868     		ldr	r0, [r3]
+ 180 008c FFF7FEFF 		bl	electronic_throttle_set
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s 			page 5
+
+
+ 181              	.LVL18:
+ 182              	.L8:
+  45:controller/engine_cycle/gas_injection.c **** }
+ 183              		.loc 1 45 1 is_stmt 0 view .LVU44
+ 184 0090 08BD     		pop	{r3, pc}
+ 185              	.L20:
+ 186 0092 00BF     		.align	2
+ 187              	.L19:
+ 188 0094 00000000 		.word	etb
+ 189 0098 00100000 		.word	config+4096
+ 190 009c 00000000 		.word	0
+ 191 00a0 DB0F4940 		.word	1078530011
+ 192 00a4 00004843 		.word	1128792064
+ 193 00a8 0000C842 		.word	1120403456
+ 194              		.cfi_endproc
+ 195              	.LFE239:
+ 197              		.section	.bss.etb,"aw",%nobits
+ 198              		.align	2
+ 201              	etb:
+ 202 0000 00000000 		.space	4
+ 203              		.text
+ 204              	.Letext0:
+ 205              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 206              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 207              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 208              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 209              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 210              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 211              		.file 8 "controller/types.h"
+ 212              		.file 9 "controller/tables.h"
+ 213              		.file 10 "controller/config_and_runtime.h"
+ 214              		.file 11 "controller/IO/analog_inputs.h"
+ 215              		.file 12 "controller/IO/sensors.h"
+ 216              		.file 13 "controller/actuators/dc_motors.h"
+ 217              		.file 14 "controller/utils/pid.h"
+ 218              		.file 15 "controller/actuators/electronic_throttle.h"
+ 219              		.file 16 "controller/algorithm/fuel/fuel_math.h"
+ 220              		.file 17 "controller/utils/error_handling.h"
+ 221              		.file 18 "controller/utils/utils.h"
+ 222              		.file 19 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 gas_injection.c
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:21     .rodata.gas_injection_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:25     .text.gas_injection_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:31     .text.gas_injection_init:00000000 gas_injection_init
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:67     .text.gas_injection_init:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:201    .bss.etb:00000000 etb
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:73     .text.gas_injection_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:79     .text.gas_injection_update:00000000 gas_injection_update
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:188    .text.gas_injection_update:00000094 $d
+C:\Users\alireza\AppData\Local\Temp\ccZxB0eH.s:198    .bss.etb:00000000 $d
+
+UNDEFINED SYMBOLS
+log_error
+fuel_get_required_mass_gas
+asinf
+electronic_throttle_set
+config

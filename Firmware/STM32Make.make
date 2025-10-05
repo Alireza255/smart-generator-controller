@@ -140,8 +140,11 @@ controller/actuators/electronic_throttle.c \
 controller/actuators/fan_control.c \
 controller/algorithm/fuel/fuel_math.c \
 controller/algorithm/governer.c \
+controller/algorithm/protection.c \
 controller/controller.c \
+controller/engine_cycle/gas_injection.c \
 controller/engine_cycle/ignition.c \
+controller/engine_cycle/injection.c \
 controller/engine_cycle/trigger.c \
 controller/tables.c \
 controller/utils/comms.c \

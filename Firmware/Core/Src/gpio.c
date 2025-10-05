@@ -87,7 +87,7 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = INJECTOR_OUTPUT_4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(INJECTOR_OUTPUT_4_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : IGNITION_OUTPUT_4_Pin */
@@ -97,17 +97,11 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(IGNITION_OUTPUT_4_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SENSOR_VR_1_Pin */
-  GPIO_InitStruct.Pin = SENSOR_VR_1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(SENSOR_VR_1_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : SENSOR_VR2_Pin */
-  GPIO_InitStruct.Pin = SENSOR_VR2_Pin;
+  /*Configure GPIO pins : SENSOR_VR1_Pin SENSOR_VR2_Pin */
+  GPIO_InitStruct.Pin = SENSOR_VR1_Pin|SENSOR_VR2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(SENSOR_VR2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);

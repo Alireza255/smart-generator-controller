@@ -6,8 +6,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
+
 #ifdef ERROR_HANDLING_ENABLED
 #include "usbd_cdc_if.h"
+
 #endif
 
 #define ERROR_HANDLING_BUFFER_SIZE 100
@@ -33,6 +36,22 @@ void log_error(const char* message);
  * @param message A string containing the warning message.
  */
 void log_warning(const char* message);
+
+/**
+ * @brief Logs a debug message with variable arguments over USB CDC.
+ *
+ * This function behaves similarly to printf, allowing formatted output with a "Debug: " prefix.
+ * It supports variable arguments for flexible message formatting.
+ * A newline is appended if buffer space allows.
+ * It checks if the format is NULL before proceeding.
+ *
+ * Example usage:
+ * log_debug("Value of x: %d", x);
+ *
+ * @param format The format string (like printf).
+ * @param ... Variable arguments corresponding to the format string.
+ */
+void log_debug(const char* format, ...);
 
 
 #endif // ERROR_HANDLING_H

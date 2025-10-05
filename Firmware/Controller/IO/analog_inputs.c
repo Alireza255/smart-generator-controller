@@ -21,27 +21,51 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  * @param instance Pointer to the analog_inputs_s structure instance
  *                 that holds the state and configuration of the analog inputs.
  */
-void analog_inputs_init(ADC_HandleTypeDef *adc_handle)
+void analog_inputs_init(ADC_HandleTypeDef *adc_handle, TIM_HandleTypeDef *timer_handle)
 {
-    if (adc_handle == NULL)
+    if (adc_handle == NULL || timer_handle == NULL)
     {
         
-        log_error("Analog input init failed! adc handle is null.");
+        log_error("Analog input init failed! adc or timer handle is null.");
         return;
     }
     
     hadc = adc_handle;
 
-    /**
-    * @todo this is just a temporary fix make this a proper thing
-    */
-    osTimerId_t timer_id = osTimerNew(
-        analog_inputs_start_conversion,
-        osTimerPeriodic,
-        NULL,
-        NULL
-    );
-    osTimerStart(timer_id, 1);
+    const uint16_t frequency = 1000;
+	
+	uint32_t timer_clock = HAL_RCC_GetPCLK1Freq(); // Get the timer clock frequency
+	uint16_t prescaler = 0;
+	uint32_t auto_reload = 0;
+
+	// Calculate prescaler and auto-reload values
+	for (prescaler = 0; prescaler <= 0xFFFF; prescaler++)
+	{
+		auto_reload = (timer_clock / ((prescaler + 1) * frequency)) - 1;
+		
+		if (auto_reload <= 0xFFFF)
+		{
+			break;
+
+		}
+	}
+
+	if (prescaler > 0xFFFF || auto_reload > 0xFFFF)
+	{
+		// Frequency is too low, cannot configure timer
+		return;
+	}
+	
+	// Set the prescaler and auto-reload values
+	__HAL_TIM_SET_PRESCALER((TIM_HandleTypeDef *)timer_handle, prescaler);
+	__HAL_TIM_SET_AUTORELOAD((TIM_HandleTypeDef *)timer_handle, auto_reload);
+    __HAL_TIM_SET_COMPARE(timer_handle, TIM_CHANNEL_1, 0);
+    
+    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data, ANALOG_INPUTS_MAX * ANALOG_INPUTS_NUMBER_OF_SAMPLES);
+
+    HAL_TIM_Base_Start(timer_handle);
+    HAL_TIM_OC_Start(timer_handle, TIM_CHANNEL_1);
+
 
 }
 
@@ -58,7 +82,8 @@ void analog_inputs_start_conversion()
         return;
     }
     
-    HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data, ANALOG_INPUTS_MAX * ANALOG_INPUTS_NUMBER_OF_SAMPLES);
+    
+
 }
 
 void analog_inputs_start_conversion_injected()

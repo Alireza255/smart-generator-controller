@@ -90,20 +90,37 @@ typedef struct
 } controller_output_pin_t;
 
 /**
- * @brief Trigger wheel type
+ * @brief crankshaft wheel type
  */
 typedef enum __attribute__((__packed__))
 {
     /**
      * 58 teeth with 2 missing tooth wheel
      */
-    TW_58_TOOTH_2_MISSING = 0,
+    TRIGGER_WHEEL_TYPE_CRANK_58_TOOTH_2_MISSING = 0,
     /**
      * 29 teeth with 1 missing tooth wheel
      */
-    TW_29_TOOTH_1_MISSING = 1,
+    TRIGGER_WHEEL_TYPE_CRANK_29_TOOTH_1_MISSING = 1,
 
-} trigger_wheel_type_t;
+} trigger_wheel_type_crankshaft_t;
+
+/**
+ * @brief Camshaft wheel type
+ */
+typedef enum __attribute__((__packed__))
+{
+    /**
+     * No camshaft wheel
+     */
+    TRIGGER_WHEEL_TYPE_CAM_NO_WHEEL = 0,
+
+    /**
+     * Half circle wheel
+     */
+    TRIGGER_WHEEL_TYPE_CAM_HALF_CIRCLE = 1,
+
+} trigger_wheel_type_camshaft_t;
 
 /**
  * @brief Ignition Mode
@@ -113,22 +130,25 @@ typedef enum __attribute__((__packed__))
     /**
      * in this mode the ecu won't produce any sparks
      */
-    IM_NO_IGNITION = 0,
+    IGNITION_MODE_NO_IGNITION = 0,
     /**
      * in this mode only one spark output is used
      */
-    IM_ONE_COIL = 1,
+    IGNITION_MODE_ONE_COIL = 1,
     /**
      * in this mode we use one coil for every two cylinders
      */
-    IM_WASTED_SPARK = 2,
+    IGNITION_MODE_WASTED_SPARK = 2,
     /**
      * in this mode we use as many coils as we have cylinders
      */
-    IM_INDIVIDUAL_COILS = 3,
-    
+    IGNITION_MODE_COIL_ON_PLUG_WASTED_SPARK = 3,
+    /**
+     * in this mode we use as many coils as we have cylinders
+     */
+    IGNITION_MODE_COIL_ON_PLUG = 4,
 
-} ignition_mode_e;
+} ignition_mode_t;
 
 /**
  * @brief Injection Mode
@@ -136,24 +156,24 @@ typedef enum __attribute__((__packed__))
 typedef enum __attribute__((__packed__))
 {
     /**
-     * each cylinder has it's own injector but they all works in parallel
+     * No fuel injection
      */
-    IM_SIMULTANEOUS = 0,
+    INJECTION_MODE_NO_FUEL_INJECTION = 0,
     /**
-     * each cylinder has it's own injector, each injector is wired separately
+     * only one injector for the whole engine
      */
-    IM_SEQUENTIAL = 1,
+    INJECTION_MODE_SINGLE_POINT = 1,
     /**
      * each cylinder has it's own injector but these injectors work in pairs. Injectors could be wired in pairs or separately.
      * Each pair is fired once per engine cycle
      */
-    IM_BATCH = 2,
+    INJECTION_MODE_BATCH = 2,
     /**
-     * only one injector for the whole engine
+     * each cylinder has it's own injector, each injector is wired separately
      */
-    IM_SINGLE_POINT = 3,
+    INJECTION_MODE_SEQUENTIAL = 3,
 
-} injection_mode_e;
+} injection_mode_t;
 
 /**
  * @brief Fuel Type
@@ -198,6 +218,12 @@ typedef enum __attribute__((__packed__))
     FO_1342 = 0,
     FO_153624 = 1,
 } firing_order_e;
+
+typedef enum __attribute__((__packed__))
+{
+    SENSOR_TPS_TYPE_SAMAND_ETB,
+    SENSOR_TPS_CUSTOM,
+} sensor_tps_type_t;
 
 typedef enum __attribute__((__packed__))
 {

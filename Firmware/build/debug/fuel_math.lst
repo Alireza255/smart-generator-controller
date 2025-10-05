@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -20,15 +20,22 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 1
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
   19              		.file 1 "controller/algorithm/fuel/fuel_math.c"
-  20              		.section	.text.ideal_gas_law,"ax",%progbits
-  21              		.align	1
-  22              		.global	ideal_gas_law
-  23              		.syntax unified
-  24              		.thumb
-  25              		.thumb_func
-  27              	ideal_gas_law:
-  28              	.LVL0:
-  29              	.LFB232:
+  20              		.section	.rodata.air_mass_get.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 556E6B6E 		.ascii	"Unknown fuel type.\000"
+  23      6F776E20 
+  23      6675656C 
+  23      20747970 
+  23      652E00
+  24              		.section	.text.air_mass_get,"ax",%progbits
+  25              		.align	1
+  26              		.global	air_mass_get
+  27              		.syntax unified
+  28              		.thumb
+  29              		.thumb_func
+  31              	air_mass_get:
+  32              	.LFB238:
    1:controller/algorithm/fuel/fuel_math.c **** #include "fuel_math.h"
    2:controller/algorithm/fuel/fuel_math.c **** /**
    3:controller/algorithm/fuel/fuel_math.c ****  * Ideal gas law is PV = nRT
@@ -39,280 +46,1036 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 1
    8:controller/algorithm/fuel/fuel_math.c ****  * (28.97g mol^-1)    <- molar mass of air
    9:controller/algorithm/fuel/fuel_math.c ****  * = 0.28705 J*K/g
   10:controller/algorithm/fuel/fuel_math.c ****  */
-  11:controller/algorithm/fuel/fuel_math.c **** #define AIR_R 0.28705f
-  12:controller/algorithm/fuel/fuel_math.c **** 
-  13:controller/algorithm/fuel/fuel_math.c **** mass_t ideal_gas_law(float volume, pressure_t pressure, temperature_t temperature);
-  14:controller/algorithm/fuel/fuel_math.c **** 
-  15:controller/algorithm/fuel/fuel_math.c **** /**
-  16:controller/algorithm/fuel/fuel_math.c ****  * @brief Calculates air mass in grams using RPM, volumetric efficiency (VE),
-  17:controller/algorithm/fuel/fuel_math.c ****  *        and intake air temperature (IAT).
-  18:controller/algorithm/fuel/fuel_math.c ****  *
-  19:controller/algorithm/fuel/fuel_math.c ****  * This function uses the ideal gas law and engine parameters to estimate
-  20:controller/algorithm/fuel/fuel_math.c ****  * the mass of air entering the engine.
-  21:controller/algorithm/fuel/fuel_math.c ****  * Ideal gas law PV = nRT
-  22:controller/algorithm/fuel/fuel_math.c ****  *
-  23:controller/algorithm/fuel/fuel_math.c ****  * @param rpm Engine speed in revolutions per minute.
-  24:controller/algorithm/fuel/fuel_math.c ****  * @param pressure Manifold abslute pressure.
-  25:controller/algorithm/fuel/fuel_math.c ****  * @param iat Intake air temperature in Kelvin.
-  26:controller/algorithm/fuel/fuel_math.c ****  * @return The calculated air mass in grams.
-  27:controller/algorithm/fuel/fuel_math.c ****  */
-  28:controller/algorithm/fuel/fuel_math.c **** mass_t air_mass_get(rpm_t rpm, percent_t ve, pressure_t map, temperature_t iat);
-  29:controller/algorithm/fuel/fuel_math.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 2
+  11:controller/algorithm/fuel/fuel_math.c **** #define AIR_MOLAR_MASS 28.9647f          // g/mol
+  12:controller/algorithm/fuel/fuel_math.c **** #define UNIVERSAL_GAS_CONST 8.314462618f // J/(K*mol)
+  13:controller/algorithm/fuel/fuel_math.c **** 
+  14:controller/algorithm/fuel/fuel_math.c **** mass_t air_mass_get()
+  15:controller/algorithm/fuel/fuel_math.c **** {
+  33              		.loc 1 15 1 view -0
+  34              		.cfi_startproc
+  35              		@ args = 0, pretend = 0, frame = 0
+  36              		@ frame_needed = 0, uses_anonymous_args = 0
+  37 0000 10B5     		push	{r4, lr}
+  38              		.cfi_def_cfa_offset 8
+  39              		.cfi_offset 4, -8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 2
 
 
-  30:controller/algorithm/fuel/fuel_math.c **** mass_t ideal_gas_law(float volume, pressure_t pressure, temperature_t temperature)
-  31:controller/algorithm/fuel/fuel_math.c **** {
-  30              		.loc 1 31 1 view -0
-  31              		.cfi_startproc
-  32              		@ args = 0, pretend = 0, frame = 0
-  33              		@ frame_needed = 0, uses_anonymous_args = 0
-  34              		@ link register save eliminated.
-  32:controller/algorithm/fuel/fuel_math.c **** 	return volume * pressure / (AIR_R * temperature);
-  35              		.loc 1 32 2 view .LVU1
-  36              		.loc 1 32 16 is_stmt 0 view .LVU2
-  37 0000 20EE200A 		vmul.f32	s0, s0, s1
-  38              	.LVL1:
-  39              		.loc 1 32 36 view .LVU3
-  40 0004 DFED037A 		vldr.32	s15, .L2
-  41 0008 21EE271A 		vmul.f32	s2, s2, s15
-  42              	.LVL2:
-  33:controller/algorithm/fuel/fuel_math.c **** }
-  43              		.loc 1 33 1 view .LVU4
-  44 000c 80EE010A 		vdiv.f32	s0, s0, s2
-  45 0010 7047     		bx	lr
-  46              	.L3:
-  47 0012 00BF     		.align	2
-  48              	.L2:
-  49 0014 38F8923E 		.word	1049819192
-  50              		.cfi_endproc
-  51              	.LFE232:
-  53              		.section	.text.air_mass_get,"ax",%progbits
-  54              		.align	1
-  55              		.global	air_mass_get
-  56              		.syntax unified
-  57              		.thumb
-  58              		.thumb_func
-  60              	air_mass_get:
-  61              	.LVL3:
-  62              	.LFB233:
-  34:controller/algorithm/fuel/fuel_math.c **** 
-  35:controller/algorithm/fuel/fuel_math.c **** mass_t air_mass_get(rpm_t rpm, percent_t ve, pressure_t map, temperature_t iat)
-  36:controller/algorithm/fuel/fuel_math.c **** {
-  63              		.loc 1 36 1 is_stmt 1 view -0
-  64              		.cfi_startproc
-  65              		@ args = 0, pretend = 0, frame = 0
-  66              		@ frame_needed = 0, uses_anonymous_args = 0
-  67              		.loc 1 36 1 is_stmt 0 view .LVU6
-  68 0000 08B5     		push	{r3, lr}
-  69              		.cfi_def_cfa_offset 8
-  70              		.cfi_offset 3, -8
-  71              		.cfi_offset 14, -4
-  72 0002 2DED028B 		vpush.64	{d8}
-  73              		.cfi_def_cfa_offset 16
-  74              		.cfi_offset 80, -16
-  75              		.cfi_offset 81, -12
-  76 0006 B0EE608A 		vmov.f32	s16, s1
-  77 000a F0EE410A 		vmov.f32	s1, s2
-  78              	.LVL4:
-  37:controller/algorithm/fuel/fuel_math.c ****     mass_t air_mass = 0;
-  79              		.loc 1 37 5 is_stmt 1 view .LVU7
-  38:controller/algorithm/fuel/fuel_math.c ****     // check if this is mathematically correct
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 3
+  40              		.cfi_offset 14, -4
+  41 0002 2DED068B 		vpush.64	{d8, d9, d10}
+  42              		.cfi_def_cfa_offset 32
+  43              		.cfi_offset 80, -32
+  44              		.cfi_offset 81, -28
+  45              		.cfi_offset 82, -24
+  46              		.cfi_offset 83, -20
+  47              		.cfi_offset 84, -16
+  48              		.cfi_offset 85, -12
+  16:controller/algorithm/fuel/fuel_math.c ****     mass_t air_mass = 0;
+  49              		.loc 1 16 5 view .LVU1
+  50              	.LVL0:
+  17:controller/algorithm/fuel/fuel_math.c **** 
+  18:controller/algorithm/fuel/fuel_math.c ****     rpm_t rpm = crankshaft_get_rpm();
+  51              		.loc 1 18 5 view .LVU2
+  52              		.loc 1 18 17 is_stmt 0 view .LVU3
+  53 0006 FFF7FEFF 		bl	crankshaft_get_rpm
+  54              	.LVL1:
+  55 000a B0EE409A 		vmov.f32	s18, s0
+  56              	.LVL2:
+  19:controller/algorithm/fuel/fuel_math.c ****     pressure_t map = sensor_map_get();
+  57              		.loc 1 19 5 is_stmt 1 view .LVU4
+  58              		.loc 1 19 22 is_stmt 0 view .LVU5
+  59 000e FFF7FEFF 		bl	sensor_map_get
+  60              	.LVL3:
+  61              		.loc 1 19 22 view .LVU6
+  62 0012 F0EE409A 		vmov.f32	s19, s0
+  63              	.LVL4:
+  20:controller/algorithm/fuel/fuel_math.c ****     temperature_t iat = sensor_iat_get();
+  64              		.loc 1 20 5 is_stmt 1 view .LVU7
+  65              		.loc 1 20 25 is_stmt 0 view .LVU8
+  66 0016 FFF7FEFF 		bl	sensor_iat_get
+  67              	.LVL5:
+  68              		.loc 1 20 25 view .LVU9
+  69 001a B0EE408A 		vmov.f32	s16, s0
+  70              	.LVL6:
+  21:controller/algorithm/fuel/fuel_math.c ****     percent_t ve = 0;
+  71              		.loc 1 21 5 is_stmt 1 view .LVU10
+  22:controller/algorithm/fuel/fuel_math.c **** 
+  23:controller/algorithm/fuel/fuel_math.c ****     // get VE from table based on fuel type
+  24:controller/algorithm/fuel/fuel_math.c ****     switch (config.fuel_type)
+  72              		.loc 1 24 5 view .LVU11
+  73              		.loc 1 24 19 is_stmt 0 view .LVU12
+  74 001e 3E4B     		ldr	r3, .L7
+  75 0020 93F8CB39 		ldrb	r3, [r3, #2507]	@ zero_extendqisi2
+  76              		.loc 1 24 5 view .LVU13
+  77 0024 012B     		cmp	r3, #1
+  78 0026 32D0     		beq	.L2
+  79 0028 022B     		cmp	r3, #2
+  80 002a 3AD0     		beq	.L3
+  81 002c 002B     		cmp	r3, #0
+  82 002e 68D1     		bne	.L4
+  83              	.LBB11:
+  25:controller/algorithm/fuel/fuel_math.c ****     {
+  26:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GAS:
+  27:controller/algorithm/fuel/fuel_math.c ****         ve = table_2d_get_value(&config.ve_table_1, rpm, map);
+  84              		.loc 1 27 9 is_stmt 1 view .LVU14
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 3
 
 
-  39:controller/algorithm/fuel/fuel_math.c ****     air_mass = ve * ideal_gas_law(config.engine_displacement_cc, map, CELSIUS_TO_KELVIN(iat));
-  80              		.loc 1 39 5 view .LVU8
-  81              		.loc 1 39 41 is_stmt 0 view .LVU9
-  82 000e 094B     		ldr	r3, .L6
-  83 0010 B3F88E32 		ldrh	r3, [r3, #654]
-  84 0014 00EE103A 		vmov	s0, r3	@ int
-  85              	.LVL5:
-  86              		.loc 1 39 21 view .LVU10
-  87 0018 9FED071A 		vldr.32	s2, .L6+4
-  88              	.LVL6:
-  89              		.loc 1 39 21 view .LVU11
-  90 001c 31EE811A 		vadd.f32	s2, s3, s2
-  91 0020 B8EE400A 		vcvt.f32.u32	s0, s0
-  92 0024 FFF7FEFF 		bl	ideal_gas_law
-  93              	.LVL7:
-  40:controller/algorithm/fuel/fuel_math.c ****     return air_mass;
-  94              		.loc 1 40 5 is_stmt 1 view .LVU12
-  41:controller/algorithm/fuel/fuel_math.c **** }
-  95              		.loc 1 41 1 is_stmt 0 view .LVU13
-  96 0028 20EE080A 		vmul.f32	s0, s0, s16
-  97              	.LVL8:
-  98              		.loc 1 41 1 view .LVU14
-  99 002c BDEC028B 		vldm	sp!, {d8}
- 100              		.cfi_restore 80
- 101              		.cfi_restore 81
- 102              		.cfi_def_cfa_offset 8
- 103              	.LVL9:
- 104              		.loc 1 41 1 view .LVU15
- 105 0030 08BD     		pop	{r3, pc}
- 106              	.L7:
- 107 0032 00BF     		.align	2
- 108              	.L6:
- 109 0034 00100000 		.word	config+4096
- 110 0038 33938843 		.word	1133024051
- 111              		.cfi_endproc
- 112              	.LFE233:
- 114              		.section	.rodata.fuel_get_required_mass.str1.4,"aMS",%progbits,1
- 115              		.align	2
- 116              	.LC0:
- 117 0000 44656661 		.ascii	"Defaulting to natural gas as fuel.\000"
- 117      756C7469 
- 117      6E672074 
- 117      6F206E61 
- 117      74757261 
- 118              		.section	.text.fuel_get_required_mass,"ax",%progbits
- 119              		.align	1
- 120              		.global	fuel_get_required_mass
- 121              		.syntax unified
- 122              		.thumb
- 123              		.thumb_func
- 125              	fuel_get_required_mass:
- 126              	.LVL10:
- 127              	.LFB234:
-  42:controller/algorithm/fuel/fuel_math.c **** 
-  43:controller/algorithm/fuel/fuel_math.c **** mass_t fuel_get_required_mass(mass_t air_mass, afr_t afr)
-  44:controller/algorithm/fuel/fuel_math.c **** {
- 128              		.loc 1 44 1 is_stmt 1 view -0
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 4
+  85              		.loc 1 27 14 is_stmt 0 view .LVU15
+  86 0030 F0EE690A 		vmov.f32	s1, s19
+  87 0034 B0EE490A 		vmov.f32	s0, s18
+  88              	.LVL7:
+  89              		.loc 1 27 14 view .LVU16
+  90 0038 3848     		ldr	r0, .L7+4
+  91 003a FFF7FEFF 		bl	table_2d_get_value
+  92              	.LVL8:
+  93 003e B0EE407A 		vmov.f32	s14, s0
+  94              	.LVL9:
+  28:controller/algorithm/fuel/fuel_math.c ****         break;
+  95              		.loc 1 28 9 is_stmt 1 view .LVU17
+  96              	.L5:
+  97              		.loc 1 28 9 is_stmt 0 view .LVU18
+  98              	.LBE11:
+  29:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GASOLINE:
+  30:controller/algorithm/fuel/fuel_math.c ****         ve = table_2d_get_value(&config.ve_table_2, rpm, map);
+  31:controller/algorithm/fuel/fuel_math.c ****         break;
+  32:controller/algorithm/fuel/fuel_math.c **** 
+  33:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_DUAL_FUEL:
+  34:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+  35:controller/algorithm/fuel/fuel_math.c ****         ve = (table_2d_get_value(&config.ve_table_1, rpm, map) * (blend_ratio * 0.01f)) +
+  36:controller/algorithm/fuel/fuel_math.c ****              (table_2d_get_value(&config.ve_table_2, rpm, map) * (1.0f - (blend_ratio * 0.01f)));
+  37:controller/algorithm/fuel/fuel_math.c ****         break;
+  38:controller/algorithm/fuel/fuel_math.c **** 
+  39:controller/algorithm/fuel/fuel_math.c ****     default:
+  40:controller/algorithm/fuel/fuel_math.c ****         /* Defaults to natural gas */
+  41:controller/algorithm/fuel/fuel_math.c ****         ve = 0;
+  42:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+  43:controller/algorithm/fuel/fuel_math.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+  44:controller/algorithm/fuel/fuel_math.c ****         break;
+  45:controller/algorithm/fuel/fuel_math.c ****     }
+  46:controller/algorithm/fuel/fuel_math.c **** 
+  47:controller/algorithm/fuel/fuel_math.c ****     // check if this is mathematically correct
+  48:controller/algorithm/fuel/fuel_math.c ****     // map in kpa, iat in degC, ve in percent (0-100), rpm in revolutions per minute
+  49:controller/algorithm/fuel/fuel_math.c ****     // engine_displacement_cc in cubic centimeters
+  50:controller/algorithm/fuel/fuel_math.c ****     air_mass = map * (float)config.engine_displacement_cc * rpm * (ve * 0.01f) * AIR_MOLAR_MASS * 1
+  99              		.loc 1 50 5 is_stmt 1 view .LVU19
+ 100              		.loc 1 50 35 is_stmt 0 view .LVU20
+ 101 0042 354B     		ldr	r3, .L7
+ 102 0044 B3F8C039 		ldrh	r3, [r3, #2496]
+ 103 0048 07EE903A 		vmov	s15, r3	@ int
+ 104              		.loc 1 50 22 view .LVU21
+ 105 004c F8EE677A 		vcvt.f32.u32	s15, s15
+ 106              		.loc 1 50 20 view .LVU22
+ 107 0050 67EEA97A 		vmul.f32	s15, s15, s19
+ 108              		.loc 1 50 59 view .LVU23
+ 109 0054 67EE897A 		vmul.f32	s15, s15, s18
+ 110              		.loc 1 50 71 view .LVU24
+ 111 0058 DFED316A 		vldr.32	s13, .L7+8
+ 112 005c 27EE260A 		vmul.f32	s0, s14, s13
+ 113              		.loc 1 50 65 view .LVU25
+ 114 0060 67EE807A 		vmul.f32	s15, s15, s0
+ 115              		.loc 1 50 80 view .LVU26
+ 116 0064 9FED2F7A 		vldr.32	s14, .L7+12
+ 117              	.LVL10:
+ 118              		.loc 1 50 80 view .LVU27
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 4
 
 
- 129              		.cfi_startproc
- 130              		@ args = 0, pretend = 0, frame = 0
- 131              		@ frame_needed = 0, uses_anonymous_args = 0
- 132              		.loc 1 44 1 is_stmt 0 view .LVU17
- 133 0000 08B5     		push	{r3, lr}
- 134              		.cfi_def_cfa_offset 8
- 135              		.cfi_offset 3, -8
- 136              		.cfi_offset 14, -4
- 137 0002 2DED028B 		vpush.64	{d8}
- 138              		.cfi_def_cfa_offset 16
- 139              		.cfi_offset 80, -16
- 140              		.cfi_offset 81, -12
-  45:controller/algorithm/fuel/fuel_math.c ****     mass_t fuel_mass = 0;
- 141              		.loc 1 45 5 is_stmt 1 view .LVU18
- 142              	.LVL11:
-  46:controller/algorithm/fuel/fuel_math.c ****     switch (config.fuel_type)
- 143              		.loc 1 46 5 view .LVU19
- 144              		.loc 1 46 19 is_stmt 0 view .LVU20
- 145 0006 124B     		ldr	r3, .L14
- 146 0008 93F89932 		ldrb	r3, [r3, #665]	@ zero_extendqisi2
- 147              		.loc 1 46 5 view .LVU21
- 148 000c 012B     		cmp	r3, #1
- 149 000e 08D0     		beq	.L9
- 150 0010 022B     		cmp	r3, #2
- 151 0012 15D0     		beq	.L12
- 152 0014 5BB9     		cbnz	r3, .L11
-  47:controller/algorithm/fuel/fuel_math.c ****     {
-  48:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GAS:
-  49:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_gas;
- 153              		.loc 1 49 9 is_stmt 1 view .LVU22
- 154              		.loc 1 49 38 is_stmt 0 view .LVU23
- 155 0016 0E4B     		ldr	r3, .L14
- 156 0018 D3ED877A 		vldr.32	s15, [r3, #540]
- 157              		.loc 1 49 19 view .LVU24
- 158 001c 80EE278A 		vdiv.f32	s16, s0, s15
- 159              	.LVL12:
-  50:controller/algorithm/fuel/fuel_math.c ****         break;
- 160              		.loc 1 50 9 is_stmt 1 view .LVU25
- 161 0020 10E0     		b	.L8
- 162              	.LVL13:
- 163              	.L9:
-  51:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GASOLINE:
-  52:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_petrol;
- 164              		.loc 1 52 9 view .LVU26
- 165              		.loc 1 52 38 is_stmt 0 view .LVU27
- 166 0022 0B4B     		ldr	r3, .L14
- 167 0024 D3ED887A 		vldr.32	s15, [r3, #544]
- 168              		.loc 1 52 19 view .LVU28
- 169 0028 80EE278A 		vdiv.f32	s16, s0, s15
- 170              	.LVL14:
-  53:controller/algorithm/fuel/fuel_math.c ****         break;
- 171              		.loc 1 53 9 is_stmt 1 view .LVU29
- 172 002c 0AE0     		b	.L8
- 173              	.LVL15:
- 174              	.L11:
-  54:controller/algorithm/fuel/fuel_math.c **** 
-  55:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_DUAL_FUEL:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 5
+ 119 0068 67EE877A 		vmul.f32	s15, s15, s14
+ 120              		.loc 1 50 97 view .LVU28
+ 121 006c 9FED2E7A 		vldr.32	s14, .L7+16
+ 122 0070 67EE877A 		vmul.f32	s15, s15, s14
+ 123              		.loc 1 50 141 view .LVU29
+ 124 0074 9FED2D7A 		vldr.32	s14, .L7+20
+ 125 0078 38EE070A 		vadd.f32	s0, s16, s14
+ 126              		.loc 1 50 139 view .LVU30
+ 127 007c 9FED2C7A 		vldr.32	s14, .L7+24
+ 128 0080 20EE070A 		vmul.f32	s0, s0, s14
+ 129              	.LVL11:
+  51:controller/algorithm/fuel/fuel_math.c ****     return air_mass;
+ 130              		.loc 1 51 5 is_stmt 1 view .LVU31
+  52:controller/algorithm/fuel/fuel_math.c **** }
+ 131              		.loc 1 52 1 is_stmt 0 view .LVU32
+ 132 0084 87EE800A 		vdiv.f32	s0, s15, s0
+ 133              	.LVL12:
+ 134              		.loc 1 52 1 view .LVU33
+ 135 0088 BDEC068B 		vldm	sp!, {d8-d10}
+ 136              		.cfi_remember_state
+ 137              		.cfi_restore 84
+ 138              		.cfi_restore 85
+ 139              		.cfi_restore 82
+ 140              		.cfi_restore 83
+ 141              		.cfi_restore 80
+ 142              		.cfi_restore 81
+ 143              		.cfi_def_cfa_offset 8
+ 144              	.LVL13:
+ 145              		.loc 1 52 1 view .LVU34
+ 146 008c 10BD     		pop	{r4, pc}
+ 147              	.LVL14:
+ 148              	.L2:
+ 149              		.cfi_restore_state
+ 150              	.LBB16:
+  30:controller/algorithm/fuel/fuel_math.c ****         break;
+ 151              		.loc 1 30 9 is_stmt 1 view .LVU35
+  30:controller/algorithm/fuel/fuel_math.c ****         break;
+ 152              		.loc 1 30 14 is_stmt 0 view .LVU36
+ 153 008e F0EE690A 		vmov.f32	s1, s19
+ 154 0092 B0EE490A 		vmov.f32	s0, s18
+ 155              	.LVL15:
+  30:controller/algorithm/fuel/fuel_math.c ****         break;
+ 156              		.loc 1 30 14 view .LVU37
+ 157 0096 2748     		ldr	r0, .L7+28
+ 158 0098 FFF7FEFF 		bl	table_2d_get_value
+ 159              	.LVL16:
+ 160 009c B0EE407A 		vmov.f32	s14, s0
+ 161              	.LVL17:
+  31:controller/algorithm/fuel/fuel_math.c **** 
+ 162              		.loc 1 31 9 is_stmt 1 view .LVU38
+ 163 00a0 CFE7     		b	.L5
+ 164              	.LVL18:
+ 165              	.L3:
+  34:controller/algorithm/fuel/fuel_math.c ****         ve = (table_2d_get_value(&config.ve_table_1, rpm, map) * (blend_ratio * 0.01f)) +
+ 166              		.loc 1 34 9 view .LVU39
+  34:controller/algorithm/fuel/fuel_math.c ****         ve = (table_2d_get_value(&config.ve_table_1, rpm, map) * (blend_ratio * 0.01f)) +
+ 167              		.loc 1 34 29 is_stmt 0 view .LVU40
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 5
 
 
-  56:controller/algorithm/fuel/fuel_math.c ****         /* @todo implement this*/
-  57:controller/algorithm/fuel/fuel_math.c ****         break;
-  58:controller/algorithm/fuel/fuel_math.c ****         
-  59:controller/algorithm/fuel/fuel_math.c ****     default:
-  60:controller/algorithm/fuel/fuel_math.c ****         /* Defults to natural gas */
-  61:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_gas;
- 175              		.loc 1 61 9 view .LVU30
- 176              		.loc 1 61 38 is_stmt 0 view .LVU31
- 177 002e 084B     		ldr	r3, .L14
- 178 0030 D3ED877A 		vldr.32	s15, [r3, #540]
- 179              		.loc 1 61 19 view .LVU32
- 180 0034 80EE278A 		vdiv.f32	s16, s0, s15
- 181              	.LVL16:
-  62:controller/algorithm/fuel/fuel_math.c ****         log_warning("Defaulting to natural gas as fuel.");
- 182              		.loc 1 62 9 is_stmt 1 view .LVU33
- 183 0038 0648     		ldr	r0, .L14+4
- 184 003a FFF7FEFF 		bl	log_warning
- 185              	.LVL17:
+ 168 00a2 FFF7FEFF 		bl	crankshaft_get_rpm
+ 169              	.LVL19:
+  34:controller/algorithm/fuel/fuel_math.c ****         ve = (table_2d_get_value(&config.ve_table_1, rpm, map) * (blend_ratio * 0.01f)) +
+ 170              		.loc 1 34 29 view .LVU41
+ 171 00a6 F0EE408A 		vmov.f32	s17, s0
+  34:controller/algorithm/fuel/fuel_math.c ****         ve = (table_2d_get_value(&config.ve_table_1, rpm, map) * (blend_ratio * 0.01f)) +
+ 172              		.loc 1 34 29 discriminator 1 view .LVU42
+ 173 00aa FFF7FEFF 		bl	sensor_map_get
+ 174              	.LVL20:
+ 175 00ae F0EE400A 		vmov.f32	s1, s0
+  34:controller/algorithm/fuel/fuel_math.c ****         ve = (table_2d_get_value(&config.ve_table_1, rpm, map) * (blend_ratio * 0.01f)) +
+ 176              		.loc 1 34 29 discriminator 2 view .LVU43
+ 177 00b2 214C     		ldr	r4, .L7+32
+ 178 00b4 B0EE680A 		vmov.f32	s0, s17
+ 179 00b8 2046     		mov	r0, r4
+ 180 00ba FFF7FEFF 		bl	table_2d_get_value
+ 181              	.LVL21:
+ 182 00be B0EE40AA 		vmov.f32	s20, s0
+ 183              	.LVL22:
+  35:controller/algorithm/fuel/fuel_math.c ****              (table_2d_get_value(&config.ve_table_2, rpm, map) * (1.0f - (blend_ratio * 0.01f)));
+ 184              		.loc 1 35 9 is_stmt 1 view .LVU44
+  35:controller/algorithm/fuel/fuel_math.c ****              (table_2d_get_value(&config.ve_table_2, rpm, map) * (1.0f - (blend_ratio * 0.01f)));
+ 185              		.loc 1 35 15 is_stmt 0 view .LVU45
+ 186 00c2 A4F59054 		sub	r4, r4, #4608
+ 187 00c6 F0EE690A 		vmov.f32	s1, s19
+ 188 00ca B0EE490A 		vmov.f32	s0, s18
+ 189              	.LVL23:
+  35:controller/algorithm/fuel/fuel_math.c ****              (table_2d_get_value(&config.ve_table_2, rpm, map) * (1.0f - (blend_ratio * 0.01f)));
+ 190              		.loc 1 35 15 view .LVU46
+ 191 00ce 2046     		mov	r0, r4
+ 192 00d0 FFF7FEFF 		bl	table_2d_get_value
+ 193              	.LVL24:
+  35:controller/algorithm/fuel/fuel_math.c ****              (table_2d_get_value(&config.ve_table_2, rpm, map) * (1.0f - (blend_ratio * 0.01f)));
+ 194              		.loc 1 35 79 discriminator 1 view .LVU47
+ 195 00d4 DFED127A 		vldr.32	s15, .L7+8
+ 196 00d8 2AEE27AA 		vmul.f32	s20, s20, s15
+ 197              	.LVL25:
+  35:controller/algorithm/fuel/fuel_math.c ****              (table_2d_get_value(&config.ve_table_2, rpm, map) * (1.0f - (blend_ratio * 0.01f)));
+ 198              		.loc 1 35 64 discriminator 1 view .LVU48
+ 199 00dc 60EE0A8A 		vmul.f32	s17, s0, s20
+  36:controller/algorithm/fuel/fuel_math.c ****         break;
+ 200              		.loc 1 36 15 view .LVU49
+ 201 00e0 F0EE690A 		vmov.f32	s1, s19
+ 202 00e4 B0EE490A 		vmov.f32	s0, s18
+ 203 00e8 04F59060 		add	r0, r4, #1152
+ 204 00ec FFF7FEFF 		bl	table_2d_get_value
+ 205              	.LVL26:
+  36:controller/algorithm/fuel/fuel_math.c ****         break;
+ 206              		.loc 1 36 72 discriminator 1 view .LVU50
+ 207 00f0 F7EE007A 		vmov.f32	s15, #1.0e+0
+ 208 00f4 77EECA7A 		vsub.f32	s15, s15, s20
+  36:controller/algorithm/fuel/fuel_math.c ****         break;
+ 209              		.loc 1 36 64 discriminator 1 view .LVU51
+ 210 00f8 20EE270A 		vmul.f32	s0, s0, s15
+  35:controller/algorithm/fuel/fuel_math.c ****              (table_2d_get_value(&config.ve_table_2, rpm, map) * (1.0f - (blend_ratio * 0.01f)));
+ 211              		.loc 1 35 12 view .LVU52
+ 212 00fc 38EE807A 		vadd.f32	s14, s17, s0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 6
+
+
+ 213              	.LVL27:
+  37:controller/algorithm/fuel/fuel_math.c **** 
+ 214              		.loc 1 37 9 is_stmt 1 view .LVU53
+ 215 0100 9FE7     		b	.L5
+ 216              	.LVL28:
+ 217              	.L4:
+  41:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+ 218              		.loc 1 41 9 view .LVU54
+  42:controller/algorithm/fuel/fuel_math.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+ 219              		.loc 1 42 9 view .LVU55
+ 220 0102 0E48     		ldr	r0, .L7+36
+ 221 0104 FFF7FEFF 		bl	log_warning
+ 222              	.LVL29:
+  43:controller/algorithm/fuel/fuel_math.c ****         break;
+ 223              		.loc 1 43 9 view .LVU56
+ 224              	.LBB12:
+ 225              	.LBI12:
+ 226              		.file 2 "controller/utils/utils.h"
+   1:controller/utils/utils.h **** /**
+   2:controller/utils/utils.h ****  * @file utils.h
+   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
+   4:controller/utils/utils.h ****  *
+   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
+   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
+   7:controller/utils/utils.h ****  *
+   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
+   9:controller/utils/utils.h ****  */
+  10:controller/utils/utils.h **** #ifndef UTILS_H
+  11:controller/utils/utils.h **** #define UTILS_H
+  12:controller/utils/utils.h **** 
+  13:controller/utils/utils.h **** #include "types.h"
+  14:controller/utils/utils.h **** #include "math.h"
+  15:controller/utils/utils.h **** 
+  16:controller/utils/utils.h **** #define PI 3.14159265358979323846f
+  17:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  18:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  19:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** #define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
+  22:controller/utils/utils.h **** 
+  23:controller/utils/utils.h **** bool is_phase_in_range(float test, float current, float next);
+  24:controller/utils/utils.h **** 
+  25:controller/utils/utils.h **** size_t nearest_index_float(const float *arr, size_t size, float target);
+  26:controller/utils/utils.h **** size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target);
+  27:controller/utils/utils.h **** size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target);
+  28:controller/utils/utils.h **** size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
+  29:controller/utils/utils.h **** 
+  30:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
+ 227              		.loc 2 30 20 view .LVU57
+ 228              	.LBB13:
+  31:controller/utils/utils.h **** {
+  32:controller/utils/utils.h ****     if (bit > 31)
+ 229              		.loc 2 32 5 view .LVU58
+  33:controller/utils/utils.h ****     {
+  34:controller/utils/utils.h ****         return;
+  35:controller/utils/utils.h ****     }
+  36:controller/utils/utils.h ****     if (state)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 7
+
+
+ 230              		.loc 2 36 5 view .LVU59
+  37:controller/utils/utils.h ****     {
+  38:controller/utils/utils.h ****         *var |= (1u << bit);
+ 231              		.loc 2 38 9 view .LVU60
+ 232 0108 0D4A     		ldr	r2, .L7+40
+ 233 010a 1368     		ldr	r3, [r2]
+ 234              		.loc 2 38 14 is_stmt 0 view .LVU61
+ 235 010c 43F00103 		orr	r3, r3, #1
+ 236 0110 1360     		str	r3, [r2]
+ 237              	.LVL30:
+ 238              		.loc 2 38 14 view .LVU62
+ 239              	.LBE13:
+ 240              	.LBE12:
+  44:controller/algorithm/fuel/fuel_math.c ****     }
+ 241              		.loc 1 44 9 is_stmt 1 view .LVU63
+  41:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+ 242              		.loc 1 41 12 is_stmt 0 view .LVU64
+ 243 0112 9FED0C7A 		vldr.32	s14, .L7+44
+ 244              	.LBB15:
+ 245              	.LBB14:
+ 246 0116 94E7     		b	.L5
+ 247              	.L8:
+ 248              		.align	2
+ 249              	.L7:
+ 250 0118 00100000 		.word	config+4096
+ 251 011c 00000000 		.word	config
+ 252 0120 0AD7233C 		.word	1008981770
+ 253 0124 B5B7E741 		.word	1105704885
+ 254 0128 6F12833A 		.word	981668463
+ 255 012c 33938843 		.word	1133024051
+ 256 0130 136F7944 		.word	1148808979
+ 257 0134 80040000 		.word	config+1152
+ 258 0138 00120000 		.word	config+4608
+ 259 013c 00000000 		.word	.LC0
+ 260 0140 00000000 		.word	runtime
+ 261 0144 00000000 		.word	0
+ 262              	.LBE14:
+ 263              	.LBE15:
+ 264              	.LBE16:
+ 265              		.cfi_endproc
+ 266              	.LFE238:
+ 268              		.section	.text.fuel_get_required_mass_petrol,"ax",%progbits
+ 269              		.align	1
+ 270              		.global	fuel_get_required_mass_petrol
+ 271              		.syntax unified
+ 272              		.thumb
+ 273              		.thumb_func
+ 275              	fuel_get_required_mass_petrol:
+ 276              	.LFB239:
+  53:controller/algorithm/fuel/fuel_math.c **** 
+  54:controller/algorithm/fuel/fuel_math.c **** mass_t fuel_get_required_mass_petrol()
+  55:controller/algorithm/fuel/fuel_math.c **** {
+ 277              		.loc 1 55 1 is_stmt 1 view -0
+ 278              		.cfi_startproc
+ 279              		@ args = 0, pretend = 0, frame = 0
+ 280              		@ frame_needed = 0, uses_anonymous_args = 0
+ 281 0000 10B5     		push	{r4, lr}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 8
+
+
+ 282              		.cfi_def_cfa_offset 8
+ 283              		.cfi_offset 4, -8
+ 284              		.cfi_offset 14, -4
+ 285 0002 2DED028B 		vpush.64	{d8}
+ 286              		.cfi_def_cfa_offset 16
+ 287              		.cfi_offset 80, -16
+ 288              		.cfi_offset 81, -12
+  56:controller/algorithm/fuel/fuel_math.c ****     mass_t air_mass = air_mass_get();
+ 289              		.loc 1 56 5 view .LVU66
+ 290              		.loc 1 56 23 is_stmt 0 view .LVU67
+ 291 0006 FFF7FEFF 		bl	air_mass_get
+ 292              	.LVL31:
+ 293 000a B0EE408A 		vmov.f32	s16, s0
+ 294              	.LVL32:
+  57:controller/algorithm/fuel/fuel_math.c ****     mass_t fuel_mass = 0;
+ 295              		.loc 1 57 5 is_stmt 1 view .LVU68
+  58:controller/algorithm/fuel/fuel_math.c ****     // get VE from table based on fuel type
+  59:controller/algorithm/fuel/fuel_math.c ****     switch (config.fuel_type)
+ 296              		.loc 1 59 5 view .LVU69
+ 297              		.loc 1 59 19 is_stmt 0 view .LVU70
+ 298 000e 2D4B     		ldr	r3, .L22
+ 299 0010 93F8CB39 		ldrb	r3, [r3, #2507]	@ zero_extendqisi2
+ 300              		.loc 1 59 5 view .LVU71
+ 301 0014 012B     		cmp	r3, #1
+ 302 0016 0ED0     		beq	.L10
+ 303 0018 022B     		cmp	r3, #2
+ 304 001a 31D0     		beq	.L11
+ 305 001c 002B     		cmp	r3, #0
+ 306 001e 4ED0     		beq	.L17
+ 307              	.LBB17:
+  60:controller/algorithm/fuel/fuel_math.c ****     {
+  61:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GAS:
+  62:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = 0;
   63:controller/algorithm/fuel/fuel_math.c ****         break;
- 186              		.loc 1 63 9 view .LVU34
- 187 003e 01E0     		b	.L8
- 188              	.LVL18:
- 189              	.L12:
-  46:controller/algorithm/fuel/fuel_math.c ****     {
- 190              		.loc 1 46 5 is_stmt 0 view .LVU35
- 191 0040 9FED058A 		vldr.32	s16, .L14+8
-  64:controller/algorithm/fuel/fuel_math.c ****     }
-  65:controller/algorithm/fuel/fuel_math.c **** 
-  66:controller/algorithm/fuel/fuel_math.c ****     return fuel_mass;
- 192              		.loc 1 66 5 is_stmt 1 view .LVU36
- 193              	.LVL19:
- 194              	.L8:
-  67:controller/algorithm/fuel/fuel_math.c **** }
- 195              		.loc 1 67 1 is_stmt 0 view .LVU37
- 196 0044 B0EE480A 		vmov.f32	s0, s16
- 197 0048 BDEC028B 		vldm	sp!, {d8}
- 198              		.cfi_restore 80
- 199              		.cfi_restore 81
- 200              		.cfi_def_cfa_offset 8
- 201 004c 08BD     		pop	{r3, pc}
- 202              	.L15:
- 203 004e 00BF     		.align	2
- 204              	.L14:
- 205 0050 00100000 		.word	config+4096
- 206 0054 00000000 		.word	.LC0
- 207 0058 00000000 		.word	0
- 208              		.cfi_endproc
- 209              	.LFE234:
- 211              		.text
- 212              	.Letext0:
- 213              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 214              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 215              		.file 4 "controller/types.h"
- 216              		.file 5 "controller/tables.h"
- 217              		.file 6 "controller/config_and_runtime.h"
- 218              		.file 7 "controller/utils/error_handling.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s 			page 6
+  64:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GASOLINE:
+  65:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_petrol;
+  66:controller/algorithm/fuel/fuel_math.c ****         break;
+  67:controller/algorithm/fuel/fuel_math.c **** 
+  68:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_DUAL_FUEL:
+  69:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+  70:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_petrol) * (1.0f - (blend_ratio * 0.01f));
+  71:controller/algorithm/fuel/fuel_math.c ****         break;
+  72:controller/algorithm/fuel/fuel_math.c **** 
+  73:controller/algorithm/fuel/fuel_math.c ****     default:
+  74:controller/algorithm/fuel/fuel_math.c ****         /* no fuel will be injected */
+  75:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = 0;
+ 308              		.loc 1 75 9 is_stmt 1 view .LVU72
+  76:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+ 309              		.loc 1 76 9 view .LVU73
+ 310 0020 2948     		ldr	r0, .L22+4
+ 311 0022 FFF7FEFF 		bl	log_warning
+ 312              	.LVL33:
+  77:controller/algorithm/fuel/fuel_math.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+ 313              		.loc 1 77 9 view .LVU74
+ 314              	.LBB18:
+ 315              	.LBI18:
+  30:controller/utils/utils.h **** {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 9
+
+
+ 316              		.loc 2 30 20 view .LVU75
+ 317              	.LBB19:
+  32:controller/utils/utils.h ****     {
+ 318              		.loc 2 32 5 view .LVU76
+  36:controller/utils/utils.h ****     {
+ 319              		.loc 2 36 5 view .LVU77
+ 320              		.loc 2 38 9 view .LVU78
+ 321 0026 294A     		ldr	r2, .L22+8
+ 322 0028 1368     		ldr	r3, [r2]
+ 323              		.loc 2 38 14 is_stmt 0 view .LVU79
+ 324 002a 43F00103 		orr	r3, r3, #1
+ 325 002e 1360     		str	r3, [r2]
+ 326              	.LVL34:
+ 327              		.loc 2 38 14 view .LVU80
+ 328              	.LBE19:
+ 329              	.LBE18:
+  78:controller/algorithm/fuel/fuel_math.c ****         break;
+ 330              		.loc 1 78 9 is_stmt 1 view .LVU81
+  75:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+ 331              		.loc 1 75 19 is_stmt 0 view .LVU82
+ 332 0030 DFED278A 		vldr.32	s17, .L22+12
+ 333              	.LBB21:
+ 334              	.LBB20:
+ 335 0034 04E0     		b	.L12
+ 336              	.LVL35:
+ 337              	.L10:
+  75:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+ 338              		.loc 1 75 19 view .LVU83
+ 339              	.LBE20:
+ 340              	.LBE21:
+  65:controller/algorithm/fuel/fuel_math.c ****         break;
+ 341              		.loc 1 65 9 is_stmt 1 view .LVU84
+  65:controller/algorithm/fuel/fuel_math.c ****         break;
+ 342              		.loc 1 65 38 is_stmt 0 view .LVU85
+ 343 0036 274B     		ldr	r3, .L22+16
+ 344 0038 D3ED007A 		vldr.32	s15, [r3]
+  65:controller/algorithm/fuel/fuel_math.c ****         break;
+ 345              		.loc 1 65 19 view .LVU86
+ 346 003c C0EE278A 		vdiv.f32	s17, s0, s15
+ 347              	.LVL36:
+  66:controller/algorithm/fuel/fuel_math.c **** 
+ 348              		.loc 1 66 9 is_stmt 1 view .LVU87
+ 349              	.L12:
+  66:controller/algorithm/fuel/fuel_math.c **** 
+ 350              		.loc 1 66 9 is_stmt 0 view .LVU88
+ 351              	.LBE17:
+  79:controller/algorithm/fuel/fuel_math.c ****     }
+  80:controller/algorithm/fuel/fuel_math.c ****     percent_t clt_correction = (percent_t)table_1d_get_value(&config.clt_based_fuel_correction_tabl
+ 352              		.loc 1 80 5 is_stmt 1 view .LVU89
+ 353              		.loc 1 80 32 is_stmt 0 view .LVU90
+ 354 0040 FFF7FEFF 		bl	sensor_clt_get
+ 355              	.LVL37:
+ 356              		.loc 1 80 32 discriminator 1 view .LVU91
+ 357 0044 2448     		ldr	r0, .L22+20
+ 358 0046 FFF7FEFF 		bl	table_1d_get_value
+ 359              	.LVL38:
+  81:controller/algorithm/fuel/fuel_math.c ****     if (IS_IN_RANGE(clt_correction, (percent_t)((float)-1 * FUEL_CLT_BASED_CORRECTION_RANGE), (perc
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 10
+
+
+ 360              		.loc 1 81 5 is_stmt 1 view .LVU92
+ 361              		.loc 1 81 8 is_stmt 0 view .LVU93
+ 362 004a DFED247A 		vldr.32	s15, .L22+24
+ 363 004e B4EEE70A 		vcmpe.f32	s0, s15
+ 364 0052 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 365 0056 0EDB     		blt	.L9
+ 366              		.loc 1 81 9 discriminator 1 view .LVU94
+ 367 0058 DFED217A 		vldr.32	s15, .L22+28
+ 368 005c B4EEE70A 		vcmpe.f32	s0, s15
+ 369 0060 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 370 0064 07D8     		bhi	.L9
+  82:controller/algorithm/fuel/fuel_math.c ****     {
+  83:controller/algorithm/fuel/fuel_math.c ****         fuel_mass += clt_correction / (percent_t)100 * fuel_mass;
+ 371              		.loc 1 83 9 is_stmt 1 view .LVU95
+ 372              		.loc 1 83 37 is_stmt 0 view .LVU96
+ 373 0066 9FED1F7A 		vldr.32	s14, .L22+32
+ 374 006a C0EE077A 		vdiv.f32	s15, s0, s14
+ 375              		.loc 1 83 54 view .LVU97
+ 376 006e 67EEA87A 		vmul.f32	s15, s15, s17
+ 377              		.loc 1 83 19 view .LVU98
+ 378 0072 78EEA78A 		vadd.f32	s17, s17, s15
+ 379              	.LVL39:
+  84:controller/algorithm/fuel/fuel_math.c ****     }
+  85:controller/algorithm/fuel/fuel_math.c ****     return fuel_mass;
+ 380              		.loc 1 85 5 is_stmt 1 view .LVU99
+ 381              	.L9:
+  86:controller/algorithm/fuel/fuel_math.c **** }
+ 382              		.loc 1 86 1 is_stmt 0 view .LVU100
+ 383 0076 B0EE680A 		vmov.f32	s0, s17
+ 384              	.LVL40:
+ 385              		.loc 1 86 1 view .LVU101
+ 386 007a BDEC028B 		vldm	sp!, {d8}
+ 387              		.cfi_remember_state
+ 388              		.cfi_restore 80
+ 389              		.cfi_restore 81
+ 390              		.cfi_def_cfa_offset 8
+ 391              	.LVL41:
+ 392              		.loc 1 86 1 view .LVU102
+ 393 007e 10BD     		pop	{r4, pc}
+ 394              	.LVL42:
+ 395              	.L11:
+ 396              		.cfi_restore_state
+ 397              	.LBB22:
+  69:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_petrol) * (1.0f - (blend_ratio * 0.01f));
+ 398              		.loc 1 69 9 is_stmt 1 view .LVU103
+  69:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_petrol) * (1.0f - (blend_ratio * 0.01f));
+ 399              		.loc 1 69 29 is_stmt 0 view .LVU104
+ 400 0080 FFF7FEFF 		bl	crankshaft_get_rpm
+ 401              	.LVL43:
+  69:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_petrol) * (1.0f - (blend_ratio * 0.01f));
+ 402              		.loc 1 69 29 view .LVU105
+ 403 0084 F0EE408A 		vmov.f32	s17, s0
+  69:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_petrol) * (1.0f - (blend_ratio * 0.01f));
+ 404              		.loc 1 69 29 discriminator 1 view .LVU106
+ 405 0088 FFF7FEFF 		bl	sensor_map_get
+ 406              	.LVL44:
+ 407 008c F0EE400A 		vmov.f32	s1, s0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 11
+
+
+  69:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_petrol) * (1.0f - (blend_ratio * 0.01f));
+ 408              		.loc 1 69 29 discriminator 2 view .LVU107
+ 409 0090 154C     		ldr	r4, .L22+36
+ 410 0092 B0EE680A 		vmov.f32	s0, s17
+ 411 0096 2046     		mov	r0, r4
+ 412 0098 FFF7FEFF 		bl	table_2d_get_value
+ 413              	.LVL45:
+  70:controller/algorithm/fuel/fuel_math.c ****         break;
+ 414              		.loc 1 70 9 is_stmt 1 view .LVU108
+  70:controller/algorithm/fuel/fuel_math.c ****         break;
+ 415              		.loc 1 70 39 is_stmt 0 view .LVU109
+ 416 009c 04F59564 		add	r4, r4, #1192
+ 417 00a0 D4ED007A 		vldr.32	s15, [r4]
+  70:controller/algorithm/fuel/fuel_math.c ****         break;
+ 418              		.loc 1 70 31 view .LVU110
+ 419 00a4 C8EE278A 		vdiv.f32	s17, s16, s15
+  70:controller/algorithm/fuel/fuel_math.c ****         break;
+ 420              		.loc 1 70 82 view .LVU111
+ 421 00a8 DFED107A 		vldr.32	s15, .L22+40
+ 422 00ac 20EE270A 		vmul.f32	s0, s0, s15
+ 423              	.LVL46:
+  70:controller/algorithm/fuel/fuel_math.c ****         break;
+ 424              		.loc 1 70 67 view .LVU112
+ 425 00b0 F7EE007A 		vmov.f32	s15, #1.0e+0
+ 426 00b4 77EEC07A 		vsub.f32	s15, s15, s0
+  70:controller/algorithm/fuel/fuel_math.c ****         break;
+ 427              		.loc 1 70 19 view .LVU113
+ 428 00b8 68EEA78A 		vmul.f32	s17, s17, s15
+ 429              	.LVL47:
+  71:controller/algorithm/fuel/fuel_math.c **** 
+ 430              		.loc 1 71 9 is_stmt 1 view .LVU114
+ 431 00bc C0E7     		b	.L12
+ 432              	.LVL48:
+ 433              	.L17:
+  71:controller/algorithm/fuel/fuel_math.c **** 
+ 434              		.loc 1 71 9 is_stmt 0 view .LVU115
+ 435              	.LBE22:
+  59:controller/algorithm/fuel/fuel_math.c ****     {
+ 436              		.loc 1 59 5 view .LVU116
+ 437 00be DFED048A 		vldr.32	s17, .L22+12
+ 438 00c2 BDE7     		b	.L12
+ 439              	.L23:
+ 440              		.align	2
+ 441              	.L22:
+ 442 00c4 00100000 		.word	config+4096
+ 443 00c8 00000000 		.word	.LC0
+ 444 00cc 00000000 		.word	runtime
+ 445 00d0 00000000 		.word	0
+ 446 00d4 A8160000 		.word	config+5800
+ 447 00d8 3C190000 		.word	config+6460
+ 448 00dc 0000FAC3 		.word	-1007026176
+ 449 00e0 0000FA43 		.word	1140457472
+ 450 00e4 0000C842 		.word	1120403456
+ 451 00e8 00120000 		.word	config+4608
+ 452 00ec 0AD7233C 		.word	1008981770
+ 453              		.cfi_endproc
+ 454              	.LFE239:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 12
+
+
+ 456              		.section	.text.fuel_get_required_mass_petrol_per_cycle,"ax",%progbits
+ 457              		.align	1
+ 458              		.global	fuel_get_required_mass_petrol_per_cycle
+ 459              		.syntax unified
+ 460              		.thumb
+ 461              		.thumb_func
+ 463              	fuel_get_required_mass_petrol_per_cycle:
+ 464              	.LFB240:
+  87:controller/algorithm/fuel/fuel_math.c **** 
+  88:controller/algorithm/fuel/fuel_math.c **** mass_t fuel_get_required_mass_petrol_per_cycle()
+  89:controller/algorithm/fuel/fuel_math.c **** {
+ 465              		.loc 1 89 1 is_stmt 1 view -0
+ 466              		.cfi_startproc
+ 467              		@ args = 0, pretend = 0, frame = 0
+ 468              		@ frame_needed = 0, uses_anonymous_args = 0
+ 469 0000 08B5     		push	{r3, lr}
+ 470              		.cfi_def_cfa_offset 8
+ 471              		.cfi_offset 3, -8
+ 472              		.cfi_offset 14, -4
+ 473 0002 2DED028B 		vpush.64	{d8}
+ 474              		.cfi_def_cfa_offset 16
+ 475              		.cfi_offset 80, -16
+ 476              		.cfi_offset 81, -12
+  90:controller/algorithm/fuel/fuel_math.c ****     mass_t petrol_mass_grams_per_second = 0;
+ 477              		.loc 1 90 5 view .LVU118
+ 478              	.LVL49:
+  91:controller/algorithm/fuel/fuel_math.c ****     petrol_mass_grams_per_second = fuel_get_required_mass_petrol();
+ 479              		.loc 1 91 5 view .LVU119
+ 480              		.loc 1 91 36 is_stmt 0 view .LVU120
+ 481 0006 FFF7FEFF 		bl	fuel_get_required_mass_petrol
+ 482              	.LVL50:
+ 483 000a B0EE408A 		vmov.f32	s16, s0
+ 484              	.LVL51:
+  92:controller/algorithm/fuel/fuel_math.c ****     return petrol_mass_grams_per_second / (crankshaft_get_rpm() / 120.0f);
+ 485              		.loc 1 92 5 is_stmt 1 view .LVU121
+ 486              		.loc 1 92 44 is_stmt 0 view .LVU122
+ 487 000e FFF7FEFF 		bl	crankshaft_get_rpm
+ 488              	.LVL52:
+ 489              		.loc 1 92 65 discriminator 1 view .LVU123
+ 490 0012 9FED047A 		vldr.32	s14, .L26
+ 491 0016 C0EE077A 		vdiv.f32	s15, s0, s14
+  93:controller/algorithm/fuel/fuel_math.c **** }
+ 492              		.loc 1 93 1 view .LVU124
+ 493 001a 88EE270A 		vdiv.f32	s0, s16, s15
+ 494 001e BDEC028B 		vldm	sp!, {d8}
+ 495              		.cfi_restore 80
+ 496              		.cfi_restore 81
+ 497              		.cfi_def_cfa_offset 8
+ 498              	.LVL53:
+ 499              		.loc 1 93 1 view .LVU125
+ 500 0022 08BD     		pop	{r3, pc}
+ 501              	.L27:
+ 502              		.align	2
+ 503              	.L26:
+ 504 0024 0000F042 		.word	1123024896
+ 505              		.cfi_endproc
+ 506              	.LFE240:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 13
+
+
+ 508              		.section	.text.fuel_get_required_mass_gas,"ax",%progbits
+ 509              		.align	1
+ 510              		.global	fuel_get_required_mass_gas
+ 511              		.syntax unified
+ 512              		.thumb
+ 513              		.thumb_func
+ 515              	fuel_get_required_mass_gas:
+ 516              	.LFB242:
+  94:controller/algorithm/fuel/fuel_math.c **** 
+  95:controller/algorithm/fuel/fuel_math.c **** mass_t fuel_get_required_mass_gas_per_cycle()
+  96:controller/algorithm/fuel/fuel_math.c **** {
+  97:controller/algorithm/fuel/fuel_math.c ****     mass_t gas_mass_grams_per_second = 0;
+  98:controller/algorithm/fuel/fuel_math.c ****     gas_mass_grams_per_second = fuel_get_required_mass_gas();
+  99:controller/algorithm/fuel/fuel_math.c ****     return gas_mass_grams_per_second / (crankshaft_get_rpm() / 120.0f);
+ 100:controller/algorithm/fuel/fuel_math.c **** }
+ 101:controller/algorithm/fuel/fuel_math.c **** 
+ 102:controller/algorithm/fuel/fuel_math.c **** mass_t fuel_get_required_mass_gas()
+ 103:controller/algorithm/fuel/fuel_math.c **** {
+ 517              		.loc 1 103 1 is_stmt 1 view -0
+ 518              		.cfi_startproc
+ 519              		@ args = 0, pretend = 0, frame = 0
+ 520              		@ frame_needed = 0, uses_anonymous_args = 0
+ 521 0000 10B5     		push	{r4, lr}
+ 522              		.cfi_def_cfa_offset 8
+ 523              		.cfi_offset 4, -8
+ 524              		.cfi_offset 14, -4
+ 525 0002 2DED028B 		vpush.64	{d8}
+ 526              		.cfi_def_cfa_offset 16
+ 527              		.cfi_offset 80, -16
+ 528              		.cfi_offset 81, -12
+ 104:controller/algorithm/fuel/fuel_math.c ****     mass_t air_mass = air_mass_get();
+ 529              		.loc 1 104 5 view .LVU127
+ 530              		.loc 1 104 23 is_stmt 0 view .LVU128
+ 531 0006 FFF7FEFF 		bl	air_mass_get
+ 532              	.LVL54:
+ 105:controller/algorithm/fuel/fuel_math.c ****     mass_t fuel_mass = 0;
+ 533              		.loc 1 105 5 is_stmt 1 view .LVU129
+ 106:controller/algorithm/fuel/fuel_math.c ****     // get VE from table based on fuel type
+ 107:controller/algorithm/fuel/fuel_math.c ****     switch (config.fuel_type)
+ 534              		.loc 1 107 5 view .LVU130
+ 535              		.loc 1 107 19 is_stmt 0 view .LVU131
+ 536 000a 2C4B     		ldr	r3, .L39
+ 537 000c 93F8CB39 		ldrb	r3, [r3, #2507]	@ zero_extendqisi2
+ 538              		.loc 1 107 5 view .LVU132
+ 539 0010 012B     		cmp	r3, #1
+ 540 0012 50D0     		beq	.L35
+ 541 0014 B0EE408A 		vmov.f32	s16, s0
+ 542 0018 022B     		cmp	r3, #2
+ 543 001a 26D0     		beq	.L30
+ 544 001c 002B     		cmp	r3, #0
+ 545 001e 3FD1     		bne	.L31
+ 546              	.LBB23:
+ 108:controller/algorithm/fuel/fuel_math.c ****     {
+ 109:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GAS:
+ 110:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = air_mass / config.stoich_afr_gas;
+ 547              		.loc 1 110 9 is_stmt 1 view .LVU133
+ 548              		.loc 1 110 38 is_stmt 0 view .LVU134
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 14
+
+
+ 549 0020 274B     		ldr	r3, .L39+4
+ 550 0022 D3ED007A 		vldr.32	s15, [r3]
+ 551              		.loc 1 110 19 view .LVU135
+ 552 0026 C0EE278A 		vdiv.f32	s17, s0, s15
+ 553              	.LVL55:
+ 111:controller/algorithm/fuel/fuel_math.c ****         break;
+ 554              		.loc 1 111 9 is_stmt 1 view .LVU136
+ 555              	.L29:
+ 556              		.loc 1 111 9 is_stmt 0 view .LVU137
+ 557              	.LBE23:
+ 112:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_GASOLINE:
+ 113:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = 0;
+ 114:controller/algorithm/fuel/fuel_math.c ****         break;
+ 115:controller/algorithm/fuel/fuel_math.c **** 
+ 116:controller/algorithm/fuel/fuel_math.c ****     case FUEL_TYPE_DUAL_FUEL:
+ 117:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+ 118:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_gas) * (blend_ratio * 0.01f);
+ 119:controller/algorithm/fuel/fuel_math.c ****         break;
+ 120:controller/algorithm/fuel/fuel_math.c **** 
+ 121:controller/algorithm/fuel/fuel_math.c ****     default:
+ 122:controller/algorithm/fuel/fuel_math.c ****         /* no fuel will be injected */
+ 123:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = 0;
+ 124:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+ 125:controller/algorithm/fuel/fuel_math.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+ 126:controller/algorithm/fuel/fuel_math.c ****         break;
+ 127:controller/algorithm/fuel/fuel_math.c ****     }
+ 128:controller/algorithm/fuel/fuel_math.c ****     
+ 129:controller/algorithm/fuel/fuel_math.c ****     percent_t clt_correction = (percent_t)table_1d_get_value(&config.clt_based_fuel_correction_tabl
+ 558              		.loc 1 129 5 is_stmt 1 view .LVU138
+ 559              		.loc 1 129 32 is_stmt 0 view .LVU139
+ 560 002a FFF7FEFF 		bl	sensor_clt_get
+ 561              	.LVL56:
+ 562              		.loc 1 129 32 discriminator 1 view .LVU140
+ 563 002e 2548     		ldr	r0, .L39+8
+ 564 0030 FFF7FEFF 		bl	table_1d_get_value
+ 565              	.LVL57:
+ 130:controller/algorithm/fuel/fuel_math.c ****     if (IS_IN_RANGE(clt_correction, (percent_t)((float)-1 * FUEL_CLT_BASED_CORRECTION_RANGE), (perc
+ 566              		.loc 1 130 5 is_stmt 1 view .LVU141
+ 567              		.loc 1 130 8 is_stmt 0 view .LVU142
+ 568 0034 DFED247A 		vldr.32	s15, .L39+12
+ 569 0038 B4EEE70A 		vcmpe.f32	s0, s15
+ 570 003c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 571 0040 0EDB     		blt	.L28
+ 572              		.loc 1 130 9 discriminator 1 view .LVU143
+ 573 0042 DFED227A 		vldr.32	s15, .L39+16
+ 574 0046 B4EEE70A 		vcmpe.f32	s0, s15
+ 575 004a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 576 004e 07D8     		bhi	.L28
+ 131:controller/algorithm/fuel/fuel_math.c ****     {
+ 132:controller/algorithm/fuel/fuel_math.c ****         fuel_mass += clt_correction / (percent_t)100 * fuel_mass;
+ 577              		.loc 1 132 9 is_stmt 1 view .LVU144
+ 578              		.loc 1 132 37 is_stmt 0 view .LVU145
+ 579 0050 9FED1F7A 		vldr.32	s14, .L39+20
+ 580 0054 C0EE077A 		vdiv.f32	s15, s0, s14
+ 581              		.loc 1 132 54 view .LVU146
+ 582 0058 67EEA87A 		vmul.f32	s15, s15, s17
+ 583              		.loc 1 132 19 view .LVU147
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 15
+
+
+ 584 005c 78EEA78A 		vadd.f32	s17, s17, s15
+ 585              	.LVL58:
+ 133:controller/algorithm/fuel/fuel_math.c ****     }
+ 134:controller/algorithm/fuel/fuel_math.c ****     return fuel_mass;
+ 586              		.loc 1 134 5 is_stmt 1 view .LVU148
+ 587              	.L28:
+ 135:controller/algorithm/fuel/fuel_math.c **** }...
+ 588              		.loc 1 135 1 is_stmt 0 view .LVU149
+ 589 0060 B0EE680A 		vmov.f32	s0, s17
+ 590              	.LVL59:
+ 591              		.loc 1 135 1 view .LVU150
+ 592 0064 BDEC028B 		vldm	sp!, {d8}
+ 593              		.cfi_remember_state
+ 594              		.cfi_restore 80
+ 595              		.cfi_restore 81
+ 596              		.cfi_def_cfa_offset 8
+ 597 0068 10BD     		pop	{r4, pc}
+ 598              	.LVL60:
+ 599              	.L30:
+ 600              		.cfi_restore_state
+ 601              	.LBB28:
+ 117:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+ 602              		.loc 1 117 9 is_stmt 1 view .LVU151
+ 117:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+ 603              		.loc 1 117 29 is_stmt 0 view .LVU152
+ 604 006a FFF7FEFF 		bl	crankshaft_get_rpm
+ 605              	.LVL61:
+ 117:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+ 606              		.loc 1 117 29 view .LVU153
+ 607 006e F0EE408A 		vmov.f32	s17, s0
+ 117:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+ 608              		.loc 1 117 29 discriminator 1 view .LVU154
+ 609 0072 FFF7FEFF 		bl	sensor_map_get
+ 610              	.LVL62:
+ 611 0076 F0EE400A 		vmov.f32	s1, s0
+ 117:controller/algorithm/fuel/fuel_math.c ****         float blend_ratio = table_2d_get_value(&config.fuel_blend_table, crankshaft_get_rpm(), sens
+ 612              		.loc 1 117 29 discriminator 2 view .LVU155
+ 613 007a 164C     		ldr	r4, .L39+24
+ 614 007c B0EE680A 		vmov.f32	s0, s17
+ 615 0080 2046     		mov	r0, r4
+ 616 0082 FFF7FEFF 		bl	table_2d_get_value
+ 617              	.LVL63:
+ 118:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_gas) * (blend_ratio * 0.01f);
+ 618              		.loc 1 118 9 is_stmt 1 view .LVU156
+ 118:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_gas) * (blend_ratio * 0.01f);
+ 619              		.loc 1 118 39 is_stmt 0 view .LVU157
+ 620 0086 04F2A444 		addw	r4, r4, #1188
+ 621 008a D4ED007A 		vldr.32	s15, [r4]
+ 118:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_gas) * (blend_ratio * 0.01f);
+ 622              		.loc 1 118 31 view .LVU158
+ 623 008e C8EE278A 		vdiv.f32	s17, s16, s15
+ 118:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_gas) * (blend_ratio * 0.01f);
+ 624              		.loc 1 118 71 view .LVU159
+ 625 0092 DFED117A 		vldr.32	s15, .L39+28
+ 626 0096 20EE270A 		vmul.f32	s0, s0, s15
+ 627              	.LVL64:
+ 118:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = (air_mass / config.stoich_afr_gas) * (blend_ratio * 0.01f);
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 16
+
+
+ 628              		.loc 1 118 19 view .LVU160
+ 629 009a 68EE808A 		vmul.f32	s17, s17, s0
+ 630              	.LVL65:
+ 119:controller/algorithm/fuel/fuel_math.c ****         break;
+ 631              		.loc 1 119 9 is_stmt 1 view .LVU161
+ 632 009e C4E7     		b	.L29
+ 633              	.LVL66:
+ 634              	.L31:
+ 123:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = 0;
+ 635              		.loc 1 123 9 view .LVU162
+ 124:controller/algorithm/fuel/fuel_math.c ****         log_warning("Unknown fuel type.");
+ 636              		.loc 1 124 9 view .LVU163
+ 637 00a0 0E48     		ldr	r0, .L39+32
+ 638 00a2 FFF7FEFF 		bl	log_warning
+ 639              	.LVL67:
+ 125:controller/algorithm/fuel/fuel_math.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+ 640              		.loc 1 125 9 view .LVU164
+ 641              	.LBB24:
+ 642              	.LBI24:
+  30:controller/utils/utils.h **** {
+ 643              		.loc 2 30 20 view .LVU165
+ 644              	.LBB25:
+  32:controller/utils/utils.h ****     {
+ 645              		.loc 2 32 5 view .LVU166
+  36:controller/utils/utils.h ****     {
+ 646              		.loc 2 36 5 view .LVU167
+ 647              		.loc 2 38 9 view .LVU168
+ 648 00a6 0E4A     		ldr	r2, .L39+36
+ 649 00a8 1368     		ldr	r3, [r2]
+ 650              		.loc 2 38 14 is_stmt 0 view .LVU169
+ 651 00aa 43F00103 		orr	r3, r3, #1
+ 652 00ae 1360     		str	r3, [r2]
+ 653              	.LVL68:
+ 654              		.loc 2 38 14 view .LVU170
+ 655              	.LBE25:
+ 656              	.LBE24:
+ 126:controller/algorithm/fuel/fuel_math.c ****         break;
+ 657              		.loc 1 126 9 is_stmt 1 view .LVU171
+ 123:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = 0;
+ 658              		.loc 1 123 19 is_stmt 0 view .LVU172
+ 659 00b0 DFED0C8A 		vldr.32	s17, .L39+40
+ 660              	.LBB27:
+ 661              	.LBB26:
+ 662 00b4 B9E7     		b	.L29
+ 663              	.LVL69:
+ 664              	.L35:
+ 123:controller/algorithm/fuel/fuel_math.c ****         fuel_mass = 0;
+ 665              		.loc 1 123 19 view .LVU173
+ 666              	.LBE26:
+ 667              	.LBE27:
+ 668              	.LBE28:
+ 107:controller/algorithm/fuel/fuel_math.c ****     switch (config.fuel_type)
+ 669              		.loc 1 107 5 view .LVU174
+ 670 00b6 DFED0B8A 		vldr.32	s17, .L39+40
+ 671 00ba B6E7     		b	.L29
+ 672              	.L40:
+ 673              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 17
+
+
+ 674              	.L39:
+ 675 00bc 00100000 		.word	config+4096
+ 676 00c0 A4160000 		.word	config+5796
+ 677 00c4 BC180000 		.word	config+6332
+ 678 00c8 0000FAC3 		.word	-1007026176
+ 679 00cc 0000FA43 		.word	1140457472
+ 680 00d0 0000C842 		.word	1120403456
+ 681 00d4 00120000 		.word	config+4608
+ 682 00d8 0AD7233C 		.word	1008981770
+ 683 00dc 00000000 		.word	.LC0
+ 684 00e0 00000000 		.word	runtime
+ 685 00e4 00000000 		.word	0
+ 686              		.cfi_endproc
+ 687              	.LFE242:
+ 689              		.section	.text.fuel_get_required_mass_gas_per_cycle,"ax",%progbits
+ 690              		.align	1
+ 691              		.global	fuel_get_required_mass_gas_per_cycle
+ 692              		.syntax unified
+ 693              		.thumb
+ 694              		.thumb_func
+ 696              	fuel_get_required_mass_gas_per_cycle:
+ 697              	.LFB241:
+  96:controller/algorithm/fuel/fuel_math.c **** {
+ 698              		.loc 1 96 1 is_stmt 1 view -0
+ 699              		.cfi_startproc
+ 700              		@ args = 0, pretend = 0, frame = 0
+ 701              		@ frame_needed = 0, uses_anonymous_args = 0
+ 702 0000 08B5     		push	{r3, lr}
+ 703              		.cfi_def_cfa_offset 8
+ 704              		.cfi_offset 3, -8
+ 705              		.cfi_offset 14, -4
+ 706 0002 2DED028B 		vpush.64	{d8}
+ 707              		.cfi_def_cfa_offset 16
+ 708              		.cfi_offset 80, -16
+ 709              		.cfi_offset 81, -12
+  97:controller/algorithm/fuel/fuel_math.c ****     mass_t gas_mass_grams_per_second = 0;
+ 710              		.loc 1 97 5 view .LVU176
+ 711              	.LVL70:
+  98:controller/algorithm/fuel/fuel_math.c ****     gas_mass_grams_per_second = fuel_get_required_mass_gas();
+ 712              		.loc 1 98 5 view .LVU177
+  98:controller/algorithm/fuel/fuel_math.c ****     gas_mass_grams_per_second = fuel_get_required_mass_gas();
+ 713              		.loc 1 98 33 is_stmt 0 view .LVU178
+ 714 0006 FFF7FEFF 		bl	fuel_get_required_mass_gas
+ 715              	.LVL71:
+ 716 000a B0EE408A 		vmov.f32	s16, s0
+ 717              	.LVL72:
+  99:controller/algorithm/fuel/fuel_math.c ****     return gas_mass_grams_per_second / (crankshaft_get_rpm() / 120.0f);
+ 718              		.loc 1 99 5 is_stmt 1 view .LVU179
+  99:controller/algorithm/fuel/fuel_math.c ****     return gas_mass_grams_per_second / (crankshaft_get_rpm() / 120.0f);
+ 719              		.loc 1 99 41 is_stmt 0 view .LVU180
+ 720 000e FFF7FEFF 		bl	crankshaft_get_rpm
+ 721              	.LVL73:
+  99:controller/algorithm/fuel/fuel_math.c ****     return gas_mass_grams_per_second / (crankshaft_get_rpm() / 120.0f);
+ 722              		.loc 1 99 62 discriminator 1 view .LVU181
+ 723 0012 9FED047A 		vldr.32	s14, .L43
+ 724 0016 C0EE077A 		vdiv.f32	s15, s0, s14
+ 100:controller/algorithm/fuel/fuel_math.c **** }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 18
+
+
+ 725              		.loc 1 100 1 view .LVU182
+ 726 001a 88EE270A 		vdiv.f32	s0, s16, s15
+ 727 001e BDEC028B 		vldm	sp!, {d8}
+ 728              		.cfi_restore 80
+ 729              		.cfi_restore 81
+ 730              		.cfi_def_cfa_offset 8
+ 731              	.LVL74:
+ 100:controller/algorithm/fuel/fuel_math.c **** }
+ 732              		.loc 1 100 1 view .LVU183
+ 733 0022 08BD     		pop	{r3, pc}
+ 734              	.L44:
+ 735              		.align	2
+ 736              	.L43:
+ 737 0024 0000F042 		.word	1123024896
+ 738              		.cfi_endproc
+ 739              	.LFE241:
+ 741              		.text
+ 742              	.Letext0:
+ 743              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 744              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 745              		.file 5 "controller/types.h"
+ 746              		.file 6 "controller/tables.h"
+ 747              		.file 7 "controller/config_and_runtime.h"
+ 748              		.file 8 "controller/IO/sensors.h"
+ 749              		.file 9 "controller/utils/error_handling.h"
+ 750              		.file 10 "controller/engine_cycle/trigger.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s 			page 19
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 fuel_math.c
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:21     .text.ideal_gas_law:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:27     .text.ideal_gas_law:00000000 ideal_gas_law
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:49     .text.ideal_gas_law:00000014 $d
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:54     .text.air_mass_get:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:60     .text.air_mass_get:00000000 air_mass_get
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:109    .text.air_mass_get:00000034 $d
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:115    .rodata.fuel_get_required_mass.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:119    .text.fuel_get_required_mass:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:125    .text.fuel_get_required_mass:00000000 fuel_get_required_mass
-C:\Users\alireza\AppData\Local\Temp\ccOnn2OV.s:205    .text.fuel_get_required_mass:00000050 $d
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:21     .rodata.air_mass_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:25     .text.air_mass_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:31     .text.air_mass_get:00000000 air_mass_get
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:250    .text.air_mass_get:00000118 $d
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:269    .text.fuel_get_required_mass_petrol:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:275    .text.fuel_get_required_mass_petrol:00000000 fuel_get_required_mass_petrol
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:442    .text.fuel_get_required_mass_petrol:000000c4 $d
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:457    .text.fuel_get_required_mass_petrol_per_cycle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:463    .text.fuel_get_required_mass_petrol_per_cycle:00000000 fuel_get_required_mass_petrol_per_cycle
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:504    .text.fuel_get_required_mass_petrol_per_cycle:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:509    .text.fuel_get_required_mass_gas:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:515    .text.fuel_get_required_mass_gas:00000000 fuel_get_required_mass_gas
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:675    .text.fuel_get_required_mass_gas:000000bc $d
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:690    .text.fuel_get_required_mass_gas_per_cycle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:696    .text.fuel_get_required_mass_gas_per_cycle:00000000 fuel_get_required_mass_gas_per_cycle
+C:\Users\alireza\AppData\Local\Temp\cc7PA12x.s:737    .text.fuel_get_required_mass_gas_per_cycle:00000024 $d
 
 UNDEFINED SYMBOLS
-config
+crankshaft_get_rpm
+sensor_map_get
+sensor_iat_get
+table_2d_get_value
 log_warning
+config
+runtime
+sensor_clt_get
+table_1d_get_value

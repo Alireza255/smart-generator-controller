@@ -64,16 +64,7 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  __NOP();
-  if (GPIO_Pin == GPIO_PIN_9)
-  {
-    trigger_tooth_handle(&trigger1);
-  }
 
-  
-}
 
 
 /* USER CODE END 0 */
@@ -116,6 +107,7 @@ int main(void)
   MX_TIM2_Init();
   MX_CRC_Init();
   MX_I2C1_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
    
   /* USER CODE END 2 */

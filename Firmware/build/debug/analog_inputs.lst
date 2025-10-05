@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -20,14 +20,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 1
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
   19              		.file 1 "controller/IO/analog_inputs.c"
-  20              		.section	.text.analog_inputs_start_conversion,"ax",%progbits
+  20              		.section	.text.HAL_ADC_ConvCpltCallback,"ax",%progbits
   21              		.align	1
-  22              		.global	analog_inputs_start_conversion
+  22              		.global	HAL_ADC_ConvCpltCallback
   23              		.syntax unified
   24              		.thumb
   25              		.thumb_func
-  27              	analog_inputs_start_conversion:
-  28              	.LFB234:
+  27              	HAL_ADC_ConvCpltCallback:
+  28              	.LVL0:
+  29              	.LFB238:
    1:controller/IO/analog_inputs.c **** #include "analog_inputs.h"
    2:controller/IO/analog_inputs.c **** #include "error_handling.h"
    3:controller/IO/analog_inputs.c **** 
@@ -36,9 +37,39 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 1
    6:controller/IO/analog_inputs.c **** 
    7:controller/IO/analog_inputs.c **** void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
    8:controller/IO/analog_inputs.c **** {
+  30              		.loc 1 8 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
    9:controller/IO/analog_inputs.c **** 
   10:controller/IO/analog_inputs.c ****     
   11:controller/IO/analog_inputs.c **** }
+  35              		.loc 1 11 1 view .LVU1
+  36 0000 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE238:
+  40              		.section	.rodata.analog_inputs_init.str1.4,"aMS",%progbits,1
+  41              		.align	2
+  42              	.LC0:
+  43 0000 416E616C 		.ascii	"Analog input init failed! adc or timer handle is nu"
+  43      6F672069 
+  43      6E707574 
+  43      20696E69 
+  43      74206661 
+  44 0033 6C6C2E00 		.ascii	"ll.\000"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 2
+
+
+  45              		.section	.text.analog_inputs_init,"ax",%progbits
+  46              		.align	1
+  47              		.global	analog_inputs_init
+  48              		.syntax unified
+  49              		.thumb
+  50              		.thumb_func
+  52              	analog_inputs_init:
+  53              	.LVL1:
+  54              	.LFB239:
   12:controller/IO/analog_inputs.c **** 
   13:controller/IO/analog_inputs.c **** /**
   14:controller/IO/analog_inputs.c ****  * @brief Initializes the analog inputs module.
@@ -51,379 +82,417 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 1
   21:controller/IO/analog_inputs.c ****  * @param instance Pointer to the analog_inputs_s structure instance
   22:controller/IO/analog_inputs.c ****  *                 that holds the state and configuration of the analog inputs.
   23:controller/IO/analog_inputs.c ****  */
-  24:controller/IO/analog_inputs.c **** void analog_inputs_init(ADC_HandleTypeDef *adc_handle)
+  24:controller/IO/analog_inputs.c **** void analog_inputs_init(ADC_HandleTypeDef *adc_handle, TIM_HandleTypeDef *timer_handle)
   25:controller/IO/analog_inputs.c **** {
-  26:controller/IO/analog_inputs.c ****     if (adc_handle == NULL)
+  55              		.loc 1 25 1 view -0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              		.loc 1 25 1 is_stmt 0 view .LVU3
+  60 0000 38B5     		push	{r3, r4, r5, lr}
+  61              		.cfi_def_cfa_offset 16
+  62              		.cfi_offset 3, -16
+  63              		.cfi_offset 4, -12
+  64              		.cfi_offset 5, -8
+  65              		.cfi_offset 14, -4
+  26:controller/IO/analog_inputs.c ****     if (adc_handle == NULL || timer_handle == NULL)
+  66              		.loc 1 26 5 is_stmt 1 view .LVU4
+  67              		.loc 1 26 8 is_stmt 0 view .LVU5
+  68 0002 98B1     		cbz	r0, .L3
+  69 0004 0C46     		mov	r4, r1
+  70              		.loc 1 26 28 discriminator 1 view .LVU6
+  71 0006 89B1     		cbz	r1, .L3
   27:controller/IO/analog_inputs.c ****     {
   28:controller/IO/analog_inputs.c ****         
-  29:controller/IO/analog_inputs.c ****         log_error("Analog input init failed! adc handle is null.");
+  29:controller/IO/analog_inputs.c ****         log_error("Analog input init failed! adc or timer handle is null.");
   30:controller/IO/analog_inputs.c ****         return;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 2
-
-
   31:controller/IO/analog_inputs.c ****     }
   32:controller/IO/analog_inputs.c ****     
   33:controller/IO/analog_inputs.c ****     hadc = adc_handle;
+  72              		.loc 1 33 5 is_stmt 1 view .LVU7
+  73              		.loc 1 33 10 is_stmt 0 view .LVU8
+  74 0008 154A     		ldr	r2, .L9
+  75 000a 1060     		str	r0, [r2]
   34:controller/IO/analog_inputs.c **** 
-  35:controller/IO/analog_inputs.c ****     /**
-  36:controller/IO/analog_inputs.c ****     * @todo this is just a temporary fix make this a proper thing
-  37:controller/IO/analog_inputs.c ****     */
-  38:controller/IO/analog_inputs.c ****     osTimerId_t timer_id = osTimerNew(
-  39:controller/IO/analog_inputs.c ****         analog_inputs_start_conversion,
-  40:controller/IO/analog_inputs.c ****         osTimerPeriodic,
-  41:controller/IO/analog_inputs.c ****         NULL,
-  42:controller/IO/analog_inputs.c ****         NULL
-  43:controller/IO/analog_inputs.c ****     );
-  44:controller/IO/analog_inputs.c ****     osTimerStart(timer_id, 1);
-  45:controller/IO/analog_inputs.c **** 
-  46:controller/IO/analog_inputs.c **** }
-  47:controller/IO/analog_inputs.c **** 
-  48:controller/IO/analog_inputs.c **** /**
-  49:controller/IO/analog_inputs.c ****  * @brief Starts the ADC conversion for analog inputs.
-  50:controller/IO/analog_inputs.c ****  * 
-  51:controller/IO/analog_inputs.c ****  * This function triggers the ADC to begin converting the analog signals
-  52:controller/IO/analog_inputs.c ****  * to digital values.
-  53:controller/IO/analog_inputs.c ****  */
-  54:controller/IO/analog_inputs.c **** void analog_inputs_start_conversion()
-  55:controller/IO/analog_inputs.c **** {
-  29              		.loc 1 55 1 view -0
-  30              		.cfi_startproc
-  31              		@ args = 0, pretend = 0, frame = 0
-  32              		@ frame_needed = 0, uses_anonymous_args = 0
-  33 0000 08B5     		push	{r3, lr}
-  34              		.cfi_def_cfa_offset 8
-  35              		.cfi_offset 3, -8
-  36              		.cfi_offset 14, -4
-  56:controller/IO/analog_inputs.c ****     if (hadc == NULL)
-  37              		.loc 1 56 5 view .LVU1
-  38              		.loc 1 56 14 is_stmt 0 view .LVU2
-  39 0002 044B     		ldr	r3, .L4
-  40 0004 1868     		ldr	r0, [r3]
-  41              		.loc 1 56 8 view .LVU3
-  42 0006 18B1     		cbz	r0, .L1
-  57:controller/IO/analog_inputs.c ****     {
-  58:controller/IO/analog_inputs.c ****         return;
-  59:controller/IO/analog_inputs.c ****     }
-  60:controller/IO/analog_inputs.c ****     
-  61:controller/IO/analog_inputs.c ****     HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data, ANALOG_INPUTS_MAX * ANALOG_INPUTS_NUMBER_OF_SA
-  43              		.loc 1 61 5 is_stmt 1 view .LVU4
-  44 0008 6822     		movs	r2, #104
-  45 000a 0349     		ldr	r1, .L4+4
-  46 000c FFF7FEFF 		bl	HAL_ADC_Start_DMA
-  47              	.LVL0:
-  48              	.L1:
-  62:controller/IO/analog_inputs.c **** }
-  49              		.loc 1 62 1 is_stmt 0 view .LVU5
-  50 0010 08BD     		pop	{r3, pc}
-  51              	.L5:
-  52 0012 00BF     		.align	2
-  53              	.L4:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 3
+  35:controller/IO/analog_inputs.c ****     const uint16_t frequency = 1000;
+  76              		.loc 1 35 5 is_stmt 1 view .LVU9
+  77              	.LVL2:
+  36:controller/IO/analog_inputs.c **** 	
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 3
 
 
-  54 0014 00000000 		.word	hadc
-  55 0018 00000000 		.word	analog_data
-  56              		.cfi_endproc
-  57              	.LFE234:
-  59              		.section	.text.HAL_ADC_ConvCpltCallback,"ax",%progbits
-  60              		.align	1
-  61              		.global	HAL_ADC_ConvCpltCallback
-  62              		.syntax unified
-  63              		.thumb
-  64              		.thumb_func
-  66              	HAL_ADC_ConvCpltCallback:
-  67              	.LVL1:
-  68              	.LFB232:
-   8:controller/IO/analog_inputs.c **** 
-  69              		.loc 1 8 1 is_stmt 1 view -0
-  70              		.cfi_startproc
-  71              		@ args = 0, pretend = 0, frame = 0
-  72              		@ frame_needed = 0, uses_anonymous_args = 0
-  73              		@ link register save eliminated.
-  11:controller/IO/analog_inputs.c **** 
-  74              		.loc 1 11 1 view .LVU7
-  75 0000 7047     		bx	lr
-  76              		.cfi_endproc
-  77              	.LFE232:
-  79              		.section	.rodata.analog_inputs_init.str1.4,"aMS",%progbits,1
-  80              		.align	2
-  81              	.LC0:
-  82 0000 416E616C 		.ascii	"Analog input init failed! adc handle is null.\000"
-  82      6F672069 
-  82      6E707574 
-  82      20696E69 
-  82      74206661 
-  83              		.section	.text.analog_inputs_init,"ax",%progbits
-  84              		.align	1
-  85              		.global	analog_inputs_init
-  86              		.syntax unified
-  87              		.thumb
-  88              		.thumb_func
-  90              	analog_inputs_init:
-  91              	.LVL2:
-  92              	.LFB233:
-  25:controller/IO/analog_inputs.c ****     if (adc_handle == NULL)
-  93              		.loc 1 25 1 view -0
-  94              		.cfi_startproc
-  95              		@ args = 0, pretend = 0, frame = 0
-  96              		@ frame_needed = 0, uses_anonymous_args = 0
-  25:controller/IO/analog_inputs.c ****     if (adc_handle == NULL)
-  97              		.loc 1 25 1 is_stmt 0 view .LVU9
-  98 0000 08B5     		push	{r3, lr}
-  99              		.cfi_def_cfa_offset 8
- 100              		.cfi_offset 3, -8
- 101              		.cfi_offset 14, -4
-  26:controller/IO/analog_inputs.c ****     {
- 102              		.loc 1 26 5 is_stmt 1 view .LVU10
-  26:controller/IO/analog_inputs.c ****     {
- 103              		.loc 1 26 8 is_stmt 0 view .LVU11
- 104 0002 58B1     		cbz	r0, .L11
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 4
-
-
-  33:controller/IO/analog_inputs.c **** 
- 105              		.loc 1 33 5 is_stmt 1 view .LVU12
-  33:controller/IO/analog_inputs.c **** 
- 106              		.loc 1 33 10 is_stmt 0 view .LVU13
- 107 0004 074A     		ldr	r2, .L12
- 108 0006 1060     		str	r0, [r2]
-  38:controller/IO/analog_inputs.c ****         analog_inputs_start_conversion,
- 109              		.loc 1 38 5 is_stmt 1 view .LVU14
-  38:controller/IO/analog_inputs.c ****         analog_inputs_start_conversion,
- 110              		.loc 1 38 28 is_stmt 0 view .LVU15
- 111 0008 0023     		movs	r3, #0
- 112 000a 1A46     		mov	r2, r3
- 113 000c 0121     		movs	r1, #1
- 114 000e 0648     		ldr	r0, .L12+4
- 115              	.LVL3:
-  38:controller/IO/analog_inputs.c ****         analog_inputs_start_conversion,
- 116              		.loc 1 38 28 view .LVU16
- 117 0010 FFF7FEFF 		bl	osTimerNew
- 118              	.LVL4:
-  44:controller/IO/analog_inputs.c **** 
- 119              		.loc 1 44 5 is_stmt 1 view .LVU17
- 120 0014 0121     		movs	r1, #1
- 121 0016 FFF7FEFF 		bl	osTimerStart
- 122              	.LVL5:
- 123              	.L7:
-  46:controller/IO/analog_inputs.c **** 
- 124              		.loc 1 46 1 is_stmt 0 view .LVU18
- 125 001a 08BD     		pop	{r3, pc}
- 126              	.LVL6:
- 127              	.L11:
+  37:controller/IO/analog_inputs.c **** 	uint32_t timer_clock = HAL_RCC_GetPCLK1Freq(); // Get the timer clock frequency
+  78              		.loc 1 37 2 view .LVU10
+  79              		.loc 1 37 25 is_stmt 0 view .LVU11
+  80 000c FFF7FEFF 		bl	HAL_RCC_GetPCLK1Freq
+  81              	.LVL3:
+  38:controller/IO/analog_inputs.c **** 	uint16_t prescaler = 0;
+  82              		.loc 1 38 2 is_stmt 1 view .LVU12
+  39:controller/IO/analog_inputs.c **** 	uint32_t auto_reload = 0;
+  83              		.loc 1 39 2 view .LVU13
+  40:controller/IO/analog_inputs.c **** 
+  41:controller/IO/analog_inputs.c **** 	// Calculate prescaler and auto-reload values
+  42:controller/IO/analog_inputs.c **** 	for (prescaler = 0; prescaler <= 0xFFFF; prescaler++)
+  84              		.loc 1 42 2 view .LVU14
+  85              		.loc 1 42 17 is_stmt 0 view .LVU15
+  86 0010 0022     		movs	r2, #0
+  87              	.LVL4:
+  88              	.L7:
+  43:controller/IO/analog_inputs.c **** 	{
+  44:controller/IO/analog_inputs.c **** 		auto_reload = (timer_clock / ((prescaler + 1) * frequency)) - 1;
+  89              		.loc 1 44 3 is_stmt 1 view .LVU16
+  90              		.loc 1 44 49 is_stmt 0 view .LVU17
+  91 0012 4FF47A73 		mov	r3, #1000
+  92 0016 02FB0333 		mla	r3, r2, r3, r3
+  93              		.loc 1 44 30 view .LVU18
+  94 001a B0FBF3F3 		udiv	r3, r0, r3
+  95              		.loc 1 44 15 view .LVU19
+  96 001e 013B     		subs	r3, r3, #1
+  97              	.LVL5:
+  45:controller/IO/analog_inputs.c **** 		
+  46:controller/IO/analog_inputs.c **** 		if (auto_reload <= 0xFFFF)
+  98              		.loc 1 46 3 is_stmt 1 view .LVU20
+  99              		.loc 1 46 6 is_stmt 0 view .LVU21
+ 100 0020 B3F5803F 		cmp	r3, #65536
+ 101 0024 06D3     		bcc	.L6
+  42:controller/IO/analog_inputs.c **** 	{
+ 102              		.loc 1 42 52 is_stmt 1 view .LVU22
+ 103 0026 0132     		adds	r2, r2, #1
+ 104              	.LVL6:
+  42:controller/IO/analog_inputs.c **** 	{
+ 105              		.loc 1 42 52 is_stmt 0 view .LVU23
+ 106 0028 92B2     		uxth	r2, r2
+ 107              	.LVL7:
+  42:controller/IO/analog_inputs.c **** 	{
+ 108              		.loc 1 42 2 is_stmt 1 view .LVU24
+  44:controller/IO/analog_inputs.c **** 		
+ 109              		.loc 1 44 15 is_stmt 0 view .LVU25
+ 110 002a F2E7     		b	.L7
+ 111              	.LVL8:
+ 112              	.L3:
   29:controller/IO/analog_inputs.c ****         return;
- 128              		.loc 1 29 9 is_stmt 1 view .LVU19
- 129 001c 0348     		ldr	r0, .L12+8
- 130              	.LVL7:
+ 113              		.loc 1 29 9 is_stmt 1 view .LVU26
+ 114 002c 0D48     		ldr	r0, .L9+4
+ 115              	.LVL9:
   29:controller/IO/analog_inputs.c ****         return;
- 131              		.loc 1 29 9 is_stmt 0 view .LVU20
- 132 001e FFF7FEFF 		bl	log_error
- 133              	.LVL8:
+ 116              		.loc 1 29 9 is_stmt 0 view .LVU27
+ 117 002e FFF7FEFF 		bl	log_error
+ 118              	.LVL10:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 4
+
+
   30:controller/IO/analog_inputs.c ****     }
- 134              		.loc 1 30 9 is_stmt 1 view .LVU21
- 135 0022 FAE7     		b	.L7
- 136              	.L13:
- 137              		.align	2
- 138              	.L12:
- 139 0024 00000000 		.word	hadc
- 140 0028 00000000 		.word	analog_inputs_start_conversion
- 141 002c 00000000 		.word	.LC0
- 142              		.cfi_endproc
- 143              	.LFE233:
- 145              		.section	.text.analog_inputs_start_conversion_injected,"ax",%progbits
- 146              		.align	1
- 147              		.global	analog_inputs_start_conversion_injected
- 148              		.syntax unified
- 149              		.thumb
- 150              		.thumb_func
- 152              	analog_inputs_start_conversion_injected:
- 153              	.LFB235:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 5
+ 119              		.loc 1 30 9 is_stmt 1 view .LVU28
+ 120 0032 14E0     		b	.L2
+ 121              	.LVL11:
+ 122              	.L6:
+  47:controller/IO/analog_inputs.c **** 		{
+  48:controller/IO/analog_inputs.c **** 			break;
+  49:controller/IO/analog_inputs.c **** 
+  50:controller/IO/analog_inputs.c **** 		}
+  51:controller/IO/analog_inputs.c **** 	}
+  52:controller/IO/analog_inputs.c **** 
+  53:controller/IO/analog_inputs.c **** 	if (prescaler > 0xFFFF || auto_reload > 0xFFFF)
+ 123              		.loc 1 53 2 view .LVU29
+  54:controller/IO/analog_inputs.c **** 	{
+  55:controller/IO/analog_inputs.c **** 		// Frequency is too low, cannot configure timer
+  56:controller/IO/analog_inputs.c **** 		return;
+  57:controller/IO/analog_inputs.c **** 	}
+  58:controller/IO/analog_inputs.c **** 	
+  59:controller/IO/analog_inputs.c **** 	// Set the prescaler and auto-reload values
+  60:controller/IO/analog_inputs.c **** 	__HAL_TIM_SET_PRESCALER((TIM_HandleTypeDef *)timer_handle, prescaler);
+ 124              		.loc 1 60 2 view .LVU30
+ 125 0034 2168     		ldr	r1, [r4]
+ 126 0036 8A62     		str	r2, [r1, #40]
+  61:controller/IO/analog_inputs.c **** 	__HAL_TIM_SET_AUTORELOAD((TIM_HandleTypeDef *)timer_handle, auto_reload);
+ 127              		.loc 1 61 2 view .LVU31
+ 128              		.loc 1 61 2 view .LVU32
+ 129 0038 2268     		ldr	r2, [r4]
+ 130              	.LVL12:
+ 131              		.loc 1 61 2 is_stmt 0 view .LVU33
+ 132 003a D362     		str	r3, [r2, #44]
+ 133              	.LVL13:
+ 134              		.loc 1 61 2 is_stmt 1 view .LVU34
+ 135 003c E360     		str	r3, [r4, #12]
+ 136              		.loc 1 61 2 view .LVU35
+  62:controller/IO/analog_inputs.c ****     __HAL_TIM_SET_COMPARE(timer_handle, TIM_CHANNEL_1, 0);
+ 137              		.loc 1 62 5 view .LVU36
+ 138 003e 2368     		ldr	r3, [r4]
+ 139              	.LVL14:
+ 140              		.loc 1 62 5 is_stmt 0 view .LVU37
+ 141 0040 0025     		movs	r5, #0
+ 142 0042 5D63     		str	r5, [r3, #52]
+ 143              	.LVL15:
+  63:controller/IO/analog_inputs.c ****     
+  64:controller/IO/analog_inputs.c ****     HAL_ADC_Start_DMA(hadc, (uint32_t*)&analog_data, ANALOG_INPUTS_MAX * ANALOG_INPUTS_NUMBER_OF_SA
+ 144              		.loc 1 64 5 is_stmt 1 view .LVU38
+ 145 0044 6822     		movs	r2, #104
+ 146 0046 0849     		ldr	r1, .L9+8
+ 147 0048 054B     		ldr	r3, .L9
+ 148 004a 1868     		ldr	r0, [r3]
+ 149              	.LVL16:
+ 150              		.loc 1 64 5 is_stmt 0 view .LVU39
+ 151 004c FFF7FEFF 		bl	HAL_ADC_Start_DMA
+ 152              	.LVL17:
+  65:controller/IO/analog_inputs.c **** 
+  66:controller/IO/analog_inputs.c ****     HAL_TIM_Base_Start(timer_handle);
+ 153              		.loc 1 66 5 is_stmt 1 view .LVU40
+ 154 0050 2046     		mov	r0, r4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 5
 
 
-  63:controller/IO/analog_inputs.c **** 
-  64:controller/IO/analog_inputs.c **** void analog_inputs_start_conversion_injected()
-  65:controller/IO/analog_inputs.c **** {
- 154              		.loc 1 65 1 view -0
- 155              		.cfi_startproc
- 156              		@ args = 0, pretend = 0, frame = 0
- 157              		@ frame_needed = 0, uses_anonymous_args = 0
- 158              		@ link register save eliminated.
-  66:controller/IO/analog_inputs.c **** 
-  67:controller/IO/analog_inputs.c **** }
- 159              		.loc 1 67 1 view .LVU23
- 160 0000 7047     		bx	lr
- 161              		.cfi_endproc
- 162              	.LFE235:
- 164              		.section	.rodata.analog_inputs_get_data.str1.4,"aMS",%progbits,1
- 165              		.align	2
- 166              	.LC1:
- 167 0000 496E7661 		.ascii	"Invalid index in analog input.\000"
- 167      6C696420 
- 167      696E6465 
- 167      7820696E 
- 167      20616E61 
- 168              		.section	.text.analog_inputs_get_data,"ax",%progbits
- 169              		.align	1
- 170              		.global	analog_inputs_get_data
- 171              		.syntax unified
- 172              		.thumb
- 173              		.thumb_func
- 175              	analog_inputs_get_data:
- 176              	.LVL9:
- 177              	.LFB236:
+ 155 0052 FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 156              	.LVL18:
+  67:controller/IO/analog_inputs.c ****     HAL_TIM_OC_Start(timer_handle, TIM_CHANNEL_1);
+ 157              		.loc 1 67 5 view .LVU41
+ 158 0056 2946     		mov	r1, r5
+ 159 0058 2046     		mov	r0, r4
+ 160 005a FFF7FEFF 		bl	HAL_TIM_OC_Start
+ 161              	.LVL19:
+ 162              	.L2:
   68:controller/IO/analog_inputs.c **** 
-  69:controller/IO/analog_inputs.c **** /**
-  70:controller/IO/analog_inputs.c ****  * @brief Retrieves the converted data for a specific analog input.
-  71:controller/IO/analog_inputs.c ****  * 
-  72:controller/IO/analog_inputs.c ****  * This function returns the digital value corresponding to the specified
-  73:controller/IO/analog_inputs.c ****  * analog input index.
+  69:controller/IO/analog_inputs.c **** 
+  70:controller/IO/analog_inputs.c **** }
+ 163              		.loc 1 70 1 is_stmt 0 view .LVU42
+ 164 005e 38BD     		pop	{r3, r4, r5, pc}
+ 165              	.L10:
+ 166              		.align	2
+ 167              	.L9:
+ 168 0060 00000000 		.word	hadc
+ 169 0064 00000000 		.word	.LC0
+ 170 0068 00000000 		.word	analog_data
+ 171              		.cfi_endproc
+ 172              	.LFE239:
+ 174              		.section	.text.analog_inputs_start_conversion,"ax",%progbits
+ 175              		.align	1
+ 176              		.global	analog_inputs_start_conversion
+ 177              		.syntax unified
+ 178              		.thumb
+ 179              		.thumb_func
+ 181              	analog_inputs_start_conversion:
+ 182              	.LFB240:
+  71:controller/IO/analog_inputs.c **** 
+  72:controller/IO/analog_inputs.c **** /**
+  73:controller/IO/analog_inputs.c ****  * @brief Starts the ADC conversion for analog inputs.
   74:controller/IO/analog_inputs.c ****  * 
-  75:controller/IO/analog_inputs.c ****  * @param input_index The index of the analog input to retrieve data from.
-  76:controller/IO/analog_inputs.c ****  *                    This index corresponds to the specific channel of the ADC.
-  77:controller/IO/analog_inputs.c ****  * @return The digital value of the specified analog input.
-  78:controller/IO/analog_inputs.c ****  */
-  79:controller/IO/analog_inputs.c **** uint16_t analog_inputs_get_data(analog_input_channel_t input_index)
-  80:controller/IO/analog_inputs.c **** {
- 178              		.loc 1 80 1 view -0
- 179              		.cfi_startproc
- 180              		@ args = 0, pretend = 0, frame = 0
- 181              		@ frame_needed = 0, uses_anonymous_args = 0
- 182              		.loc 1 80 1 is_stmt 0 view .LVU25
- 183 0000 10B5     		push	{r4, lr}
- 184              		.cfi_def_cfa_offset 8
- 185              		.cfi_offset 4, -8
- 186              		.cfi_offset 14, -4
-  81:controller/IO/analog_inputs.c ****     if (input_index >= ANALOG_INPUTS_MAX)
- 187              		.loc 1 81 5 is_stmt 1 view .LVU26
- 188              		.loc 1 81 8 is_stmt 0 view .LVU27
- 189 0002 0C28     		cmp	r0, #12
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 6
+  75:controller/IO/analog_inputs.c ****  * This function triggers the ADC to begin converting the analog signals
+  76:controller/IO/analog_inputs.c ****  * to digital values.
+  77:controller/IO/analog_inputs.c ****  */
+  78:controller/IO/analog_inputs.c **** void analog_inputs_start_conversion()
+  79:controller/IO/analog_inputs.c **** {
+ 183              		.loc 1 79 1 is_stmt 1 view -0
+ 184              		.cfi_startproc
+ 185              		@ args = 0, pretend = 0, frame = 0
+ 186              		@ frame_needed = 0, uses_anonymous_args = 0
+ 187              		@ link register save eliminated.
+  80:controller/IO/analog_inputs.c ****     if (hadc == NULL)
+ 188              		.loc 1 80 5 view .LVU44
+  81:controller/IO/analog_inputs.c ****     {
+  82:controller/IO/analog_inputs.c ****         return;
+ 189              		.loc 1 82 9 view .LVU45
+  83:controller/IO/analog_inputs.c ****     }
+  84:controller/IO/analog_inputs.c ****     
+  85:controller/IO/analog_inputs.c ****     
+  86:controller/IO/analog_inputs.c **** 
+  87:controller/IO/analog_inputs.c **** }
+ 190              		.loc 1 87 1 is_stmt 0 view .LVU46
+ 191 0000 7047     		bx	lr
+ 192              		.cfi_endproc
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 6
 
 
- 190 0004 02D8     		bhi	.L21
- 191              	.LBB4:
-  82:controller/IO/analog_inputs.c ****     {
-  83:controller/IO/analog_inputs.c ****         log_error("Invalid index in analog input.");
-  84:controller/IO/analog_inputs.c ****         return 0;
-  85:controller/IO/analog_inputs.c ****     }
-  86:controller/IO/analog_inputs.c ****     uint_fast32_t sum = 0;
-  87:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
- 192              		.loc 1 87 23 view .LVU28
- 193 0006 0023     		movs	r3, #0
- 194              	.LBE4:
-  86:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
- 195              		.loc 1 86 19 view .LVU29
- 196 0008 1946     		mov	r1, r3
- 197 000a 0FE0     		b	.L16
- 198              	.L21:
-  83:controller/IO/analog_inputs.c ****         return 0;
- 199              		.loc 1 83 9 is_stmt 1 view .LVU30
- 200 000c 0A48     		ldr	r0, .L22
- 201              	.LVL10:
-  83:controller/IO/analog_inputs.c ****         return 0;
- 202              		.loc 1 83 9 is_stmt 0 view .LVU31
- 203 000e FFF7FEFF 		bl	log_error
- 204              	.LVL11:
-  84:controller/IO/analog_inputs.c ****     }
- 205              		.loc 1 84 9 is_stmt 1 view .LVU32
-  84:controller/IO/analog_inputs.c ****     }
- 206              		.loc 1 84 16 is_stmt 0 view .LVU33
- 207 0012 0020     		movs	r0, #0
- 208 0014 0EE0     		b	.L17
- 209              	.LVL12:
- 210              	.L18:
- 211              	.LBB5:
-  88:controller/IO/analog_inputs.c ****     {
-  89:controller/IO/analog_inputs.c ****         sum += analog_data[i * ANALOG_INPUTS_MAX + input_index];
- 212              		.loc 1 89 9 is_stmt 1 view .LVU34
- 213              		.loc 1 89 30 is_stmt 0 view .LVU35
- 214 0016 03EB4302 		add	r2, r3, r3, lsl #1
- 215 001a 03EB8202 		add	r2, r3, r2, lsl #2
- 216              		.loc 1 89 50 view .LVU36
- 217 001e 0244     		add	r2, r2, r0
- 218              		.loc 1 89 27 view .LVU37
- 219 0020 064C     		ldr	r4, .L22+4
- 220 0022 34F81220 		ldrh	r2, [r4, r2, lsl #1]
- 221              		.loc 1 89 13 view .LVU38
- 222 0026 11FA82F1 		uxtah	r1, r1, r2
- 223              	.LVL13:
-  87:controller/IO/analog_inputs.c ****     {
- 224              		.loc 1 87 68 is_stmt 1 discriminator 3 view .LVU39
- 225 002a 0133     		adds	r3, r3, #1
- 226              	.LVL14:
- 227              	.L16:
-  87:controller/IO/analog_inputs.c ****     {
- 228              		.loc 1 87 32 discriminator 1 view .LVU40
- 229 002c 072B     		cmp	r3, #7
- 230 002e F2D9     		bls	.L18
- 231              	.LBE5:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 7
+ 193              	.LFE240:
+ 195              		.section	.text.analog_inputs_start_conversion_injected,"ax",%progbits
+ 196              		.align	1
+ 197              		.global	analog_inputs_start_conversion_injected
+ 198              		.syntax unified
+ 199              		.thumb
+ 200              		.thumb_func
+ 202              	analog_inputs_start_conversion_injected:
+ 203              	.LFB241:
+  88:controller/IO/analog_inputs.c **** 
+  89:controller/IO/analog_inputs.c **** void analog_inputs_start_conversion_injected()
+  90:controller/IO/analog_inputs.c **** {
+ 204              		.loc 1 90 1 is_stmt 1 view -0
+ 205              		.cfi_startproc
+ 206              		@ args = 0, pretend = 0, frame = 0
+ 207              		@ frame_needed = 0, uses_anonymous_args = 0
+ 208              		@ link register save eliminated.
+  91:controller/IO/analog_inputs.c **** 
+  92:controller/IO/analog_inputs.c **** }
+ 209              		.loc 1 92 1 view .LVU48
+ 210 0000 7047     		bx	lr
+ 211              		.cfi_endproc
+ 212              	.LFE241:
+ 214              		.section	.rodata.analog_inputs_get_data.str1.4,"aMS",%progbits,1
+ 215              		.align	2
+ 216              	.LC1:
+ 217 0000 496E7661 		.ascii	"Invalid index in analog input.\000"
+ 217      6C696420 
+ 217      696E6465 
+ 217      7820696E 
+ 217      20616E61 
+ 218              		.section	.text.analog_inputs_get_data,"ax",%progbits
+ 219              		.align	1
+ 220              		.global	analog_inputs_get_data
+ 221              		.syntax unified
+ 222              		.thumb
+ 223              		.thumb_func
+ 225              	analog_inputs_get_data:
+ 226              	.LVL20:
+ 227              	.LFB242:
+  93:controller/IO/analog_inputs.c **** 
+  94:controller/IO/analog_inputs.c **** /**
+  95:controller/IO/analog_inputs.c ****  * @brief Retrieves the converted data for a specific analog input.
+  96:controller/IO/analog_inputs.c ****  * 
+  97:controller/IO/analog_inputs.c ****  * This function returns the digital value corresponding to the specified
+  98:controller/IO/analog_inputs.c ****  * analog input index.
+  99:controller/IO/analog_inputs.c ****  * 
+ 100:controller/IO/analog_inputs.c ****  * @param input_index The index of the analog input to retrieve data from.
+ 101:controller/IO/analog_inputs.c ****  *                    This index corresponds to the specific channel of the ADC.
+ 102:controller/IO/analog_inputs.c ****  * @return The digital value of the specified analog input.
+ 103:controller/IO/analog_inputs.c ****  */
+ 104:controller/IO/analog_inputs.c **** uint16_t analog_inputs_get_data(analog_input_channel_t input_index)
+ 105:controller/IO/analog_inputs.c **** {
+ 228              		.loc 1 105 1 view -0
+ 229              		.cfi_startproc
+ 230              		@ args = 0, pretend = 0, frame = 0
+ 231              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 7
 
 
-  90:controller/IO/analog_inputs.c ****     }
-  91:controller/IO/analog_inputs.c ****     
-  92:controller/IO/analog_inputs.c ****     return sum / ANALOG_INPUTS_NUMBER_OF_SAMPLES;
- 232              		.loc 1 92 5 view .LVU41
- 233              		.loc 1 92 16 is_stmt 0 view .LVU42
- 234 0030 C1F3CF00 		ubfx	r0, r1, #3, #16
- 235              	.LVL15:
- 236              	.L17:
-  93:controller/IO/analog_inputs.c **** }
- 237              		.loc 1 93 1 view .LVU43
- 238 0034 10BD     		pop	{r4, pc}
- 239              	.L23:
- 240 0036 00BF     		.align	2
- 241              	.L22:
- 242 0038 00000000 		.word	.LC1
- 243 003c 00000000 		.word	analog_data
- 244              		.cfi_endproc
- 245              	.LFE236:
- 247              		.section	.text.analog_inputs_get_voltage,"ax",%progbits
- 248              		.align	1
- 249              		.global	analog_inputs_get_voltage
- 250              		.syntax unified
- 251              		.thumb
- 252              		.thumb_func
- 254              	analog_inputs_get_voltage:
- 255              	.LVL16:
- 256              	.LFB237:
-  94:controller/IO/analog_inputs.c **** 
-  95:controller/IO/analog_inputs.c **** voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index)
-  96:controller/IO/analog_inputs.c **** {
- 257              		.loc 1 96 1 is_stmt 1 view -0
- 258              		.cfi_startproc
- 259              		@ args = 0, pretend = 0, frame = 0
- 260              		@ frame_needed = 0, uses_anonymous_args = 0
- 261              		.loc 1 96 1 is_stmt 0 view .LVU45
- 262 0000 08B5     		push	{r3, lr}
- 263              		.cfi_def_cfa_offset 8
- 264              		.cfi_offset 3, -8
- 265              		.cfi_offset 14, -4
-  97:controller/IO/analog_inputs.c ****     voltage_t v = 0;
- 266              		.loc 1 97 5 is_stmt 1 view .LVU46
- 267              	.LVL17:
-  98:controller/IO/analog_inputs.c ****     uint16_t raw_data = 0;
- 268              		.loc 1 98 5 view .LVU47
-  99:controller/IO/analog_inputs.c ****     raw_data = analog_inputs_get_data(input_index);
- 269              		.loc 1 99 5 view .LVU48
- 270              		.loc 1 99 16 is_stmt 0 view .LVU49
- 271 0002 FFF7FEFF 		bl	analog_inputs_get_data
- 272              	.LVL18:
- 273              		.loc 1 99 16 view .LVU50
- 274 0006 07EE900A 		vmov	s15, r0	@ int
- 275              	.LVL19:
- 100:controller/IO/analog_inputs.c ****     v = mapf((float)raw_data, (float)0, (float)4095, 0, CONTROLLER_REF_VOLTAGE);
- 276              		.loc 1 100 5 is_stmt 1 view .LVU51
- 277              		.loc 1 100 9 is_stmt 0 view .LVU52
- 278 000a F8EE677A 		vcvt.f32.u32	s15, s15
- 279              	.LVL20:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 8
+ 232              		.loc 1 105 1 is_stmt 0 view .LVU50
+ 233 0000 10B5     		push	{r4, lr}
+ 234              		.cfi_def_cfa_offset 8
+ 235              		.cfi_offset 4, -8
+ 236              		.cfi_offset 14, -4
+ 106:controller/IO/analog_inputs.c ****     if (input_index >= ANALOG_INPUTS_MAX)
+ 237              		.loc 1 106 5 is_stmt 1 view .LVU51
+ 238              		.loc 1 106 8 is_stmt 0 view .LVU52
+ 239 0002 0C28     		cmp	r0, #12
+ 240 0004 02D8     		bhi	.L19
+ 241              	.LBB4:
+ 107:controller/IO/analog_inputs.c ****     {
+ 108:controller/IO/analog_inputs.c ****         log_error("Invalid index in analog input.");
+ 109:controller/IO/analog_inputs.c ****         return 0;
+ 110:controller/IO/analog_inputs.c ****     }
+ 111:controller/IO/analog_inputs.c ****     uint_fast32_t sum = 0;
+ 112:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
+ 242              		.loc 1 112 23 view .LVU53
+ 243 0006 0023     		movs	r3, #0
+ 244              	.LBE4:
+ 111:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
+ 245              		.loc 1 111 19 view .LVU54
+ 246 0008 1946     		mov	r1, r3
+ 247 000a 0FE0     		b	.L14
+ 248              	.L19:
+ 108:controller/IO/analog_inputs.c ****         return 0;
+ 249              		.loc 1 108 9 is_stmt 1 view .LVU55
+ 250 000c 0A48     		ldr	r0, .L20
+ 251              	.LVL21:
+ 108:controller/IO/analog_inputs.c ****         return 0;
+ 252              		.loc 1 108 9 is_stmt 0 view .LVU56
+ 253 000e FFF7FEFF 		bl	log_error
+ 254              	.LVL22:
+ 109:controller/IO/analog_inputs.c ****     }
+ 255              		.loc 1 109 9 is_stmt 1 view .LVU57
+ 109:controller/IO/analog_inputs.c ****     }
+ 256              		.loc 1 109 16 is_stmt 0 view .LVU58
+ 257 0012 0020     		movs	r0, #0
+ 258 0014 0EE0     		b	.L15
+ 259              	.LVL23:
+ 260              	.L16:
+ 261              	.LBB5:
+ 113:controller/IO/analog_inputs.c ****     {
+ 114:controller/IO/analog_inputs.c ****         sum += analog_data[i * ANALOG_INPUTS_MAX + input_index];
+ 262              		.loc 1 114 9 is_stmt 1 view .LVU59
+ 263              		.loc 1 114 30 is_stmt 0 view .LVU60
+ 264 0016 03EB4302 		add	r2, r3, r3, lsl #1
+ 265 001a 03EB8202 		add	r2, r3, r2, lsl #2
+ 266              		.loc 1 114 50 view .LVU61
+ 267 001e 0244     		add	r2, r2, r0
+ 268              		.loc 1 114 27 view .LVU62
+ 269 0020 064C     		ldr	r4, .L20+4
+ 270 0022 34F81220 		ldrh	r2, [r4, r2, lsl #1]
+ 271              		.loc 1 114 13 view .LVU63
+ 272 0026 11FA82F1 		uxtah	r1, r1, r2
+ 273              	.LVL24:
+ 112:controller/IO/analog_inputs.c ****     {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 8
 
 
- 280              	.LBB6:
- 281              	.LBI6:
- 282              		.file 2 "controller/utils/utils.h"
+ 274              		.loc 1 112 68 is_stmt 1 discriminator 3 view .LVU64
+ 275 002a 0133     		adds	r3, r3, #1
+ 276              	.LVL25:
+ 277              	.L14:
+ 112:controller/IO/analog_inputs.c ****     {
+ 278              		.loc 1 112 32 discriminator 1 view .LVU65
+ 279 002c 072B     		cmp	r3, #7
+ 280 002e F2D9     		bls	.L16
+ 281              	.LBE5:
+ 115:controller/IO/analog_inputs.c ****     }
+ 116:controller/IO/analog_inputs.c ****     
+ 117:controller/IO/analog_inputs.c ****     return sum / ANALOG_INPUTS_NUMBER_OF_SAMPLES;
+ 282              		.loc 1 117 5 view .LVU66
+ 283              		.loc 1 117 16 is_stmt 0 view .LVU67
+ 284 0030 C1F3CF00 		ubfx	r0, r1, #3, #16
+ 285              	.LVL26:
+ 286              	.L15:
+ 118:controller/IO/analog_inputs.c **** }
+ 287              		.loc 1 118 1 view .LVU68
+ 288 0034 10BD     		pop	{r4, pc}
+ 289              	.L21:
+ 290 0036 00BF     		.align	2
+ 291              	.L20:
+ 292 0038 00000000 		.word	.LC1
+ 293 003c 00000000 		.word	analog_data
+ 294              		.cfi_endproc
+ 295              	.LFE242:
+ 297              		.section	.text.analog_inputs_get_voltage,"ax",%progbits
+ 298              		.align	1
+ 299              		.global	analog_inputs_get_voltage
+ 300              		.syntax unified
+ 301              		.thumb
+ 302              		.thumb_func
+ 304              	analog_inputs_get_voltage:
+ 305              	.LVL27:
+ 306              	.LFB243:
+ 119:controller/IO/analog_inputs.c **** 
+ 120:controller/IO/analog_inputs.c **** voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index)
+ 121:controller/IO/analog_inputs.c **** {
+ 307              		.loc 1 121 1 is_stmt 1 view -0
+ 308              		.cfi_startproc
+ 309              		@ args = 0, pretend = 0, frame = 0
+ 310              		@ frame_needed = 0, uses_anonymous_args = 0
+ 311              		.loc 1 121 1 is_stmt 0 view .LVU70
+ 312 0000 08B5     		push	{r3, lr}
+ 313              		.cfi_def_cfa_offset 8
+ 314              		.cfi_offset 3, -8
+ 315              		.cfi_offset 14, -4
+ 122:controller/IO/analog_inputs.c ****     voltage_t v = 0;
+ 316              		.loc 1 122 5 is_stmt 1 view .LVU71
+ 317              	.LVL28:
+ 123:controller/IO/analog_inputs.c ****     uint16_t raw_data = 0;
+ 318              		.loc 1 123 5 view .LVU72
+ 124:controller/IO/analog_inputs.c ****     raw_data = analog_inputs_get_data(input_index);
+ 319              		.loc 1 124 5 view .LVU73
+ 320              		.loc 1 124 16 is_stmt 0 view .LVU74
+ 321 0002 FFF7FEFF 		bl	analog_inputs_get_data
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 9
+
+
+ 322              	.LVL29:
+ 323              		.loc 1 124 16 view .LVU75
+ 324 0006 07EE900A 		vmov	s15, r0	@ int
+ 325              	.LVL30:
+ 125:controller/IO/analog_inputs.c ****     v = mapf((float)raw_data, (float)0, (float)4095, 0, CONTROLLER_REF_VOLTAGE);
+ 326              		.loc 1 125 5 is_stmt 1 view .LVU76
+ 327              		.loc 1 125 9 is_stmt 0 view .LVU77
+ 328 000a F8EE677A 		vcvt.f32.u32	s15, s15
+ 329              	.LVL31:
+ 330              	.LBB6:
+ 331              	.LBI6:
+ 332              		.file 2 "controller/utils/utils.h"
    1:controller/utils/utils.h **** /**
    2:controller/utils/utils.h ****  * @file utils.h
    3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
@@ -438,168 +507,180 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 1
   12:controller/utils/utils.h **** 
   13:controller/utils/utils.h **** #include "types.h"
   14:controller/utils/utils.h **** #include "math.h"
-  15:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
-  16:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
-  17:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
-  18:controller/utils/utils.h **** 
-  19:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
-  20:controller/utils/utils.h **** {
-  21:controller/utils/utils.h ****     if (bit > 31)
-  22:controller/utils/utils.h ****     {
-  23:controller/utils/utils.h ****         return;
-  24:controller/utils/utils.h ****     }
-  25:controller/utils/utils.h ****     if (state)
-  26:controller/utils/utils.h ****     {
-  27:controller/utils/utils.h ****         *var |= (1u << bit);
-  28:controller/utils/utils.h ****     }
-  29:controller/utils/utils.h ****     else
-  30:controller/utils/utils.h ****     {
-  31:controller/utils/utils.h ****         *var &= ~(1u << bit);
-  32:controller/utils/utils.h ****     }
-  33:controller/utils/utils.h **** }
-  34:controller/utils/utils.h **** 
-  35:controller/utils/utils.h **** static inline bool get_bit(uint32_t flags, uint8_t bit)
-  36:controller/utils/utils.h **** {
-  37:controller/utils/utils.h ****     if (bit < 32)
-  38:controller/utils/utils.h ****     {
-  39:controller/utils/utils.h ****         return (flags >> bit) & 1u;
-  40:controller/utils/utils.h ****     }
-  41:controller/utils/utils.h ****     return false;
-  42:controller/utils/utils.h **** }
-  43:controller/utils/utils.h **** 
-  44:controller/utils/utils.h **** /**
-  45:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
-  46:controller/utils/utils.h ****  *
-  47:controller/utils/utils.h ****  * @param x The value to map.
-  48:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  49:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  50:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  51:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  52:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  53:controller/utils/utils.h ****  */
-  54:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 9
+  15:controller/utils/utils.h **** 
+  16:controller/utils/utils.h **** #define PI 3.14159265358979323846f
+  17:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  18:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  19:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** #define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
+  22:controller/utils/utils.h **** 
+  23:controller/utils/utils.h **** bool is_phase_in_range(float test, float current, float next);
+  24:controller/utils/utils.h **** 
+  25:controller/utils/utils.h **** size_t nearest_index_float(const float *arr, size_t size, float target);
+  26:controller/utils/utils.h **** size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target);
+  27:controller/utils/utils.h **** size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target);
+  28:controller/utils/utils.h **** size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
+  29:controller/utils/utils.h **** 
+  30:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
+  31:controller/utils/utils.h **** {
+  32:controller/utils/utils.h ****     if (bit > 31)
+  33:controller/utils/utils.h ****     {
+  34:controller/utils/utils.h ****         return;
+  35:controller/utils/utils.h ****     }
+  36:controller/utils/utils.h ****     if (state)
+  37:controller/utils/utils.h ****     {
+  38:controller/utils/utils.h ****         *var |= (1u << bit);
+  39:controller/utils/utils.h ****     }
+  40:controller/utils/utils.h ****     else
+  41:controller/utils/utils.h ****     {
+  42:controller/utils/utils.h ****         *var &= ~(1u << bit);
+  43:controller/utils/utils.h ****     }
+  44:controller/utils/utils.h **** }
+  45:controller/utils/utils.h **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 10
 
 
-  55:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
-  56:controller/utils/utils.h **** 
-  57:controller/utils/utils.h **** /**
-  58:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
-  59:controller/utils/utils.h ****  *
-  60:controller/utils/utils.h ****  * @param x The value to map.
-  61:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  62:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  63:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  64:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  65:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  66:controller/utils/utils.h ****  */
-  67:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
-  68:controller/utils/utils.h **** {
-  69:controller/utils/utils.h ****     if (in_max == in_min)
-  70:controller/utils/utils.h ****     {
-  71:controller/utils/utils.h ****         return 0; // Avoid division by zero
-  72:controller/utils/utils.h ****     }
-  73:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-  74:controller/utils/utils.h **** }
-  75:controller/utils/utils.h **** 
-  76:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
- 283              		.loc 2 76 21 is_stmt 1 view .LVU53
- 284              	.LBB7:
-  77:controller/utils/utils.h **** {
-  78:controller/utils/utils.h ****     if (in_max == in_min)
- 285              		.loc 2 78 5 view .LVU54
-  79:controller/utils/utils.h ****     {
-  80:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
-  81:controller/utils/utils.h ****     }
-  82:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
- 286              		.loc 2 82 5 view .LVU55
- 287              		.loc 2 82 25 is_stmt 0 view .LVU56
- 288 000e B1EE047A 		vmov.f32	s14, #5.0e+0
- 289 0012 67EE877A 		vmul.f32	s15, s15, s14
- 290              	.LVL21:
- 291              		.loc 2 82 47 view .LVU57
- 292 0016 9FED047A 		vldr.32	s14, .L26
- 293 001a 87EE870A 		vdiv.f32	s0, s15, s14
- 294              	.LVL22:
- 295              		.loc 2 82 47 view .LVU58
- 296              	.LBE7:
- 297              	.LBE6:
- 101:controller/IO/analog_inputs.c ****     return v;
- 298              		.loc 1 101 5 is_stmt 1 view .LVU59
- 102:controller/IO/analog_inputs.c **** }...
- 299              		.loc 1 102 1 is_stmt 0 view .LVU60
- 300 001e DFED037A 		vldr.32	s15, .L26+4
- 301 0022 30EE270A 		vadd.f32	s0, s0, s15
- 302              	.LVL23:
- 303              		.loc 1 102 1 view .LVU61
- 304 0026 08BD     		pop	{r3, pc}
- 305              	.L27:
- 306              		.align	2
- 307              	.L26:
- 308 0028 00F07F45 		.word	1166012416
- 309 002c 00000000 		.word	0
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 10
+  46:controller/utils/utils.h **** static inline bool get_bit(uint32_t flags, uint8_t bit)
+  47:controller/utils/utils.h **** {
+  48:controller/utils/utils.h ****     if (bit < 32)
+  49:controller/utils/utils.h ****     {
+  50:controller/utils/utils.h ****         return (flags >> bit) & 1u;
+  51:controller/utils/utils.h ****     }
+  52:controller/utils/utils.h ****     return false;
+  53:controller/utils/utils.h **** }
+  54:controller/utils/utils.h **** 
+  55:controller/utils/utils.h **** /**
+  56:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
+  57:controller/utils/utils.h ****  *
+  58:controller/utils/utils.h ****  * @param x The value to map.
+  59:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  60:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  61:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  62:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  63:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  64:controller/utils/utils.h ****  */
+  65:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
+  66:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
+  67:controller/utils/utils.h **** 
+  68:controller/utils/utils.h **** /**
+  69:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
+  70:controller/utils/utils.h ****  *
+  71:controller/utils/utils.h ****  * @param x The value to map.
+  72:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  73:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  74:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  75:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  76:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  77:controller/utils/utils.h ****  */
+  78:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
+  79:controller/utils/utils.h **** {
+  80:controller/utils/utils.h ****     if (in_max == in_min)
+  81:controller/utils/utils.h ****     {
+  82:controller/utils/utils.h ****         return 0; // Avoid division by zero
+  83:controller/utils/utils.h ****     }
+  84:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+  85:controller/utils/utils.h **** }
+  86:controller/utils/utils.h **** 
+  87:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+ 333              		.loc 2 87 21 is_stmt 1 view .LVU78
+ 334              	.LBB7:
+  88:controller/utils/utils.h **** {
+  89:controller/utils/utils.h ****     if (in_max == in_min)
+ 335              		.loc 2 89 5 view .LVU79
+  90:controller/utils/utils.h ****     {
+  91:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
+  92:controller/utils/utils.h ****     }
+  93:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+ 336              		.loc 2 93 5 view .LVU80
+ 337              		.loc 2 93 25 is_stmt 0 view .LVU81
+ 338 000e B1EE047A 		vmov.f32	s14, #5.0e+0
+ 339 0012 67EE877A 		vmul.f32	s15, s15, s14
+ 340              	.LVL32:
+ 341              		.loc 2 93 47 view .LVU82
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 11
 
 
- 310              		.cfi_endproc
- 311              	.LFE237:
- 313              		.section	.bss.analog_data,"aw",%nobits
- 314              		.align	2
- 317              	analog_data:
- 318 0000 00000000 		.space	208
- 318      00000000 
- 318      00000000 
- 318      00000000 
- 318      00000000 
- 319              		.global	hadc
- 320              		.section	.bss.hadc,"aw",%nobits
- 321              		.align	2
- 324              	hadc:
- 325 0000 00000000 		.space	4
- 326              		.text
- 327              	.Letext0:
- 328              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 329              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 330              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 331              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 332              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
- 333              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 334              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 335              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
- 336              		.file 11 "controller/types.h"
- 337              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 338              		.file 13 "controller/IO/analog_inputs.h"
- 339              		.file 14 "controller/utils/error_handling.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s 			page 11
+ 342 0016 9FED047A 		vldr.32	s14, .L24
+ 343 001a 87EE870A 		vdiv.f32	s0, s15, s14
+ 344              	.LVL33:
+ 345              		.loc 2 93 47 view .LVU83
+ 346              	.LBE7:
+ 347              	.LBE6:
+ 126:controller/IO/analog_inputs.c ****     return v;
+ 348              		.loc 1 126 5 is_stmt 1 view .LVU84
+ 127:controller/IO/analog_inputs.c **** }...
+ 349              		.loc 1 127 1 is_stmt 0 view .LVU85
+ 350 001e DFED037A 		vldr.32	s15, .L24+4
+ 351 0022 30EE270A 		vadd.f32	s0, s0, s15
+ 352              	.LVL34:
+ 353              		.loc 1 127 1 view .LVU86
+ 354 0026 08BD     		pop	{r3, pc}
+ 355              	.L25:
+ 356              		.align	2
+ 357              	.L24:
+ 358 0028 00F07F45 		.word	1166012416
+ 359 002c 00000000 		.word	0
+ 360              		.cfi_endproc
+ 361              	.LFE243:
+ 363              		.section	.bss.analog_data,"aw",%nobits
+ 364              		.align	2
+ 367              	analog_data:
+ 368 0000 00000000 		.space	208
+ 368      00000000 
+ 368      00000000 
+ 368      00000000 
+ 368      00000000 
+ 369              		.global	hadc
+ 370              		.section	.bss.hadc,"aw",%nobits
+ 371              		.align	2
+ 374              	hadc:
+ 375 0000 00000000 		.space	4
+ 376              		.text
+ 377              	.Letext0:
+ 378              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 379              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 380              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 381              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 382              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 383              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 384              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 385              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 386              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 387              		.file 12 "controller/types.h"
+ 388              		.file 13 "controller/IO/analog_inputs.h"
+ 389              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ 390              		.file 15 "controller/utils/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 12
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 analog_inputs.c
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:21     .text.analog_inputs_start_conversion:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:27     .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:54     .text.analog_inputs_start_conversion:00000014 $d
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:324    .bss.hadc:00000000 hadc
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:317    .bss.analog_data:00000000 analog_data
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:60     .text.HAL_ADC_ConvCpltCallback:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:66     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:80     .rodata.analog_inputs_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:84     .text.analog_inputs_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:90     .text.analog_inputs_init:00000000 analog_inputs_init
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:139    .text.analog_inputs_init:00000024 $d
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:146    .text.analog_inputs_start_conversion_injected:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:152    .text.analog_inputs_start_conversion_injected:00000000 analog_inputs_start_conversion_injected
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:165    .rodata.analog_inputs_get_data.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:169    .text.analog_inputs_get_data:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:175    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:242    .text.analog_inputs_get_data:00000038 $d
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:248    .text.analog_inputs_get_voltage:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:254    .text.analog_inputs_get_voltage:00000000 analog_inputs_get_voltage
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:308    .text.analog_inputs_get_voltage:00000028 $d
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:314    .bss.analog_data:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccbyutmv.s:321    .bss.hadc:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:21     .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:27     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:41     .rodata.analog_inputs_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:46     .text.analog_inputs_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:52     .text.analog_inputs_init:00000000 analog_inputs_init
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:168    .text.analog_inputs_init:00000060 $d
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:374    .bss.hadc:00000000 hadc
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:367    .bss.analog_data:00000000 analog_data
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:175    .text.analog_inputs_start_conversion:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:181    .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:196    .text.analog_inputs_start_conversion_injected:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:202    .text.analog_inputs_start_conversion_injected:00000000 analog_inputs_start_conversion_injected
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:215    .rodata.analog_inputs_get_data.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:219    .text.analog_inputs_get_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:225    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:292    .text.analog_inputs_get_data:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:298    .text.analog_inputs_get_voltage:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:304    .text.analog_inputs_get_voltage:00000000 analog_inputs_get_voltage
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:358    .text.analog_inputs_get_voltage:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:364    .bss.analog_data:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:371    .bss.hadc:00000000 $d
 
 UNDEFINED SYMBOLS
-HAL_ADC_Start_DMA
-osTimerNew
-osTimerStart
+HAL_RCC_GetPCLK1Freq
 log_error
+HAL_ADC_Start_DMA
+HAL_TIM_Base_Start
+HAL_TIM_OC_Start

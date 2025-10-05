@@ -1,0 +1,3088 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"injection.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/engine_cycle/injection.c"
+  20              		.section	.rodata.injection_switch_to_batch.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 696E6A65 		.ascii	"injection init failed. unkown firing order.\000"
+  23      6374696F 
+  23      6E20696E 
+  23      69742066 
+  23      61696C65 
+  24              		.section	.text.injection_switch_to_batch,"ax",%progbits
+  25              		.align	1
+  26              		.syntax unified
+  27              		.thumb
+  28              		.thumb_func
+  30              	injection_switch_to_batch:
+  31              	.LFB240:
+   1:controller/engine_cycle/injection.c **** #include "injection.h"
+   2:controller/engine_cycle/injection.c **** 
+   3:controller/engine_cycle/injection.c **** injection_output_pin_conf_t *injector_pin_conf = NULL;
+   4:controller/engine_cycle/injection.c **** 
+   5:controller/engine_cycle/injection.c **** injection_event_t injection_events[FIRMWARE_MAX_NUMBER_OF_CYLINDERS] = {0};
+   6:controller/engine_cycle/injection.c **** 
+   7:controller/engine_cycle/injection.c **** static uint8_t number_of_events = 0;
+   8:controller/engine_cycle/injection.c **** static uint8_t number_of_injections = 0;
+   9:controller/engine_cycle/injection.c **** static bool injection_initialized = false;
+  10:controller/engine_cycle/injection.c **** 
+  11:controller/engine_cycle/injection.c **** static bool operating_in_forced_batch_injection = false;
+  12:controller/engine_cycle/injection.c **** 
+  13:controller/engine_cycle/injection.c **** float_time_ms_t get_pulse_width();
+  14:controller/engine_cycle/injection.c **** static void schedule_injection_event(injection_event_t *event);
+  15:controller/engine_cycle/injection.c **** static void injector_stop_injection(void *arg);
+  16:controller/engine_cycle/injection.c **** static void injector_start_injection(void *arg);
+  17:controller/engine_cycle/injection.c **** static void injection_switch_to_batch();
+  18:controller/engine_cycle/injection.c **** static void injection_switch_to_sequential();
+  19:controller/engine_cycle/injection.c **** static void injection_watchdog_check();
+  20:controller/engine_cycle/injection.c **** 
+  21:controller/engine_cycle/injection.c **** bool injection_init(injection_output_pin_conf_t *output_pin_conf)
+  22:controller/engine_cycle/injection.c **** {
+  23:controller/engine_cycle/injection.c ****     if (output_pin_conf == NULL)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 2
+
+
+  24:controller/engine_cycle/injection.c ****     {
+  25:controller/engine_cycle/injection.c ****         change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
+  26:controller/engine_cycle/injection.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+  27:controller/engine_cycle/injection.c ****         log_error("injection init failed. No output config");
+  28:controller/engine_cycle/injection.c ****         return false;
+  29:controller/engine_cycle/injection.c ****     }
+  30:controller/engine_cycle/injection.c ****     controller_output_pin_t *outputs = &output_pin_conf->pin[0];
+  31:controller/engine_cycle/injection.c ****     injector_pin_conf = output_pin_conf;
+  32:controller/engine_cycle/injection.c **** 
+  33:controller/engine_cycle/injection.c ****     if (config.injection_mode == INJECTION_MODE_NO_FUEL_INJECTION)
+  34:controller/engine_cycle/injection.c ****         return true;
+  35:controller/engine_cycle/injection.c **** 
+  36:controller/engine_cycle/injection.c ****     switch (config.firing_order)
+  37:controller/engine_cycle/injection.c ****     {
+  38:controller/engine_cycle/injection.c ****     case FO_1342: // Common inline-4
+  39:controller/engine_cycle/injection.c ****         switch (config.injection_mode)
+  40:controller/engine_cycle/injection.c ****         {
+  41:controller/engine_cycle/injection.c ****         case INJECTION_MODE_SINGLE_POINT:
+  42:controller/engine_cycle/injection.c ****             injection_events[0].primary_output = &outputs[0];
+  43:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[0];
+  44:controller/engine_cycle/injection.c **** 
+  45:controller/engine_cycle/injection.c ****             injection_events[0].crank_angle_at_end_of_injection = (angle_t)0;
+  46:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+  47:controller/engine_cycle/injection.c ****             number_of_injections = 4;
+  48:controller/engine_cycle/injection.c ****             number_of_events = 2;
+  49:controller/engine_cycle/injection.c ****             break;
+  50:controller/engine_cycle/injection.c ****         case INJECTION_MODE_BATCH:
+  51:controller/engine_cycle/injection.c ****             injection_events[0].crank_angle_at_end_of_injection = (angle_t)0;
+  52:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+  53:controller/engine_cycle/injection.c **** 
+  54:controller/engine_cycle/injection.c ****             injection_events[0].primary_output = &outputs[0];
+  55:controller/engine_cycle/injection.c ****             injection_events[0].secondary_output = &outputs[3];
+  56:controller/engine_cycle/injection.c **** 
+  57:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+  58:controller/engine_cycle/injection.c ****             injection_events[1].secondary_output = &outputs[2];
+  59:controller/engine_cycle/injection.c ****             number_of_injections = 4;   
+  60:controller/engine_cycle/injection.c ****             number_of_events = 2;
+  61:controller/engine_cycle/injection.c ****             break;
+  62:controller/engine_cycle/injection.c ****         case INJECTION_MODE_SEQUENTIAL:
+  63:controller/engine_cycle/injection.c ****             injection_events[0].crank_angle_at_end_of_injection = (angle_t)360;
+  64:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)540;
+  65:controller/engine_cycle/injection.c ****             injection_events[3].crank_angle_at_end_of_injection = (angle_t)0;
+  66:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+  67:controller/engine_cycle/injection.c **** 
+  68:controller/engine_cycle/injection.c ****             injection_events[0].primary_output = &outputs[0];
+  69:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+  70:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+  71:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+  72:controller/engine_cycle/injection.c ****             number_of_injections = 4;
+  73:controller/engine_cycle/injection.c ****             number_of_events = 4;
+  74:controller/engine_cycle/injection.c ****             break;
+  75:controller/engine_cycle/injection.c **** 
+  76:controller/engine_cycle/injection.c ****         default:
+  77:controller/engine_cycle/injection.c ****             break;
+  78:controller/engine_cycle/injection.c ****         }
+  79:controller/engine_cycle/injection.c ****         break;
+  80:controller/engine_cycle/injection.c ****     case FO_153624: // Common inline-6
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 3
+
+
+  81:controller/engine_cycle/injection.c ****         switch (config.injection_mode)
+  82:controller/engine_cycle/injection.c ****         {
+  83:controller/engine_cycle/injection.c ****         case INJECTION_MODE_SINGLE_POINT:
+  84:controller/engine_cycle/injection.c ****             injection_events[0].crank_angle_at_end_of_injection = (angle_t)0;   // cyl 1 & 6
+  85:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)120; // cyl 5 & 2
+  86:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)240; // cyl 3 & 4
+  87:controller/engine_cycle/injection.c **** 
+  88:controller/engine_cycle/injection.c ****             injection_events[0].primary_output = &outputs[0];
+  89:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[0];
+  90:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[0];
+  91:controller/engine_cycle/injection.c ****             number_of_injections = 6;
+  92:controller/engine_cycle/injection.c ****             number_of_events = 3;
+  93:controller/engine_cycle/injection.c ****             break;
+  94:controller/engine_cycle/injection.c **** 
+  95:controller/engine_cycle/injection.c ****         case INJECTION_MODE_BATCH:
+  96:controller/engine_cycle/injection.c ****             injection_events[0].crank_angle_at_end_of_injection = (angle_t)0;   // cyl 1 & 6
+  97:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)120; // cyl 5 & 2
+  98:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)240; // cyl 3 & 4
+  99:controller/engine_cycle/injection.c **** 
+ 100:controller/engine_cycle/injection.c ****             injection_events[0].primary_output = &outputs[0];
+ 101:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 102:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 103:controller/engine_cycle/injection.c ****             number_of_injections = 6;
+ 104:controller/engine_cycle/injection.c ****             number_of_events = 3;
+ 105:controller/engine_cycle/injection.c ****             break;
+ 106:controller/engine_cycle/injection.c **** 
+ 107:controller/engine_cycle/injection.c ****         case INJECTION_MODE_SEQUENTIAL:
+ 108:controller/engine_cycle/injection.c ****             config.injection_mode = INJECTION_MODE_BATCH;
+ 109:controller/engine_cycle/injection.c ****             change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
+ 110:controller/engine_cycle/injection.c ****             injection_init(output_pin_conf);
+ 111:controller/engine_cycle/injection.c ****             log_error("Sequential injection not possible for 6 cylinders, defaulting to batch fire.
+ 112:controller/engine_cycle/injection.c ****             return false;
+ 113:controller/engine_cycle/injection.c ****             break;
+ 114:controller/engine_cycle/injection.c **** 
+ 115:controller/engine_cycle/injection.c ****         default:
+ 116:controller/engine_cycle/injection.c ****             break;
+ 117:controller/engine_cycle/injection.c ****         }
+ 118:controller/engine_cycle/injection.c ****         break;
+ 119:controller/engine_cycle/injection.c **** 
+ 120:controller/engine_cycle/injection.c ****     default:
+ 121:controller/engine_cycle/injection.c ****         log_error("injection init failed. unkown firing order.");
+ 122:controller/engine_cycle/injection.c ****         break;
+ 123:controller/engine_cycle/injection.c ****     }
+ 124:controller/engine_cycle/injection.c **** 
+ 125:controller/engine_cycle/injection.c ****     if (number_of_events == 0)
+ 126:controller/engine_cycle/injection.c ****     {
+ 127:controller/engine_cycle/injection.c ****         change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
+ 128:controller/engine_cycle/injection.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+ 129:controller/engine_cycle/injection.c ****         return false;
+ 130:controller/engine_cycle/injection.c ****     }
+ 131:controller/engine_cycle/injection.c **** 
+ 132:controller/engine_cycle/injection.c ****     osTimerId_t injection_watchdog_timer = osTimerNew(injection_watchdog_check, osTimerPeriodic, NU
+ 133:controller/engine_cycle/injection.c ****     if (injection_watchdog_timer != NULL)
+ 134:controller/engine_cycle/injection.c ****     {
+ 135:controller/engine_cycle/injection.c ****         osTimerStart(injection_watchdog_timer, 1); // check every 1 ms
+ 136:controller/engine_cycle/injection.c ****     }
+ 137:controller/engine_cycle/injection.c **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 4
+
+
+ 138:controller/engine_cycle/injection.c ****     injection_initialized = true;
+ 139:controller/engine_cycle/injection.c **** 
+ 140:controller/engine_cycle/injection.c ****     return true;
+ 141:controller/engine_cycle/injection.c **** }
+ 142:controller/engine_cycle/injection.c **** 
+ 143:controller/engine_cycle/injection.c **** void injection_watchdog_check()
+ 144:controller/engine_cycle/injection.c **** {
+ 145:controller/engine_cycle/injection.c ****     for (size_t i = 0; i < number_of_events; i++)
+ 146:controller/engine_cycle/injection.c ****     {
+ 147:controller/engine_cycle/injection.c ****         injection_event_t *event = &injection_events[i];
+ 148:controller/engine_cycle/injection.c ****         if (event->status != INJECTION_EVENT_INJECTING) continue;
+ 149:controller/engine_cycle/injection.c ****         time_us_t current_time = get_time_us();
+ 150:controller/engine_cycle/injection.c ****         if ((int32_t)(current_time - (event->injection_stop_time)) > 0)
+ 151:controller/engine_cycle/injection.c ****         {
+ 152:controller/engine_cycle/injection.c ****             injector_stop_injection((void *)event);
+ 153:controller/engine_cycle/injection.c ****             change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
+ 154:controller/engine_cycle/injection.c ****             log_error("injection watchdog fired.");
+ 155:controller/engine_cycle/injection.c ****         }
+ 156:controller/engine_cycle/injection.c ****     } 
+ 157:controller/engine_cycle/injection.c **** }
+ 158:controller/engine_cycle/injection.c **** 
+ 159:controller/engine_cycle/injection.c **** void injection_switch_to_batch()
+ 160:controller/engine_cycle/injection.c **** {
+  32              		.loc 1 160 1 view -0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36 0000 08B5     		push	{r3, lr}
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 3, -8
+  39              		.cfi_offset 14, -4
+ 161:controller/engine_cycle/injection.c ****     controller_output_pin_t *outputs = &injector_pin_conf->pin[0];
+  40              		.loc 1 161 5 view .LVU1
+  41              		.loc 1 161 58 is_stmt 0 view .LVU2
+  42 0002 104B     		ldr	r3, .L7
+  43 0004 1B68     		ldr	r3, [r3]
+  44              	.LVL0:
+ 162:controller/engine_cycle/injection.c **** 
+ 163:controller/engine_cycle/injection.c ****     operating_in_forced_batch_injection = true;
+  45              		.loc 1 163 5 is_stmt 1 view .LVU3
+  46              		.loc 1 163 41 is_stmt 0 view .LVU4
+  47 0006 104A     		ldr	r2, .L7+4
+  48 0008 0121     		movs	r1, #1
+  49 000a 1170     		strb	r1, [r2]
+ 164:controller/engine_cycle/injection.c ****     switch (config.firing_order)
+  50              		.loc 1 164 5 is_stmt 1 view .LVU5
+  51              		.loc 1 164 19 is_stmt 0 view .LVU6
+  52 000c 0F4A     		ldr	r2, .L7+8
+  53 000e 92F8CA29 		ldrb	r2, [r2, #2506]	@ zero_extendqisi2
+  54              		.loc 1 164 5 view .LVU7
+  55 0012 2AB1     		cbz	r2, .L2
+  56 0014 8A42     		cmp	r2, r1
+  57 0016 14D0     		beq	.L1
+ 165:controller/engine_cycle/injection.c ****     {
+ 166:controller/engine_cycle/injection.c ****     case FO_1342: // Common inline-4
+ 167:controller/engine_cycle/injection.c ****         injection_events[0].crank_angle_at_end_of_injection = (angle_t)0;
+ 168:controller/engine_cycle/injection.c ****         injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 5
+
+
+ 169:controller/engine_cycle/injection.c **** 
+ 170:controller/engine_cycle/injection.c ****         injection_events[0].primary_output = &outputs[0];
+ 171:controller/engine_cycle/injection.c ****         injection_events[0].secondary_output = &outputs[3];
+ 172:controller/engine_cycle/injection.c **** 
+ 173:controller/engine_cycle/injection.c ****         injection_events[1].primary_output = &outputs[1];
+ 174:controller/engine_cycle/injection.c ****         injection_events[1].secondary_output = &outputs[2];
+ 175:controller/engine_cycle/injection.c **** 
+ 176:controller/engine_cycle/injection.c ****         number_of_events = 2;
+ 177:controller/engine_cycle/injection.c ****         break;
+ 178:controller/engine_cycle/injection.c **** 
+ 179:controller/engine_cycle/injection.c ****     case FO_153624: // Common inline-6
+ 180:controller/engine_cycle/injection.c **** 
+ 181:controller/engine_cycle/injection.c ****         break;
+ 182:controller/engine_cycle/injection.c **** 
+ 183:controller/engine_cycle/injection.c ****     default:
+ 184:controller/engine_cycle/injection.c ****         log_error("injection init failed. unkown firing order.");
+  58              		.loc 1 184 9 is_stmt 1 view .LVU8
+  59 0018 0D48     		ldr	r0, .L7+12
+  60 001a FFF7FEFF 		bl	log_error
+  61              	.LVL1:
+ 185:controller/engine_cycle/injection.c ****         break;
+  62              		.loc 1 185 9 view .LVU9
+ 186:controller/engine_cycle/injection.c ****     }
+ 187:controller/engine_cycle/injection.c **** }
+  63              		.loc 1 187 1 is_stmt 0 view .LVU10
+  64 001e 10E0     		b	.L1
+  65              	.LVL2:
+  66              	.L2:
+ 167:controller/engine_cycle/injection.c ****         injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+  67              		.loc 1 167 9 is_stmt 1 view .LVU11
+ 167:controller/engine_cycle/injection.c ****         injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+  68              		.loc 1 167 61 is_stmt 0 view .LVU12
+  69 0020 0C4A     		ldr	r2, .L7+16
+  70 0022 0021     		movs	r1, #0
+  71 0024 1161     		str	r1, [r2, #16]	@ float
+ 168:controller/engine_cycle/injection.c **** 
+  72              		.loc 1 168 9 is_stmt 1 view .LVU13
+ 168:controller/engine_cycle/injection.c **** 
+  73              		.loc 1 168 61 is_stmt 0 view .LVU14
+  74 0026 0C49     		ldr	r1, .L7+20
+  75 0028 9162     		str	r1, [r2, #40]	@ float
+ 170:controller/engine_cycle/injection.c ****         injection_events[0].secondary_output = &outputs[3];
+  76              		.loc 1 170 9 is_stmt 1 view .LVU15
+ 170:controller/engine_cycle/injection.c ****         injection_events[0].secondary_output = &outputs[3];
+  77              		.loc 1 170 44 is_stmt 0 view .LVU16
+  78 002a 9360     		str	r3, [r2, #8]
+ 171:controller/engine_cycle/injection.c **** 
+  79              		.loc 1 171 9 is_stmt 1 view .LVU17
+ 171:controller/engine_cycle/injection.c **** 
+  80              		.loc 1 171 48 is_stmt 0 view .LVU18
+  81 002c 03F11801 		add	r1, r3, #24
+ 171:controller/engine_cycle/injection.c **** 
+  82              		.loc 1 171 46 view .LVU19
+  83 0030 D160     		str	r1, [r2, #12]
+ 173:controller/engine_cycle/injection.c ****         injection_events[1].secondary_output = &outputs[2];
+  84              		.loc 1 173 9 is_stmt 1 view .LVU20
+ 173:controller/engine_cycle/injection.c ****         injection_events[1].secondary_output = &outputs[2];
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 6
+
+
+  85              		.loc 1 173 46 is_stmt 0 view .LVU21
+  86 0032 03F10801 		add	r1, r3, #8
+ 173:controller/engine_cycle/injection.c ****         injection_events[1].secondary_output = &outputs[2];
+  87              		.loc 1 173 44 view .LVU22
+  88 0036 1162     		str	r1, [r2, #32]
+ 174:controller/engine_cycle/injection.c **** 
+  89              		.loc 1 174 9 is_stmt 1 view .LVU23
+ 174:controller/engine_cycle/injection.c **** 
+  90              		.loc 1 174 48 is_stmt 0 view .LVU24
+  91 0038 1033     		adds	r3, r3, #16
+  92              	.LVL3:
+ 174:controller/engine_cycle/injection.c **** 
+  93              		.loc 1 174 46 view .LVU25
+  94 003a 5362     		str	r3, [r2, #36]
+ 176:controller/engine_cycle/injection.c ****         break;
+  95              		.loc 1 176 9 is_stmt 1 view .LVU26
+ 176:controller/engine_cycle/injection.c ****         break;
+  96              		.loc 1 176 26 is_stmt 0 view .LVU27
+  97 003c 074B     		ldr	r3, .L7+24
+  98 003e 0222     		movs	r2, #2
+  99 0040 1A70     		strb	r2, [r3]
+ 177:controller/engine_cycle/injection.c **** 
+ 100              		.loc 1 177 9 is_stmt 1 view .LVU28
+ 101              	.LVL4:
+ 102              	.L1:
+ 103              		.loc 1 187 1 is_stmt 0 view .LVU29
+ 104 0042 08BD     		pop	{r3, pc}
+ 105              	.L8:
+ 106              		.align	2
+ 107              	.L7:
+ 108 0044 00000000 		.word	injector_pin_conf
+ 109 0048 00000000 		.word	operating_in_forced_batch_injection
+ 110 004c 00100000 		.word	config+4096
+ 111 0050 00000000 		.word	.LC0
+ 112 0054 00000000 		.word	injection_events
+ 113 0058 00003443 		.word	1127481344
+ 114 005c 00000000 		.word	number_of_events
+ 115              		.cfi_endproc
+ 116              	.LFE240:
+ 118              		.section	.text.injection_switch_to_sequential,"ax",%progbits
+ 119              		.align	1
+ 120              		.syntax unified
+ 121              		.thumb
+ 122              		.thumb_func
+ 124              	injection_switch_to_sequential:
+ 125              	.LFB241:
+ 188:controller/engine_cycle/injection.c **** 
+ 189:controller/engine_cycle/injection.c **** void injection_switch_to_sequential()
+ 190:controller/engine_cycle/injection.c **** {
+ 126              		.loc 1 190 1 is_stmt 1 view -0
+ 127              		.cfi_startproc
+ 128              		@ args = 0, pretend = 0, frame = 0
+ 129              		@ frame_needed = 0, uses_anonymous_args = 0
+ 130 0000 08B5     		push	{r3, lr}
+ 131              		.cfi_def_cfa_offset 8
+ 132              		.cfi_offset 3, -8
+ 133              		.cfi_offset 14, -4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 7
+
+
+ 191:controller/engine_cycle/injection.c ****     controller_output_pin_t *outputs = &injector_pin_conf->pin[0];
+ 134              		.loc 1 191 5 view .LVU31
+ 135              		.loc 1 191 58 is_stmt 0 view .LVU32
+ 136 0002 124B     		ldr	r3, .L15
+ 137 0004 1B68     		ldr	r3, [r3]
+ 138              	.LVL5:
+ 192:controller/engine_cycle/injection.c **** 
+ 193:controller/engine_cycle/injection.c ****     operating_in_forced_batch_injection = false;
+ 139              		.loc 1 193 5 is_stmt 1 view .LVU33
+ 140              		.loc 1 193 41 is_stmt 0 view .LVU34
+ 141 0006 124A     		ldr	r2, .L15+4
+ 142 0008 0021     		movs	r1, #0
+ 143 000a 1170     		strb	r1, [r2]
+ 194:controller/engine_cycle/injection.c ****     switch (config.firing_order)
+ 144              		.loc 1 194 5 is_stmt 1 view .LVU35
+ 145              		.loc 1 194 19 is_stmt 0 view .LVU36
+ 146 000c 114A     		ldr	r2, .L15+8
+ 147 000e 92F8CA29 		ldrb	r2, [r2, #2506]	@ zero_extendqisi2
+ 148              		.loc 1 194 5 view .LVU37
+ 149 0012 2AB1     		cbz	r2, .L10
+ 150 0014 012A     		cmp	r2, #1
+ 151 0016 18D0     		beq	.L9
+ 195:controller/engine_cycle/injection.c ****     {
+ 196:controller/engine_cycle/injection.c ****     case FO_1342: // Common inline-4
+ 197:controller/engine_cycle/injection.c ****             injection_events[0].crank_angle_at_end_of_injection = (angle_t)360;
+ 198:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)540;
+ 199:controller/engine_cycle/injection.c ****             injection_events[3].crank_angle_at_end_of_injection = (angle_t)0;
+ 200:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 201:controller/engine_cycle/injection.c **** 
+ 202:controller/engine_cycle/injection.c ****             injection_events[0].primary_output = &outputs[0];
+ 203:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 204:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 205:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+ 206:controller/engine_cycle/injection.c **** 
+ 207:controller/engine_cycle/injection.c ****             number_of_events = 4;
+ 208:controller/engine_cycle/injection.c ****         break;
+ 209:controller/engine_cycle/injection.c **** 
+ 210:controller/engine_cycle/injection.c ****     case FO_153624: // Common inline-6
+ 211:controller/engine_cycle/injection.c **** 
+ 212:controller/engine_cycle/injection.c ****         break;
+ 213:controller/engine_cycle/injection.c **** 
+ 214:controller/engine_cycle/injection.c ****     default:
+ 215:controller/engine_cycle/injection.c ****         log_error("injection init failed. unkown firing order.");
+ 152              		.loc 1 215 9 is_stmt 1 view .LVU38
+ 153 0018 0F48     		ldr	r0, .L15+12
+ 154 001a FFF7FEFF 		bl	log_error
+ 155              	.LVL6:
+ 216:controller/engine_cycle/injection.c ****         break;
+ 156              		.loc 1 216 9 view .LVU39
+ 217:controller/engine_cycle/injection.c ****     }
+ 218:controller/engine_cycle/injection.c **** }
+ 157              		.loc 1 218 1 is_stmt 0 view .LVU40
+ 158 001e 14E0     		b	.L9
+ 159              	.LVL7:
+ 160              	.L10:
+ 197:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)540;
+ 161              		.loc 1 197 13 is_stmt 1 view .LVU41
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 8
+
+
+ 197:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)540;
+ 162              		.loc 1 197 65 is_stmt 0 view .LVU42
+ 163 0020 0E4A     		ldr	r2, .L15+16
+ 164 0022 0F49     		ldr	r1, .L15+20
+ 165 0024 1161     		str	r1, [r2, #16]	@ float
+ 198:controller/engine_cycle/injection.c ****             injection_events[3].crank_angle_at_end_of_injection = (angle_t)0;
+ 166              		.loc 1 198 13 is_stmt 1 view .LVU43
+ 198:controller/engine_cycle/injection.c ****             injection_events[3].crank_angle_at_end_of_injection = (angle_t)0;
+ 167              		.loc 1 198 65 is_stmt 0 view .LVU44
+ 168 0026 0F49     		ldr	r1, .L15+24
+ 169 0028 1164     		str	r1, [r2, #64]	@ float
+ 199:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 170              		.loc 1 199 13 is_stmt 1 view .LVU45
+ 199:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 171              		.loc 1 199 65 is_stmt 0 view .LVU46
+ 172 002a 0021     		movs	r1, #0
+ 173 002c 9165     		str	r1, [r2, #88]	@ float
+ 200:controller/engine_cycle/injection.c **** 
+ 174              		.loc 1 200 13 is_stmt 1 view .LVU47
+ 200:controller/engine_cycle/injection.c **** 
+ 175              		.loc 1 200 65 is_stmt 0 view .LVU48
+ 176 002e 0E49     		ldr	r1, .L15+28
+ 177 0030 9162     		str	r1, [r2, #40]	@ float
+ 202:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 178              		.loc 1 202 13 is_stmt 1 view .LVU49
+ 202:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 179              		.loc 1 202 48 is_stmt 0 view .LVU50
+ 180 0032 9360     		str	r3, [r2, #8]
+ 203:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 181              		.loc 1 203 13 is_stmt 1 view .LVU51
+ 203:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 182              		.loc 1 203 50 is_stmt 0 view .LVU52
+ 183 0034 03F10801 		add	r1, r3, #8
+ 203:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 184              		.loc 1 203 48 view .LVU53
+ 185 0038 1162     		str	r1, [r2, #32]
+ 204:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+ 186              		.loc 1 204 13 is_stmt 1 view .LVU54
+ 204:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+ 187              		.loc 1 204 50 is_stmt 0 view .LVU55
+ 188 003a 03F11001 		add	r1, r3, #16
+ 204:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+ 189              		.loc 1 204 48 view .LVU56
+ 190 003e 9163     		str	r1, [r2, #56]
+ 205:controller/engine_cycle/injection.c **** 
+ 191              		.loc 1 205 13 is_stmt 1 view .LVU57
+ 205:controller/engine_cycle/injection.c **** 
+ 192              		.loc 1 205 50 is_stmt 0 view .LVU58
+ 193 0040 1833     		adds	r3, r3, #24
+ 194              	.LVL8:
+ 205:controller/engine_cycle/injection.c **** 
+ 195              		.loc 1 205 48 view .LVU59
+ 196 0042 1365     		str	r3, [r2, #80]
+ 207:controller/engine_cycle/injection.c ****         break;
+ 197              		.loc 1 207 13 is_stmt 1 view .LVU60
+ 207:controller/engine_cycle/injection.c ****         break;
+ 198              		.loc 1 207 30 is_stmt 0 view .LVU61
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 9
+
+
+ 199 0044 094B     		ldr	r3, .L15+32
+ 200 0046 0422     		movs	r2, #4
+ 201 0048 1A70     		strb	r2, [r3]
+ 208:controller/engine_cycle/injection.c **** 
+ 202              		.loc 1 208 9 is_stmt 1 view .LVU62
+ 203              	.LVL9:
+ 204              	.L9:
+ 205              		.loc 1 218 1 is_stmt 0 view .LVU63
+ 206 004a 08BD     		pop	{r3, pc}
+ 207              	.L16:
+ 208              		.align	2
+ 209              	.L15:
+ 210 004c 00000000 		.word	injector_pin_conf
+ 211 0050 00000000 		.word	operating_in_forced_batch_injection
+ 212 0054 00100000 		.word	config+4096
+ 213 0058 00000000 		.word	.LC0
+ 214 005c 00000000 		.word	injection_events
+ 215 0060 0000B443 		.word	1135869952
+ 216 0064 00000744 		.word	1141309440
+ 217 0068 00003443 		.word	1127481344
+ 218 006c 00000000 		.word	number_of_events
+ 219              		.cfi_endproc
+ 220              	.LFE241:
+ 222              		.section	.text.injector_stop_injection,"ax",%progbits
+ 223              		.align	1
+ 224              		.syntax unified
+ 225              		.thumb
+ 226              		.thumb_func
+ 228              	injector_stop_injection:
+ 229              	.LVL10:
+ 230              	.LFB245:
+ 219:controller/engine_cycle/injection.c **** 
+ 220:controller/engine_cycle/injection.c **** void injection_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us)
+ 221:controller/engine_cycle/injection.c **** {
+ 222:controller/engine_cycle/injection.c ****     /**
+ 223:controller/engine_cycle/injection.c ****      * @todo add the necessary checks and bounds
+ 224:controller/engine_cycle/injection.c ****      */
+ 225:controller/engine_cycle/injection.c ****     if (config.injection_mode == INJECTION_MODE_NO_FUEL_INJECTION || !injection_initialized)
+ 226:controller/engine_cycle/injection.c ****     {
+ 227:controller/engine_cycle/injection.c ****         return;
+ 228:controller/engine_cycle/injection.c ****     }
+ 229:controller/engine_cycle/injection.c **** 
+ 230:controller/engine_cycle/injection.c ****     if (!get_bit(runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED))
+ 231:controller/engine_cycle/injection.c ****     {
+ 232:controller/engine_cycle/injection.c ****         return;
+ 233:controller/engine_cycle/injection.c ****     }
+ 234:controller/engine_cycle/injection.c ****     
+ 235:controller/engine_cycle/injection.c **** 
+ 236:controller/engine_cycle/injection.c ****     /* Wether or not cam phase is known */
+ 237:controller/engine_cycle/injection.c ****     bool is_cam_phase_available = get_bit(runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED);
+ 238:controller/engine_cycle/injection.c **** 
+ 239:controller/engine_cycle/injection.c ****     angle_t end_of_injection_advance = 0;
+ 240:controller/engine_cycle/injection.c **** 
+ 241:controller/engine_cycle/injection.c **** #ifdef TEST_MODE
+ 242:controller/engine_cycle/injection.c ****     end_of_injection_advance = (angle_t)30;
+ 243:controller/engine_cycle/injection.c **** #else
+ 244:controller/engine_cycle/injection.c ****     end_of_injection_advance = config.injection_end_of_injection_angle;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 10
+
+
+ 245:controller/engine_cycle/injection.c **** #endif
+ 246:controller/engine_cycle/injection.c **** 
+ 247:controller/engine_cycle/injection.c ****     end_of_injection_advance = CLAMP(end_of_injection_advance, INJECTION_END_OF_INJECTION_ADVANCE_M
+ 248:controller/engine_cycle/injection.c **** 
+ 249:controller/engine_cycle/injection.c ****     bool has_cam_phase = get_bit(runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED);
+ 250:controller/engine_cycle/injection.c ****     bool cam_phase = false;
+ 251:controller/engine_cycle/injection.c **** 
+ 252:controller/engine_cycle/injection.c ****     if (config.injection_mode == INJECTION_MODE_SEQUENTIAL)
+ 253:controller/engine_cycle/injection.c ****     {
+ 254:controller/engine_cycle/injection.c ****         if (!has_cam_phase)
+ 255:controller/engine_cycle/injection.c ****         {
+ 256:controller/engine_cycle/injection.c ****             change_bit(&runtime.status, STATUS_WARNING, true);
+ 257:controller/engine_cycle/injection.c ****             log_error("Cam phase not known. Switching to batch injection.");
+ 258:controller/engine_cycle/injection.c ****             injection_switch_to_batch();
+ 259:controller/engine_cycle/injection.c ****             cam_phase = false;
+ 260:controller/engine_cycle/injection.c ****         }
+ 261:controller/engine_cycle/injection.c ****         else
+ 262:controller/engine_cycle/injection.c ****         {
+ 263:controller/engine_cycle/injection.c ****             injection_switch_to_sequential();
+ 264:controller/engine_cycle/injection.c ****             cam_phase = camshaft_get_phase();
+ 265:controller/engine_cycle/injection.c ****         }
+ 266:controller/engine_cycle/injection.c ****     }
+ 267:controller/engine_cycle/injection.c **** 
+ 268:controller/engine_cycle/injection.c ****     __NOP();
+ 269:controller/engine_cycle/injection.c **** 
+ 270:controller/engine_cycle/injection.c ****     angle_t true_crank_angle = crankshaft_angle;
+ 271:controller/engine_cycle/injection.c ****     bool is_sequential = (config.injection_mode == INJECTION_MODE_SEQUENTIAL) && (!operating_in_for
+ 272:controller/engine_cycle/injection.c **** 
+ 273:controller/engine_cycle/injection.c ****     if (is_sequential)
+ 274:controller/engine_cycle/injection.c ****     {
+ 275:controller/engine_cycle/injection.c ****         true_crank_angle = crankshaft_angle + (angle_t)cam_phase * (angle_t)360;
+ 276:controller/engine_cycle/injection.c ****     }
+ 277:controller/engine_cycle/injection.c **** 
+ 278:controller/engine_cycle/injection.c ****     /* Now we will see which cylinder(s) can be sheduled next */
+ 279:controller/engine_cycle/injection.c ****     for (size_t i = 0; i < number_of_events; i++)
+ 280:controller/engine_cycle/injection.c ****     {
+ 281:controller/engine_cycle/injection.c ****         injection_event_t *event = &injection_events[i];
+ 282:controller/engine_cycle/injection.c **** 
+ 283:controller/engine_cycle/injection.c ****         if (!(event->status == INJECTION_EVENT_FINISHED || event->status == INJECTION_EVENT_INACTIV
+ 284:controller/engine_cycle/injection.c ****         {
+ 285:controller/engine_cycle/injection.c ****             continue;
+ 286:controller/engine_cycle/injection.c ****         }
+ 287:controller/engine_cycle/injection.c ****         /* firstly, we figure out if there are other teeth in the future */
+ 288:controller/engine_cycle/injection.c ****         angle_t crank_angle_at_next_trigger = 0;
+ 289:controller/engine_cycle/injection.c ****         angle_t opening_angle = 0;
+ 290:controller/engine_cycle/injection.c ****         angle_t closing_angle = 0;
+ 291:controller/engine_cycle/injection.c ****         if (is_sequential)
+ 292:controller/engine_cycle/injection.c ****         {
+ 293:controller/engine_cycle/injection.c ****             // // we must use the 720deg math
+ 294:controller/engine_cycle/injection.c ****             // crank_angle_at_next_trigger = crankshaft_get_next_trigger_angle();
+ 295:controller/engine_cycle/injection.c ****             // closing_angle = wrap_angle_720(event->crank_angle_at_end_of_injection - end_of_injec
+ 296:controller/engine_cycle/injection.c ****             // opening_angle = wrap_angle_720(closing_angle - degrees_per_millisecond(rpm) * get_pu
+ 297:controller/engine_cycle/injection.c **** 
+ 298:controller/engine_cycle/injection.c ****             // if (is_phase_in_range(crank_angle_at_next_trigger, crankshaft_angle, opening_angle))
+ 299:controller/engine_cycle/injection.c ****             // {
+ 300:controller/engine_cycle/injection.c ****             //     continue;
+ 301:controller/engine_cycle/injection.c ****             // }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 11
+
+
+ 302:controller/engine_cycle/injection.c ****             // event->injection_stop_time = current_time_us + degree_to_microseconds(angular_forwar
+ 303:controller/engine_cycle/injection.c ****             // event->injection_start_time = current_time_us + degree_to_microseconds(angular_forwa
+ 304:controller/engine_cycle/injection.c ****             // schedule_injection_event(event);
+ 305:controller/engine_cycle/injection.c ****         }
+ 306:controller/engine_cycle/injection.c ****         else
+ 307:controller/engine_cycle/injection.c ****         {
+ 308:controller/engine_cycle/injection.c ****             // we must use the 360deg math
+ 309:controller/engine_cycle/injection.c ****             crank_angle_at_next_trigger = crankshaft_get_next_trigger_angle();
+ 310:controller/engine_cycle/injection.c ****             closing_angle = wrap_angle_360(event->crank_angle_at_end_of_injection - end_of_injectio
+ 311:controller/engine_cycle/injection.c ****             opening_angle = wrap_angle_360(closing_angle - degrees_per_millisecond(rpm) * get_pulse
+ 312:controller/engine_cycle/injection.c **** 
+ 313:controller/engine_cycle/injection.c ****             if (is_phase_in_range(crank_angle_at_next_trigger, crankshaft_angle, opening_angle))
+ 314:controller/engine_cycle/injection.c ****             {
+ 315:controller/engine_cycle/injection.c ****                 continue;
+ 316:controller/engine_cycle/injection.c ****             }
+ 317:controller/engine_cycle/injection.c ****             time_us_t injection_stop_time = current_time_us + degree_to_microseconds(angular_forwar
+ 318:controller/engine_cycle/injection.c ****             time_us_t injection_start_time = current_time_us + degree_to_microseconds(angular_forwa
+ 319:controller/engine_cycle/injection.c ****             // Don't schedule very small injections
+ 320:controller/engine_cycle/injection.c ****             if (injection_stop_time - injection_start_time < 50)
+ 321:controller/engine_cycle/injection.c ****             {
+ 322:controller/engine_cycle/injection.c ****                 continue;
+ 323:controller/engine_cycle/injection.c ****             }
+ 324:controller/engine_cycle/injection.c ****             event->injection_stop_time = injection_stop_time;
+ 325:controller/engine_cycle/injection.c ****             event->injection_start_time = injection_start_time;
+ 326:controller/engine_cycle/injection.c ****             schedule_injection_event(event);
+ 327:controller/engine_cycle/injection.c ****         }
+ 328:controller/engine_cycle/injection.c ****     }
+ 329:controller/engine_cycle/injection.c **** }
+ 330:controller/engine_cycle/injection.c **** 
+ 331:controller/engine_cycle/injection.c **** float_time_ms_t get_pulse_width()
+ 332:controller/engine_cycle/injection.c **** {
+ 333:controller/engine_cycle/injection.c ****     mass_t petrol_fuel_mass = 0;
+ 334:controller/engine_cycle/injection.c ****     petrol_fuel_mass = fuel_get_required_mass_petrol_per_cycle();
+ 335:controller/engine_cycle/injection.c **** 
+ 336:controller/engine_cycle/injection.c ****     float_time_ms_t injector_pulse_width = 0;
+ 337:controller/engine_cycle/injection.c ****     injector_pulse_width = petrol_fuel_mass / INJECTION_DENSITY_OF_PETROL_GRAM_PER_CC / config.inje
+ 338:controller/engine_cycle/injection.c **** 
+ 339:controller/engine_cycle/injection.c ****     injector_pulse_width = injector_pulse_width / (float)number_of_injections;
+ 340:controller/engine_cycle/injection.c ****     runtime.injector_pulse_width_ms = injector_pulse_width;
+ 341:controller/engine_cycle/injection.c ****     return injector_pulse_width;
+ 342:controller/engine_cycle/injection.c **** }
+ 343:controller/engine_cycle/injection.c **** 
+ 344:controller/engine_cycle/injection.c **** void injector_start_injection(void *arg)
+ 345:controller/engine_cycle/injection.c **** {
+ 346:controller/engine_cycle/injection.c ****     if (arg == NULL)
+ 347:controller/engine_cycle/injection.c ****     {
+ 348:controller/engine_cycle/injection.c ****         return;
+ 349:controller/engine_cycle/injection.c ****     }
+ 350:controller/engine_cycle/injection.c ****     injection_event_t *event = (injection_event_t *)arg;
+ 351:controller/engine_cycle/injection.c **** 
+ 352:controller/engine_cycle/injection.c ****     if (event->primary_output)
+ 353:controller/engine_cycle/injection.c ****     {
+ 354:controller/engine_cycle/injection.c ****         HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_SET);
+ 355:controller/engine_cycle/injection.c ****         event->status = INJECTION_EVENT_INJECTING;
+ 356:controller/engine_cycle/injection.c ****     }
+ 357:controller/engine_cycle/injection.c ****     if (event->secondary_output)
+ 358:controller/engine_cycle/injection.c ****     {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 12
+
+
+ 359:controller/engine_cycle/injection.c ****         HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_SET
+ 360:controller/engine_cycle/injection.c ****         event->status = INJECTION_EVENT_INJECTING;
+ 361:controller/engine_cycle/injection.c ****     }
+ 362:controller/engine_cycle/injection.c **** }
+ 363:controller/engine_cycle/injection.c **** 
+ 364:controller/engine_cycle/injection.c **** void injector_stop_injection(void *arg)
+ 365:controller/engine_cycle/injection.c **** {
+ 231              		.loc 1 365 1 is_stmt 1 view -0
+ 232              		.cfi_startproc
+ 233              		@ args = 0, pretend = 0, frame = 0
+ 234              		@ frame_needed = 0, uses_anonymous_args = 0
+ 366:controller/engine_cycle/injection.c ****     if (arg == NULL)
+ 235              		.loc 1 366 5 view .LVU65
+ 236              		.loc 1 366 8 is_stmt 0 view .LVU66
+ 237 0000 A0B1     		cbz	r0, .L21
+ 365:controller/engine_cycle/injection.c ****     if (arg == NULL)
+ 238              		.loc 1 365 1 view .LVU67
+ 239 0002 10B5     		push	{r4, lr}
+ 240              		.cfi_def_cfa_offset 8
+ 241              		.cfi_offset 4, -8
+ 242              		.cfi_offset 14, -4
+ 243 0004 0446     		mov	r4, r0
+ 367:controller/engine_cycle/injection.c ****     {
+ 368:controller/engine_cycle/injection.c ****         return;
+ 369:controller/engine_cycle/injection.c ****     }
+ 370:controller/engine_cycle/injection.c ****     injection_event_t *event = (injection_event_t *)arg;
+ 244              		.loc 1 370 5 is_stmt 1 view .LVU68
+ 245              	.LVL11:
+ 371:controller/engine_cycle/injection.c **** 
+ 372:controller/engine_cycle/injection.c ****     if (event->primary_output)
+ 246              		.loc 1 372 5 view .LVU69
+ 247              		.loc 1 372 14 is_stmt 0 view .LVU70
+ 248 0006 8368     		ldr	r3, [r0, #8]
+ 249              		.loc 1 372 8 view .LVU71
+ 250 0008 33B1     		cbz	r3, .L19
+ 373:controller/engine_cycle/injection.c ****     {
+ 374:controller/engine_cycle/injection.c ****         HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_RESET);
+ 251              		.loc 1 374 9 is_stmt 1 view .LVU72
+ 252 000a 0022     		movs	r2, #0
+ 253 000c 9988     		ldrh	r1, [r3, #4]
+ 254 000e 1868     		ldr	r0, [r3]
+ 255              	.LVL12:
+ 256              		.loc 1 374 9 is_stmt 0 view .LVU73
+ 257 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 258              	.LVL13:
+ 375:controller/engine_cycle/injection.c ****         event->status = INJECTION_EVENT_FINISHED;
+ 259              		.loc 1 375 9 is_stmt 1 view .LVU74
+ 260              		.loc 1 375 23 is_stmt 0 view .LVU75
+ 261 0014 0323     		movs	r3, #3
+ 262 0016 2375     		strb	r3, [r4, #20]
+ 263              	.L19:
+ 376:controller/engine_cycle/injection.c ****     }
+ 377:controller/engine_cycle/injection.c ****     if (event->secondary_output)
+ 264              		.loc 1 377 5 is_stmt 1 view .LVU76
+ 265              		.loc 1 377 14 is_stmt 0 view .LVU77
+ 266 0018 E368     		ldr	r3, [r4, #12]
+ 267              		.loc 1 377 8 view .LVU78
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 13
+
+
+ 268 001a 33B1     		cbz	r3, .L17
+ 378:controller/engine_cycle/injection.c ****     {
+ 379:controller/engine_cycle/injection.c ****         HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_RES
+ 269              		.loc 1 379 9 is_stmt 1 view .LVU79
+ 270 001c 0022     		movs	r2, #0
+ 271 001e 9988     		ldrh	r1, [r3, #4]
+ 272 0020 1868     		ldr	r0, [r3]
+ 273 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 274              	.LVL14:
+ 380:controller/engine_cycle/injection.c ****         event->status = INJECTION_EVENT_FINISHED;
+ 275              		.loc 1 380 9 view .LVU80
+ 276              		.loc 1 380 23 is_stmt 0 view .LVU81
+ 277 0026 0323     		movs	r3, #3
+ 278 0028 2375     		strb	r3, [r4, #20]
+ 279              	.L17:
+ 381:controller/engine_cycle/injection.c ****     }
+ 382:controller/engine_cycle/injection.c **** }
+ 280              		.loc 1 382 1 view .LVU82
+ 281 002a 10BD     		pop	{r4, pc}
+ 282              	.LVL15:
+ 283              	.L21:
+ 284              		.cfi_def_cfa_offset 0
+ 285              		.cfi_restore 4
+ 286              		.cfi_restore 14
+ 287              		.loc 1 382 1 view .LVU83
+ 288 002c 7047     		bx	lr
+ 289              		.cfi_endproc
+ 290              	.LFE245:
+ 292              		.section	.rodata.injection_watchdog_check.str1.4,"aMS",%progbits,1
+ 293              		.align	2
+ 294              	.LC1:
+ 295 0000 696E6A65 		.ascii	"injection watchdog fired.\000"
+ 295      6374696F 
+ 295      6E207761 
+ 295      74636864 
+ 295      6F672066 
+ 296              		.section	.text.injection_watchdog_check,"ax",%progbits
+ 297              		.align	1
+ 298              		.syntax unified
+ 299              		.thumb
+ 300              		.thumb_func
+ 302              	injection_watchdog_check:
+ 303              	.LFB239:
+ 144:controller/engine_cycle/injection.c ****     for (size_t i = 0; i < number_of_events; i++)
+ 304              		.loc 1 144 1 is_stmt 1 view -0
+ 305              		.cfi_startproc
+ 306              		@ args = 0, pretend = 0, frame = 0
+ 307              		@ frame_needed = 0, uses_anonymous_args = 0
+ 308 0000 38B5     		push	{r3, r4, r5, lr}
+ 309              		.cfi_def_cfa_offset 16
+ 310              		.cfi_offset 3, -16
+ 311              		.cfi_offset 4, -12
+ 312              		.cfi_offset 5, -8
+ 313              		.cfi_offset 14, -4
+ 145:controller/engine_cycle/injection.c ****     {
+ 314              		.loc 1 145 5 view .LVU85
+ 315              	.LBB41:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 14
+
+
+ 145:controller/engine_cycle/injection.c ****     {
+ 316              		.loc 1 145 10 view .LVU86
+ 317              	.LVL16:
+ 145:controller/engine_cycle/injection.c ****     {
+ 318              		.loc 1 145 17 is_stmt 0 view .LVU87
+ 319 0002 0024     		movs	r4, #0
+ 145:controller/engine_cycle/injection.c ****     {
+ 320              		.loc 1 145 5 view .LVU88
+ 321 0004 00E0     		b	.L25
+ 322              	.LVL17:
+ 323              	.L26:
+ 145:controller/engine_cycle/injection.c ****     {
+ 324              		.loc 1 145 47 is_stmt 1 discriminator 2 view .LVU89
+ 325 0006 0134     		adds	r4, r4, #1
+ 326              	.LVL18:
+ 327              	.L25:
+ 145:controller/engine_cycle/injection.c ****     {
+ 328              		.loc 1 145 26 discriminator 1 view .LVU90
+ 329 0008 0F4B     		ldr	r3, .L30
+ 330 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 331 000c A342     		cmp	r3, r4
+ 332 000e 19D9     		bls	.L29
+ 333              	.LBB42:
+ 147:controller/engine_cycle/injection.c ****         if (event->status != INJECTION_EVENT_INJECTING) continue;
+ 334              		.loc 1 147 9 view .LVU91
+ 147:controller/engine_cycle/injection.c ****         if (event->status != INJECTION_EVENT_INJECTING) continue;
+ 335              		.loc 1 147 28 is_stmt 0 view .LVU92
+ 336 0010 04EB4403 		add	r3, r4, r4, lsl #1
+ 337 0014 0D4D     		ldr	r5, .L30+4
+ 338 0016 05EBC305 		add	r5, r5, r3, lsl #3
+ 339              	.LVL19:
+ 148:controller/engine_cycle/injection.c ****         time_us_t current_time = get_time_us();
+ 340              		.loc 1 148 9 is_stmt 1 view .LVU93
+ 148:controller/engine_cycle/injection.c ****         time_us_t current_time = get_time_us();
+ 341              		.loc 1 148 18 is_stmt 0 view .LVU94
+ 342 001a 2B7D     		ldrb	r3, [r5, #20]	@ zero_extendqisi2
+ 148:controller/engine_cycle/injection.c ****         time_us_t current_time = get_time_us();
+ 343              		.loc 1 148 12 view .LVU95
+ 344 001c 022B     		cmp	r3, #2
+ 345 001e F2D1     		bne	.L26
+ 149:controller/engine_cycle/injection.c ****         if ((int32_t)(current_time - (event->injection_stop_time)) > 0)
+ 346              		.loc 1 149 9 is_stmt 1 view .LVU96
+ 149:controller/engine_cycle/injection.c ****         if ((int32_t)(current_time - (event->injection_stop_time)) > 0)
+ 347              		.loc 1 149 34 is_stmt 0 view .LVU97
+ 348 0020 FFF7FEFF 		bl	get_time_us
+ 349              	.LVL20:
+ 150:controller/engine_cycle/injection.c ****         {
+ 350              		.loc 1 150 9 is_stmt 1 view .LVU98
+ 150:controller/engine_cycle/injection.c ****         {
+ 351              		.loc 1 150 44 is_stmt 0 view .LVU99
+ 352 0024 6B68     		ldr	r3, [r5, #4]
+ 150:controller/engine_cycle/injection.c ****         {
+ 353              		.loc 1 150 36 view .LVU100
+ 354 0026 C01A     		subs	r0, r0, r3
+ 355              	.LVL21:
+ 150:controller/engine_cycle/injection.c ****         {
+ 356              		.loc 1 150 12 view .LVU101
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 15
+
+
+ 357 0028 0028     		cmp	r0, #0
+ 358 002a ECDD     		ble	.L26
+ 152:controller/engine_cycle/injection.c ****             change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
+ 359              		.loc 1 152 13 is_stmt 1 view .LVU102
+ 360 002c 2846     		mov	r0, r5
+ 361 002e FFF7FEFF 		bl	injector_stop_injection
+ 362              	.LVL22:
+ 153:controller/engine_cycle/injection.c ****             log_error("injection watchdog fired.");
+ 363              		.loc 1 153 13 view .LVU103
+ 364              	.LBB43:
+ 365              	.LBI43:
+ 366              		.file 2 "controller/utils/utils.h"
+   1:controller/utils/utils.h **** /**
+   2:controller/utils/utils.h ****  * @file utils.h
+   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
+   4:controller/utils/utils.h ****  *
+   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
+   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
+   7:controller/utils/utils.h ****  *
+   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
+   9:controller/utils/utils.h ****  */
+  10:controller/utils/utils.h **** #ifndef UTILS_H
+  11:controller/utils/utils.h **** #define UTILS_H
+  12:controller/utils/utils.h **** 
+  13:controller/utils/utils.h **** #include "types.h"
+  14:controller/utils/utils.h **** #include "math.h"
+  15:controller/utils/utils.h **** 
+  16:controller/utils/utils.h **** #define PI 3.14159265358979323846f
+  17:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  18:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  19:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** #define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
+  22:controller/utils/utils.h **** 
+  23:controller/utils/utils.h **** bool is_phase_in_range(float test, float current, float next);
+  24:controller/utils/utils.h **** 
+  25:controller/utils/utils.h **** size_t nearest_index_float(const float *arr, size_t size, float target);
+  26:controller/utils/utils.h **** size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target);
+  27:controller/utils/utils.h **** size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target);
+  28:controller/utils/utils.h **** size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
+  29:controller/utils/utils.h **** 
+  30:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
+ 367              		.loc 2 30 20 view .LVU104
+ 368              	.LBB44:
+  31:controller/utils/utils.h **** {
+  32:controller/utils/utils.h ****     if (bit > 31)
+ 369              		.loc 2 32 5 view .LVU105
+  33:controller/utils/utils.h ****     {
+  34:controller/utils/utils.h ****         return;
+  35:controller/utils/utils.h ****     }
+  36:controller/utils/utils.h ****     if (state)
+ 370              		.loc 2 36 5 view .LVU106
+  37:controller/utils/utils.h ****     {
+  38:controller/utils/utils.h ****         *var |= (1u << bit);
+ 371              		.loc 2 38 9 view .LVU107
+ 372 0032 074A     		ldr	r2, .L30+8
+ 373 0034 1368     		ldr	r3, [r2]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 16
+
+
+ 374              		.loc 2 38 14 is_stmt 0 view .LVU108
+ 375 0036 43F40023 		orr	r3, r3, #524288
+ 376 003a 1360     		str	r3, [r2]
+ 377              	.LVL23:
+ 378              		.loc 2 38 14 view .LVU109
+ 379              	.LBE44:
+ 380              	.LBE43:
+ 154:controller/engine_cycle/injection.c ****         }
+ 381              		.loc 1 154 13 is_stmt 1 view .LVU110
+ 382 003c 0548     		ldr	r0, .L30+12
+ 383 003e FFF7FEFF 		bl	log_error
+ 384              	.LVL24:
+ 385 0042 E0E7     		b	.L26
+ 386              	.LVL25:
+ 387              	.L29:
+ 154:controller/engine_cycle/injection.c ****         }
+ 388              		.loc 1 154 13 is_stmt 0 view .LVU111
+ 389              	.LBE42:
+ 390              	.LBE41:
+ 157:controller/engine_cycle/injection.c **** 
+ 391              		.loc 1 157 1 view .LVU112
+ 392 0044 38BD     		pop	{r3, r4, r5, pc}
+ 393              	.LVL26:
+ 394              	.L31:
+ 157:controller/engine_cycle/injection.c **** 
+ 395              		.loc 1 157 1 view .LVU113
+ 396 0046 00BF     		.align	2
+ 397              	.L30:
+ 398 0048 00000000 		.word	number_of_events
+ 399 004c 00000000 		.word	injection_events
+ 400 0050 00000000 		.word	runtime
+ 401 0054 00000000 		.word	.LC1
+ 402              		.cfi_endproc
+ 403              	.LFE239:
+ 405              		.section	.text.injector_start_injection,"ax",%progbits
+ 406              		.align	1
+ 407              		.syntax unified
+ 408              		.thumb
+ 409              		.thumb_func
+ 411              	injector_start_injection:
+ 412              	.LVL27:
+ 413              	.LFB244:
+ 345:controller/engine_cycle/injection.c ****     if (arg == NULL)
+ 414              		.loc 1 345 1 is_stmt 1 view -0
+ 415              		.cfi_startproc
+ 416              		@ args = 0, pretend = 0, frame = 0
+ 417              		@ frame_needed = 0, uses_anonymous_args = 0
+ 346:controller/engine_cycle/injection.c ****     {
+ 418              		.loc 1 346 5 view .LVU115
+ 346:controller/engine_cycle/injection.c ****     {
+ 419              		.loc 1 346 8 is_stmt 0 view .LVU116
+ 420 0000 A0B1     		cbz	r0, .L36
+ 345:controller/engine_cycle/injection.c ****     if (arg == NULL)
+ 421              		.loc 1 345 1 view .LVU117
+ 422 0002 10B5     		push	{r4, lr}
+ 423              		.cfi_def_cfa_offset 8
+ 424              		.cfi_offset 4, -8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 17
+
+
+ 425              		.cfi_offset 14, -4
+ 426 0004 0446     		mov	r4, r0
+ 350:controller/engine_cycle/injection.c **** 
+ 427              		.loc 1 350 5 is_stmt 1 view .LVU118
+ 428              	.LVL28:
+ 352:controller/engine_cycle/injection.c ****     {
+ 429              		.loc 1 352 5 view .LVU119
+ 352:controller/engine_cycle/injection.c ****     {
+ 430              		.loc 1 352 14 is_stmt 0 view .LVU120
+ 431 0006 8368     		ldr	r3, [r0, #8]
+ 352:controller/engine_cycle/injection.c ****     {
+ 432              		.loc 1 352 8 view .LVU121
+ 433 0008 33B1     		cbz	r3, .L34
+ 354:controller/engine_cycle/injection.c ****         event->status = INJECTION_EVENT_INJECTING;
+ 434              		.loc 1 354 9 is_stmt 1 view .LVU122
+ 435 000a 0122     		movs	r2, #1
+ 436 000c 9988     		ldrh	r1, [r3, #4]
+ 437 000e 1868     		ldr	r0, [r3]
+ 438              	.LVL29:
+ 354:controller/engine_cycle/injection.c ****         event->status = INJECTION_EVENT_INJECTING;
+ 439              		.loc 1 354 9 is_stmt 0 view .LVU123
+ 440 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 441              	.LVL30:
+ 355:controller/engine_cycle/injection.c ****     }
+ 442              		.loc 1 355 9 is_stmt 1 view .LVU124
+ 355:controller/engine_cycle/injection.c ****     }
+ 443              		.loc 1 355 23 is_stmt 0 view .LVU125
+ 444 0014 0223     		movs	r3, #2
+ 445 0016 2375     		strb	r3, [r4, #20]
+ 446              	.L34:
+ 357:controller/engine_cycle/injection.c ****     {
+ 447              		.loc 1 357 5 is_stmt 1 view .LVU126
+ 357:controller/engine_cycle/injection.c ****     {
+ 448              		.loc 1 357 14 is_stmt 0 view .LVU127
+ 449 0018 E368     		ldr	r3, [r4, #12]
+ 357:controller/engine_cycle/injection.c ****     {
+ 450              		.loc 1 357 8 view .LVU128
+ 451 001a 33B1     		cbz	r3, .L32
+ 359:controller/engine_cycle/injection.c ****         event->status = INJECTION_EVENT_INJECTING;
+ 452              		.loc 1 359 9 is_stmt 1 view .LVU129
+ 453 001c 0122     		movs	r2, #1
+ 454 001e 9988     		ldrh	r1, [r3, #4]
+ 455 0020 1868     		ldr	r0, [r3]
+ 456 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 457              	.LVL31:
+ 360:controller/engine_cycle/injection.c ****     }
+ 458              		.loc 1 360 9 view .LVU130
+ 360:controller/engine_cycle/injection.c ****     }
+ 459              		.loc 1 360 23 is_stmt 0 view .LVU131
+ 460 0026 0223     		movs	r3, #2
+ 461 0028 2375     		strb	r3, [r4, #20]
+ 462              	.L32:
+ 362:controller/engine_cycle/injection.c **** 
+ 463              		.loc 1 362 1 view .LVU132
+ 464 002a 10BD     		pop	{r4, pc}
+ 465              	.LVL32:
+ 466              	.L36:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 18
+
+
+ 467              		.cfi_def_cfa_offset 0
+ 468              		.cfi_restore 4
+ 469              		.cfi_restore 14
+ 362:controller/engine_cycle/injection.c **** 
+ 470              		.loc 1 362 1 view .LVU133
+ 471 002c 7047     		bx	lr
+ 472              		.cfi_endproc
+ 473              	.LFE244:
+ 475              		.section	.text.schedule_injection_event,"ax",%progbits
+ 476              		.align	1
+ 477              		.syntax unified
+ 478              		.thumb
+ 479              		.thumb_func
+ 481              	schedule_injection_event:
+ 482              	.LVL33:
+ 483              	.LFB246:
+ 383:controller/engine_cycle/injection.c **** 
+ 384:controller/engine_cycle/injection.c **** void schedule_injection_event(injection_event_t *event)
+ 385:controller/engine_cycle/injection.c **** {
+ 484              		.loc 1 385 1 is_stmt 1 view -0
+ 485              		.cfi_startproc
+ 486              		@ args = 0, pretend = 0, frame = 0
+ 487              		@ frame_needed = 0, uses_anonymous_args = 0
+ 386:controller/engine_cycle/injection.c ****     if (event == NULL)
+ 488              		.loc 1 386 5 view .LVU135
+ 489              		.loc 1 386 8 is_stmt 0 view .LVU136
+ 490 0000 C0B1     		cbz	r0, .L42
+ 385:controller/engine_cycle/injection.c ****     if (event == NULL)
+ 491              		.loc 1 385 1 view .LVU137
+ 492 0002 10B5     		push	{r4, lr}
+ 493              		.cfi_def_cfa_offset 8
+ 494              		.cfi_offset 4, -8
+ 495              		.cfi_offset 14, -4
+ 496 0004 0446     		mov	r4, r0
+ 387:controller/engine_cycle/injection.c ****     {
+ 388:controller/engine_cycle/injection.c ****         return;
+ 389:controller/engine_cycle/injection.c ****     }
+ 390:controller/engine_cycle/injection.c ****     /* We do not want to schedule anything in the past or very distant future */
+ 391:controller/engine_cycle/injection.c ****     time_us_t current_time = get_time_us();
+ 497              		.loc 1 391 5 is_stmt 1 view .LVU138
+ 498              		.loc 1 391 30 is_stmt 0 view .LVU139
+ 499 0006 FFF7FEFF 		bl	get_time_us
+ 500              	.LVL34:
+ 501              		.loc 1 391 30 view .LVU140
+ 502 000a 0346     		mov	r3, r0
+ 503              	.LVL35:
+ 392:controller/engine_cycle/injection.c **** 
+ 393:controller/engine_cycle/injection.c ****     if ((int32_t)(event->injection_start_time - current_time) < 0 || (int32_t)(event->injection_sto
+ 504              		.loc 1 393 5 is_stmt 1 view .LVU141
+ 505              		.loc 1 393 24 is_stmt 0 view .LVU142
+ 506 000c 2268     		ldr	r2, [r4]
+ 507              		.loc 1 393 47 view .LVU143
+ 508 000e 121A     		subs	r2, r2, r0
+ 509              		.loc 1 393 8 view .LVU144
+ 510 0010 002A     		cmp	r2, #0
+ 511 0012 0EDB     		blt	.L39
+ 512              		.loc 1 393 85 discriminator 1 view .LVU145
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 19
+
+
+ 513 0014 6068     		ldr	r0, [r4, #4]
+ 514              	.LVL36:
+ 515              		.loc 1 393 107 discriminator 1 view .LVU146
+ 516 0016 C31A     		subs	r3, r0, r3
+ 517              	.LVL37:
+ 518              		.loc 1 393 67 discriminator 1 view .LVU147
+ 519 0018 002B     		cmp	r3, #0
+ 520 001a 0ADB     		blt	.L39
+ 394:controller/engine_cycle/injection.c ****     {
+ 395:controller/engine_cycle/injection.c ****         return;
+ 396:controller/engine_cycle/injection.c ****     }
+ 397:controller/engine_cycle/injection.c ****     event->status = INJECTION_EVENT_PENDING;
+ 521              		.loc 1 397 5 is_stmt 1 view .LVU148
+ 522              		.loc 1 397 19 is_stmt 0 view .LVU149
+ 523 001c 0123     		movs	r3, #1
+ 524 001e 2375     		strb	r3, [r4, #20]
+ 398:controller/engine_cycle/injection.c ****     scheduler_schedule_event_with_arg(event->injection_stop_time, injector_stop_injection, (void *)
+ 525              		.loc 1 398 5 is_stmt 1 view .LVU150
+ 526 0020 2246     		mov	r2, r4
+ 527 0022 0549     		ldr	r1, .L45
+ 528 0024 FFF7FEFF 		bl	scheduler_schedule_event_with_arg
+ 529              	.LVL38:
+ 399:controller/engine_cycle/injection.c ****     scheduler_schedule_event_with_arg(event->injection_start_time, injector_start_injection, (void 
+ 530              		.loc 1 399 5 view .LVU151
+ 531 0028 2246     		mov	r2, r4
+ 532 002a 0449     		ldr	r1, .L45+4
+ 533 002c 2068     		ldr	r0, [r4]
+ 534 002e FFF7FEFF 		bl	scheduler_schedule_event_with_arg
+ 535              	.LVL39:
+ 536              	.L39:
+ 400:controller/engine_cycle/injection.c **** }
+ 537              		.loc 1 400 1 is_stmt 0 view .LVU152
+ 538 0032 10BD     		pop	{r4, pc}
+ 539              	.LVL40:
+ 540              	.L42:
+ 541              		.cfi_def_cfa_offset 0
+ 542              		.cfi_restore 4
+ 543              		.cfi_restore 14
+ 544              		.loc 1 400 1 view .LVU153
+ 545 0034 7047     		bx	lr
+ 546              	.L46:
+ 547 0036 00BF     		.align	2
+ 548              	.L45:
+ 549 0038 00000000 		.word	injector_stop_injection
+ 550 003c 00000000 		.word	injector_start_injection
+ 551              		.cfi_endproc
+ 552              	.LFE246:
+ 554              		.section	.rodata.injection_init.str1.4,"aMS",%progbits,1
+ 555              		.align	2
+ 556              	.LC2:
+ 557 0000 696E6A65 		.ascii	"injection init failed. No output config\000"
+ 557      6374696F 
+ 557      6E20696E 
+ 557      69742066 
+ 557      61696C65 
+ 558              		.align	2
+ 559              	.LC3:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 20
+
+
+ 560 0028 53657175 		.ascii	"Sequential injection not possible for 6 cylinders, "
+ 560      656E7469 
+ 560      616C2069 
+ 560      6E6A6563 
+ 560      74696F6E 
+ 561 005b 64656661 		.ascii	"defaulting to batch fire.\000"
+ 561      756C7469 
+ 561      6E672074 
+ 561      6F206261 
+ 561      74636820 
+ 562              		.section	.text.injection_init,"ax",%progbits
+ 563              		.align	1
+ 564              		.global	injection_init
+ 565              		.syntax unified
+ 566              		.thumb
+ 567              		.thumb_func
+ 569              	injection_init:
+ 570              	.LVL41:
+ 571              	.LFB238:
+  22:controller/engine_cycle/injection.c ****     if (output_pin_conf == NULL)
+ 572              		.loc 1 22 1 is_stmt 1 view -0
+ 573              		.cfi_startproc
+ 574              		@ args = 0, pretend = 0, frame = 0
+ 575              		@ frame_needed = 0, uses_anonymous_args = 0
+  22:controller/engine_cycle/injection.c ****     if (output_pin_conf == NULL)
+ 576              		.loc 1 22 1 is_stmt 0 view .LVU155
+ 577 0000 08B5     		push	{r3, lr}
+ 578              		.cfi_def_cfa_offset 8
+ 579              		.cfi_offset 3, -8
+ 580              		.cfi_offset 14, -4
+  23:controller/engine_cycle/injection.c ****     {
+ 581              		.loc 1 23 5 is_stmt 1 view .LVU156
+  23:controller/engine_cycle/injection.c ****     {
+ 582              		.loc 1 23 8 is_stmt 0 view .LVU157
+ 583 0002 00B3     		cbz	r0, .L63
+ 584 0004 0346     		mov	r3, r0
+  30:controller/engine_cycle/injection.c ****     injector_pin_conf = output_pin_conf;
+ 585              		.loc 1 30 5 is_stmt 1 view .LVU158
+ 586              	.LVL42:
+  31:controller/engine_cycle/injection.c **** 
+ 587              		.loc 1 31 5 view .LVU159
+  31:controller/engine_cycle/injection.c **** 
+ 588              		.loc 1 31 23 is_stmt 0 view .LVU160
+ 589 0006 5C4A     		ldr	r2, .L64
+ 590 0008 1060     		str	r0, [r2]
+  33:controller/engine_cycle/injection.c ****         return true;
+ 591              		.loc 1 33 5 is_stmt 1 view .LVU161
+  33:controller/engine_cycle/injection.c ****         return true;
+ 592              		.loc 1 33 15 is_stmt 0 view .LVU162
+ 593 000a 5C4A     		ldr	r2, .L64+4
+ 594 000c 92F8D129 		ldrb	r2, [r2, #2513]	@ zero_extendqisi2
+  33:controller/engine_cycle/injection.c ****         return true;
+ 595              		.loc 1 33 8 view .LVU163
+ 596 0010 002A     		cmp	r2, #0
+ 597 0012 00F0AF80 		beq	.L60
+  36:controller/engine_cycle/injection.c ****     {
+ 598              		.loc 1 36 5 is_stmt 1 view .LVU164
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 21
+
+
+  36:controller/engine_cycle/injection.c ****     {
+ 599              		.loc 1 36 19 is_stmt 0 view .LVU165
+ 600 0016 5949     		ldr	r1, .L64+4
+ 601 0018 91F8CA19 		ldrb	r1, [r1, #2506]	@ zero_extendqisi2
+  36:controller/engine_cycle/injection.c ****     {
+ 602              		.loc 1 36 5 view .LVU166
+ 603 001c 01B3     		cbz	r1, .L50
+ 604 001e 0129     		cmp	r1, #1
+ 605 0020 5FD0     		beq	.L51
+ 121:controller/engine_cycle/injection.c ****         break;
+ 606              		.loc 1 121 9 is_stmt 1 view .LVU167
+ 607 0022 5748     		ldr	r0, .L64+8
+ 608              	.LVL43:
+ 121:controller/engine_cycle/injection.c ****         break;
+ 609              		.loc 1 121 9 is_stmt 0 view .LVU168
+ 610 0024 FFF7FEFF 		bl	log_error
+ 611              	.LVL44:
+ 122:controller/engine_cycle/injection.c ****     }
+ 612              		.loc 1 122 9 is_stmt 1 view .LVU169
+ 613              	.L55:
+ 125:controller/engine_cycle/injection.c ****     {
+ 614              		.loc 1 125 5 view .LVU170
+ 125:controller/engine_cycle/injection.c ****     {
+ 615              		.loc 1 125 26 is_stmt 0 view .LVU171
+ 616 0028 564B     		ldr	r3, .L64+12
+ 617 002a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 125:controller/engine_cycle/injection.c ****     {
+ 618              		.loc 1 125 8 view .LVU172
+ 619 002c 002B     		cmp	r3, #0
+ 620 002e 40F09380 		bne	.L58
+ 127:controller/engine_cycle/injection.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+ 621              		.loc 1 127 9 is_stmt 1 view .LVU173
+ 622              	.LVL45:
+ 623              	.LBB45:
+ 624              	.LBI45:
+  30:controller/utils/utils.h **** {
+ 625              		.loc 2 30 20 view .LVU174
+ 626              	.LBB46:
+  32:controller/utils/utils.h ****     {
+ 627              		.loc 2 32 5 view .LVU175
+  36:controller/utils/utils.h ****     {
+ 628              		.loc 2 36 5 view .LVU176
+ 629              		.loc 2 38 9 view .LVU177
+ 630 0032 554A     		ldr	r2, .L64+16
+ 631 0034 1368     		ldr	r3, [r2]
+ 632              		.loc 2 38 14 is_stmt 0 view .LVU178
+ 633 0036 43F48023 		orr	r3, r3, #262144
+ 634 003a 1360     		str	r3, [r2]
+ 635              	.LVL46:
+ 636              		.loc 2 38 14 view .LVU179
+ 637              	.LBE46:
+ 638              	.LBE45:
+ 128:controller/engine_cycle/injection.c ****         return false;
+ 639              		.loc 1 128 9 is_stmt 1 view .LVU180
+ 640              	.LBB47:
+ 641              	.LBI47:
+  30:controller/utils/utils.h **** {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 22
+
+
+ 642              		.loc 2 30 20 view .LVU181
+ 643              	.LBB48:
+  32:controller/utils/utils.h ****     {
+ 644              		.loc 2 32 5 view .LVU182
+  36:controller/utils/utils.h ****     {
+ 645              		.loc 2 36 5 view .LVU183
+ 646              		.loc 2 38 9 view .LVU184
+ 647              		.loc 2 38 14 is_stmt 0 view .LVU185
+ 648 003c 43F00103 		orr	r3, r3, #1
+ 649 0040 1360     		str	r3, [r2]
+ 650              	.LVL47:
+ 651              		.loc 2 38 14 view .LVU186
+ 652              	.LBE48:
+ 653              	.LBE47:
+ 129:controller/engine_cycle/injection.c ****     }
+ 654              		.loc 1 129 9 is_stmt 1 view .LVU187
+ 129:controller/engine_cycle/injection.c ****     }
+ 655              		.loc 1 129 16 is_stmt 0 view .LVU188
+ 656 0042 0020     		movs	r0, #0
+ 657 0044 97E0     		b	.L49
+ 658              	.LVL48:
+ 659              	.L63:
+  25:controller/engine_cycle/injection.c ****         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
+ 660              		.loc 1 25 9 is_stmt 1 view .LVU189
+ 661              	.LBB49:
+ 662              	.LBI49:
+  30:controller/utils/utils.h **** {
+ 663              		.loc 2 30 20 view .LVU190
+ 664              	.LBB50:
+  32:controller/utils/utils.h ****     {
+ 665              		.loc 2 32 5 view .LVU191
+  36:controller/utils/utils.h ****     {
+ 666              		.loc 2 36 5 view .LVU192
+ 667              		.loc 2 38 9 view .LVU193
+ 668 0046 504A     		ldr	r2, .L64+16
+ 669 0048 1368     		ldr	r3, [r2]
+ 670              		.loc 2 38 14 is_stmt 0 view .LVU194
+ 671 004a 43F40023 		orr	r3, r3, #524288
+ 672 004e 1360     		str	r3, [r2]
+ 673              	.LVL49:
+ 674              		.loc 2 38 14 view .LVU195
+ 675              	.LBE50:
+ 676              	.LBE49:
+  26:controller/engine_cycle/injection.c ****         log_error("injection init failed. No output config");
+ 677              		.loc 1 26 9 is_stmt 1 view .LVU196
+ 678              	.LBB51:
+ 679              	.LBI51:
+  30:controller/utils/utils.h **** {
+ 680              		.loc 2 30 20 view .LVU197
+ 681              	.LBB52:
+  32:controller/utils/utils.h ****     {
+ 682              		.loc 2 32 5 view .LVU198
+  36:controller/utils/utils.h ****     {
+ 683              		.loc 2 36 5 view .LVU199
+ 684              		.loc 2 38 9 view .LVU200
+ 685              		.loc 2 38 14 is_stmt 0 view .LVU201
+ 686 0050 43F00103 		orr	r3, r3, #1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 23
+
+
+ 687 0054 1360     		str	r3, [r2]
+ 688              	.LVL50:
+ 689              		.loc 2 38 14 view .LVU202
+ 690              	.LBE52:
+ 691              	.LBE51:
+  27:controller/engine_cycle/injection.c ****         return false;
+ 692              		.loc 1 27 9 is_stmt 1 view .LVU203
+ 693 0056 4D48     		ldr	r0, .L64+20
+ 694              	.LVL51:
+  27:controller/engine_cycle/injection.c ****         return false;
+ 695              		.loc 1 27 9 is_stmt 0 view .LVU204
+ 696 0058 FFF7FEFF 		bl	log_error
+ 697              	.LVL52:
+  28:controller/engine_cycle/injection.c ****     }
+ 698              		.loc 1 28 9 is_stmt 1 view .LVU205
+  28:controller/engine_cycle/injection.c ****     }
+ 699              		.loc 1 28 16 is_stmt 0 view .LVU206
+ 700 005c 0020     		movs	r0, #0
+ 701 005e 8AE0     		b	.L49
+ 702              	.LVL53:
+ 703              	.L50:
+  39:controller/engine_cycle/injection.c ****         {
+ 704              		.loc 1 39 9 is_stmt 1 view .LVU207
+ 705 0060 022A     		cmp	r2, #2
+ 706 0062 11D0     		beq	.L53
+ 707 0064 032A     		cmp	r2, #3
+ 708 0066 24D0     		beq	.L54
+ 709 0068 012A     		cmp	r2, #1
+ 710 006a DDD1     		bne	.L55
+  42:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[0];
+ 711              		.loc 1 42 13 view .LVU208
+  42:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[0];
+ 712              		.loc 1 42 48 is_stmt 0 view .LVU209
+ 713 006c 484A     		ldr	r2, .L64+24
+ 714 006e 9060     		str	r0, [r2, #8]
+  43:controller/engine_cycle/injection.c **** 
+ 715              		.loc 1 43 13 is_stmt 1 view .LVU210
+  43:controller/engine_cycle/injection.c **** 
+ 716              		.loc 1 43 48 is_stmt 0 view .LVU211
+ 717 0070 1062     		str	r0, [r2, #32]
+  45:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 718              		.loc 1 45 13 is_stmt 1 view .LVU212
+  45:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 719              		.loc 1 45 65 is_stmt 0 view .LVU213
+ 720 0072 0023     		movs	r3, #0
+ 721 0074 1361     		str	r3, [r2, #16]	@ float
+  46:controller/engine_cycle/injection.c ****             number_of_injections = 4;
+ 722              		.loc 1 46 13 is_stmt 1 view .LVU214
+  46:controller/engine_cycle/injection.c ****             number_of_injections = 4;
+ 723              		.loc 1 46 65 is_stmt 0 view .LVU215
+ 724 0076 474B     		ldr	r3, .L64+28
+ 725 0078 9362     		str	r3, [r2, #40]	@ float
+  47:controller/engine_cycle/injection.c ****             number_of_events = 2;
+ 726              		.loc 1 47 13 is_stmt 1 view .LVU216
+  47:controller/engine_cycle/injection.c ****             number_of_events = 2;
+ 727              		.loc 1 47 34 is_stmt 0 view .LVU217
+ 728 007a 474B     		ldr	r3, .L64+32
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 24
+
+
+ 729 007c 0422     		movs	r2, #4
+ 730 007e 1A70     		strb	r2, [r3]
+  48:controller/engine_cycle/injection.c ****             break;
+ 731              		.loc 1 48 13 is_stmt 1 view .LVU218
+  48:controller/engine_cycle/injection.c ****             break;
+ 732              		.loc 1 48 30 is_stmt 0 view .LVU219
+ 733 0080 404B     		ldr	r3, .L64+12
+ 734 0082 0222     		movs	r2, #2
+ 735 0084 1A70     		strb	r2, [r3]
+  49:controller/engine_cycle/injection.c ****         case INJECTION_MODE_BATCH:
+ 736              		.loc 1 49 13 is_stmt 1 view .LVU220
+ 737 0086 CFE7     		b	.L55
+ 738              	.L53:
+  51:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 739              		.loc 1 51 13 view .LVU221
+  51:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 740              		.loc 1 51 65 is_stmt 0 view .LVU222
+ 741 0088 414A     		ldr	r2, .L64+24
+ 742 008a 0021     		movs	r1, #0
+ 743 008c 1161     		str	r1, [r2, #16]	@ float
+  52:controller/engine_cycle/injection.c **** 
+ 744              		.loc 1 52 13 is_stmt 1 view .LVU223
+  52:controller/engine_cycle/injection.c **** 
+ 745              		.loc 1 52 65 is_stmt 0 view .LVU224
+ 746 008e 4149     		ldr	r1, .L64+28
+ 747 0090 9162     		str	r1, [r2, #40]	@ float
+  54:controller/engine_cycle/injection.c ****             injection_events[0].secondary_output = &outputs[3];
+ 748              		.loc 1 54 13 is_stmt 1 view .LVU225
+  54:controller/engine_cycle/injection.c ****             injection_events[0].secondary_output = &outputs[3];
+ 749              		.loc 1 54 48 is_stmt 0 view .LVU226
+ 750 0092 9060     		str	r0, [r2, #8]
+  55:controller/engine_cycle/injection.c **** 
+ 751              		.loc 1 55 13 is_stmt 1 view .LVU227
+  55:controller/engine_cycle/injection.c **** 
+ 752              		.loc 1 55 52 is_stmt 0 view .LVU228
+ 753 0094 00F11801 		add	r1, r0, #24
+  55:controller/engine_cycle/injection.c **** 
+ 754              		.loc 1 55 50 view .LVU229
+ 755 0098 D160     		str	r1, [r2, #12]
+  57:controller/engine_cycle/injection.c ****             injection_events[1].secondary_output = &outputs[2];
+ 756              		.loc 1 57 13 is_stmt 1 view .LVU230
+  57:controller/engine_cycle/injection.c ****             injection_events[1].secondary_output = &outputs[2];
+ 757              		.loc 1 57 50 is_stmt 0 view .LVU231
+ 758 009a 00F10801 		add	r1, r0, #8
+  57:controller/engine_cycle/injection.c ****             injection_events[1].secondary_output = &outputs[2];
+ 759              		.loc 1 57 48 view .LVU232
+ 760 009e 1162     		str	r1, [r2, #32]
+  58:controller/engine_cycle/injection.c ****             number_of_injections = 4;   
+ 761              		.loc 1 58 13 is_stmt 1 view .LVU233
+  58:controller/engine_cycle/injection.c ****             number_of_injections = 4;   
+ 762              		.loc 1 58 52 is_stmt 0 view .LVU234
+ 763 00a0 1033     		adds	r3, r3, #16
+  58:controller/engine_cycle/injection.c ****             number_of_injections = 4;   
+ 764              		.loc 1 58 50 view .LVU235
+ 765 00a2 5362     		str	r3, [r2, #36]
+  59:controller/engine_cycle/injection.c ****             number_of_events = 2;
+ 766              		.loc 1 59 13 is_stmt 1 view .LVU236
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 25
+
+
+  59:controller/engine_cycle/injection.c ****             number_of_events = 2;
+ 767              		.loc 1 59 34 is_stmt 0 view .LVU237
+ 768 00a4 3C4B     		ldr	r3, .L64+32
+ 769 00a6 0422     		movs	r2, #4
+ 770 00a8 1A70     		strb	r2, [r3]
+  60:controller/engine_cycle/injection.c ****             break;
+ 771              		.loc 1 60 13 is_stmt 1 view .LVU238
+  60:controller/engine_cycle/injection.c ****             break;
+ 772              		.loc 1 60 30 is_stmt 0 view .LVU239
+ 773 00aa 364B     		ldr	r3, .L64+12
+ 774 00ac 0222     		movs	r2, #2
+ 775 00ae 1A70     		strb	r2, [r3]
+  61:controller/engine_cycle/injection.c ****         case INJECTION_MODE_SEQUENTIAL:
+ 776              		.loc 1 61 13 is_stmt 1 view .LVU240
+ 777 00b0 BAE7     		b	.L55
+ 778              	.L54:
+  63:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)540;
+ 779              		.loc 1 63 13 view .LVU241
+  63:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)540;
+ 780              		.loc 1 63 65 is_stmt 0 view .LVU242
+ 781 00b2 374A     		ldr	r2, .L64+24
+ 782 00b4 3949     		ldr	r1, .L64+36
+ 783 00b6 1161     		str	r1, [r2, #16]	@ float
+  64:controller/engine_cycle/injection.c ****             injection_events[3].crank_angle_at_end_of_injection = (angle_t)0;
+ 784              		.loc 1 64 13 is_stmt 1 view .LVU243
+  64:controller/engine_cycle/injection.c ****             injection_events[3].crank_angle_at_end_of_injection = (angle_t)0;
+ 785              		.loc 1 64 65 is_stmt 0 view .LVU244
+ 786 00b8 3949     		ldr	r1, .L64+40
+ 787 00ba 1164     		str	r1, [r2, #64]	@ float
+  65:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 788              		.loc 1 65 13 is_stmt 1 view .LVU245
+  65:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
+ 789              		.loc 1 65 65 is_stmt 0 view .LVU246
+ 790 00bc 0021     		movs	r1, #0
+ 791 00be 9165     		str	r1, [r2, #88]	@ float
+  66:controller/engine_cycle/injection.c **** 
+ 792              		.loc 1 66 13 is_stmt 1 view .LVU247
+  66:controller/engine_cycle/injection.c **** 
+ 793              		.loc 1 66 65 is_stmt 0 view .LVU248
+ 794 00c0 3449     		ldr	r1, .L64+28
+ 795 00c2 9162     		str	r1, [r2, #40]	@ float
+  68:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 796              		.loc 1 68 13 is_stmt 1 view .LVU249
+  68:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 797              		.loc 1 68 48 is_stmt 0 view .LVU250
+ 798 00c4 9060     		str	r0, [r2, #8]
+  69:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 799              		.loc 1 69 13 is_stmt 1 view .LVU251
+  69:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 800              		.loc 1 69 50 is_stmt 0 view .LVU252
+ 801 00c6 00F10801 		add	r1, r0, #8
+  69:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 802              		.loc 1 69 48 view .LVU253
+ 803 00ca 1162     		str	r1, [r2, #32]
+  70:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+ 804              		.loc 1 70 13 is_stmt 1 view .LVU254
+  70:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 26
+
+
+ 805              		.loc 1 70 50 is_stmt 0 view .LVU255
+ 806 00cc 00F11001 		add	r1, r0, #16
+  70:controller/engine_cycle/injection.c ****             injection_events[3].primary_output = &outputs[3];
+ 807              		.loc 1 70 48 view .LVU256
+ 808 00d0 9163     		str	r1, [r2, #56]
+  71:controller/engine_cycle/injection.c ****             number_of_injections = 4;
+ 809              		.loc 1 71 13 is_stmt 1 view .LVU257
+  71:controller/engine_cycle/injection.c ****             number_of_injections = 4;
+ 810              		.loc 1 71 50 is_stmt 0 view .LVU258
+ 811 00d2 1833     		adds	r3, r3, #24
+  71:controller/engine_cycle/injection.c ****             number_of_injections = 4;
+ 812              		.loc 1 71 48 view .LVU259
+ 813 00d4 1365     		str	r3, [r2, #80]
+  72:controller/engine_cycle/injection.c ****             number_of_events = 4;
+ 814              		.loc 1 72 13 is_stmt 1 view .LVU260
+  72:controller/engine_cycle/injection.c ****             number_of_events = 4;
+ 815              		.loc 1 72 34 is_stmt 0 view .LVU261
+ 816 00d6 0423     		movs	r3, #4
+ 817 00d8 2F4A     		ldr	r2, .L64+32
+ 818 00da 1370     		strb	r3, [r2]
+  73:controller/engine_cycle/injection.c ****             break;
+ 819              		.loc 1 73 13 is_stmt 1 view .LVU262
+  73:controller/engine_cycle/injection.c ****             break;
+ 820              		.loc 1 73 30 is_stmt 0 view .LVU263
+ 821 00dc 294A     		ldr	r2, .L64+12
+ 822 00de 1370     		strb	r3, [r2]
+  74:controller/engine_cycle/injection.c **** 
+ 823              		.loc 1 74 13 is_stmt 1 view .LVU264
+ 824 00e0 A2E7     		b	.L55
+ 825              	.L51:
+  81:controller/engine_cycle/injection.c ****         {
+ 826              		.loc 1 81 9 view .LVU265
+ 827 00e2 022A     		cmp	r2, #2
+ 828 00e4 14D0     		beq	.L56
+ 829 00e6 032A     		cmp	r2, #3
+ 830 00e8 26D0     		beq	.L57
+ 831 00ea 012A     		cmp	r2, #1
+ 832 00ec 9CD1     		bne	.L55
+  84:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)120; // cyl 5 & 2
+ 833              		.loc 1 84 13 view .LVU266
+  84:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)120; // cyl 5 & 2
+ 834              		.loc 1 84 65 is_stmt 0 view .LVU267
+ 835 00ee 284A     		ldr	r2, .L64+24
+ 836 00f0 0021     		movs	r1, #0
+ 837 00f2 1161     		str	r1, [r2, #16]	@ float
+  85:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)240; // cyl 3 & 4
+ 838              		.loc 1 85 13 is_stmt 1 view .LVU268
+  85:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)240; // cyl 3 & 4
+ 839              		.loc 1 85 65 is_stmt 0 view .LVU269
+ 840 00f4 2B49     		ldr	r1, .L64+44
+ 841 00f6 9162     		str	r1, [r2, #40]	@ float
+  86:controller/engine_cycle/injection.c **** 
+ 842              		.loc 1 86 13 is_stmt 1 view .LVU270
+  86:controller/engine_cycle/injection.c **** 
+ 843              		.loc 1 86 65 is_stmt 0 view .LVU271
+ 844 00f8 2B49     		ldr	r1, .L64+48
+ 845 00fa 1164     		str	r1, [r2, #64]	@ float
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 27
+
+
+  88:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[0];
+ 846              		.loc 1 88 13 is_stmt 1 view .LVU272
+  88:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[0];
+ 847              		.loc 1 88 48 is_stmt 0 view .LVU273
+ 848 00fc 9060     		str	r0, [r2, #8]
+  89:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[0];
+ 849              		.loc 1 89 13 is_stmt 1 view .LVU274
+  89:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[0];
+ 850              		.loc 1 89 48 is_stmt 0 view .LVU275
+ 851 00fe 1062     		str	r0, [r2, #32]
+  90:controller/engine_cycle/injection.c ****             number_of_injections = 6;
+ 852              		.loc 1 90 13 is_stmt 1 view .LVU276
+  90:controller/engine_cycle/injection.c ****             number_of_injections = 6;
+ 853              		.loc 1 90 48 is_stmt 0 view .LVU277
+ 854 0100 9063     		str	r0, [r2, #56]
+  91:controller/engine_cycle/injection.c ****             number_of_events = 3;
+ 855              		.loc 1 91 13 is_stmt 1 view .LVU278
+  91:controller/engine_cycle/injection.c ****             number_of_events = 3;
+ 856              		.loc 1 91 34 is_stmt 0 view .LVU279
+ 857 0102 254B     		ldr	r3, .L64+32
+ 858 0104 0622     		movs	r2, #6
+ 859 0106 1A70     		strb	r2, [r3]
+  92:controller/engine_cycle/injection.c ****             break;
+ 860              		.loc 1 92 13 is_stmt 1 view .LVU280
+  92:controller/engine_cycle/injection.c ****             break;
+ 861              		.loc 1 92 30 is_stmt 0 view .LVU281
+ 862 0108 1E4B     		ldr	r3, .L64+12
+ 863 010a 0322     		movs	r2, #3
+ 864 010c 1A70     		strb	r2, [r3]
+  93:controller/engine_cycle/injection.c **** 
+ 865              		.loc 1 93 13 is_stmt 1 view .LVU282
+ 866 010e 8BE7     		b	.L55
+ 867              	.L56:
+  96:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)120; // cyl 5 & 2
+ 868              		.loc 1 96 13 view .LVU283
+  96:controller/engine_cycle/injection.c ****             injection_events[1].crank_angle_at_end_of_injection = (angle_t)120; // cyl 5 & 2
+ 869              		.loc 1 96 65 is_stmt 0 view .LVU284
+ 870 0110 1F4A     		ldr	r2, .L64+24
+ 871 0112 0021     		movs	r1, #0
+ 872 0114 1161     		str	r1, [r2, #16]	@ float
+  97:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)240; // cyl 3 & 4
+ 873              		.loc 1 97 13 is_stmt 1 view .LVU285
+  97:controller/engine_cycle/injection.c ****             injection_events[2].crank_angle_at_end_of_injection = (angle_t)240; // cyl 3 & 4
+ 874              		.loc 1 97 65 is_stmt 0 view .LVU286
+ 875 0116 2349     		ldr	r1, .L64+44
+ 876 0118 9162     		str	r1, [r2, #40]	@ float
+  98:controller/engine_cycle/injection.c **** 
+ 877              		.loc 1 98 13 is_stmt 1 view .LVU287
+  98:controller/engine_cycle/injection.c **** 
+ 878              		.loc 1 98 65 is_stmt 0 view .LVU288
+ 879 011a 2349     		ldr	r1, .L64+48
+ 880 011c 1164     		str	r1, [r2, #64]	@ float
+ 100:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 881              		.loc 1 100 13 is_stmt 1 view .LVU289
+ 100:controller/engine_cycle/injection.c ****             injection_events[1].primary_output = &outputs[1];
+ 882              		.loc 1 100 48 is_stmt 0 view .LVU290
+ 883 011e 9060     		str	r0, [r2, #8]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 28
+
+
+ 101:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 884              		.loc 1 101 13 is_stmt 1 view .LVU291
+ 101:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 885              		.loc 1 101 50 is_stmt 0 view .LVU292
+ 886 0120 00F10801 		add	r1, r0, #8
+ 101:controller/engine_cycle/injection.c ****             injection_events[2].primary_output = &outputs[2];
+ 887              		.loc 1 101 48 view .LVU293
+ 888 0124 1162     		str	r1, [r2, #32]
+ 102:controller/engine_cycle/injection.c ****             number_of_injections = 6;
+ 889              		.loc 1 102 13 is_stmt 1 view .LVU294
+ 102:controller/engine_cycle/injection.c ****             number_of_injections = 6;
+ 890              		.loc 1 102 50 is_stmt 0 view .LVU295
+ 891 0126 1033     		adds	r3, r3, #16
+ 102:controller/engine_cycle/injection.c ****             number_of_injections = 6;
+ 892              		.loc 1 102 48 view .LVU296
+ 893 0128 9363     		str	r3, [r2, #56]
+ 103:controller/engine_cycle/injection.c ****             number_of_events = 3;
+ 894              		.loc 1 103 13 is_stmt 1 view .LVU297
+ 103:controller/engine_cycle/injection.c ****             number_of_events = 3;
+ 895              		.loc 1 103 34 is_stmt 0 view .LVU298
+ 896 012a 1B4B     		ldr	r3, .L64+32
+ 897 012c 0622     		movs	r2, #6
+ 898 012e 1A70     		strb	r2, [r3]
+ 104:controller/engine_cycle/injection.c ****             break;
+ 899              		.loc 1 104 13 is_stmt 1 view .LVU299
+ 104:controller/engine_cycle/injection.c ****             break;
+ 900              		.loc 1 104 30 is_stmt 0 view .LVU300
+ 901 0130 144B     		ldr	r3, .L64+12
+ 902 0132 0322     		movs	r2, #3
+ 903 0134 1A70     		strb	r2, [r3]
+ 105:controller/engine_cycle/injection.c **** 
+ 904              		.loc 1 105 13 is_stmt 1 view .LVU301
+ 905 0136 77E7     		b	.L55
+ 906              	.L57:
+ 108:controller/engine_cycle/injection.c ****             change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
+ 907              		.loc 1 108 13 view .LVU302
+ 108:controller/engine_cycle/injection.c ****             change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
+ 908              		.loc 1 108 35 is_stmt 0 view .LVU303
+ 909 0138 104A     		ldr	r2, .L64+4
+ 910 013a 0221     		movs	r1, #2
+ 911 013c 82F8D119 		strb	r1, [r2, #2513]
+ 109:controller/engine_cycle/injection.c ****             injection_init(output_pin_conf);
+ 912              		.loc 1 109 13 is_stmt 1 view .LVU304
+ 913              	.LVL54:
+ 914              	.LBB53:
+ 915              	.LBI53:
+  30:controller/utils/utils.h **** {
+ 916              		.loc 2 30 20 view .LVU305
+ 917              	.LBB54:
+  32:controller/utils/utils.h ****     {
+ 918              		.loc 2 32 5 view .LVU306
+  36:controller/utils/utils.h ****     {
+ 919              		.loc 2 36 5 view .LVU307
+ 920              		.loc 2 38 9 view .LVU308
+ 921 0140 1149     		ldr	r1, .L64+16
+ 922 0142 0A68     		ldr	r2, [r1]
+ 923              		.loc 2 38 14 is_stmt 0 view .LVU309
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 29
+
+
+ 924 0144 42F40022 		orr	r2, r2, #524288
+ 925 0148 0A60     		str	r2, [r1]
+ 926              	.LVL55:
+ 927              		.loc 2 38 14 view .LVU310
+ 928              	.LBE54:
+ 929              	.LBE53:
+ 110:controller/engine_cycle/injection.c ****             log_error("Sequential injection not possible for 6 cylinders, defaulting to batch fire.
+ 930              		.loc 1 110 13 is_stmt 1 view .LVU311
+ 931 014a FFF7FEFF 		bl	injection_init
+ 932              	.LVL56:
+ 111:controller/engine_cycle/injection.c ****             return false;
+ 933              		.loc 1 111 13 view .LVU312
+ 934 014e 1748     		ldr	r0, .L64+52
+ 935 0150 FFF7FEFF 		bl	log_error
+ 936              	.LVL57:
+ 112:controller/engine_cycle/injection.c ****             break;
+ 937              		.loc 1 112 13 view .LVU313
+ 112:controller/engine_cycle/injection.c ****             break;
+ 938              		.loc 1 112 20 is_stmt 0 view .LVU314
+ 939 0154 0020     		movs	r0, #0
+ 940 0156 0EE0     		b	.L49
+ 941              	.L58:
+ 132:controller/engine_cycle/injection.c ****     if (injection_watchdog_timer != NULL)
+ 942              		.loc 1 132 5 is_stmt 1 view .LVU315
+ 132:controller/engine_cycle/injection.c ****     if (injection_watchdog_timer != NULL)
+ 943              		.loc 1 132 44 is_stmt 0 view .LVU316
+ 944 0158 0023     		movs	r3, #0
+ 945 015a 1A46     		mov	r2, r3
+ 946 015c 0121     		movs	r1, #1
+ 947 015e 1448     		ldr	r0, .L64+56
+ 948 0160 FFF7FEFF 		bl	osTimerNew
+ 949              	.LVL58:
+ 133:controller/engine_cycle/injection.c ****     {
+ 950              		.loc 1 133 5 is_stmt 1 view .LVU317
+ 133:controller/engine_cycle/injection.c ****     {
+ 951              		.loc 1 133 8 is_stmt 0 view .LVU318
+ 952 0164 10B1     		cbz	r0, .L59
+ 135:controller/engine_cycle/injection.c ****     }
+ 953              		.loc 1 135 9 is_stmt 1 view .LVU319
+ 954 0166 0121     		movs	r1, #1
+ 955 0168 FFF7FEFF 		bl	osTimerStart
+ 956              	.LVL59:
+ 957              	.L59:
+ 138:controller/engine_cycle/injection.c **** 
+ 958              		.loc 1 138 5 view .LVU320
+ 138:controller/engine_cycle/injection.c **** 
+ 959              		.loc 1 138 27 is_stmt 0 view .LVU321
+ 960 016c 0120     		movs	r0, #1
+ 961 016e 114B     		ldr	r3, .L64+60
+ 962 0170 1870     		strb	r0, [r3]
+ 140:controller/engine_cycle/injection.c **** }
+ 963              		.loc 1 140 5 is_stmt 1 view .LVU322
+ 140:controller/engine_cycle/injection.c **** }
+ 964              		.loc 1 140 12 is_stmt 0 view .LVU323
+ 965 0172 00E0     		b	.L49
+ 966              	.LVL60:
+ 967              	.L60:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 30
+
+
+  34:controller/engine_cycle/injection.c **** 
+ 968              		.loc 1 34 16 view .LVU324
+ 969 0174 0120     		movs	r0, #1
+ 970              	.LVL61:
+ 971              	.L49:
+ 141:controller/engine_cycle/injection.c **** 
+ 972              		.loc 1 141 1 view .LVU325
+ 973 0176 08BD     		pop	{r3, pc}
+ 974              	.L65:
+ 975              		.align	2
+ 976              	.L64:
+ 977 0178 00000000 		.word	injector_pin_conf
+ 978 017c 00100000 		.word	config+4096
+ 979 0180 00000000 		.word	.LC0
+ 980 0184 00000000 		.word	number_of_events
+ 981 0188 00000000 		.word	runtime
+ 982 018c 00000000 		.word	.LC2
+ 983 0190 00000000 		.word	injection_events
+ 984 0194 00003443 		.word	1127481344
+ 985 0198 00000000 		.word	number_of_injections
+ 986 019c 0000B443 		.word	1135869952
+ 987 01a0 00000744 		.word	1141309440
+ 988 01a4 0000F042 		.word	1123024896
+ 989 01a8 00007043 		.word	1131413504
+ 990 01ac 28000000 		.word	.LC3
+ 991 01b0 00000000 		.word	injection_watchdog_check
+ 992 01b4 00000000 		.word	injection_initialized
+ 993              		.cfi_endproc
+ 994              	.LFE238:
+ 996              		.section	.text.get_pulse_width,"ax",%progbits
+ 997              		.align	1
+ 998              		.global	get_pulse_width
+ 999              		.syntax unified
+ 1000              		.thumb
+ 1001              		.thumb_func
+ 1003              	get_pulse_width:
+ 1004              	.LFB243:
+ 332:controller/engine_cycle/injection.c ****     mass_t petrol_fuel_mass = 0;
+ 1005              		.loc 1 332 1 is_stmt 1 view -0
+ 1006              		.cfi_startproc
+ 1007              		@ args = 0, pretend = 0, frame = 0
+ 1008              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1009 0000 08B5     		push	{r3, lr}
+ 1010              		.cfi_def_cfa_offset 8
+ 1011              		.cfi_offset 3, -8
+ 1012              		.cfi_offset 14, -4
+ 333:controller/engine_cycle/injection.c ****     petrol_fuel_mass = fuel_get_required_mass_petrol_per_cycle();
+ 1013              		.loc 1 333 5 view .LVU327
+ 1014              	.LVL62:
+ 334:controller/engine_cycle/injection.c **** 
+ 1015              		.loc 1 334 5 view .LVU328
+ 334:controller/engine_cycle/injection.c **** 
+ 1016              		.loc 1 334 24 is_stmt 0 view .LVU329
+ 1017 0002 FFF7FEFF 		bl	fuel_get_required_mass_petrol_per_cycle
+ 1018              	.LVL63:
+ 336:controller/engine_cycle/injection.c ****     injector_pulse_width = petrol_fuel_mass / INJECTION_DENSITY_OF_PETROL_GRAM_PER_CC / config.inje
+ 1019              		.loc 1 336 5 is_stmt 1 view .LVU330
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 31
+
+
+ 337:controller/engine_cycle/injection.c **** 
+ 1020              		.loc 1 337 5 view .LVU331
+ 337:controller/engine_cycle/injection.c **** 
+ 1021              		.loc 1 337 45 is_stmt 0 view .LVU332
+ 1022 0006 DFED0E7A 		vldr.32	s15, .L68
+ 1023 000a C0EE276A 		vdiv.f32	s13, s0, s15
+ 337:controller/engine_cycle/injection.c **** 
+ 1024              		.loc 1 337 95 view .LVU333
+ 1025 000e 0D4B     		ldr	r3, .L68+4
+ 1026 0010 93ED007A 		vldr.32	s14, [r3]
+ 337:controller/engine_cycle/injection.c **** 
+ 1027              		.loc 1 337 87 view .LVU334
+ 1028 0014 C6EE877A 		vdiv.f32	s15, s13, s14
+ 337:controller/engine_cycle/injection.c **** 
+ 1029              		.loc 1 337 126 view .LVU335
+ 1030 0018 9FED0B7A 		vldr.32	s14, .L68+8
+ 1031 001c 67EE877A 		vmul.f32	s15, s15, s14
+ 337:controller/engine_cycle/injection.c **** 
+ 1032              		.loc 1 337 26 view .LVU336
+ 1033 0020 9FED0A7A 		vldr.32	s14, .L68+12
+ 1034 0024 67EE877A 		vmul.f32	s15, s15, s14
+ 1035              	.LVL64:
+ 339:controller/engine_cycle/injection.c ****     runtime.injector_pulse_width_ms = injector_pulse_width;
+ 1036              		.loc 1 339 5 is_stmt 1 view .LVU337
+ 339:controller/engine_cycle/injection.c ****     runtime.injector_pulse_width_ms = injector_pulse_width;
+ 1037              		.loc 1 339 51 is_stmt 0 view .LVU338
+ 1038 0028 094B     		ldr	r3, .L68+16
+ 1039 002a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1040 002c 07EE103A 		vmov	s14, r3	@ int
+ 1041 0030 B8EE477A 		vcvt.f32.u32	s14, s14
+ 339:controller/engine_cycle/injection.c ****     runtime.injector_pulse_width_ms = injector_pulse_width;
+ 1042              		.loc 1 339 26 view .LVU339
+ 1043 0034 87EE870A 		vdiv.f32	s0, s15, s14
+ 1044              	.LVL65:
+ 340:controller/engine_cycle/injection.c ****     return injector_pulse_width;
+ 1045              		.loc 1 340 5 is_stmt 1 view .LVU340
+ 340:controller/engine_cycle/injection.c ****     return injector_pulse_width;
+ 1046              		.loc 1 340 37 is_stmt 0 view .LVU341
+ 1047 0038 064B     		ldr	r3, .L68+20
+ 1048 003a 83ED1B0A 		vstr.32	s0, [r3, #108]
+ 341:controller/engine_cycle/injection.c **** }
+ 1049              		.loc 1 341 5 is_stmt 1 view .LVU342
+ 342:controller/engine_cycle/injection.c **** 
+ 1050              		.loc 1 342 1 is_stmt 0 view .LVU343
+ 1051 003e 08BD     		pop	{r3, pc}
+ 1052              	.L69:
+ 1053              		.align	2
+ 1054              	.L68:
+ 1055 0040 CDCC2C3F 		.word	1059900621
+ 1056 0044 C0160000 		.word	config+5824
+ 1057 0048 00007042 		.word	1114636288
+ 1058 004c 00007A44 		.word	1148846080
+ 1059 0050 00000000 		.word	number_of_injections
+ 1060 0054 00000000 		.word	runtime
+ 1061              		.cfi_endproc
+ 1062              	.LFE243:
+ 1064              		.section	.rodata.injection_trigger_event_handle.str1.4,"aMS",%progbits,1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 32
+
+
+ 1065              		.align	2
+ 1066              	.LC4:
+ 1067 0000 43616D20 		.ascii	"Cam phase not known. Switching to batch injection.\000"
+ 1067      70686173 
+ 1067      65206E6F 
+ 1067      74206B6E 
+ 1067      6F776E2E 
+ 1068              		.section	.text.injection_trigger_event_handle,"ax",%progbits
+ 1069              		.align	1
+ 1070              		.global	injection_trigger_event_handle
+ 1071              		.syntax unified
+ 1072              		.thumb
+ 1073              		.thumb_func
+ 1075              	injection_trigger_event_handle:
+ 1076              	.LVL66:
+ 1077              	.LFB242:
+ 221:controller/engine_cycle/injection.c ****     /**
+ 1078              		.loc 1 221 1 is_stmt 1 view -0
+ 1079              		.cfi_startproc
+ 1080              		@ args = 0, pretend = 0, frame = 0
+ 1081              		@ frame_needed = 0, uses_anonymous_args = 0
+ 221:controller/engine_cycle/injection.c ****     /**
+ 1082              		.loc 1 221 1 is_stmt 0 view .LVU345
+ 1083 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1084              		.cfi_def_cfa_offset 24
+ 1085              		.cfi_offset 3, -24
+ 1086              		.cfi_offset 4, -20
+ 1087              		.cfi_offset 5, -16
+ 1088              		.cfi_offset 6, -12
+ 1089              		.cfi_offset 7, -8
+ 1090              		.cfi_offset 14, -4
+ 1091 0002 2DED088B 		vpush.64	{d8, d9, d10, d11}
+ 1092              		.cfi_def_cfa_offset 56
+ 1093              		.cfi_offset 80, -56
+ 1094              		.cfi_offset 81, -52
+ 1095              		.cfi_offset 82, -48
+ 1096              		.cfi_offset 83, -44
+ 1097              		.cfi_offset 84, -40
+ 1098              		.cfi_offset 85, -36
+ 1099              		.cfi_offset 86, -32
+ 1100              		.cfi_offset 87, -28
+ 225:controller/engine_cycle/injection.c ****     {
+ 1101              		.loc 1 225 5 is_stmt 1 view .LVU346
+ 225:controller/engine_cycle/injection.c ****     {
+ 1102              		.loc 1 225 15 is_stmt 0 view .LVU347
+ 1103 0006 974B     		ldr	r3, .L116
+ 1104 0008 93F8D139 		ldrb	r3, [r3, #2513]	@ zero_extendqisi2
+ 225:controller/engine_cycle/injection.c ****     {
+ 1105              		.loc 1 225 8 view .LVU348
+ 1106 000c 002B     		cmp	r3, #0
+ 1107 000e 00F02581 		beq	.L70
+ 1108 0012 B0EE409A 		vmov.f32	s18, s0
+ 1109 0016 F0EE608A 		vmov.f32	s17, s1
+ 1110 001a 0546     		mov	r5, r0
+ 225:controller/engine_cycle/injection.c ****     {
+ 1111              		.loc 1 225 70 discriminator 1 view .LVU349
+ 1112 001c 924A     		ldr	r2, .L116+4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 33
+
+
+ 1113 001e 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 225:controller/engine_cycle/injection.c ****     {
+ 1114              		.loc 1 225 67 discriminator 1 view .LVU350
+ 1115 0020 002A     		cmp	r2, #0
+ 1116 0022 00F01B81 		beq	.L70
+ 230:controller/engine_cycle/injection.c ****     {
+ 1117              		.loc 1 230 5 is_stmt 1 view .LVU351
+ 230:controller/engine_cycle/injection.c ****     {
+ 1118              		.loc 1 230 10 is_stmt 0 view .LVU352
+ 1119 0026 914A     		ldr	r2, .L116+8
+ 1120 0028 1268     		ldr	r2, [r2]
+ 1121              	.LVL67:
+ 1122              	.LBB55:
+ 1123              	.LBI55:
+  39:controller/utils/utils.h ****     }
+  40:controller/utils/utils.h ****     else
+  41:controller/utils/utils.h ****     {
+  42:controller/utils/utils.h ****         *var &= ~(1u << bit);
+  43:controller/utils/utils.h ****     }
+  44:controller/utils/utils.h **** }
+  45:controller/utils/utils.h **** 
+  46:controller/utils/utils.h **** static inline bool get_bit(uint32_t flags, uint8_t bit)
+ 1124              		.loc 2 46 20 is_stmt 1 view .LVU353
+ 1125              	.LBB56:
+  47:controller/utils/utils.h **** {
+  48:controller/utils/utils.h ****     if (bit < 32)
+ 1126              		.loc 2 48 5 view .LVU354
+  49:controller/utils/utils.h ****     {
+  50:controller/utils/utils.h ****         return (flags >> bit) & 1u;
+ 1127              		.loc 2 50 9 view .LVU355
+ 1128              		.loc 2 50 31 is_stmt 0 view .LVU356
+ 1129 002a C2F3C006 		ubfx	r6, r2, #3, #1
+ 1130              	.LVL68:
+ 1131              		.loc 2 50 31 view .LVU357
+ 1132              	.LBE56:
+ 1133              	.LBE55:
+ 230:controller/engine_cycle/injection.c ****     {
+ 1134              		.loc 1 230 8 discriminator 1 view .LVU358
+ 1135 002e 12F0080F 		tst	r2, #8
+ 1136 0032 00F01381 		beq	.L70
+ 237:controller/engine_cycle/injection.c **** 
+ 1137              		.loc 1 237 5 is_stmt 1 view .LVU359
+ 1138              	.LVL69:
+ 239:controller/engine_cycle/injection.c **** 
+ 1139              		.loc 1 239 5 view .LVU360
+ 244:controller/engine_cycle/injection.c **** #endif
+ 1140              		.loc 1 244 5 view .LVU361
+ 244:controller/engine_cycle/injection.c **** #endif
+ 1141              		.loc 1 244 30 is_stmt 0 view .LVU362
+ 1142 0036 8E49     		ldr	r1, .L116+12
+ 1143 0038 91ED00AA 		vldr.32	s20, [r1]
+ 1144              	.LVL70:
+ 247:controller/engine_cycle/injection.c **** 
+ 1145              		.loc 1 247 5 is_stmt 1 view .LVU363
+ 247:controller/engine_cycle/injection.c **** 
+ 1146              		.loc 1 247 32 is_stmt 0 view .LVU364
+ 1147 003c B5EEC0AA 		vcmpe.f32	s20, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 34
+
+
+ 1148 0040 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1149 0044 09D4     		bmi	.L96
+ 247:controller/engine_cycle/injection.c **** 
+ 1150              		.loc 1 247 32 discriminator 2 view .LVU365
+ 1151 0046 DFED8B7A 		vldr.32	s15, .L116+16
+ 1152 004a B4EEE7AA 		vcmpe.f32	s20, s15
+ 1153 004e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1154 0052 04DD     		ble	.L72
+ 247:controller/engine_cycle/injection.c **** 
+ 1155              		.loc 1 247 32 discriminator 4 view .LVU366
+ 1156 0054 B0EE67AA 		vmov.f32	s20, s15
+ 1157              	.LVL71:
+ 247:controller/engine_cycle/injection.c **** 
+ 1158              		.loc 1 247 32 discriminator 4 view .LVU367
+ 1159 0058 01E0     		b	.L72
+ 1160              	.LVL72:
+ 1161              	.L96:
+ 247:controller/engine_cycle/injection.c **** 
+ 1162              		.loc 1 247 32 discriminator 1 view .LVU368
+ 1163 005a 9FED87AA 		vldr.32	s20, .L116+20
+ 1164              	.LVL73:
+ 1165              	.L72:
+ 249:controller/engine_cycle/injection.c ****     bool cam_phase = false;
+ 1166              		.loc 1 249 5 is_stmt 1 view .LVU369
+ 1167              	.LBB57:
+ 1168              	.LBI57:
+  46:controller/utils/utils.h **** {
+ 1169              		.loc 2 46 20 view .LVU370
+ 1170              	.LBB58:
+  48:controller/utils/utils.h ****     {
+ 1171              		.loc 2 48 5 view .LVU371
+ 1172              		.loc 2 50 9 view .LVU372
+ 1173              		.loc 2 50 31 is_stmt 0 view .LVU373
+ 1174 005e C2F30014 		ubfx	r4, r2, #4, #1
+ 1175              	.LVL74:
+ 1176              		.loc 2 50 31 view .LVU374
+ 1177              	.LBE58:
+ 1178              	.LBE57:
+ 250:controller/engine_cycle/injection.c **** 
+ 1179              		.loc 1 250 5 is_stmt 1 view .LVU375
+ 252:controller/engine_cycle/injection.c ****     {
+ 1180              		.loc 1 252 5 view .LVU376
+ 252:controller/engine_cycle/injection.c ****     {
+ 1181              		.loc 1 252 8 is_stmt 0 view .LVU377
+ 1182 0062 032B     		cmp	r3, #3
+ 1183 0064 0BD0     		beq	.L109
+ 250:controller/engine_cycle/injection.c **** 
+ 1184              		.loc 1 250 10 view .LVU378
+ 1185 0066 0024     		movs	r4, #0
+ 1186              	.LVL75:
+ 1187              	.L74:
+ 268:controller/engine_cycle/injection.c **** 
+ 1188              		.loc 1 268 5 is_stmt 1 view .LVU379
+ 1189              		.syntax unified
+ 1190              	@ 268 "controller/engine_cycle/injection.c" 1
+ 1191 0068 00BF     		nop
+ 1192              	@ 0 "" 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 35
+
+
+ 270:controller/engine_cycle/injection.c ****     bool is_sequential = (config.injection_mode == INJECTION_MODE_SEQUENTIAL) && (!operating_in_for
+ 1193              		.loc 1 270 5 view .LVU380
+ 1194              	.LVL76:
+ 271:controller/engine_cycle/injection.c **** 
+ 1195              		.loc 1 271 5 view .LVU381
+ 271:controller/engine_cycle/injection.c **** 
+ 1196              		.loc 1 271 33 is_stmt 0 view .LVU382
+ 1197              		.thumb
+ 1198              		.syntax unified
+ 1199 006a 7E4B     		ldr	r3, .L116
+ 1200 006c 93F8D139 		ldrb	r3, [r3, #2513]	@ zero_extendqisi2
+ 271:controller/engine_cycle/injection.c **** 
+ 1201              		.loc 1 271 79 view .LVU383
+ 1202 0070 032B     		cmp	r3, #3
+ 1203 0072 15D0     		beq	.L110
+ 270:controller/engine_cycle/injection.c ****     bool is_sequential = (config.injection_mode == INJECTION_MODE_SEQUENTIAL) && (!operating_in_for
+ 1204              		.loc 1 270 13 view .LVU384
+ 1205 0074 F0EE499A 		vmov.f32	s19, s18
+ 271:controller/engine_cycle/injection.c **** 
+ 1206              		.loc 1 271 10 discriminator 6 view .LVU385
+ 1207 0078 0026     		movs	r6, #0
+ 1208              	.LVL77:
+ 1209              	.L76:
+ 279:controller/engine_cycle/injection.c ****     {
+ 1210              		.loc 1 279 5 is_stmt 1 view .LVU386
+ 1211              	.LBB59:
+ 279:controller/engine_cycle/injection.c ****     {
+ 1212              		.loc 1 279 10 view .LVU387
+ 279:controller/engine_cycle/injection.c ****     {
+ 1213              		.loc 1 279 17 is_stmt 0 view .LVU388
+ 1214 007a 0024     		movs	r4, #0
+ 1215              	.LVL78:
+ 279:controller/engine_cycle/injection.c ****     {
+ 1216              		.loc 1 279 5 view .LVU389
+ 1217 007c 24E0     		b	.L77
+ 1218              	.LVL79:
+ 1219              	.L109:
+ 279:controller/engine_cycle/injection.c ****     {
+ 1220              		.loc 1 279 5 view .LVU390
+ 1221              	.LBE59:
+ 254:controller/engine_cycle/injection.c ****         {
+ 1222              		.loc 1 254 9 is_stmt 1 view .LVU391
+ 254:controller/engine_cycle/injection.c ****         {
+ 1223              		.loc 1 254 12 is_stmt 0 view .LVU392
+ 1224 007e 4CB9     		cbnz	r4, .L75
+ 256:controller/engine_cycle/injection.c ****             log_error("Cam phase not known. Switching to batch injection.");
+ 1225              		.loc 1 256 13 is_stmt 1 view .LVU393
+ 1226              	.LVL80:
+ 1227              	.LBB89:
+ 1228              	.LBI89:
+  30:controller/utils/utils.h **** {
+ 1229              		.loc 2 30 20 view .LVU394
+ 1230              	.LBB90:
+  32:controller/utils/utils.h ****     {
+ 1231              		.loc 2 32 5 view .LVU395
+  36:controller/utils/utils.h ****     {
+ 1232              		.loc 2 36 5 view .LVU396
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 36
+
+
+  38:controller/utils/utils.h ****     }
+ 1233              		.loc 2 38 9 view .LVU397
+  38:controller/utils/utils.h ****     }
+ 1234              		.loc 2 38 14 is_stmt 0 view .LVU398
+ 1235 0080 42F00402 		orr	r2, r2, #4
+ 1236              	.LVL81:
+  38:controller/utils/utils.h ****     }
+ 1237              		.loc 2 38 14 view .LVU399
+ 1238 0084 794B     		ldr	r3, .L116+8
+ 1239              	.LVL82:
+  38:controller/utils/utils.h ****     }
+ 1240              		.loc 2 38 14 view .LVU400
+ 1241 0086 1A60     		str	r2, [r3]
+ 1242              	.LVL83:
+  38:controller/utils/utils.h ****     }
+ 1243              		.loc 2 38 14 view .LVU401
+ 1244              	.LBE90:
+ 1245              	.LBE89:
+ 257:controller/engine_cycle/injection.c ****             injection_switch_to_batch();
+ 1246              		.loc 1 257 13 is_stmt 1 view .LVU402
+ 1247 0088 7C48     		ldr	r0, .L116+24
+ 1248              	.LVL84:
+ 257:controller/engine_cycle/injection.c ****             injection_switch_to_batch();
+ 1249              		.loc 1 257 13 is_stmt 0 view .LVU403
+ 1250 008a FFF7FEFF 		bl	log_error
+ 1251              	.LVL85:
+ 258:controller/engine_cycle/injection.c ****             cam_phase = false;
+ 1252              		.loc 1 258 13 is_stmt 1 view .LVU404
+ 1253 008e FFF7FEFF 		bl	injection_switch_to_batch
+ 1254              	.LVL86:
+ 259:controller/engine_cycle/injection.c ****         }
+ 1255              		.loc 1 259 13 view .LVU405
+ 259:controller/engine_cycle/injection.c ****         }
+ 1256              		.loc 1 259 13 is_stmt 0 view .LVU406
+ 1257 0092 E9E7     		b	.L74
+ 1258              	.LVL87:
+ 1259              	.L75:
+ 263:controller/engine_cycle/injection.c ****             cam_phase = camshaft_get_phase();
+ 1260              		.loc 1 263 13 is_stmt 1 view .LVU407
+ 1261 0094 FFF7FEFF 		bl	injection_switch_to_sequential
+ 1262              	.LVL88:
+ 264:controller/engine_cycle/injection.c ****         }
+ 1263              		.loc 1 264 13 view .LVU408
+ 264:controller/engine_cycle/injection.c ****         }
+ 1264              		.loc 1 264 25 is_stmt 0 view .LVU409
+ 1265 0098 FFF7FEFF 		bl	camshaft_get_phase
+ 1266              	.LVL89:
+ 1267 009c 0446     		mov	r4, r0
+ 1268              	.LVL90:
+ 264:controller/engine_cycle/injection.c ****         }
+ 1269              		.loc 1 264 25 view .LVU410
+ 1270 009e E3E7     		b	.L74
+ 1271              	.LVL91:
+ 1272              	.L110:
+ 271:controller/engine_cycle/injection.c **** 
+ 1273              		.loc 1 271 83 discriminator 1 view .LVU411
+ 1274 00a0 774B     		ldr	r3, .L116+28
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 37
+
+
+ 1275 00a2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 271:controller/engine_cycle/injection.c **** 
+ 1276              		.loc 1 271 79 discriminator 1 view .LVU412
+ 1277 00a4 53B9     		cbnz	r3, .L99
+ 1278              	.LVL92:
+ 273:controller/engine_cycle/injection.c ****     {
+ 1279              		.loc 1 273 5 is_stmt 1 view .LVU413
+ 275:controller/engine_cycle/injection.c ****     }
+ 1280              		.loc 1 275 9 view .LVU414
+ 275:controller/engine_cycle/injection.c ****     }
+ 1281              		.loc 1 275 47 is_stmt 0 view .LVU415
+ 1282 00a6 07EE904A 		vmov	s15, r4	@ int
+ 1283 00aa F8EE679A 		vcvt.f32.u32	s19, s15
+ 275:controller/engine_cycle/injection.c ****     }
+ 1284              		.loc 1 275 66 view .LVU416
+ 1285 00ae DFED757A 		vldr.32	s15, .L116+32
+ 1286 00b2 69EEA79A 		vmul.f32	s19, s19, s15
+ 275:controller/engine_cycle/injection.c ****     }
+ 1287              		.loc 1 275 26 view .LVU417
+ 1288 00b6 79EE899A 		vadd.f32	s19, s19, s18
+ 1289              	.LVL93:
+ 275:controller/engine_cycle/injection.c ****     }
+ 1290              		.loc 1 275 26 view .LVU418
+ 1291 00ba DEE7     		b	.L76
+ 1292              	.LVL94:
+ 1293              	.L99:
+ 270:controller/engine_cycle/injection.c ****     bool is_sequential = (config.injection_mode == INJECTION_MODE_SEQUENTIAL) && (!operating_in_for
+ 1294              		.loc 1 270 13 view .LVU419
+ 1295 00bc F0EE499A 		vmov.f32	s19, s18
+ 271:controller/engine_cycle/injection.c **** 
+ 1296              		.loc 1 271 10 discriminator 6 view .LVU420
+ 1297 00c0 0026     		movs	r6, #0
+ 1298 00c2 DAE7     		b	.L76
+ 1299              	.LVL95:
+ 1300              	.L78:
+ 1301              	.LBB91:
+ 1302              	.LBB60:
+ 288:controller/engine_cycle/injection.c ****         angle_t opening_angle = 0;
+ 1303              		.loc 1 288 9 is_stmt 1 view .LVU421
+ 289:controller/engine_cycle/injection.c ****         angle_t closing_angle = 0;
+ 1304              		.loc 1 289 9 view .LVU422
+ 290:controller/engine_cycle/injection.c ****         if (is_sequential)
+ 1305              		.loc 1 290 9 view .LVU423
+ 291:controller/engine_cycle/injection.c ****         {
+ 1306              		.loc 1 291 9 view .LVU424
+ 291:controller/engine_cycle/injection.c ****         {
+ 1307              		.loc 1 291 12 is_stmt 0 view .LVU425
+ 1308 00c4 86B1     		cbz	r6, .L111
+ 1309              	.LVL96:
+ 1310              	.L79:
+ 291:controller/engine_cycle/injection.c ****         {
+ 1311              		.loc 1 291 12 view .LVU426
+ 1312              	.LBE60:
+ 279:controller/engine_cycle/injection.c ****     {
+ 1313              		.loc 1 279 47 is_stmt 1 discriminator 2 view .LVU427
+ 1314 00c6 0134     		adds	r4, r4, #1
+ 1315              	.LVL97:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 38
+
+
+ 1316              	.L77:
+ 279:controller/engine_cycle/injection.c ****     {
+ 1317              		.loc 1 279 26 discriminator 1 view .LVU428
+ 1318 00c8 6F4B     		ldr	r3, .L116+36
+ 1319 00ca 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1320 00cc A342     		cmp	r3, r4
+ 1321 00ce 40F2C580 		bls	.L70
+ 1322              	.LBB88:
+ 281:controller/engine_cycle/injection.c **** 
+ 1323              		.loc 1 281 9 view .LVU429
+ 281:controller/engine_cycle/injection.c **** 
+ 1324              		.loc 1 281 28 is_stmt 0 view .LVU430
+ 1325 00d2 04EB4403 		add	r3, r4, r4, lsl #1
+ 1326 00d6 6D4F     		ldr	r7, .L116+40
+ 1327 00d8 07EBC307 		add	r7, r7, r3, lsl #3
+ 1328              	.LVL98:
+ 283:controller/engine_cycle/injection.c ****         {
+ 1329              		.loc 1 283 9 is_stmt 1 view .LVU431
+ 283:controller/engine_cycle/injection.c ****         {
+ 1330              		.loc 1 283 20 is_stmt 0 view .LVU432
+ 1331 00dc 3B7D     		ldrb	r3, [r7, #20]	@ zero_extendqisi2
+ 283:controller/engine_cycle/injection.c ****         {
+ 1332              		.loc 1 283 12 view .LVU433
+ 1333 00de 032B     		cmp	r3, #3
+ 1334 00e0 F0D0     		beq	.L78
+ 283:controller/engine_cycle/injection.c ****         {
+ 1335              		.loc 1 283 13 discriminator 1 view .LVU434
+ 1336 00e2 002B     		cmp	r3, #0
+ 1337 00e4 EED0     		beq	.L78
+ 1338 00e6 EEE7     		b	.L79
+ 1339              	.LVL99:
+ 1340              	.L111:
+ 1341              	.LBB61:
+ 309:controller/engine_cycle/injection.c ****             closing_angle = wrap_angle_360(event->crank_angle_at_end_of_injection - end_of_injectio
+ 1342              		.loc 1 309 13 is_stmt 1 view .LVU435
+ 309:controller/engine_cycle/injection.c ****             closing_angle = wrap_angle_360(event->crank_angle_at_end_of_injection - end_of_injectio
+ 1343              		.loc 1 309 43 is_stmt 0 view .LVU436
+ 1344 00e8 FFF7FEFF 		bl	crankshaft_get_next_trigger_angle
+ 1345              	.LVL100:
+ 1346 00ec B0EE40BA 		vmov.f32	s22, s0
+ 1347              	.LVL101:
+ 310:controller/engine_cycle/injection.c ****             opening_angle = wrap_angle_360(closing_angle - degrees_per_millisecond(rpm) * get_pulse
+ 1348              		.loc 1 310 13 is_stmt 1 view .LVU437
+ 310:controller/engine_cycle/injection.c ****             opening_angle = wrap_angle_360(closing_angle - degrees_per_millisecond(rpm) * get_pulse
+ 1349              		.loc 1 310 49 is_stmt 0 view .LVU438
+ 1350 00f0 04EB4402 		add	r2, r4, r4, lsl #1
+ 1351 00f4 654B     		ldr	r3, .L116+40
+ 1352 00f6 03EBC203 		add	r3, r3, r2, lsl #3
+ 1353 00fa D3ED047A 		vldr.32	s15, [r3, #16]
+ 310:controller/engine_cycle/injection.c ****             opening_angle = wrap_angle_360(closing_angle - degrees_per_millisecond(rpm) * get_pulse
+ 1354              		.loc 1 310 29 view .LVU439
+ 1355 00fe 77EECAAA 		vsub.f32	s21, s15, s20
+ 1356              	.LVL102:
+ 1357              	.LBB62:
+ 1358              	.LBI62:
+  51:controller/utils/utils.h ****     }
+  52:controller/utils/utils.h ****     return false;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 39
+
+
+  53:controller/utils/utils.h **** }
+  54:controller/utils/utils.h **** 
+  55:controller/utils/utils.h **** /**
+  56:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
+  57:controller/utils/utils.h ****  *
+  58:controller/utils/utils.h ****  * @param x The value to map.
+  59:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  60:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  61:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  62:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  63:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  64:controller/utils/utils.h ****  */
+  65:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
+  66:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
+  67:controller/utils/utils.h **** 
+  68:controller/utils/utils.h **** /**
+  69:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
+  70:controller/utils/utils.h ****  *
+  71:controller/utils/utils.h ****  * @param x The value to map.
+  72:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
+  73:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
+  74:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+  75:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
+  76:controller/utils/utils.h ****  * @return The mapped value in the output range.
+  77:controller/utils/utils.h ****  */
+  78:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
+  79:controller/utils/utils.h **** {
+  80:controller/utils/utils.h ****     if (in_max == in_min)
+  81:controller/utils/utils.h ****     {
+  82:controller/utils/utils.h ****         return 0; // Avoid division by zero
+  83:controller/utils/utils.h ****     }
+  84:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+  85:controller/utils/utils.h **** }
+  86:controller/utils/utils.h **** 
+  87:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+  88:controller/utils/utils.h **** {
+  89:controller/utils/utils.h ****     if (in_max == in_min)
+  90:controller/utils/utils.h ****     {
+  91:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
+  92:controller/utils/utils.h ****     }
+  93:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  94:controller/utils/utils.h **** }
+  95:controller/utils/utils.h **** 
+  96:controller/utils/utils.h **** // http://en.wikipedia.org/wiki/Endianness
+  97:controller/utils/utils.h **** inline uint16_t swap_endian_uint16(uint16_t x)
+  98:controller/utils/utils.h **** {
+  99:controller/utils/utils.h ****     return ((x << 8) | (x >> 8));
+ 100:controller/utils/utils.h **** }
+ 101:controller/utils/utils.h **** inline uint32_t swap_endian_uint32(uint32_t x)
+ 102:controller/utils/utils.h **** {
+ 103:controller/utils/utils.h ****     return (((x >> 24) & 0x000000ff) | ((x << 8) & 0x00ff0000) |
+ 104:controller/utils/utils.h ****             ((x >> 8) & 0x0000ff00) | ((x << 24) & 0xff000000));
+ 105:controller/utils/utils.h **** }
+ 106:controller/utils/utils.h **** 
+ 107:controller/utils/utils.h **** void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
+ 108:controller/utils/utils.h **** 
+ 109:controller/utils/utils.h **** #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 40
+
+
+ 110:controller/utils/utils.h **** #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
+ 111:controller/utils/utils.h **** 
+ 112:controller/utils/utils.h **** /**
+ 113:controller/utils/utils.h ****  * @brief Function to calculate the microseconds it takes for the engine to turn one degree.
+ 114:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
+ 115:controller/utils/utils.h ****  */
+ 116:controller/utils/utils.h **** static inline time_us_t microseconds_per_degree(rpm_t rpm)
+ 117:controller/utils/utils.h **** {
+ 118:controller/utils/utils.h ****     if (rpm == 0)
+ 119:controller/utils/utils.h ****     {
+ 120:controller/utils/utils.h ****         return 0;
+ 121:controller/utils/utils.h ****     }
+ 122:controller/utils/utils.h ****     return (time_us_t)60.0f * 1e6f / (rpm * 360.0f);
+ 123:controller/utils/utils.h **** }
+ 124:controller/utils/utils.h **** 
+ 125:controller/utils/utils.h **** /**
+ 126:controller/utils/utils.h ****  * @brief Convert a rotation angle in degrees to time in microseconds at a given RPM.
+ 127:controller/utils/utils.h ****  *
+ 128:controller/utils/utils.h ****  * @param degrees Rotation angle in degrees (> 0)
+ 129:controller/utils/utils.h ****  * @param rpm     Rotational speed in RPM (> 0)
+ 130:controller/utils/utils.h ****  * @return Time in microseconds to rotate the given angle, or 0 if input is invalid
+ 131:controller/utils/utils.h ****  */
+ 132:controller/utils/utils.h **** static inline time_us_t degree_to_microseconds(angle_t degrees, rpm_t rpm)
+ 133:controller/utils/utils.h **** {
+ 134:controller/utils/utils.h ****     if (rpm <= 0 || degrees <= 0)
+ 135:controller/utils/utils.h ****     {
+ 136:controller/utils/utils.h ****         return 0;
+ 137:controller/utils/utils.h ****     }
+ 138:controller/utils/utils.h ****     return (time_us_t) (60.0f * 1e6f / (rpm * 360.0f) * degrees); 
+ 139:controller/utils/utils.h **** }
+ 140:controller/utils/utils.h **** 
+ 141:controller/utils/utils.h **** /**
+ 142:controller/utils/utils.h ****  * @brief Function to calculate the degrees the engine turns in one microsecond.
+ 143:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
+ 144:controller/utils/utils.h ****  */
+ 145:controller/utils/utils.h **** static inline angle_t degrees_per_microsecond(rpm_t rpm)
+ 146:controller/utils/utils.h **** {
+ 147:controller/utils/utils.h ****     if (rpm == 0)
+ 148:controller/utils/utils.h ****     {
+ 149:controller/utils/utils.h ****         return 0.0f;
+ 150:controller/utils/utils.h ****     }
+ 151:controller/utils/utils.h ****     return (angle_t)(rpm * 360.0f) / (60.0f * 1e6f);
+ 152:controller/utils/utils.h **** }
+ 153:controller/utils/utils.h **** 
+ 154:controller/utils/utils.h **** static inline angle_t degrees_per_millisecond(rpm_t rpm)
+ 155:controller/utils/utils.h **** {
+ 156:controller/utils/utils.h ****     if (rpm == 0)
+ 157:controller/utils/utils.h ****     {
+ 158:controller/utils/utils.h ****         return 0.0f;
+ 159:controller/utils/utils.h ****     }
+ 160:controller/utils/utils.h ****     return (angle_t)(rpm * 360.0f) / (60.0f * 1e3f);
+ 161:controller/utils/utils.h **** }
+ 162:controller/utils/utils.h **** 
+ 163:controller/utils/utils.h **** /**
+ 164:controller/utils/utils.h ****  * @brief Convert milliseconds to microseconds, preserving the type of the input.
+ 165:controller/utils/utils.h ****  *
+ 166:controller/utils/utils.h ****  * Usage:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 41
+
+
+ 167:controller/utils/utils.h ****  *   time_us_t t = MILLISECONDS_TO_MICROSECONDS(5.5f);   // float -> float microseconds
+ 168:controller/utils/utils.h ****  *   uint32_t t_int = MILLISECONDS_TO_MICROSECONDS(5U);  // uint32_t -> uint32_t microseconds
+ 169:controller/utils/utils.h ****  */
+ 170:controller/utils/utils.h **** #define MILLISECONDS_TO_MICROSECONDS(x) ((typeof(x))((x) * (typeof(x))1000))
+ 171:controller/utils/utils.h **** 
+ 172:controller/utils/utils.h **** float interpolate_2d(float x0, float y0, float x1, float y1, float x);
+ 173:controller/utils/utils.h **** 
+ 174:controller/utils/utils.h **** /*----------------------------------------------------------------------------*\
+ 175:controller/utils/utils.h ****  *  NAME:
+ 176:controller/utils/utils.h ****  *     Crc32_ComputeBuf() - computes the CRC-32 value of a memory buffer
+ 177:controller/utils/utils.h ****  *  DESCRIPTION:
+ 178:controller/utils/utils.h ****  *     Computes or accumulates the CRC-32 value for a memory buffer.
+ 179:controller/utils/utils.h ****  *     The 'inCrc32' gives a previously accumulated CRC-32 value to allow
+ 180:controller/utils/utils.h ****  *     a CRC to be generated for multiple sequential buffer-fuls of data.
+ 181:controller/utils/utils.h ****  *     The 'inCrc32' for the first buffer must be zero.
+ 182:controller/utils/utils.h ****  *  ARGUMENTS:
+ 183:controller/utils/utils.h ****  *     inCrc32 - accumulated CRC-32 value, must be 0 on first call
+ 184:controller/utils/utils.h ****  *     buf     - buffer to compute CRC-32 value for
+ 185:controller/utils/utils.h ****  *     bufLen  - number of bytes in buffer
+ 186:controller/utils/utils.h ****  *  RETURNS:
+ 187:controller/utils/utils.h ****  *     crc32 - computed CRC-32 value
+ 188:controller/utils/utils.h ****  *  ERRORS:
+ 189:controller/utils/utils.h ****  *     (no errors are possible)
+ 190:controller/utils/utils.h **** \*----------------------------------------------------------------------------*/
+ 191:controller/utils/utils.h **** uint32_t crc32_inc(uint32_t in_crc32, const void *buf, size_t size);
+ 192:controller/utils/utils.h **** 
+ 193:controller/utils/utils.h **** /**
+ 194:controller/utils/utils.h ****  * @brief Wraps an angle in degrees to the range [0, 360).
+ 195:controller/utils/utils.h ****  *
+ 196:controller/utils/utils.h ****  * This function ensures that the input angle is normalized to the range [0, 360).
+ 197:controller/utils/utils.h ****  * If the input angle is negative, it adds 360 repeatedly until the angle is non-negative.
+ 198:controller/utils/utils.h ****  * If the input angle is greater than or equal to 360, it subtracts 360 repeatedly
+ 199:controller/utils/utils.h ****  * until the angle is less than 360.
+ 200:controller/utils/utils.h ****  *
+ 201:controller/utils/utils.h ****  * @param angle The input angle in degrees to be wrapped.
+ 202:controller/utils/utils.h ****  * @return The wrapped angle in the range [0, 360).
+ 203:controller/utils/utils.h ****  */
+ 204:controller/utils/utils.h **** static inline angle_t wrap_angle_360(angle_t angle)
+ 1359              		.loc 2 204 23 is_stmt 1 view .LVU440
+ 1360              	.LBB63:
+ 205:controller/utils/utils.h **** {
+ 206:controller/utils/utils.h ****     while (angle < 0.0f)
+ 1361              		.loc 2 206 5 view .LVU441
+ 1362              	.L80:
+ 1363              		.loc 2 206 18 view .LVU442
+ 1364 0102 F5EEC0AA 		vcmpe.f32	s21, #0
+ 1365 0106 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1366 010a 04D5     		bpl	.L82
+ 207:controller/utils/utils.h ****     {
+ 208:controller/utils/utils.h ****         angle += 360.0f;
+ 1367              		.loc 2 208 9 view .LVU443
+ 1368              		.loc 2 208 15 is_stmt 0 view .LVU444
+ 1369 010c DFED5D7A 		vldr.32	s15, .L116+32
+ 1370 0110 7AEEA7AA 		vadd.f32	s21, s21, s15
+ 1371              	.LVL103:
+ 1372              		.loc 2 208 15 view .LVU445
+ 1373 0114 F5E7     		b	.L80
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 42
+
+
+ 1374              	.LVL104:
+ 1375              	.L82:
+ 209:controller/utils/utils.h ****     }
+ 210:controller/utils/utils.h ****     while (angle >= 360.0f)
+ 1376              		.loc 2 210 18 is_stmt 1 view .LVU446
+ 1377 0116 DFED5B7A 		vldr.32	s15, .L116+32
+ 1378 011a F4EEE7AA 		vcmpe.f32	s21, s15
+ 1379 011e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1380 0122 04DB     		blt	.L112
+ 211:controller/utils/utils.h ****     {
+ 212:controller/utils/utils.h ****         angle -= 360.0f;
+ 1381              		.loc 2 212 9 view .LVU447
+ 1382              		.loc 2 212 15 is_stmt 0 view .LVU448
+ 1383 0124 DFED577A 		vldr.32	s15, .L116+32
+ 1384 0128 7AEEE7AA 		vsub.f32	s21, s21, s15
+ 1385              	.LVL105:
+ 1386              		.loc 2 212 15 view .LVU449
+ 1387 012c F3E7     		b	.L82
+ 1388              	.LVL106:
+ 1389              	.L112:
+ 213:controller/utils/utils.h ****     }
+ 214:controller/utils/utils.h ****     return angle;
+ 1390              		.loc 2 214 5 is_stmt 1 view .LVU450
+ 1391              		.loc 2 214 5 is_stmt 0 view .LVU451
+ 1392              	.LBE63:
+ 1393              	.LBE62:
+ 311:controller/engine_cycle/injection.c **** 
+ 1394              		.loc 1 311 13 is_stmt 1 view .LVU452
+ 1395              	.LBB64:
+ 1396              	.LBI64:
+ 154:controller/utils/utils.h **** {
+ 1397              		.loc 2 154 23 view .LVU453
+ 1398              	.LBB65:
+ 156:controller/utils/utils.h ****     {
+ 1399              		.loc 2 156 5 view .LVU454
+ 156:controller/utils/utils.h ****     {
+ 1400              		.loc 2 156 8 is_stmt 0 view .LVU455
+ 1401 012e F5EE408A 		vcmp.f32	s17, #0
+ 1402 0132 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1403 0136 15D0     		beq	.L100
+ 160:controller/utils/utils.h **** }
+ 1404              		.loc 2 160 5 is_stmt 1 view .LVU456
+ 160:controller/utils/utils.h **** }
+ 1405              		.loc 2 160 12 is_stmt 0 view .LVU457
+ 1406 0138 68EEA77A 		vmul.f32	s15, s17, s15
+ 160:controller/utils/utils.h **** }
+ 1407              		.loc 2 160 36 view .LVU458
+ 1408 013c 9FED547A 		vldr.32	s14, .L116+44
+ 1409 0140 87EE878A 		vdiv.f32	s16, s15, s14
+ 1410              	.L84:
+ 1411              	.LVL107:
+ 160:controller/utils/utils.h **** }
+ 1412              		.loc 2 160 36 view .LVU459
+ 1413              	.LBE65:
+ 1414              	.LBE64:
+ 311:controller/engine_cycle/injection.c **** 
+ 1415              		.loc 1 311 91 discriminator 1 view .LVU460
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 43
+
+
+ 1416 0144 FFF7FEFF 		bl	get_pulse_width
+ 1417              	.LVL108:
+ 311:controller/engine_cycle/injection.c **** 
+ 1418              		.loc 1 311 89 discriminator 2 view .LVU461
+ 1419 0148 20EE088A 		vmul.f32	s16, s0, s16
+ 311:controller/engine_cycle/injection.c **** 
+ 1420              		.loc 1 311 29 discriminator 2 view .LVU462
+ 1421 014c 3AEEC88A 		vsub.f32	s16, s21, s16
+ 1422              	.LVL109:
+ 1423              	.LBB67:
+ 1424              	.LBI67:
+ 204:controller/utils/utils.h **** {
+ 1425              		.loc 2 204 23 is_stmt 1 view .LVU463
+ 1426              	.LBB68:
+ 206:controller/utils/utils.h ****     {
+ 1427              		.loc 2 206 5 view .LVU464
+ 1428              	.L85:
+ 206:controller/utils/utils.h ****     {
+ 1429              		.loc 2 206 18 view .LVU465
+ 1430 0150 B5EEC08A 		vcmpe.f32	s16, #0
+ 1431 0154 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1432 0158 07D5     		bpl	.L87
+ 208:controller/utils/utils.h ****     }
+ 1433              		.loc 2 208 9 view .LVU466
+ 208:controller/utils/utils.h ****     }
+ 1434              		.loc 2 208 15 is_stmt 0 view .LVU467
+ 1435 015a DFED4A7A 		vldr.32	s15, .L116+32
+ 1436 015e 38EE278A 		vadd.f32	s16, s16, s15
+ 1437              	.LVL110:
+ 208:controller/utils/utils.h ****     }
+ 1438              		.loc 2 208 15 view .LVU468
+ 1439 0162 F5E7     		b	.L85
+ 1440              	.LVL111:
+ 1441              	.L100:
+ 208:controller/utils/utils.h ****     }
+ 1442              		.loc 2 208 15 view .LVU469
+ 1443              	.LBE68:
+ 1444              	.LBE67:
+ 1445              	.LBB70:
+ 1446              	.LBB66:
+ 158:controller/utils/utils.h ****     }
+ 1447              		.loc 2 158 16 view .LVU470
+ 1448 0164 9FED448A 		vldr.32	s16, .L116+20
+ 1449 0168 ECE7     		b	.L84
+ 1450              	.LVL112:
+ 1451              	.L87:
+ 158:controller/utils/utils.h ****     }
+ 1452              		.loc 2 158 16 view .LVU471
+ 1453              	.LBE66:
+ 1454              	.LBE70:
+ 1455              	.LBB71:
+ 1456              	.LBB69:
+ 210:controller/utils/utils.h ****     {
+ 1457              		.loc 2 210 18 is_stmt 1 view .LVU472
+ 1458 016a DFED467A 		vldr.32	s15, .L116+32
+ 1459 016e B4EEE78A 		vcmpe.f32	s16, s15
+ 1460 0172 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 44
+
+
+ 1461 0176 04DB     		blt	.L113
+ 212:controller/utils/utils.h ****     }
+ 1462              		.loc 2 212 9 view .LVU473
+ 212:controller/utils/utils.h ****     }
+ 1463              		.loc 2 212 15 is_stmt 0 view .LVU474
+ 1464 0178 DFED427A 		vldr.32	s15, .L116+32
+ 1465 017c 38EE678A 		vsub.f32	s16, s16, s15
+ 1466              	.LVL113:
+ 212:controller/utils/utils.h ****     }
+ 1467              		.loc 2 212 15 view .LVU475
+ 1468 0180 F3E7     		b	.L87
+ 1469              	.LVL114:
+ 1470              	.L113:
+ 1471              		.loc 2 214 5 is_stmt 1 view .LVU476
+ 1472              		.loc 2 214 5 is_stmt 0 view .LVU477
+ 1473              	.LBE69:
+ 1474              	.LBE71:
+ 313:controller/engine_cycle/injection.c ****             {
+ 1475              		.loc 1 313 13 is_stmt 1 view .LVU478
+ 313:controller/engine_cycle/injection.c ****             {
+ 1476              		.loc 1 313 17 is_stmt 0 view .LVU479
+ 1477 0182 B0EE481A 		vmov.f32	s2, s16
+ 1478 0186 F0EE490A 		vmov.f32	s1, s18
+ 1479 018a B0EE4B0A 		vmov.f32	s0, s22
+ 1480 018e FFF7FEFF 		bl	is_phase_in_range
+ 1481              	.LVL115:
+ 313:controller/engine_cycle/injection.c ****             {
+ 1482              		.loc 1 313 16 discriminator 1 view .LVU480
+ 1483 0192 0028     		cmp	r0, #0
+ 1484 0194 97D1     		bne	.L79
+ 317:controller/engine_cycle/injection.c ****             time_us_t injection_start_time = current_time_us + degree_to_microseconds(angular_forwa
+ 1485              		.loc 1 317 13 is_stmt 1 view .LVU481
+ 1486              	.LVL116:
+ 1487              	.LBB72:
+ 1488              	.LBI72:
+ 215:controller/utils/utils.h **** }
+ 216:controller/utils/utils.h **** /**
+ 217:controller/utils/utils.h ****  * @brief Wraps an angle in degrees to the range [0, 720).
+ 218:controller/utils/utils.h ****  *
+ 219:controller/utils/utils.h ****  * This function ensures that the input angle is normalized to the range [0, 720).
+ 220:controller/utils/utils.h ****  * If the input angle is negative, it adds 720 repeatedly until the angle is non-negative.
+ 221:controller/utils/utils.h ****  * If the input angle is greater than or equal to 720, it subtracts 720 repeatedly
+ 222:controller/utils/utils.h ****  * until the angle is less than 720.
+ 223:controller/utils/utils.h ****  *
+ 224:controller/utils/utils.h ****  * @param angle The input angle in degrees to be wrapped.
+ 225:controller/utils/utils.h ****  * @return The wrapped angle in the range [0, 720).
+ 226:controller/utils/utils.h ****  */
+ 227:controller/utils/utils.h **** static inline angle_t wrap_angle_720(angle_t angle)
+ 228:controller/utils/utils.h **** {
+ 229:controller/utils/utils.h ****     while (angle < 0.0f)
+ 230:controller/utils/utils.h ****     {
+ 231:controller/utils/utils.h ****         angle += 720.0f;
+ 232:controller/utils/utils.h ****     }
+ 233:controller/utils/utils.h ****     while (angle >= 720.0f)
+ 234:controller/utils/utils.h ****     {
+ 235:controller/utils/utils.h ****         angle -= 720.0f;
+ 236:controller/utils/utils.h ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 45
+
+
+ 237:controller/utils/utils.h ****     return angle;
+ 238:controller/utils/utils.h **** }
+ 239:controller/utils/utils.h **** 
+ 240:controller/utils/utils.h **** /**
+ 241:controller/utils/utils.h ****  * @brief Compute the forward angular distance from `from` to `to` in a 720° cycle.
+ 242:controller/utils/utils.h ****  *
+ 243:controller/utils/utils.h ****  * Always returns a value in the range [0, 720).
+ 244:controller/utils/utils.h ****  * This represents the forward (positive rotation) distance,
+ 245:controller/utils/utils.h ****  * not the shortest path between the angles.
+ 246:controller/utils/utils.h ****  *
+ 247:controller/utils/utils.h ****  * Useful whenever angles are cyclic with a period of 720°,
+ 248:controller/utils/utils.h ****  *
+ 249:controller/utils/utils.h ****  * Examples:
+ 250:controller/utils/utils.h ****  *   angular_forward_distance_720(700, 20)   -> 40
+ 251:controller/utils/utils.h ****  *   angular_forward_distance_720(100, 20)   -> 640
+ 252:controller/utils/utils.h ****  *   angular_forward_distance_720(180, 270)  -> 90
+ 253:controller/utils/utils.h ****  *
+ 254:controller/utils/utils.h ****  * @param from Start angle, in degrees [0..720)
+ 255:controller/utils/utils.h ****  * @param to   Target angle, in degrees [0..720)
+ 256:controller/utils/utils.h ****  * @return Forward angular distance in degrees [0..720)
+ 257:controller/utils/utils.h ****  */
+ 258:controller/utils/utils.h **** static inline angle_t angular_forward_distance_720(angle_t from, angle_t to)
+ 259:controller/utils/utils.h **** {
+ 260:controller/utils/utils.h ****     angle_t dist = to - from;
+ 261:controller/utils/utils.h ****     if (dist < 0.0f) {
+ 262:controller/utils/utils.h ****         dist += 720.0f;
+ 263:controller/utils/utils.h ****     }
+ 264:controller/utils/utils.h ****     return dist;
+ 265:controller/utils/utils.h **** }
+ 266:controller/utils/utils.h **** 
+ 267:controller/utils/utils.h **** /**
+ 268:controller/utils/utils.h ****  * @brief Compute the forward angular distance from `from` to `to` in a 360° cycle.
+ 269:controller/utils/utils.h ****  *
+ 270:controller/utils/utils.h ****  * Always returns a value in the range [0, 360).
+ 271:controller/utils/utils.h ****  * This represents the forward (positive rotation) distance,
+ 272:controller/utils/utils.h ****  * not the shortest path between the angles.
+ 273:controller/utils/utils.h ****  *
+ 274:controller/utils/utils.h ****  * Useful whenever angles are cyclic with a period of 360°,
+ 275:controller/utils/utils.h ****  *
+ 276:controller/utils/utils.h ****  * Examples:
+ 277:controller/utils/utils.h ****  *   angular_forward_distance_360(350, 10)  -> 20
+ 278:controller/utils/utils.h ****  *   angular_forward_distance_360(100, 20)  -> 280
+ 279:controller/utils/utils.h ****  *   angular_forward_distance_360(90, 180)  -> 90
+ 280:controller/utils/utils.h ****  *
+ 281:controller/utils/utils.h ****  * @param from Start angle, in degrees [0..360)
+ 282:controller/utils/utils.h ****  * @param to   Target angle, in degrees [0..360)
+ 283:controller/utils/utils.h ****  * @return Forward angular distance in degrees [0..360)
+ 284:controller/utils/utils.h ****  */
+ 285:controller/utils/utils.h **** static inline angle_t angular_forward_distance_360(angle_t from, angle_t to)
+ 1489              		.loc 2 285 23 view .LVU482
+ 1490              	.LBB73:
+ 286:controller/utils/utils.h **** {
+ 287:controller/utils/utils.h ****     angle_t dist = to - from;
+ 1491              		.loc 2 287 5 view .LVU483
+ 1492              		.loc 2 287 13 is_stmt 0 view .LVU484
+ 1493 0196 7AEEE97A 		vsub.f32	s15, s21, s19
+ 1494              	.LVL117:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 46
+
+
+ 288:controller/utils/utils.h ****     if (dist < 0.0f) {
+ 1495              		.loc 2 288 5 is_stmt 1 view .LVU485
+ 1496              		.loc 2 288 8 is_stmt 0 view .LVU486
+ 1497 019a F5EEC07A 		vcmpe.f32	s15, #0
+ 1498 019e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1499 01a2 49D4     		bmi	.L114
+ 1500              	.LVL118:
+ 1501              	.L89:
+ 289:controller/utils/utils.h ****         dist += 360.0f;
+ 290:controller/utils/utils.h ****     }
+ 291:controller/utils/utils.h ****     return dist;
+ 1502              		.loc 2 291 5 is_stmt 1 view .LVU487
+ 1503              		.loc 2 291 5 is_stmt 0 view .LVU488
+ 1504              	.LBE73:
+ 1505              	.LBE72:
+ 1506              	.LBB75:
+ 1507              	.LBI75:
+ 132:controller/utils/utils.h **** {
+ 1508              		.loc 2 132 25 is_stmt 1 view .LVU489
+ 1509              	.LBB76:
+ 134:controller/utils/utils.h ****     {
+ 1510              		.loc 2 134 5 view .LVU490
+ 134:controller/utils/utils.h ****     {
+ 1511              		.loc 2 134 8 is_stmt 0 view .LVU491
+ 1512 01a4 F5EEC08A 		vcmpe.f32	s17, #0
+ 1513 01a8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1514 01ac 49D9     		bls	.L101
+ 134:controller/utils/utils.h ****     {
+ 1515              		.loc 2 134 18 discriminator 1 view .LVU492
+ 1516 01ae F5EEC07A 		vcmpe.f32	s15, #0
+ 1517 01b2 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1518 01b6 46D9     		bls	.L102
+ 138:controller/utils/utils.h **** }
+ 1519              		.loc 2 138 5 is_stmt 1 view .LVU493
+ 138:controller/utils/utils.h **** }
+ 1520              		.loc 2 138 45 is_stmt 0 view .LVU494
+ 1521 01b8 DFED326A 		vldr.32	s13, .L116+32
+ 1522 01bc 68EEA66A 		vmul.f32	s13, s17, s13
+ 138:controller/utils/utils.h **** }
+ 1523              		.loc 2 138 38 view .LVU495
+ 1524 01c0 9FED346A 		vldr.32	s12, .L116+48
+ 1525 01c4 86EE267A 		vdiv.f32	s14, s12, s13
+ 138:controller/utils/utils.h **** }
+ 1526              		.loc 2 138 55 view .LVU496
+ 1527 01c8 67EE277A 		vmul.f32	s15, s14, s15
+ 1528              	.LVL119:
+ 138:controller/utils/utils.h **** }
+ 1529              		.loc 2 138 12 view .LVU497
+ 1530 01cc FCEEE77A 		vcvt.u32.f32	s15, s15
+ 1531 01d0 17EE903A 		vmov	r3, s15	@ int
+ 1532              	.L91:
+ 1533              	.LVL120:
+ 138:controller/utils/utils.h **** }
+ 1534              		.loc 2 138 12 view .LVU498
+ 1535              	.LBE76:
+ 1536              	.LBE75:
+ 317:controller/engine_cycle/injection.c ****             time_us_t injection_start_time = current_time_us + degree_to_microseconds(angular_forwa
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 47
+
+
+ 1537              		.loc 1 317 23 discriminator 2 view .LVU499
+ 1538 01d4 E818     		adds	r0, r5, r3
+ 1539              	.LVL121:
+ 318:controller/engine_cycle/injection.c ****             // Don't schedule very small injections
+ 1540              		.loc 1 318 13 is_stmt 1 view .LVU500
+ 1541              	.LBB78:
+ 1542              	.LBI78:
+ 285:controller/utils/utils.h **** {
+ 1543              		.loc 2 285 23 view .LVU501
+ 1544              	.LBB79:
+ 287:controller/utils/utils.h ****     if (dist < 0.0f) {
+ 1545              		.loc 2 287 5 view .LVU502
+ 287:controller/utils/utils.h ****     if (dist < 0.0f) {
+ 1546              		.loc 2 287 13 is_stmt 0 view .LVU503
+ 1547 01d6 38EE698A 		vsub.f32	s16, s16, s19
+ 1548              	.LVL122:
+ 288:controller/utils/utils.h ****         dist += 360.0f;
+ 1549              		.loc 2 288 5 is_stmt 1 view .LVU504
+ 288:controller/utils/utils.h ****         dist += 360.0f;
+ 1550              		.loc 2 288 8 is_stmt 0 view .LVU505
+ 1551 01da B5EEC08A 		vcmpe.f32	s16, #0
+ 1552 01de F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1553 01e2 32D4     		bmi	.L115
+ 1554              	.LVL123:
+ 1555              	.L92:
+ 1556              		.loc 2 291 5 is_stmt 1 view .LVU506
+ 1557              		.loc 2 291 5 is_stmt 0 view .LVU507
+ 1558              	.LBE79:
+ 1559              	.LBE78:
+ 1560              	.LBB81:
+ 1561              	.LBI81:
+ 132:controller/utils/utils.h **** {
+ 1562              		.loc 2 132 25 is_stmt 1 view .LVU508
+ 1563              	.LBB82:
+ 134:controller/utils/utils.h ****     {
+ 1564              		.loc 2 134 5 view .LVU509
+ 134:controller/utils/utils.h ****     {
+ 1565              		.loc 2 134 8 is_stmt 0 view .LVU510
+ 1566 01e4 F5EEC08A 		vcmpe.f32	s17, #0
+ 1567 01e8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1568 01ec 32D9     		bls	.L103
+ 134:controller/utils/utils.h ****     {
+ 1569              		.loc 2 134 18 discriminator 1 view .LVU511
+ 1570 01ee B5EEC08A 		vcmpe.f32	s16, #0
+ 1571 01f2 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1572 01f6 2FD9     		bls	.L104
+ 138:controller/utils/utils.h **** }
+ 1573              		.loc 2 138 5 is_stmt 1 view .LVU512
+ 138:controller/utils/utils.h **** }
+ 1574              		.loc 2 138 45 is_stmt 0 view .LVU513
+ 1575 01f8 9FED227A 		vldr.32	s14, .L116+32
+ 1576 01fc 28EE877A 		vmul.f32	s14, s17, s14
+ 138:controller/utils/utils.h **** }
+ 1577              		.loc 2 138 38 view .LVU514
+ 1578 0200 DFED246A 		vldr.32	s13, .L116+48
+ 1579 0204 C6EE877A 		vdiv.f32	s15, s13, s14
+ 138:controller/utils/utils.h **** }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 48
+
+
+ 1580              		.loc 2 138 55 view .LVU515
+ 1581 0208 67EE887A 		vmul.f32	s15, s15, s16
+ 138:controller/utils/utils.h **** }
+ 1582              		.loc 2 138 12 view .LVU516
+ 1583 020c FCEEE77A 		vcvt.u32.f32	s15, s15
+ 1584 0210 17EE902A 		vmov	r2, s15	@ int
+ 1585              	.L94:
+ 1586              	.LVL124:
+ 138:controller/utils/utils.h **** }
+ 1587              		.loc 2 138 12 view .LVU517
+ 1588              	.LBE82:
+ 1589              	.LBE81:
+ 318:controller/engine_cycle/injection.c ****             // Don't schedule very small injections
+ 1590              		.loc 1 318 23 discriminator 2 view .LVU518
+ 1591 0214 A918     		adds	r1, r5, r2
+ 1592              	.LVL125:
+ 320:controller/engine_cycle/injection.c ****             {
+ 1593              		.loc 1 320 13 is_stmt 1 view .LVU519
+ 320:controller/engine_cycle/injection.c ****             {
+ 1594              		.loc 1 320 37 is_stmt 0 view .LVU520
+ 1595 0216 9B1A     		subs	r3, r3, r2
+ 320:controller/engine_cycle/injection.c ****             {
+ 1596              		.loc 1 320 16 view .LVU521
+ 1597 0218 312B     		cmp	r3, #49
+ 1598 021a 7FF654AF 		bls	.L79
+ 324:controller/engine_cycle/injection.c ****             event->injection_start_time = injection_start_time;
+ 1599              		.loc 1 324 13 is_stmt 1 view .LVU522
+ 324:controller/engine_cycle/injection.c ****             event->injection_start_time = injection_start_time;
+ 1600              		.loc 1 324 40 is_stmt 0 view .LVU523
+ 1601 021e 1B4B     		ldr	r3, .L116+40
+ 1602 0220 04EB4402 		add	r2, r4, r4, lsl #1
+ 1603 0224 03EBC20C 		add	ip, r3, r2, lsl #3
+ 1604 0228 CCF80400 		str	r0, [ip, #4]
+ 325:controller/engine_cycle/injection.c ****             schedule_injection_event(event);
+ 1605              		.loc 1 325 13 is_stmt 1 view .LVU524
+ 325:controller/engine_cycle/injection.c ****             schedule_injection_event(event);
+ 1606              		.loc 1 325 41 is_stmt 0 view .LVU525
+ 1607 022c 43F83210 		str	r1, [r3, r2, lsl #3]
+ 326:controller/engine_cycle/injection.c ****         }
+ 1608              		.loc 1 326 13 is_stmt 1 view .LVU526
+ 1609 0230 3846     		mov	r0, r7
+ 1610              	.LVL126:
+ 326:controller/engine_cycle/injection.c ****         }
+ 1611              		.loc 1 326 13 is_stmt 0 view .LVU527
+ 1612 0232 FFF7FEFF 		bl	schedule_injection_event
+ 1613              	.LVL127:
+ 326:controller/engine_cycle/injection.c ****         }
+ 1614              		.loc 1 326 13 view .LVU528
+ 1615 0236 46E7     		b	.L79
+ 1616              	.LVL128:
+ 1617              	.L114:
+ 1618              	.LBB84:
+ 1619              	.LBB74:
+ 289:controller/utils/utils.h ****     }
+ 1620              		.loc 2 289 9 is_stmt 1 view .LVU529
+ 289:controller/utils/utils.h ****     }
+ 1621              		.loc 2 289 14 is_stmt 0 view .LVU530
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 49
+
+
+ 1622 0238 9FED127A 		vldr.32	s14, .L116+32
+ 1623 023c 77EE877A 		vadd.f32	s15, s15, s14
+ 1624              	.LVL129:
+ 289:controller/utils/utils.h ****     }
+ 1625              		.loc 2 289 14 view .LVU531
+ 1626 0240 B0E7     		b	.L89
+ 1627              	.LVL130:
+ 1628              	.L101:
+ 289:controller/utils/utils.h ****     }
+ 1629              		.loc 2 289 14 view .LVU532
+ 1630              	.LBE74:
+ 1631              	.LBE84:
+ 1632              	.LBB85:
+ 1633              	.LBB77:
+ 136:controller/utils/utils.h ****     }
+ 1634              		.loc 2 136 16 view .LVU533
+ 1635 0242 0023     		movs	r3, #0
+ 1636 0244 C6E7     		b	.L91
+ 1637              	.L102:
+ 1638 0246 0023     		movs	r3, #0
+ 1639 0248 C4E7     		b	.L91
+ 1640              	.LVL131:
+ 1641              	.L115:
+ 136:controller/utils/utils.h ****     }
+ 1642              		.loc 2 136 16 view .LVU534
+ 1643              	.LBE77:
+ 1644              	.LBE85:
+ 1645              	.LBB86:
+ 1646              	.LBB80:
+ 289:controller/utils/utils.h ****     }
+ 1647              		.loc 2 289 9 is_stmt 1 view .LVU535
+ 289:controller/utils/utils.h ****     }
+ 1648              		.loc 2 289 14 is_stmt 0 view .LVU536
+ 1649 024a DFED0E7A 		vldr.32	s15, .L116+32
+ 1650 024e 38EE278A 		vadd.f32	s16, s16, s15
+ 1651              	.LVL132:
+ 289:controller/utils/utils.h ****     }
+ 1652              		.loc 2 289 14 view .LVU537
+ 1653 0252 C7E7     		b	.L92
+ 1654              	.LVL133:
+ 1655              	.L103:
+ 289:controller/utils/utils.h ****     }
+ 1656              		.loc 2 289 14 view .LVU538
+ 1657              	.LBE80:
+ 1658              	.LBE86:
+ 1659              	.LBB87:
+ 1660              	.LBB83:
+ 136:controller/utils/utils.h ****     }
+ 1661              		.loc 2 136 16 view .LVU539
+ 1662 0254 0022     		movs	r2, #0
+ 1663 0256 DDE7     		b	.L94
+ 1664              	.L104:
+ 1665 0258 0022     		movs	r2, #0
+ 1666 025a DBE7     		b	.L94
+ 1667              	.LVL134:
+ 1668              	.L70:
+ 136:controller/utils/utils.h ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 50
+
+
+ 1669              		.loc 2 136 16 view .LVU540
+ 1670              	.LBE83:
+ 1671              	.LBE87:
+ 1672              	.LBE61:
+ 1673              	.LBE88:
+ 1674              	.LBE91:
+ 329:controller/engine_cycle/injection.c **** 
+ 1675              		.loc 1 329 1 view .LVU541
+ 1676 025c BDEC088B 		vldm	sp!, {d8-d11}
+ 1677              		.cfi_restore 86
+ 1678              		.cfi_restore 87
+ 1679              		.cfi_restore 84
+ 1680              		.cfi_restore 85
+ 1681              		.cfi_restore 82
+ 1682              		.cfi_restore 83
+ 1683              		.cfi_restore 80
+ 1684              		.cfi_restore 81
+ 1685              		.cfi_def_cfa_offset 24
+ 1686 0260 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1687              	.L117:
+ 1688 0262 00BF     		.align	2
+ 1689              	.L116:
+ 1690 0264 00100000 		.word	config+4096
+ 1691 0268 00000000 		.word	injection_initialized
+ 1692 026c 00000000 		.word	runtime
+ 1693 0270 BC160000 		.word	config+5820
+ 1694 0274 00003443 		.word	1127481344
+ 1695 0278 00000000 		.word	0
+ 1696 027c 00000000 		.word	.LC4
+ 1697 0280 00000000 		.word	operating_in_forced_batch_injection
+ 1698 0284 0000B443 		.word	1135869952
+ 1699 0288 00000000 		.word	number_of_events
+ 1700 028c 00000000 		.word	injection_events
+ 1701 0290 00606A47 		.word	1198153728
+ 1702 0294 C0E1644C 		.word	1281679808
+ 1703              		.cfi_endproc
+ 1704              	.LFE242:
+ 1706              		.section	.bss.operating_in_forced_batch_injection,"aw",%nobits
+ 1709              	operating_in_forced_batch_injection:
+ 1710 0000 00       		.space	1
+ 1711              		.section	.bss.injection_initialized,"aw",%nobits
+ 1714              	injection_initialized:
+ 1715 0000 00       		.space	1
+ 1716              		.section	.bss.number_of_injections,"aw",%nobits
+ 1719              	number_of_injections:
+ 1720 0000 00       		.space	1
+ 1721              		.section	.bss.number_of_events,"aw",%nobits
+ 1724              	number_of_events:
+ 1725 0000 00       		.space	1
+ 1726              		.global	injection_events
+ 1727              		.section	.bss.injection_events,"aw",%nobits
+ 1728              		.align	2
+ 1731              	injection_events:
+ 1732 0000 00000000 		.space	192
+ 1732      00000000 
+ 1732      00000000 
+ 1732      00000000 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 51
+
+
+ 1732      00000000 
+ 1733              		.global	injector_pin_conf
+ 1734              		.section	.bss.injector_pin_conf,"aw",%nobits
+ 1735              		.align	2
+ 1738              	injector_pin_conf:
+ 1739 0000 00000000 		.space	4
+ 1740              		.text
+ 1741              	.Letext0:
+ 1742              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 1743              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 1744              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 1745              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 1746              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 1747              		.file 8 "controller/types.h"
+ 1748              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 1749              		.file 10 "controller/tables.h"
+ 1750              		.file 11 "controller/config_and_runtime.h"
+ 1751              		.file 12 "controller/engine_cycle/injection.h"
+ 1752              		.file 13 "controller/utils/timing.h"
+ 1753              		.file 14 "controller/algorithm/fuel/fuel_math.h"
+ 1754              		.file 15 "controller/engine_cycle/trigger.h"
+ 1755              		.file 16 "controller/utils/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 52
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 injection.c
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:21     .rodata.injection_switch_to_batch.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:25     .text.injection_switch_to_batch:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:30     .text.injection_switch_to_batch:00000000 injection_switch_to_batch
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:108    .text.injection_switch_to_batch:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1738   .bss.injector_pin_conf:00000000 injector_pin_conf
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1709   .bss.operating_in_forced_batch_injection:00000000 operating_in_forced_batch_injection
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1731   .bss.injection_events:00000000 injection_events
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1724   .bss.number_of_events:00000000 number_of_events
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:119    .text.injection_switch_to_sequential:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:124    .text.injection_switch_to_sequential:00000000 injection_switch_to_sequential
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:210    .text.injection_switch_to_sequential:0000004c $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:223    .text.injector_stop_injection:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:228    .text.injector_stop_injection:00000000 injector_stop_injection
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:293    .rodata.injection_watchdog_check.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:297    .text.injection_watchdog_check:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:302    .text.injection_watchdog_check:00000000 injection_watchdog_check
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:398    .text.injection_watchdog_check:00000048 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:406    .text.injector_start_injection:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:411    .text.injector_start_injection:00000000 injector_start_injection
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:476    .text.schedule_injection_event:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:481    .text.schedule_injection_event:00000000 schedule_injection_event
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:549    .text.schedule_injection_event:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:555    .rodata.injection_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:563    .text.injection_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:569    .text.injection_init:00000000 injection_init
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:977    .text.injection_init:00000178 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1719   .bss.number_of_injections:00000000 number_of_injections
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1714   .bss.injection_initialized:00000000 injection_initialized
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:997    .text.get_pulse_width:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1003   .text.get_pulse_width:00000000 get_pulse_width
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1055   .text.get_pulse_width:00000040 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1065   .rodata.injection_trigger_event_handle.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1069   .text.injection_trigger_event_handle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1075   .text.injection_trigger_event_handle:00000000 injection_trigger_event_handle
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1690   .text.injection_trigger_event_handle:00000264 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1710   .bss.operating_in_forced_batch_injection:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1715   .bss.injection_initialized:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1720   .bss.number_of_injections:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1725   .bss.number_of_events:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1728   .bss.injection_events:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s:1735   .bss.injector_pin_conf:00000000 $d
+
+UNDEFINED SYMBOLS
+log_error
+config
+HAL_GPIO_WritePin
+get_time_us
+runtime
+scheduler_schedule_event_with_arg
+osTimerNew
+osTimerStart
+fuel_get_required_mass_petrol_per_cycle
+camshaft_get_phase
+crankshaft_get_next_trigger_angle
+is_phase_in_range
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccEiTjKA.s 			page 53
+
+

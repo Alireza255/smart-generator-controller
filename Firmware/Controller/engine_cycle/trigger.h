@@ -7,6 +7,11 @@
 #include "error_handling.h"
 #include "config_and_runtime.h"
 
+#define TRIGGER_TOOTH_GAP_SYNC_RATIO_LOWER 1.5
+#define TRIGGER_TOOTH_GAP_SYNC_RATIO_UPPER 3
+
+#define TRIGGER_SPINNING_STATE_RPM_HYSTEERSIS (rpm_t)50
+
 typedef enum
 {
     TRIGGER_FILTERING_NONE = 0,
@@ -21,30 +26,32 @@ typedef enum
     TS_FULLY_SYNCED = 1,
 } trigger_sync_status_t;
 
-typedef enum
-{
-    TRIGGER_NUMBER_1,
-    TRIGGER_NUMBER_2,
-} trigger_number_t;
 
 typedef struct
 {
-    trigger_number_t trigger_number;
     bool initialized;
-    uint8_t status_synced_index; // which of the status bits in runtime we are using
     uint8_t *filtering;
-    time_us_t _trigger_filter_time_us;
-    time_us_t _tooth_time_us[3]; // the higher the index, the older the sample. 0 is the current tooth time
-    time_us_t _current_tooth_gap_us;
-    time_us_t _shorter_tooth_gap;
-    time_us_t _target_tooth_gap_us;
-    uint16_t _counted_tooth;
-    uint8_t _trigger_actual_teeth;
-    uint8_t _full_teeth;
-    uint8_t _missing_teeth;
-} trigger_t;
+    
+    time_us_t       tooth_time_history[2]; // the higher the index, the older the sample.
+    time_us_t       filter_time;
+    uint16_t        counted_teeth;
+    uint8_t         trigger_actual_teeth;
+    uint8_t         full_teeth;
+    uint8_t         missing_teeth;
 
-typedef enum {
+} trigger_crankshaft_t;
+
+typedef struct
+{
+    bool initialized;
+    uint8_t *filtering;
+    bool        phase;
+    time_us_t   last_edge_time;
+    time_us_t   last_edge_gap;
+} trigger_camshaft_t;
+
+typedef enum 
+{
     /**
      * The engine is not spinning, RPM=0
      */
@@ -65,10 +72,6 @@ typedef enum {
 } spinning_state_t;
 
 /**
- * @brief returns the state of the engine - ie: cranking, running, stopped
- */
-
-/**
  * @brief returns the instant angle of the crankshaft
  * @note angle is updated on every trigger event!
  */
@@ -80,13 +83,29 @@ angle_t crankshaft_get_angle();
  */
 rpm_t crankshaft_get_rpm();
 
-angle_t camshaft_get_angle();
+bool camshaft_get_phase();
 
 /**
  * @brief called by an interrupt in the middle of the tooth i.e.- zero crossing of the signal
- * @todo add filtering capability
  */
-void trigger_tooth_handle(trigger_t *trigger);
-void trigger_init(trigger_t *trigger, trigger_wheel_type_t wheel_type, uint8_t *filtering, status_t sync_status_bit, uint8_t trigger_number);
+void trigger_crankshaft_signal_handle();
+
+/**
+ * @brief gets called on either edge of the camshaft signal
+ */
+void trigger_camshaft_signal_handle(bool is_rising_edge);
+
+void trigger_crankshaft_init(trigger_wheel_type_crankshaft_t wheel_type);
+
+void trigger_camshaft_init(trigger_wheel_type_camshaft_t wheel_type, uint8_t *filtering);
+
+void trigger_driven_events_callback();
+
+angle_t crankshaft_get_next_trigger_angle();
+
+void trigger_tooth_logger_start();
+void trigger_tooth_logger_stop();
+void trigger_tooth_logger_reset();
+time_us_t *trigger_tooth_logger_get_buffer();
 
 #endif // TRIGGER_H

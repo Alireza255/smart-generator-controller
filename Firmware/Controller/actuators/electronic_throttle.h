@@ -16,7 +16,8 @@
 #include "math.h"
 
 #define ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION (percent_t)0
-#define ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD (percent_t)0.5f
+#define ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD (percent_t)0.8f
+#define ELECTRONIC_THROTTLE_AUTO_CALIB_MIN_VBAT (voltage_t)11
 
 typedef enum
 {
@@ -25,35 +26,37 @@ typedef enum
     ETB_STATE_ERROR,
 } electronic_throttle_state_t;
 
-typedef enum
-{
-    ETB_NUMBER_1,
-    ETB_NUMBER_2,
-} electronic_throttle_number_t;
-
 typedef struct
 {
     electronic_throttle_state_t state;
     dc_motor_t *motor;
     pid_t *pid;
     sensor_tps_t *sensor;
+    table_1d_t *feed_forward_table;
     percent_t target_position;
     percent_t current_position;
     percent_t duty_cycle_limiting_lower;
     percent_t duty_cycle_limiting_upper;
-    electronic_throttle_number_t etb_number;
     bool is_duty_cycle_limiting_enabled;
 } electronic_throttle_t;
 
 /**
  * @note sensor and motor have to be initialized before calling this function
  */
-bool electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor);
+void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor, table_1d_t *feed_forward_table);
 
-bool electronic_throttle_auto_tune(electronic_throttle_t *etb);
+void electronic_throttle_auto_tune(electronic_throttle_t *etb);
 
-bool electronic_throttle_set(electronic_throttle_t *etb, percent_t position);
+void electronic_throttle_set(electronic_throttle_t *etb, percent_t position);
 
 void electronic_throttle_update(void *arg);
  
+/**
+ * @brief Limits the duty cycle in order to not burn out the motor in case the control loop asks the motor to something stupid.
+ * 
+ * @param etb pointer to the etb of choice
+ * @param duty_limit_opening Duty cycle limit of the motor when protection is active (percent)
+ * @param duty_limit_closing Duty cycle limit of the motor when protection is active (percent)
+ */
+void electronic_throttle_enable_end_of_travel_protection(electronic_throttle_t *etb, percent_t duty_limit_closing, percent_t duty_limit_opening);
 #endif // ELECTRONIC_THROTTLE_H

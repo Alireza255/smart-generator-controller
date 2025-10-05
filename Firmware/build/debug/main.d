@@ -61,16 +61,19 @@ build/debug/main.o: Core/Src/main.c Core/Inc/main.h \
  controller/config_and_runtime.h controller/constants.h \
  controller/tables.h controller/engine_cycle/trigger.h \
  controller/utils/error_handling.h controller/actuators/dc_motors.h \
- controller/utils/utils.h controller/IO/sensors.h \
- controller/IO/analog_inputs.h controller/IO/resistor.h \
+ controller/IO/sensors.h controller/IO/analog_inputs.h \
+ controller/utils/utils.h controller/IO/resistor.h \
  controller/IO/thermistor.h controller/constants.h \
- controller/engine_cycle/ignition.h controller/IO/thermistor.h \
+ controller/engine_cycle/ignition.h controller/tables.h \
+ controller/engine_cycle/trigger.h controller/IO/thermistor.h \
  controller/utils/pid.h controller/utils/timing.h \
  controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h controller/algorithm/governer.h \
  controller/actuators/fan_control.h controller/utils/trigger_simulator.h \
  controller/utils/utils.h controller/config_and_runtime.h \
- controller/utils/ee.h
+ controller/utils/ee.h controller/engine_cycle/gas_injection.h \
+ controller/algorithm/fuel/fuel_math.h \
+ controller/engine_cycle/injection.h
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -148,13 +151,15 @@ controller/tables.h:
 controller/engine_cycle/trigger.h:
 controller/utils/error_handling.h:
 controller/actuators/dc_motors.h:
-controller/utils/utils.h:
 controller/IO/sensors.h:
 controller/IO/analog_inputs.h:
+controller/utils/utils.h:
 controller/IO/resistor.h:
 controller/IO/thermistor.h:
 controller/constants.h:
 controller/engine_cycle/ignition.h:
+controller/tables.h:
+controller/engine_cycle/trigger.h:
 controller/IO/thermistor.h:
 controller/utils/pid.h:
 controller/utils/timing.h:
@@ -166,3 +171,6 @@ controller/utils/trigger_simulator.h:
 controller/utils/utils.h:
 controller/config_and_runtime.h:
 controller/utils/ee.h:
+controller/engine_cycle/gas_injection.h:
+controller/algorithm/fuel/fuel_math.h:
+controller/engine_cycle/injection.h:

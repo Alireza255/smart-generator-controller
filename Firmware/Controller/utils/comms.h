@@ -9,6 +9,8 @@
 #include "usbd_cdc_if.h"
 #include <stdbool.h>
 #include "config_and_runtime.h"
+#include "trigger.h"
+
 /**
  * CRC packets are implemend like this:
  * size in the beginning of a packet and a crc32 at the end.

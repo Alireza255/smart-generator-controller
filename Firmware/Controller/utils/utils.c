@@ -1,6 +1,23 @@
 #include "utils.h"
 
+bool is_phase_in_range(float test, float current, float next) {
+	bool afterCurrent = test >= current;
+	bool beforeNext = test < next;
 
+	if (next > current) {
+		// we're not near the end of the cycle, comparison is simple
+		// 0            |------------------------|       720
+		//            next                    current
+		return afterCurrent && beforeNext;
+	} else {
+		// we're near the end of the cycle so we have to check the wraparound
+		// 0 -----------|                        |------ 720
+		//            next                    current
+		// Check whether test is after current (ie, between current tooth and end of cycle)
+		// or if test if before next (ie, between start of cycle and next tooth)
+		return afterCurrent || beforeNext;
+	}
+}
 
 uint32_t crc32_inc(uint32_t in_crc32, const void *buf,
                    size_t size)
@@ -63,3 +80,93 @@ void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size) {
     }
 }
 
+
+size_t nearest_index_float(const float *arr, size_t size, float target) {
+    if (size == 0) return SIZE_MAX;
+
+    size_t nearest_index = 0;
+    float min_diff = fabsf(arr[0] - target);
+
+    for (size_t i = 1; i < size; i++) {
+        float diff = fabsf(arr[i] - target);
+        if (diff < min_diff) {
+            min_diff = diff;
+            nearest_index = i;
+        }
+    }
+    return nearest_index;
+}
+
+float interpolate_2d(float x0, float y0, float x1, float y1, float x) {
+    if (fabsf(x1 - x0) < FLT_EPSILON) {
+        // x0 and x1 are effectively the same → return y0
+        return y0;
+    }
+    return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
+}
+
+size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target) {
+    if (size == 0) return SIZE_MAX;
+
+    size_t nearest_index = 0;
+    unsigned int min_diff = (arr[0] > target) ? (arr[0] - target) : (target - arr[0]);
+
+    for (size_t i = 1; i < size; i++) {
+        unsigned int diff = (arr[i] > target) ? (arr[i] - target) : (target - arr[i]);
+        if (diff < min_diff) {
+            min_diff = diff;
+            nearest_index = i;
+        }
+    }
+    return nearest_index;
+}
+
+size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target) {
+    if (size == 0) return SIZE_MAX;
+
+    size_t nearest_index = 0;
+    unsigned int min_diff = (arr[0] > target) ? (arr[0] - target) : (target - arr[0]);
+
+    for (size_t i = 1; i < size; i++) {
+        unsigned int diff = (arr[i] > target) ? (arr[i] - target) : (target - arr[i]);
+        if (diff < min_diff) {
+            min_diff = diff;
+            nearest_index = i;
+        }
+    }
+    return nearest_index;
+}
+
+size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target) {
+    if (size == 0) return SIZE_MAX;
+
+    size_t nearest_index = 0;
+    uint32_t min_diff = (arr[0] > target) ? (arr[0] - target) : (target - arr[0]);
+
+    for (size_t i = 1; i < size; i++) {
+        uint32_t diff = (arr[i] > target) ? (arr[i] - target) : (target - arr[i]);
+        if (diff < min_diff) {
+            min_diff = diff;
+            nearest_index = i;
+        }
+    }
+    return nearest_index;
+}
+
+float rate_of_change_per_sec(float current_value, float prev_value, time_us_t current_time, time_us_t prev_time)
+{
+    if (isnan(current_value) || isnan(prev_value))
+    {
+        return (float)0;
+    }
+    time_us_t delta_time = (uint32_t)(current_time - prev_time);
+    if (delta_time == 0)
+    {
+        return (float)0;
+    }
+    
+    float delta_value = current_value - prev_value;
+    
+    return delta_value / (float)(delta_time) * (float)CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS;
+    
+}

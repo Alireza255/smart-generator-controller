@@ -3,7 +3,54 @@
 static sensor_map_t *map_sensor = NULL;
 static thermistor_t *sensor_iat = NULL;
 static thermistor_t *sensor_clt = NULL;
-static sensor_ops_t *sensor_ops = NULL;
+
+void sensor_tps_init(sensor_tps_t *sensor, sensor_tps_type_t sensor_type, bool is_inverted, status_t status_flag)
+{
+    if (sensor == NULL)
+    {
+        log_error("tps sensor is null");
+        return;
+    }
+    switch (sensor_type)
+    {
+    case SENSOR_TPS_TYPE_SAMAND_ETB:
+        /**
+         * a simple linear sensor
+         */
+        sensor->analog_channel = ANALOG_INPUT_ETB1_SENSE1;
+        sensor->analog_channel_backup = ANALOG_INPUT_ETB1_SENSE2;
+        sensor->is_backup_channel_enabled = true;
+        sensor->is_inverted = is_inverted;
+        sensor->status_bit = status_flag;
+        sensor->closed_throttle_adc_value = 5;
+        sensor->wide_open_throttle_adc_value = 4090;
+        change_bit(&runtime.status, STATUS_MAP_ERROR, false);
+        break;
+    case SENSOR_TPS_CUSTOM:
+        /**
+         * a simple linear sensor
+         */
+        sensor->is_backup_channel_enabled = false;
+        sensor->status_bit = status_flag;
+        sensor->is_inverted = is_inverted;
+        if (sensor->closed_throttle_adc_value == 0 && sensor->wide_open_throttle_adc_value == 0)
+        {
+            log_error("Custom TPS sensor init failed. Please configure calib values correctly before calling init function.");
+            change_bit(&runtime.status, sensor->status_bit, true);
+            return;
+        }
+        
+        break;
+    
+    default:
+
+        change_bit(&runtime.status, sensor->status_bit, true);
+        break;
+    }
+    
+
+}
+
 
 percent_t sensor_tps_get(sensor_tps_t *sensor)
 {
@@ -27,7 +74,7 @@ percent_t sensor_tps_get(sensor_tps_t *sensor)
     {
         result = mapf((float)raw_data, (float)sensor->closed_throttle_adc_value, (float)sensor->wide_open_throttle_adc_value, (float)0, (float)100);
     }
-    result = CLAMP(result, (percent_t)0, (percent_t)100);
+    
     change_bit(&runtime.status, sensor->status_bit, false);
     return result;
 }
@@ -233,36 +280,19 @@ temperature_t sensor_clt_get()
     return temperature;
 }
 
-void sensor_ops_init(sensor_ops_t *sensor)
-{
-    if (sensor == NULL)
-    {
-        log_error("ops sensor is null");
-        change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, true);
-        return;
-    }
-    sensor->adc_value_threshold = 4095 / 2;
-    sensor->debounce_time_ms = 200;
-    sensor->analog_channel = ANALOG_INPUT_SENSOR_OIL_PIN;
-    sensor_ops = sensor;
-    
-}
 
 bool sensor_ops_get()
 {
+    const uint16_t debounce_time_ms = 200;
+
+
     static uint32_t last_change_time = 0;
     static bool last_state = false;
     static bool debounced_state = false;
 
-    if (sensor_ops == NULL)
-    {
-        log_error("ops sensor is null");
-        change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, true);
-        return false;
-    }
 
-    uint16_t adc_value = analog_inputs_get_data(sensor_ops->analog_channel);
-    bool current_state = adc_value > sensor_ops->adc_value_threshold;
+    uint16_t adc_value = analog_inputs_get_data(ANALOG_INPUT_SENSOR_OIL_PIN);
+    bool current_state = adc_value > 2047;
 
     uint32_t now = get_time_ms();
 
@@ -273,13 +303,12 @@ bool sensor_ops_get()
         last_state = current_state;
     }
 
-    if ((now - last_change_time) >= sensor_ops->debounce_time_ms)
+    if ((now - last_change_time) >= debounce_time_ms)
     {
         /* Debounce period passed, accept new state */
         debounced_state = current_state;
     }
     
-    change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, !debounced_state);
     return debounced_state;
 }
 

@@ -288,9 +288,28 @@ void process_command(uint8_t *request, uint16_t size)
         send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
         return;
         break;
+
+	case TS_SET_LOGGER_SWITCH:
+		switch(request[3]) {
+		case TS_COMPOSITE_ENABLE:
+			trigger_tooth_logger_start();
+			break;
+		case TS_COMPOSITE_DISABLE:
+			trigger_tooth_logger_stop();
+			break;
+		case TS_COMPOSITE_READ:
+			{
+                bool is_buffer_ready = get_bit(runtime.status, STATUS_TOOTH_LOG_READY);
+                time_us_t *logger_buffer = trigger_tooth_logger_get_buffer();
+                send_response(TS_RESPONSE_OK, (uint8_t*)logger_buffer, FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES * sizeof(uint32_t), TS_CRC);
+                trigger_tooth_logger_start();
+            }
+			break;
+            }
     default:
         break;
     }
+    
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
 

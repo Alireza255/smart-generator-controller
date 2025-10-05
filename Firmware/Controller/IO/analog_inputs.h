@@ -70,12 +70,11 @@ typedef enum
  * This function sets up the ADC peripheral and prepares the analog inputs
  * module for operation.
  * 
- * @param hadc Pointer to the ADC_HandleTypeDef structure that contains
+ * @param adc_handle Pointer to the ADC_HandleTypeDef structure that contains
  *             the configuration information for the specified ADC.
- * @param instance Pointer to the analog_inputs_s structure instance
- *                 that holds the state and configuration of the analog inputs.
+ * @param timer_handle Pointer to the timer handle that is going to drive the adc at a regular rate
  */
-void analog_inputs_init(ADC_HandleTypeDef *hadc);
+void analog_inputs_init(ADC_HandleTypeDef *adc_handle, TIM_HandleTypeDef *timer_handle);
 
 /**
  * @brief Starts the ADC conversion for analog inputs.

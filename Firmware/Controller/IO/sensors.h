@@ -20,10 +20,14 @@
 #define VBAT_DIVIDER_RATIO (float)10.4
 typedef struct
 {
+    percent_t _prev_position;
+    time_us_t _prev_time;
     uint16_t wide_open_throttle_adc_value;
     uint16_t closed_throttle_adc_value;
     analog_input_channel_t analog_channel;
+    analog_input_channel_t analog_channel_backup;
     status_t status_bit;
+    bool is_backup_channel_enabled;
     bool is_inverted;
 } sensor_tps_t;
 
@@ -43,9 +47,12 @@ typedef struct
 
 
 percent_t sensor_tps_get(sensor_tps_t *sensor);
+percent_t sensor_tps_rate_of_change_get(sensor_tps_t *sensor);
 
 void sensor_map_init(sensor_map_t *sensor, sensor_map_type_t type);
 pressure_t sensor_map_get();
+
+percent_t sensor_map_rate_of_change_get();
 
 void sensor_iat_init(thermistor_t *sensor, sensor_iat_type_t type);
 temperature_t sensor_iat_get();
@@ -53,7 +60,6 @@ temperature_t sensor_iat_get();
 void sensor_clt_init(thermistor_t *sensor, sensor_clt_type_t type);
 temperature_t sensor_clt_get();
 
-void sensor_ops_init(sensor_ops_t *sensor);
 bool sensor_ops_get();
 
 temperature_t sensor_egt_get();

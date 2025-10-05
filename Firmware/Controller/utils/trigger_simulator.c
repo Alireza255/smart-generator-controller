@@ -4,20 +4,22 @@
 uint8_t wheel_full_teeth = 0;
 uint8_t wheel_missing_teeth = 0;
 
-static void (*trigger_callback)(trigger_t *arg);  //passing an argument
-static trigger_t *trigger_callback_arg;           // data to pass to callback_arg
+static bool cam_state = false;
 
-void trigger_simulator_init(uint8_t full_teeth, uint8_t missing_teeth, void (*cb)(trigger_t *arg), trigger_t *arg)
+static void (*trigger_callback_cam)(bool edge) = NULL;  // pointer to function taking no args, returns void
+static void (*trigger_callback_crank)(void) = NULL;  // pointer to function taking no args, returns void
+
+void trigger_simulator_init(uint8_t full_teeth, uint8_t missing_teeth, void (*cb_cam)(bool edge), void (*cb_crank)(void))
 {
     wheel_full_teeth = full_teeth;
     wheel_missing_teeth = missing_teeth;
-    trigger_callback = cb;
-    trigger_callback_arg = arg;
+    trigger_callback_cam = cb_cam;
+    trigger_callback_crank = cb_crank;
 }
 
 void trigger_simulator_update(rpm_t rpm)
 {
-    if (trigger_callback == NULL)
+    if (trigger_callback_cam == NULL || trigger_callback_crank == NULL)
     {
         return;
     }
@@ -44,7 +46,7 @@ void trigger_simulator_update(rpm_t rpm)
     }
     else
     {
-        trigger_callback(trigger_callback_arg);
+        trigger_callback_crank();
     }
     
 
@@ -57,6 +59,12 @@ void trigger_simulator_update(rpm_t rpm)
         current_tooth_index = 0;
     }
 
+    if (current_tooth_index == 0)
+    {
+        cam_state = !cam_state;
+        trigger_callback_cam(cam_state);
+    }
 
+    
 }
 

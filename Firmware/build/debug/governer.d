@@ -37,11 +37,10 @@ build/debug/governer.o: controller/algorithm/governer.c \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h Core/Inc/main.h \
- controller/utils/utils.h controller/utils/pid.h \
- controller/utils/timing.h Core/Inc/tim.h Core/Inc/main.h \
- controller/IO/sensors.h controller/IO/analog_inputs.h \
- controller/IO/resistor.h controller/utils/error_handling.h \
- USB_DEVICE/App/usbd_cdc_if.h \
+ controller/utils/pid.h controller/utils/timing.h Core/Inc/tim.h \
+ Core/Inc/main.h controller/IO/sensors.h controller/IO/analog_inputs.h \
+ controller/utils/utils.h controller/IO/resistor.h \
+ controller/utils/error_handling.h USB_DEVICE/App/usbd_cdc_if.h \
  Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
@@ -54,10 +53,14 @@ build/debug/governer.o: controller/algorithm/governer.c \
  controller/constants.h controller/tables.h controller/controller.h \
  controller/utils/comms.h controller/engine_cycle/trigger.h \
  controller/actuators/dc_motors.h controller/engine_cycle/ignition.h \
+ controller/tables.h controller/engine_cycle/trigger.h \
  controller/IO/thermistor.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/actuators/fan_control.h \
  controller/utils/trigger_simulator.h controller/utils/utils.h \
- controller/config_and_runtime.h controller/utils/ee.h
+ controller/config_and_runtime.h controller/utils/ee.h \
+ controller/engine_cycle/gas_injection.h \
+ controller/algorithm/fuel/fuel_math.h \
+ controller/engine_cycle/injection.h
 controller/algorithm/governer.h:
 controller/actuators/electronic_throttle.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
@@ -100,13 +103,13 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
 Core/Inc/main.h:
-controller/utils/utils.h:
 controller/utils/pid.h:
 controller/utils/timing.h:
 Core/Inc/tim.h:
 Core/Inc/main.h:
 controller/IO/sensors.h:
 controller/IO/analog_inputs.h:
+controller/utils/utils.h:
 controller/IO/resistor.h:
 controller/utils/error_handling.h:
 USB_DEVICE/App/usbd_cdc_if.h:
@@ -129,6 +132,8 @@ controller/utils/comms.h:
 controller/engine_cycle/trigger.h:
 controller/actuators/dc_motors.h:
 controller/engine_cycle/ignition.h:
+controller/tables.h:
+controller/engine_cycle/trigger.h:
 controller/IO/thermistor.h:
 Core/Inc/adc.h:
 controller/algorithm/governer.h:
@@ -137,3 +142,6 @@ controller/utils/trigger_simulator.h:
 controller/utils/utils.h:
 controller/config_and_runtime.h:
 controller/utils/ee.h:
+controller/engine_cycle/gas_injection.h:
+controller/algorithm/fuel/fuel_math.h:
+controller/engine_cycle/injection.h:

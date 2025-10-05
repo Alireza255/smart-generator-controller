@@ -12,9 +12,20 @@
 
 #include "types.h"
 #include "math.h"
+
+#define PI 3.14159265358979323846f
 #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+
+#define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
+
+bool is_phase_in_range(float test, float current, float next);
+
+size_t nearest_index_float(const float *arr, size_t size, float target);
+size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target);
+size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target);
+size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
 
 static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
 {
@@ -112,6 +123,22 @@ static inline time_us_t microseconds_per_degree(rpm_t rpm)
 }
 
 /**
+ * @brief Convert a rotation angle in degrees to time in microseconds at a given RPM.
+ *
+ * @param degrees Rotation angle in degrees (> 0)
+ * @param rpm     Rotational speed in RPM (> 0)
+ * @return Time in microseconds to rotate the given angle, or 0 if input is invalid
+ */
+static inline time_us_t degree_to_microseconds(angle_t degrees, rpm_t rpm)
+{
+    if (rpm <= 0 || degrees <= 0)
+    {
+        return 0;
+    }
+    return (time_us_t) (60.0f * 1e6f / (rpm * 360.0f) * degrees); 
+}
+
+/**
  * @brief Function to calculate the degrees the engine turns in one microsecond.
  * @note Returns 0 if rpm is 0.
  */
@@ -123,6 +150,29 @@ static inline angle_t degrees_per_microsecond(rpm_t rpm)
     }
     return (angle_t)(rpm * 360.0f) / (60.0f * 1e6f);
 }
+
+static inline angle_t degrees_per_millisecond(rpm_t rpm)
+{
+    if (rpm == 0)
+    {
+        return 0.0f;
+    }
+    return (angle_t)(rpm * 360.0f) / (60.0f * 1e3f);
+}
+
+float rate_of_change_per_sec(float current_value, float prev_value, time_us_t current_time, time_us_t prev_time);
+
+
+/**
+ * @brief Convert milliseconds to microseconds, preserving the type of the input.
+ *
+ * Usage:
+ *   time_us_t t = MILLISECONDS_TO_MICROSECONDS(5.5f);   // float -> float microseconds
+ *   uint32_t t_int = MILLISECONDS_TO_MICROSECONDS(5U);  // uint32_t -> uint32_t microseconds
+ */
+#define MILLISECONDS_TO_MICROSECONDS(x) ((typeof(x))((x) * (typeof(x))1000))
+
+float interpolate_2d(float x0, float y0, float x1, float y1, float x);
 
 /*----------------------------------------------------------------------------*\
  *  NAME:
@@ -142,5 +192,106 @@ static inline angle_t degrees_per_microsecond(rpm_t rpm)
  *     (no errors are possible)
 \*----------------------------------------------------------------------------*/
 uint32_t crc32_inc(uint32_t in_crc32, const void *buf, size_t size);
+
+/**
+ * @brief Wraps an angle in degrees to the range [0, 360).
+ *
+ * This function ensures that the input angle is normalized to the range [0, 360).
+ * If the input angle is negative, it adds 360 repeatedly until the angle is non-negative.
+ * If the input angle is greater than or equal to 360, it subtracts 360 repeatedly
+ * until the angle is less than 360.
+ *
+ * @param angle The input angle in degrees to be wrapped.
+ * @return The wrapped angle in the range [0, 360).
+ */
+static inline angle_t wrap_angle_360(angle_t angle)
+{
+    while (angle < 0.0f)
+    {
+        angle += 360.0f;
+    }
+    while (angle >= 360.0f)
+    {
+        angle -= 360.0f;
+    }
+    return angle;
+}
+/**
+ * @brief Wraps an angle in degrees to the range [0, 720).
+ *
+ * This function ensures that the input angle is normalized to the range [0, 720).
+ * If the input angle is negative, it adds 720 repeatedly until the angle is non-negative.
+ * If the input angle is greater than or equal to 720, it subtracts 720 repeatedly
+ * until the angle is less than 720.
+ *
+ * @param angle The input angle in degrees to be wrapped.
+ * @return The wrapped angle in the range [0, 720).
+ */
+static inline angle_t wrap_angle_720(angle_t angle)
+{
+    while (angle < 0.0f)
+    {
+        angle += 720.0f;
+    }
+    while (angle >= 720.0f)
+    {
+        angle -= 720.0f;
+    }
+    return angle;
+}
+
+/**
+ * @brief Compute the forward angular distance from `from` to `to` in a 720° cycle.
+ *
+ * Always returns a value in the range [0, 720).
+ * This represents the forward (positive rotation) distance,
+ * not the shortest path between the angles.
+ *
+ * Useful whenever angles are cyclic with a period of 720°,
+ *
+ * Examples:
+ *   angular_forward_distance_720(700, 20)   -> 40
+ *   angular_forward_distance_720(100, 20)   -> 640
+ *   angular_forward_distance_720(180, 270)  -> 90
+ *
+ * @param from Start angle, in degrees [0..720)
+ * @param to   Target angle, in degrees [0..720)
+ * @return Forward angular distance in degrees [0..720)
+ */
+static inline angle_t angular_forward_distance_720(angle_t from, angle_t to)
+{
+    angle_t dist = to - from;
+    if (dist < 0.0f) {
+        dist += 720.0f;
+    }
+    return dist;
+}
+
+/**
+ * @brief Compute the forward angular distance from `from` to `to` in a 360° cycle.
+ *
+ * Always returns a value in the range [0, 360).
+ * This represents the forward (positive rotation) distance,
+ * not the shortest path between the angles.
+ *
+ * Useful whenever angles are cyclic with a period of 360°,
+ *
+ * Examples:
+ *   angular_forward_distance_360(350, 10)  -> 20
+ *   angular_forward_distance_360(100, 20)  -> 280
+ *   angular_forward_distance_360(90, 180)  -> 90
+ *
+ * @param from Start angle, in degrees [0..360)
+ * @param to   Target angle, in degrees [0..360)
+ * @return Forward angular distance in degrees [0..360)
+ */
+static inline angle_t angular_forward_distance_360(angle_t from, angle_t to)
+{
+    angle_t dist = to - from;
+    if (dist < 0.0f) {
+        dist += 360.0f;
+    }
+    return dist;
+}
 
 #endif // UTILS_H

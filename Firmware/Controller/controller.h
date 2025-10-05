@@ -20,8 +20,9 @@
 #include "trigger_simulator.h"
 #include "config_and_runtime.h"
 #include "ee.h"
-
-extern trigger_t trigger1;
+#include "gas_injection.h"
+#include "fuel_math.h"
+#include "injection.h"
 
 void controller_init();
 

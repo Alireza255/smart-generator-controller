@@ -18,15 +18,12 @@ void governer_init(electronic_throttle_t *etb)
     governer_pid.limit_output_min = (percent_t)0;
     pid_configuration_t dummy_config = {0};
 
-    governer_pid.limit_output_min = (percent_t)0;
-    governer_pid.limit_output_max = (percent_t)100;
-
-    governer_pid.Kp = config.governer_pid_Kp;
-    governer_pid.Ki = config.governer_pid_Ki;
-    governer_pid.Kd = config.governer_pid_Kd;
-    governer_pid.limit_integrator_min = config.governer_pid_limit_integrator_min;
-    governer_pid.limit_integrator_max = config.governer_pid_limit_integrator_max;
-    governer_pid.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
+    dummy_config.Kp = config.governer_pid_Kp;
+    dummy_config.Ki = config.governer_pid_Ki;
+    dummy_config.Kd = config.governer_pid_Kd;
+    dummy_config.limit_integrator_min = config.governer_pid_limit_integrator_min;
+    dummy_config.limit_integrator_max = config.governer_pid_limit_integrator_max;
+    dummy_config.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
 
     pid_set_tuning(&governer_pid, &dummy_config);
 
@@ -62,7 +59,6 @@ void governer_update()
     {
         throttle_setpoint = config.cranking_throttle;
         runtime.governer_status = GOVERNER_STATUS_IGNORED;
-        electronic_throttle_set(governer_etb, throttle_setpoint);
     }
     else
     {
@@ -71,10 +67,10 @@ void governer_update()
         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
         rpm_t rpm = crankshaft_get_rpm();
         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
-        electronic_throttle_set(governer_etb, throttle_setpoint);
     }
+    electronic_throttle_set(governer_etb, throttle_setpoint);
 }
-governer_status_e governer_get_status()
+governer_status_t governer_get_status()
 {
     return runtime.governer_status;
 }

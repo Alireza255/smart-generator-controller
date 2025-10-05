@@ -1,118 +1,242 @@
 #include "ignition.h"
 
-controller_output_pin_t *ignition_outputs = NULL;
+ignition_output_pin_conf_t *output_conf = NULL;
 
-volatile ignition_coil_state_t ignition_coil_state[FIRMWARE_IGNITION_OUTPUT_COUNT] = {0};
+void schedule_ignition_event(ignition_event_t *event);
+void ignition_switch_to_coil_on_plug_wasted_spark();
+void ignition_switch_to_coil_on_plug();
+void ignition_watchdog_check();
 
-uint8_t ignition_order[FIRMWARE_LIMIT_NUMBER_OF_CYLINDERS_MAX] = {0};
-
-static volatile bool spark_is_in_progress = false;
-
+static bool ignition_initialized = false;
 static uint8_t number_of_cylinders = 0;
+static uint8_t number_of_events = 0;
 
-bool ignition_init(controller_output_pin_t *outputs)
+static bool operating_in_forced_wasted_spark = false;
+
+// We are going to have at most the same number of events as the number of cylinders
+static ignition_event_t ignition_events[FIRMWARE_LIMIT_NUMBER_OF_CYLINDERS_MAX] = {0};
+
+bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
 {
-    if (outputs == NULL)
+    if (output_pin_conf == NULL)
     {
         change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
+        change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
         log_error("ignition init failed. No output config");
         return false;
     }
-    ignition_outputs = outputs;
-
+    controller_output_pin_t *outputs = &output_pin_conf->pin[0];
+    output_conf = output_pin_conf;
+    
     switch (config.firing_order)
     {
     case FO_1342: // Common inline-4
-        number_of_cylinders = 4;
         switch (config.ignition_mode)
         {
-        case IM_ONE_COIL:
-            ignition_order[0] = 1;
-            ignition_order[1] = 1;
-            ignition_order[2] = 1;
-            ignition_order[3] = 1;
-            break;
-        case IM_WASTED_SPARK:
-            ignition_order[0] = 1;
-            ignition_order[1] = 2;
-            ignition_order[2] = 2;
-            ignition_order[3] = 1;
-            break;
-        case IM_INDIVIDUAL_COILS:
-            ignition_order[0] = 1;
-            ignition_order[1] = 3;
-            ignition_order[2] = 4;
-            ignition_order[3] = 2;
-            break;
+        case IGNITION_MODE_ONE_COIL:
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[1].primary_output = &outputs[0];
 
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;
+            ignition_events[1].crank_angle_at_tdc = (angle_t)180;
+
+            number_of_events = 2;
+            number_of_cylinders = 4;
+            break;
+        case IGNITION_MODE_WASTED_SPARK:
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;
+            ignition_events[1].crank_angle_at_tdc = (angle_t)180;
+
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[1].primary_output = &outputs[1];
+
+            number_of_events = 2;
+            number_of_cylinders = 4;
+            break;
+        case IGNITION_MODE_COIL_ON_PLUG_WASTED_SPARK:
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;
+            ignition_events[1].crank_angle_at_tdc = (angle_t)180;
+
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[0].secondary_output = &outputs[3];
+
+            ignition_events[1].primary_output = &outputs[1];
+            ignition_events[1].secondary_output = &outputs[2];
+
+            number_of_events = 2;
+            number_of_cylinders = 4;
+            break;
+        case IGNITION_MODE_COIL_ON_PLUG:
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;
+            ignition_events[2].crank_angle_at_tdc = (angle_t)180;
+            ignition_events[3].crank_angle_at_tdc = (angle_t)360;
+            ignition_events[1].crank_angle_at_tdc = (angle_t)540;
+
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[1].primary_output = &outputs[1];
+            ignition_events[2].primary_output = &outputs[2];
+            ignition_events[3].primary_output = &outputs[3];
+
+            number_of_events = 4;
+            number_of_cylinders = 4;
+            break;
         default:
-            change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-            log_error("ignition init failed. unkown mode.");
-            return false;
+            break;
         }
-
         break;
     case FO_153624: // Common inline-6
-        number_of_cylinders = 6;
         switch (config.ignition_mode)
         {
-        case IM_ONE_COIL:
-            ignition_order[0] = 1;
-            ignition_order[1] = 1;
-            ignition_order[2] = 1;
-            ignition_order[3] = 1;
-            ignition_order[4] = 1;
-            ignition_order[5] = 1;
+        case IGNITION_MODE_ONE_COIL:
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;   // cyl 1 & 6
+            ignition_events[1].crank_angle_at_tdc = (angle_t)120; // cyl 5 & 2
+            ignition_events[2].crank_angle_at_tdc = (angle_t)240; // cyl 3 & 4
+
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[1].primary_output = &outputs[0];
+            ignition_events[2].primary_output = &outputs[0];
+            number_of_events = 3;
+            number_of_cylinders = 6;
             break;
-        case IM_WASTED_SPARK:
-            ignition_order[0] = 1;
-            ignition_order[1] = 2;
-            ignition_order[2] = 3;
-            ignition_order[3] = 3;
-            ignition_order[4] = 2;
-            ignition_order[5] = 1;
+
+        case IGNITION_MODE_WASTED_SPARK:
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;   // cyl 1 & 6
+            ignition_events[1].crank_angle_at_tdc = (angle_t)120; // cyl 5 & 2
+            ignition_events[2].crank_angle_at_tdc = (angle_t)240; // cyl 3 & 4
+
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[1].primary_output = &outputs[1];
+            ignition_events[2].primary_output = &outputs[2];
+            number_of_events = 3;
+            number_of_cylinders = 6;
             break;
-        case IM_INDIVIDUAL_COILS:
-            config.ignition_mode = IM_WASTED_SPARK;
-            ignition_order[0] = 1;
-            ignition_order[1] = 2;
-            ignition_order[2] = 3;
-            ignition_order[3] = 3;
-            ignition_order[4] = 2;
-            ignition_order[5] = 1;
-            log_warning("Coil on plug igntion not possible with 6 cylinders. Defaulted to wasted spark");
+
+        case IGNITION_MODE_COIL_ON_PLUG:
+            config.ignition_mode = IGNITION_MODE_WASTED_SPARK;
+            change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
+            ignition_init(output_pin_conf);
+            log_error("Coil on plug not possible for 6 cylinders, defaulting to watesd spark.");
+            return false;
+            break;
+
+        case IGNITION_MODE_COIL_ON_PLUG_WASTED_SPARK:
+            config.ignition_mode = IGNITION_MODE_WASTED_SPARK;
+            change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
+            ignition_init(output_pin_conf);
+            log_error("Coil on plug not possible for 6 cylinders, defaulting to watesd spark.");
+            return false;
             break;
 
         default:
-        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-            log_error("ignition init failed. unkown mode.");
-            return false;
+            break;
         }
         break;
+
     default:
-        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
         log_error("ignition init failed. unkown firing order.");
+        break;
+    }
+
+    if (number_of_cylinders == 0)
+    {
+        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
+        change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
         return false;
     }
 
     runtime.firing_interval_deg = (angle_t)720 / (angle_t)number_of_cylinders;
 
-    /* Read the pin states from real hardware */
-    for (size_t i = 0; i < FIRMWARE_IGNITION_OUTPUT_COUNT; i++)
+    osTimerId_t ignition_watchdog_timer = osTimerNew(ignition_watchdog_check, osTimerPeriodic, NULL, NULL);
+    if (ignition_watchdog_timer != NULL)
     {
-        ignition_coil_state[i] = HAL_GPIO_ReadPin(ignition_outputs[i].gpio, ignition_outputs[i].pin);
+        osTimerStart(ignition_watchdog_timer, 1); // check every 1 ms
     }
-    /* Set all outputs to reset just in case */
-    for (size_t i = 0; i < FIRMWARE_IGNITION_OUTPUT_COUNT; i++)
-    {
-        HAL_GPIO_WritePin(ignition_outputs[i].gpio, ignition_outputs[i].pin, GPIO_PIN_RESET);
-    }
+    ignition_initialized = true;
 
-    if (config.multi_spark_enabled && !IS_IN_RANGE(config.multi_spark_number_of_sparks, 0, IGNITION_MULTI_SPARK_MAX_SPARKS))
-    {
-        log_warning("Multi spark is enabled but number of sparks are 0.");
-    }
     return true;
+}
+
+
+void ignition_watchdog_check()
+{
+    for (size_t i = 0; i < number_of_events; i++)
+    {
+        ignition_event_t *event = &ignition_events[i];
+        if (event->status == IGNITION_EVENT_DWELL)
+        {
+            time_us_t current_time = get_time_us();
+            if ((int32_t)(current_time - event->fire_spark_time) > IGNITION_WATCHDOG_TIMER_EXTRA_TIME_MS)
+            {
+                ignition_coil_fire_spark((void *)event);
+                change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
+                log_error("ignition watchdog fired.");
+            }
+        }
+    } 
+}
+void ignition_switch_to_coil_on_plug()
+{
+    controller_output_pin_t *outputs = &output_conf->pin[0];
+
+    operating_in_forced_wasted_spark = false;
+    switch (config.firing_order)
+    {
+    case FO_1342: // Common inline-4
+
+        ignition_events[0].crank_angle_at_tdc = (angle_t)0;
+        ignition_events[2].crank_angle_at_tdc = (angle_t)180;
+        ignition_events[3].crank_angle_at_tdc = (angle_t)360;
+        ignition_events[1].crank_angle_at_tdc = (angle_t)540;
+
+        ignition_events[0].primary_output = &outputs[0];
+        ignition_events[1].primary_output = &outputs[1];
+        ignition_events[2].primary_output = &outputs[2];
+        ignition_events[3].primary_output = &outputs[3];
+
+        number_of_events = 4;
+        number_of_cylinders = 4;
+
+        break;
+
+    case FO_153624: // Common inline-6
+
+        break;
+
+    default:
+        log_error("ignition init failed. unkown firing order.");
+        break;
+    }
+}
+
+void ignition_switch_to_coil_on_plug_wasted_spark()
+{
+    controller_output_pin_t *outputs = &output_conf->pin[0];
+
+    operating_in_forced_wasted_spark = true;
+    switch (config.firing_order)
+    {
+    case FO_1342: // Common inline-4
+        ignition_events[0].crank_angle_at_tdc = (angle_t)0;
+        ignition_events[1].crank_angle_at_tdc = (angle_t)180;
+
+        ignition_events[0].primary_output = &outputs[0];
+        ignition_events[0].secondary_output = &outputs[3];
+
+        ignition_events[1].primary_output = &outputs[1];
+        ignition_events[1].secondary_output = &outputs[2];
+
+        number_of_events = 2;
+        number_of_cylinders = 4;
+        break;
+
+    case FO_153624: // Common inline-6
+
+        break;
+
+    default:
+        log_error("ignition init failed. unkown firing order.");
+        break;
+    }
 }
 
 /**
@@ -127,19 +251,14 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
     /**
      * @todo add the necessary checks and bounds
      */
-    if (config.ignition_mode == IM_NO_IGNITION)
+    if (config.ignition_mode == IGNITION_MODE_NO_IGNITION || !ignition_initialized)
     {
-        // obviously, there is no need to do any furthure processing
-        //ignition_coil_fire_spark()????
         return;
     }
-    if (runtime.firing_interval_deg == 0)
+    if (!get_bit(runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED))
     {
-        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-        log_error("ignition not initialized.");
         return;
     }
-
     if (!IS_IN_RANGE(config.ignition_dwell, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_TIME_MS))
     {
         config.ignition_dwell = CLAMP(config.ignition_dwell, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_TIME_MS);
@@ -147,12 +266,12 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
          * @todo throw an error
          */
         change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-         log_error("ignition dwell out of bounds.");
-
+        log_error("ignition dwell out of bounds.");
         return;
     }
+
     /* Wether or not cam phase is known */
-    bool is_cam_phase_available = false;
+    bool is_cam_phase_available = get_bit(runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED);
 
     angle_t spark_advance = 0;
 
@@ -160,132 +279,167 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
     spark_advance = (angle_t)30;
 #else
     spark_advance = ignition_get_advance();
-    runtime.ignition_advance_deg = spark_advance;
 #endif
 
     spark_advance = CLAMP(spark_advance, IGNITION_MIN_ADVANCE, IGNITION_MAX_ADVANCE);
-    runtime.dwell_actual = config.ignition_dwell;
+    runtime.ignition_advance_deg = spark_advance;
 
-    /* First we have to detect the engine phase */
-    uint8_t phase = (uint8_t)(crankshaft_angle / runtime.firing_interval_deg);
-    uint8_t phase_count = (uint8_t)(angle_t)360 / (angle_t)runtime.firing_interval_deg;
+    float dwell_correction = FIRMWARE_NOMINAL_VBAT / vbat_get();
+    runtime.dwell_actual = CLAMP(config.ignition_dwell * dwell_correction, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_TIME_MS);
 
-    volatile angle_t next_spark_angle = phase * runtime.firing_interval_deg - spark_advance + runtime.firing_interval_deg;
-    volatile angle_t next_dwell_angle = next_spark_angle - (float)config.ignition_dwell * (float)1000 * degrees_per_microsecond(rpm);
+    bool has_cam_phase = get_bit(runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED);
+    bool cam_phase = false;
 
-    static uint8_t next_firing_cylinders[2] = {0};
-
-    next_firing_cylinders[0] = ignition_order[phase] - 1;
-    next_firing_cylinders[1] = ignition_order[phase] - 1;
-
-    if (!is_cam_phase_available)
+    if (config.ignition_mode == IGNITION_MODE_COIL_ON_PLUG)
     {
-        next_firing_cylinders[1] = ignition_order[phase + 2] - 1;
+        if (!has_cam_phase)
+        {
+            change_bit(&runtime.status, STATUS_WARNING, true);
+            log_error("Cam phase not known. Switching to wasted spark.");
+            ignition_switch_to_coil_on_plug_wasted_spark();
+            cam_phase = false;
+        }
+        else
+        {
+            ignition_switch_to_coil_on_plug();
+            cam_phase = camshaft_get_phase();
+        }
     }
 
-    bool is_synced = get_bit(runtime.status, STATUS_TRIGGER1_SYNCED);
+    __NOP();
 
-    if (is_synced && (next_dwell_angle - crankshaft_angle) < 10 && !spark_is_in_progress && (next_dwell_angle - crankshaft_angle) > 0)
+    angle_t true_crank_angle = crankshaft_angle;
+    bool is_coil_on_plug = (config.ignition_mode == IGNITION_MODE_COIL_ON_PLUG) && (!operating_in_forced_wasted_spark);
+
+    if (is_coil_on_plug)
     {
-        /* Now we are close enough to the dwell angle that we can schedule the coil charge start */
-
-        time_us_t dwell_start_time_us = current_time_us + (time_us_t)((next_dwell_angle - crankshaft_angle) * microseconds_per_degree(rpm));
-        time_us_t spark_start_time_us = current_time_us + (time_us_t)((next_spark_angle - crankshaft_angle) * microseconds_per_degree(rpm));
-        scheduler_schedule_event_with_arg(dwell_start_time_us, ignition_coil_begin_charge, (void *)next_firing_cylinders);
-        scheduler_schedule_event_with_arg(spark_start_time_us, ignition_coil_fire_spark, (void *)next_firing_cylinders);
-
-        uint8_t number_of_scheduled_sparks = 1;
-        if (!config.multi_spark_enabled)
-        {
-            runtime.multi_spark_actual_spark_count = number_of_scheduled_sparks;
-            return;
-        }
-
-        while (number_of_scheduled_sparks < config.multi_spark_number_of_sparks)
-        {
-            if (rpm > config.multi_spark_rpm_threshold)
-            {
-                break;
-            }
-            time_us_t duration_of_spark_and_dwell = (uint32_t)((float)number_of_scheduled_sparks * (config.multi_spark_rest_time_ms + config.ignition_dwell) * (float)1000);
-            if (duration_of_spark_and_dwell >= config.multi_spark_max_trailing_angle * microseconds_per_degree(rpm))
-            {
-                break;
-            }
-
-            dwell_start_time_us += duration_of_spark_and_dwell;
-            spark_start_time_us += duration_of_spark_and_dwell;
-
-            // don't schedule events if there are no empty slots in the scheduler
-            if (!scheduler_schedule_event_with_arg(spark_start_time_us, ignition_coil_fire_spark, (void *)next_firing_cylinders))
-            {
-                // fire the spark right away to prevent ign coil damage
-                ignition_coil_fire_spark((void *)next_firing_cylinders);
-                break;
-            }
-            if (!scheduler_schedule_event_with_arg(dwell_start_time_us, ignition_coil_begin_charge, (void *)next_firing_cylinders))
-            {
-
-                break;
-            }
-            number_of_scheduled_sparks++;
-        }
-        spark_is_in_progress = true;
-        runtime.multi_spark_actual_spark_count = number_of_scheduled_sparks;
+        true_crank_angle = crankshaft_angle + (angle_t)cam_phase * (angle_t)360;
     }
-    change_bit(&runtime.status, STATUS_IGNITION_ERROR, false);
+
+    /* Now we will see which cylinder(s) can be sheduled next */
+    for (size_t i = 0; i < number_of_events; i++)
+    {
+        ignition_event_t *event = &ignition_events[i];
+
+        if (!(event->status == IGNITION_EVENT_INACTIVE || event->status == IGNITION_EVENT_FIRED))
+        {
+            continue;
+        }
+        /* firstly, we figure out if there are other teeth in the future */
+        angle_t crank_angle_at_next_trigger = 0;
+        angle_t spark_angle = 0;
+        angle_t dwell_angle = 0;
+        if (is_coil_on_plug)
+        {
+            // // we must use the 720deg math
+            // angle_t crank_angle_at_next_trigger = crankshaft_get_next_trigger_angle();
+            // angle_t spark_angle = wrap_angle_720(event->crank_angle_at_tdc - spark_advance);
+            // angle_t dwell_angle = wrap_angle_720(spark_angle - degrees_per_millisecond(rpm) * runtime.dwell_actual);
+
+            // if (is_phase_in_range(crank_angle_at_next_trigger, crankshaft_angle, dwell_angle))
+            // {
+            //     continue;
+            // }
+            // event->fire_spark_time = current_time_us + degree_to_microseconds(angular_forward_distance_720(true_crank_angle, spark_angle), rpm);
+            // event->dwell_start_time = current_time_us + degree_to_microseconds(angular_forward_distance_720(true_crank_angle, dwell_angle), rpm);
+            // schedule_ignition_event(event);
+        }
+        else
+        {
+            // we must use the 360deg math
+            angle_t crank_angle_at_next_trigger = crankshaft_get_next_trigger_angle();
+            angle_t spark_angle = wrap_angle_360(event->crank_angle_at_tdc - spark_advance);
+            angle_t dwell_angle = wrap_angle_360(spark_angle - degrees_per_millisecond(rpm) * runtime.dwell_actual);
+
+            if (is_phase_in_range(crank_angle_at_next_trigger, crankshaft_angle, dwell_angle))
+            {
+                continue;
+            }
+            event->fire_spark_time = current_time_us + degree_to_microseconds(angular_forward_distance_360(true_crank_angle, spark_angle), rpm);
+            event->dwell_start_time = current_time_us + degree_to_microseconds(angular_forward_distance_360(true_crank_angle, dwell_angle), rpm);
+            schedule_ignition_event(event);
+
+            bool is_multi_spark_allowed = (config.multi_spark_enabled && rpm < config.multi_spark_rpm_threshold && config.ignition_mode != IGNITION_MODE_ONE_COIL && config.multi_spark_number_of_sparks > 1);
+            uint8_t remaining_sparks = 0;
+            remaining_sparks = is_multi_spark_allowed ? config.multi_spark_number_of_sparks - 1 : 0;
+            remaining_sparks = CLAMP(remaining_sparks, 0, IGNITION_MULTI_SPARK_MAX_SPARKS - 1);
+            
+            angle_t degrees_taken_by_additional_sparks = 0;
+            uint8_t total_number_of_sparks = 1;
+            for (; remaining_sparks > 0; remaining_sparks--)
+            {
+                degrees_taken_by_additional_sparks += degrees_per_millisecond(rpm) * (config.multi_spark_rest_time_ms + runtime.dwell_actual);
+                if (degrees_taken_by_additional_sparks > config.multi_spark_max_trailing_angle)
+                {
+                    break;
+                }
+                event->dwell_start_time = event->fire_spark_time + (time_us_t)MILLISECONDS_TO_MICROSECONDS(config.multi_spark_rest_time_ms);
+                event->fire_spark_time = event->dwell_start_time + (time_us_t)MILLISECONDS_TO_MICROSECONDS(runtime.dwell_actual);
+                total_number_of_sparks++;
+                schedule_ignition_event(event);
+            }
+            runtime.multi_spark_actual_spark_count = total_number_of_sparks;
+        }
+    }
 }
 
-/**
- * @brief Charges the ignition coil at the specified index.
- *
- * @param coil_index The index of the coil to be charged.
- */
 void ignition_coil_begin_charge(void *arg)
 {
     if (arg == NULL)
     {
         return;
     }
-    uint8_t *coil_index = (uint8_t *)arg;
+    ignition_event_t *event = (ignition_event_t *)arg;
 
-    if (coil_index[1] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1 || coil_index[0] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1)
+    if (event->primary_output)
     {
-        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-        log_error("Unkown ignition output");
-        return;
+        HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_SET);
+        event->status = IGNITION_EVENT_DWELL;
     }
-    ignition_coil_state[coil_index[0]] = IGNITION_COIL_STATE_CHARGING;
-    ignition_coil_state[coil_index[1]] = IGNITION_COIL_STATE_CHARGING;
-    HAL_GPIO_WritePin(ignition_outputs[coil_index[0]].gpio, ignition_outputs[coil_index[0]].pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(ignition_outputs[coil_index[1]].gpio, ignition_outputs[coil_index[1]].pin, GPIO_PIN_SET);
+    if (event->secondary_output)
+    {
+        HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_SET);
+        event->status = IGNITION_EVENT_DWELL;
+    }
+
 }
 
-/**
- * @brief Fires a spark from the ignition coil at the specified index.
- *
- * @param coil_index The index of the coil to fire the spark from.
- */
 void ignition_coil_fire_spark(void *arg)
 {
     if (arg == NULL)
     {
         return;
     }
+    ignition_event_t *event = (ignition_event_t *)arg;
 
-    uint8_t *coil_index = (uint8_t *)arg;
-    if (coil_index[1] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1 || coil_index[0] > FIRMWARE_IGNITION_OUTPUT_COUNT - 1)
+    if (event->primary_output)
     {
-        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-        log_error("Unkown ignition output");
+        HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_RESET);
+        event->status = IGNITION_EVENT_FIRED;
+    }
+    if (event->secondary_output)
+    {
+        HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_RESET);
+        event->status = IGNITION_EVENT_FIRED;
+    }
+}
+
+void schedule_ignition_event(ignition_event_t *event)
+{
+    if (event == NULL)
+    {
         return;
     }
+    /* We do not want to schedule anything in the past or very distant future */
+    time_us_t current_time = get_time_us();
 
-    ignition_coil_state[coil_index[0]] = IGNITION_COIL_STATE_NOT_CHARGING;
-    ignition_coil_state[coil_index[1]] = IGNITION_COIL_STATE_NOT_CHARGING;
-    HAL_GPIO_WritePin(ignition_outputs[coil_index[0]].gpio, ignition_outputs[coil_index[0]].pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(ignition_outputs[coil_index[1]].gpio, ignition_outputs[coil_index[1]].pin, GPIO_PIN_RESET);
-    spark_is_in_progress = false;
+    if ((int32_t)(event->dwell_start_time - current_time) < 0 || (int32_t)(event->fire_spark_time - current_time) < 0)
+    {
+        return;
+    }
+    event->status = IGNITION_EVENT_PENDING;
+    scheduler_schedule_event_with_arg(event->fire_spark_time, ignition_coil_fire_spark, (void *)event);
+    scheduler_schedule_event_with_arg(event->dwell_start_time, ignition_coil_begin_charge, (void *)event);
 }
 
 /**
@@ -300,17 +454,35 @@ percent_t ignition_get_coil_duty_cycle()
 angle_t ignition_get_advance()
 {
     angle_t final_advance = IGNITION_ADVANCE_FAIL_SAFE;
-    if (runtime.spinning_state != SS_RUNNING)
-    {
-        return config.cranking_advance;
-    }
-
     rpm_t rpm = crankshaft_get_rpm();
     pressure_t map = sensor_map_get();
-
-    final_advance = table_2d_get_value(&config.ign_table_1, rpm, map); // expand and allow the use of table2 in the future
+    if (config.ignition_fixed_timing_enabled)
+    {
+        final_advance = config.ignition_fixed_timing_advance;
+    }
+    else if (runtime.spinning_state != SS_RUNNING)
+    {
+        final_advance = config.cranking_advance;
+    }
+    else
+    {
+        final_advance = table_2d_get_value(&config.ign_table_1, rpm, map); // expand and allow the use of table2 in the future
+    }
 
     /* Here we can apply all kinds of correction to the table */
+
+    /* Now we apply clt based advance */
+    angle_t clt_correction = (angle_t)table_1d_get_value(&config.clt_based_advance_correction_table, sensor_clt_get());
+    if (IS_IN_RANGE(clt_correction, IGNITION_CLT_CORRECTION_MIN_ADVANCE, IGNITION_CLT_CORRECTION_MAX_ADVANCE) && !isnan(clt_correction))
+    {
+        final_advance += clt_correction;
+    }
+    
+    /* Rev limit Ignition retard */
+    if (IS_IN_RANGE(rpm, (rpm_t)config.rev_limit, (rpm_t)config.rev_limit + (rpm_t)config.rev_limit_hystersis))
+    {
+        final_advance = mapf(rpm, (rpm_t)config.rev_limit, (rpm_t)config.rev_limit + (rpm_t)config.rev_limit_hystersis, (angle_t)final_advance, (angle_t)0);
+    }
 
     return final_advance;
 }

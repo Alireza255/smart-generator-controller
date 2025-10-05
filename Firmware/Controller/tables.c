@@ -52,3 +52,29 @@ float table_2d_get_value(table_2d_t *table, float x, float y)
 }
 
 
+float table_1d_get_value(table_1d_t *table, float x)
+{
+    size_t num_bins = sizeof(table->x_bins) / sizeof(table->x_bins[0]);
+
+    // Check bounds
+    if (x < table->x_bins[0])
+    {
+        return table->data[0];
+    }
+    else if (x > table->x_bins[num_bins - 1])
+    {
+        return table->x_bins[num_bins - 1];
+    }
+    else
+    {
+        return NAN;
+    }
+    
+    // Find x_bin (lower index)
+    size_t x_bin = 0;
+    while (x_bin < num_bins - 1 && x >= table->x_bins[x_bin + 1]) {
+        x_bin++;
+    }
+
+    return table->data[x_bin];
+}
