@@ -24,6 +24,27 @@
 #include "fuel_math.h"
 #include "injection.h"
 
+extern config_t config;
+extern runtime_t runtime;
+
+static sensor_tps_t tps1;
+static sensor_tps_t tps2;
+
+static electronic_throttle_t etb1;
+static dc_motor_t etb1_motor;
+static pid_t etb1_pid;
+
+static electronic_throttle_t etb2;
+static dc_motor_t etb2_motor;
+static pid_t etb2_pid;
+
+
+static thermistor_t sensor_clt;
+static thermistor_t sensor_iat;
+static sensor_map_t sensor_map;
+static sensor_ops_t sensor_ops;
+
+
 void controller_init();
 
 void controller_load_configuration();

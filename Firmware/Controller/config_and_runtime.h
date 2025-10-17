@@ -9,7 +9,8 @@
 
 #define CONFIG_CHECKSUM 140051411009
 
-typedef struct {
+typedef struct __attribute__((packed)) 
+{
     /* ---------- 4-byte items (floats and table handles) ---------- */
 
     /* VE tables */
@@ -90,6 +91,9 @@ typedef struct {
     float fan2_off_temp;
 
     /* CLT-based tables */
+    table_1d_t accel_enrichment_tps_table;
+    table_1d_t accel_enrichment_map_table;
+
     table_1d_t clt_based_advance_correction_table;
     table_1d_t clt_based_fuel_correction_table_gas;
     table_1d_t clt_based_fuel_correction_table_petrol;
@@ -153,12 +157,8 @@ typedef struct {
     uint8_t fan1_enabled;
     uint8_t fan2_enabled;
 
-    /* ---------- explicit padding up to 4-byte boundary (keeps checksum aligned to 4) ---------- */
-    uint8_t _padding[3];
-
-    /* 8-byte checksum (kept last) */
-    uint64_t checksum;
 } config_t;
+
 
 typedef struct {
     /* ---------- 4-byte items (uint32 and floats) ---------- */
@@ -178,7 +178,9 @@ typedef struct {
     /* Sensors / inputs */
     float tps1;
     float tps2;
+    float tps1_dot;
     float map_kpa;
+    float map_dot;
     float baro_kpa;
     float clt_degc;
     float iat_degc;
@@ -201,8 +203,6 @@ typedef struct {
     uint8_t governer_status;
     uint8_t multi_spark_actual_spark_count;
 
-    /* keep 4-byte alignment for total size */
-    uint8_t __padding[1];
 } runtime_t;
 
 typedef enum

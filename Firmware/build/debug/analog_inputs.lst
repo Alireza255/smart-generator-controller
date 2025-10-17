@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
   43      20696E69 
   43      74206661 
   44 0033 6C6C2E00 		.ascii	"ll.\000"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 2
 
 
   45              		.section	.text.analog_inputs_init,"ax",%progbits
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
   76              		.loc 1 35 5 is_stmt 1 view .LVU9
   77              	.LVL2:
   36:controller/IO/analog_inputs.c **** 	
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 3
 
 
   37:controller/IO/analog_inputs.c **** 	uint32_t timer_clock = HAL_RCC_GetPCLK1Freq(); // Get the timer clock frequency
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
  116              		.loc 1 29 9 is_stmt 0 view .LVU27
  117 002e FFF7FEFF 		bl	log_error
  118              	.LVL10:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 4
 
 
   30:controller/IO/analog_inputs.c ****     }
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
   66:controller/IO/analog_inputs.c ****     HAL_TIM_Base_Start(timer_handle);
  153              		.loc 1 66 5 is_stmt 1 view .LVU40
  154 0050 2046     		mov	r0, r4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 5
 
 
  155 0052 FFF7FEFF 		bl	HAL_TIM_Base_Start
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
  190              		.loc 1 87 1 is_stmt 0 view .LVU46
  191 0000 7047     		bx	lr
  192              		.cfi_endproc
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 6
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 6
 
 
  193              	.LFE240:
@@ -358,145 +358,189 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
  229              		.cfi_startproc
  230              		@ args = 0, pretend = 0, frame = 0
  231              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 7
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 7
 
 
  232              		.loc 1 105 1 is_stmt 0 view .LVU50
- 233 0000 10B5     		push	{r4, lr}
- 234              		.cfi_def_cfa_offset 8
- 235              		.cfi_offset 4, -8
- 236              		.cfi_offset 14, -4
+ 233 0000 38B5     		push	{r3, r4, r5, lr}
+ 234              		.cfi_def_cfa_offset 16
+ 235              		.cfi_offset 3, -16
+ 236              		.cfi_offset 4, -12
+ 237              		.cfi_offset 5, -8
+ 238              		.cfi_offset 14, -4
  106:controller/IO/analog_inputs.c ****     if (input_index >= ANALOG_INPUTS_MAX)
- 237              		.loc 1 106 5 is_stmt 1 view .LVU51
- 238              		.loc 1 106 8 is_stmt 0 view .LVU52
- 239 0002 0C28     		cmp	r0, #12
- 240 0004 02D8     		bhi	.L19
- 241              	.LBB4:
+ 239              		.loc 1 106 5 is_stmt 1 view .LVU51
+ 240              		.loc 1 106 8 is_stmt 0 view .LVU52
+ 241 0002 0C28     		cmp	r0, #12
+ 242 0004 05D8     		bhi	.L21
+ 243 0006 0546     		mov	r5, r0
  107:controller/IO/analog_inputs.c ****     {
  108:controller/IO/analog_inputs.c ****         log_error("Invalid index in analog input.");
  109:controller/IO/analog_inputs.c ****         return 0;
  110:controller/IO/analog_inputs.c ****     }
- 111:controller/IO/analog_inputs.c ****     uint_fast32_t sum = 0;
- 112:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
- 242              		.loc 1 112 23 view .LVU53
- 243 0006 0023     		movs	r3, #0
- 244              	.LBE4:
- 111:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
- 245              		.loc 1 111 19 view .LVU54
- 246 0008 1946     		mov	r1, r3
- 247 000a 0FE0     		b	.L14
- 248              	.L19:
- 108:controller/IO/analog_inputs.c ****         return 0;
- 249              		.loc 1 108 9 is_stmt 1 view .LVU55
- 250 000c 0A48     		ldr	r0, .L20
- 251              	.LVL21:
- 108:controller/IO/analog_inputs.c ****         return 0;
- 252              		.loc 1 108 9 is_stmt 0 view .LVU56
- 253 000e FFF7FEFF 		bl	log_error
- 254              	.LVL22:
- 109:controller/IO/analog_inputs.c ****     }
- 255              		.loc 1 109 9 is_stmt 1 view .LVU57
- 109:controller/IO/analog_inputs.c ****     }
- 256              		.loc 1 109 16 is_stmt 0 view .LVU58
- 257 0012 0020     		movs	r0, #0
- 258 0014 0EE0     		b	.L15
- 259              	.LVL23:
- 260              	.L16:
- 261              	.LBB5:
- 113:controller/IO/analog_inputs.c ****     {
- 114:controller/IO/analog_inputs.c ****         sum += analog_data[i * ANALOG_INPUTS_MAX + input_index];
- 262              		.loc 1 114 9 is_stmt 1 view .LVU59
- 263              		.loc 1 114 30 is_stmt 0 view .LVU60
- 264 0016 03EB4302 		add	r2, r3, r3, lsl #1
- 265 001a 03EB8202 		add	r2, r3, r2, lsl #2
- 266              		.loc 1 114 50 view .LVU61
- 267 001e 0244     		add	r2, r2, r0
- 268              		.loc 1 114 27 view .LVU62
- 269 0020 064C     		ldr	r4, .L20+4
- 270 0022 34F81220 		ldrh	r2, [r4, r2, lsl #1]
- 271              		.loc 1 114 13 view .LVU63
- 272 0026 11FA82F1 		uxtah	r1, r1, r2
- 273              	.LVL24:
+ 111:controller/IO/analog_inputs.c ****     if (input_index != ANALOG_INPUT_VBAT_SENSE_PIN && analog_inputs_get_data(ANALOG_INPUT_VBAT_SENS
+ 244              		.loc 1 111 5 is_stmt 1 view .LVU53
+ 245              		.loc 1 111 8 is_stmt 0 view .LVU54
+ 246 0008 0928     		cmp	r0, #9
+ 247 000a 07D1     		bne	.L22
+ 248              	.LVL21:
+ 249              	.L16:
  112:controller/IO/analog_inputs.c ****     {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 8
+ 113:controller/IO/analog_inputs.c ****         return 0;
+ 114:controller/IO/analog_inputs.c ****     }
+ 115:controller/IO/analog_inputs.c ****     
+ 116:controller/IO/analog_inputs.c ****     uint_fast32_t sum = 0;
+ 250              		.loc 1 116 5 is_stmt 1 view .LVU55
+ 117:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
+ 251              		.loc 1 117 5 view .LVU56
+ 252              	.LBB4:
+ 253              		.loc 1 117 10 view .LVU57
+ 254              		.loc 1 117 23 is_stmt 0 view .LVU58
+ 255 000c 0023     		movs	r3, #0
+ 256              	.LBE4:
+ 116:controller/IO/analog_inputs.c ****     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
+ 257              		.loc 1 116 19 view .LVU59
+ 258 000e 1946     		mov	r1, r3
+ 259              	.LBB5:
+ 260              		.loc 1 117 5 view .LVU60
+ 261 0010 18E0     		b	.L17
+ 262              	.LVL22:
+ 263              	.L21:
+ 264              		.loc 1 117 5 view .LVU61
+ 265              	.LBE5:
+ 108:controller/IO/analog_inputs.c ****         return 0;
+ 266              		.loc 1 108 9 is_stmt 1 view .LVU62
+ 267 0012 0F48     		ldr	r0, .L23
+ 268              	.LVL23:
+ 108:controller/IO/analog_inputs.c ****         return 0;
+ 269              		.loc 1 108 9 is_stmt 0 view .LVU63
+ 270 0014 FFF7FEFF 		bl	log_error
+ 271              	.LVL24:
+ 109:controller/IO/analog_inputs.c ****     }
+ 272              		.loc 1 109 9 is_stmt 1 view .LVU64
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 8
 
 
- 274              		.loc 1 112 68 is_stmt 1 discriminator 3 view .LVU64
- 275 002a 0133     		adds	r3, r3, #1
+ 109:controller/IO/analog_inputs.c ****     }
+ 273              		.loc 1 109 16 is_stmt 0 view .LVU65
+ 274 0018 0020     		movs	r0, #0
+ 275 001a 17E0     		b	.L15
  276              	.LVL25:
- 277              	.L14:
- 112:controller/IO/analog_inputs.c ****     {
- 278              		.loc 1 112 32 discriminator 1 view .LVU65
- 279 002c 072B     		cmp	r3, #7
- 280 002e F2D9     		bls	.L16
- 281              	.LBE5:
- 115:controller/IO/analog_inputs.c ****     }
- 116:controller/IO/analog_inputs.c ****     
- 117:controller/IO/analog_inputs.c ****     return sum / ANALOG_INPUTS_NUMBER_OF_SAMPLES;
- 282              		.loc 1 117 5 view .LVU66
- 283              		.loc 1 117 16 is_stmt 0 view .LVU67
- 284 0030 C1F3CF00 		ubfx	r0, r1, #3, #16
- 285              	.LVL26:
- 286              	.L15:
- 118:controller/IO/analog_inputs.c **** }
- 287              		.loc 1 118 1 view .LVU68
- 288 0034 10BD     		pop	{r4, pc}
- 289              	.L21:
- 290 0036 00BF     		.align	2
- 291              	.L20:
- 292 0038 00000000 		.word	.LC1
- 293 003c 00000000 		.word	analog_data
- 294              		.cfi_endproc
- 295              	.LFE242:
- 297              		.section	.text.analog_inputs_get_voltage,"ax",%progbits
- 298              		.align	1
- 299              		.global	analog_inputs_get_voltage
- 300              		.syntax unified
- 301              		.thumb
- 302              		.thumb_func
- 304              	analog_inputs_get_voltage:
- 305              	.LVL27:
- 306              	.LFB243:
- 119:controller/IO/analog_inputs.c **** 
- 120:controller/IO/analog_inputs.c **** voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index)
- 121:controller/IO/analog_inputs.c **** {
- 307              		.loc 1 121 1 is_stmt 1 view -0
- 308              		.cfi_startproc
- 309              		@ args = 0, pretend = 0, frame = 0
- 310              		@ frame_needed = 0, uses_anonymous_args = 0
- 311              		.loc 1 121 1 is_stmt 0 view .LVU70
- 312 0000 08B5     		push	{r3, lr}
- 313              		.cfi_def_cfa_offset 8
- 314              		.cfi_offset 3, -8
- 315              		.cfi_offset 14, -4
- 122:controller/IO/analog_inputs.c ****     voltage_t v = 0;
- 316              		.loc 1 122 5 is_stmt 1 view .LVU71
- 317              	.LVL28:
- 123:controller/IO/analog_inputs.c ****     uint16_t raw_data = 0;
- 318              		.loc 1 123 5 view .LVU72
- 124:controller/IO/analog_inputs.c ****     raw_data = analog_inputs_get_data(input_index);
- 319              		.loc 1 124 5 view .LVU73
- 320              		.loc 1 124 16 is_stmt 0 view .LVU74
- 321 0002 FFF7FEFF 		bl	analog_inputs_get_data
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 9
+ 277              	.L22:
+ 111:controller/IO/analog_inputs.c ****     {
+ 278              		.loc 1 111 55 discriminator 1 view .LVU66
+ 279 001c 0920     		movs	r0, #9
+ 280              	.LVL26:
+ 111:controller/IO/analog_inputs.c ****     {
+ 281              		.loc 1 111 55 discriminator 1 view .LVU67
+ 282 001e FFF7FEFF 		bl	analog_inputs_get_data
+ 283              	.LVL27:
+ 111:controller/IO/analog_inputs.c ****     {
+ 284              		.loc 1 111 52 discriminator 1 view .LVU68
+ 285 0022 40F20633 		movw	r3, #774
+ 286 0026 9842     		cmp	r0, r3
+ 287 0028 F0D8     		bhi	.L16
+ 113:controller/IO/analog_inputs.c ****     }
+ 288              		.loc 1 113 16 view .LVU69
+ 289 002a 0020     		movs	r0, #0
+ 290 002c 0EE0     		b	.L15
+ 291              	.LVL28:
+ 292              	.L18:
+ 293              	.LBB6:
+ 118:controller/IO/analog_inputs.c ****     {
+ 119:controller/IO/analog_inputs.c ****         sum += analog_data[i * ANALOG_INPUTS_MAX + input_index];
+ 294              		.loc 1 119 9 is_stmt 1 view .LVU70
+ 295              		.loc 1 119 30 is_stmt 0 view .LVU71
+ 296 002e 03EB4302 		add	r2, r3, r3, lsl #1
+ 297 0032 03EB8202 		add	r2, r3, r2, lsl #2
+ 298              		.loc 1 119 50 view .LVU72
+ 299 0036 2A44     		add	r2, r2, r5
+ 300              		.loc 1 119 27 view .LVU73
+ 301 0038 064C     		ldr	r4, .L23+4
+ 302 003a 34F81220 		ldrh	r2, [r4, r2, lsl #1]
+ 303              		.loc 1 119 13 view .LVU74
+ 304 003e 11FA82F1 		uxtah	r1, r1, r2
+ 305              	.LVL29:
+ 117:controller/IO/analog_inputs.c ****     {
+ 306              		.loc 1 117 68 is_stmt 1 discriminator 3 view .LVU75
+ 307 0042 0133     		adds	r3, r3, #1
+ 308              	.LVL30:
+ 309              	.L17:
+ 117:controller/IO/analog_inputs.c ****     {
+ 310              		.loc 1 117 32 discriminator 1 view .LVU76
+ 311 0044 072B     		cmp	r3, #7
+ 312 0046 F2D9     		bls	.L18
+ 313              	.LBE6:
+ 120:controller/IO/analog_inputs.c ****     }
+ 121:controller/IO/analog_inputs.c ****     
+ 122:controller/IO/analog_inputs.c ****     return sum / ANALOG_INPUTS_NUMBER_OF_SAMPLES;
+ 314              		.loc 1 122 5 view .LVU77
+ 315              		.loc 1 122 16 is_stmt 0 view .LVU78
+ 316 0048 C1F3CF00 		ubfx	r0, r1, #3, #16
+ 317              	.LVL31:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 9
 
 
- 322              	.LVL29:
- 323              		.loc 1 124 16 view .LVU75
- 324 0006 07EE900A 		vmov	s15, r0	@ int
- 325              	.LVL30:
- 125:controller/IO/analog_inputs.c ****     v = mapf((float)raw_data, (float)0, (float)4095, 0, CONTROLLER_REF_VOLTAGE);
- 326              		.loc 1 125 5 is_stmt 1 view .LVU76
- 327              		.loc 1 125 9 is_stmt 0 view .LVU77
- 328 000a F8EE677A 		vcvt.f32.u32	s15, s15
- 329              	.LVL31:
- 330              	.LBB6:
- 331              	.LBI6:
- 332              		.file 2 "controller/utils/utils.h"
+ 318              	.L15:
+ 123:controller/IO/analog_inputs.c **** }
+ 319              		.loc 1 123 1 view .LVU79
+ 320 004c 38BD     		pop	{r3, r4, r5, pc}
+ 321              	.L24:
+ 322 004e 00BF     		.align	2
+ 323              	.L23:
+ 324 0050 00000000 		.word	.LC1
+ 325 0054 00000000 		.word	analog_data
+ 326              		.cfi_endproc
+ 327              	.LFE242:
+ 329              		.section	.text.analog_inputs_get_voltage,"ax",%progbits
+ 330              		.align	1
+ 331              		.global	analog_inputs_get_voltage
+ 332              		.syntax unified
+ 333              		.thumb
+ 334              		.thumb_func
+ 336              	analog_inputs_get_voltage:
+ 337              	.LVL32:
+ 338              	.LFB243:
+ 124:controller/IO/analog_inputs.c **** 
+ 125:controller/IO/analog_inputs.c **** voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index)
+ 126:controller/IO/analog_inputs.c **** {
+ 339              		.loc 1 126 1 is_stmt 1 view -0
+ 340              		.cfi_startproc
+ 341              		@ args = 0, pretend = 0, frame = 0
+ 342              		@ frame_needed = 0, uses_anonymous_args = 0
+ 343              		.loc 1 126 1 is_stmt 0 view .LVU81
+ 344 0000 08B5     		push	{r3, lr}
+ 345              		.cfi_def_cfa_offset 8
+ 346              		.cfi_offset 3, -8
+ 347              		.cfi_offset 14, -4
+ 127:controller/IO/analog_inputs.c ****     voltage_t v = 0;
+ 348              		.loc 1 127 5 is_stmt 1 view .LVU82
+ 349              	.LVL33:
+ 128:controller/IO/analog_inputs.c ****     uint16_t raw_data = 0;
+ 350              		.loc 1 128 5 view .LVU83
+ 129:controller/IO/analog_inputs.c ****     raw_data = analog_inputs_get_data(input_index);
+ 351              		.loc 1 129 5 view .LVU84
+ 352              		.loc 1 129 16 is_stmt 0 view .LVU85
+ 353 0002 FFF7FEFF 		bl	analog_inputs_get_data
+ 354              	.LVL34:
+ 355              		.loc 1 129 16 view .LVU86
+ 356 0006 07EE900A 		vmov	s15, r0	@ int
+ 357              	.LVL35:
+ 130:controller/IO/analog_inputs.c ****     v = mapf((float)raw_data, (float)0, (float)4095, 0, CONTROLLER_REF_VOLTAGE);
+ 358              		.loc 1 130 5 is_stmt 1 view .LVU87
+ 359              		.loc 1 130 9 is_stmt 0 view .LVU88
+ 360 000a F8EE677A 		vcvt.f32.u32	s15, s15
+ 361              	.LVL36:
+ 362              	.LBB7:
+ 363              	.LBI7:
+ 364              		.file 2 "controller/utils/utils.h"
    1:controller/utils/utils.h **** /**
    2:controller/utils/utils.h ****  * @file utils.h
    3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
    4:controller/utils/utils.h ****  *
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 10
+
+
    5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
    6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
    7:controller/utils/utils.h ****  *
@@ -538,9 +582,6 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
   43:controller/utils/utils.h ****     }
   44:controller/utils/utils.h **** }
   45:controller/utils/utils.h **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 10
-
-
   46:controller/utils/utils.h **** static inline bool get_bit(uint32_t flags, uint8_t bit)
   47:controller/utils/utils.h **** {
   48:controller/utils/utils.h ****     if (bit < 32)
@@ -557,6 +598,9 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
   59:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
   60:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
   61:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 11
+
+
   62:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
   63:controller/utils/utils.h ****  * @return The mapped value in the output range.
   64:controller/utils/utils.h ****  */
@@ -583,100 +627,100 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 1
   85:controller/utils/utils.h **** }
   86:controller/utils/utils.h **** 
   87:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
- 333              		.loc 2 87 21 is_stmt 1 view .LVU78
- 334              	.LBB7:
+ 365              		.loc 2 87 21 is_stmt 1 view .LVU89
+ 366              	.LBB8:
   88:controller/utils/utils.h **** {
   89:controller/utils/utils.h ****     if (in_max == in_min)
- 335              		.loc 2 89 5 view .LVU79
+ 367              		.loc 2 89 5 view .LVU90
   90:controller/utils/utils.h ****     {
   91:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
   92:controller/utils/utils.h ****     }
   93:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
- 336              		.loc 2 93 5 view .LVU80
- 337              		.loc 2 93 25 is_stmt 0 view .LVU81
- 338 000e B1EE047A 		vmov.f32	s14, #5.0e+0
- 339 0012 67EE877A 		vmul.f32	s15, s15, s14
- 340              	.LVL32:
- 341              		.loc 2 93 47 view .LVU82
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 11
+ 368              		.loc 2 93 5 view .LVU91
+ 369              		.loc 2 93 25 is_stmt 0 view .LVU92
+ 370 000e B1EE047A 		vmov.f32	s14, #5.0e+0
+ 371 0012 67EE877A 		vmul.f32	s15, s15, s14
+ 372              	.LVL37:
+ 373              		.loc 2 93 47 view .LVU93
+ 374 0016 9FED047A 		vldr.32	s14, .L27
+ 375 001a 87EE870A 		vdiv.f32	s0, s15, s14
+ 376              	.LVL38:
+ 377              		.loc 2 93 47 view .LVU94
+ 378              	.LBE8:
+ 379              	.LBE7:
+ 131:controller/IO/analog_inputs.c ****     return v;
+ 380              		.loc 1 131 5 is_stmt 1 view .LVU95
+ 132:controller/IO/analog_inputs.c **** }...
+ 381              		.loc 1 132 1 is_stmt 0 view .LVU96
+ 382 001e DFED037A 		vldr.32	s15, .L27+4
+ 383 0022 30EE270A 		vadd.f32	s0, s0, s15
+ 384              	.LVL39:
+ 385              		.loc 1 132 1 view .LVU97
+ 386 0026 08BD     		pop	{r3, pc}
+ 387              	.L28:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 12
 
 
- 342 0016 9FED047A 		vldr.32	s14, .L24
- 343 001a 87EE870A 		vdiv.f32	s0, s15, s14
- 344              	.LVL33:
- 345              		.loc 2 93 47 view .LVU83
- 346              	.LBE7:
- 347              	.LBE6:
- 126:controller/IO/analog_inputs.c ****     return v;
- 348              		.loc 1 126 5 is_stmt 1 view .LVU84
- 127:controller/IO/analog_inputs.c **** }...
- 349              		.loc 1 127 1 is_stmt 0 view .LVU85
- 350 001e DFED037A 		vldr.32	s15, .L24+4
- 351 0022 30EE270A 		vadd.f32	s0, s0, s15
- 352              	.LVL34:
- 353              		.loc 1 127 1 view .LVU86
- 354 0026 08BD     		pop	{r3, pc}
- 355              	.L25:
- 356              		.align	2
- 357              	.L24:
- 358 0028 00F07F45 		.word	1166012416
- 359 002c 00000000 		.word	0
- 360              		.cfi_endproc
- 361              	.LFE243:
- 363              		.section	.bss.analog_data,"aw",%nobits
- 364              		.align	2
- 367              	analog_data:
- 368 0000 00000000 		.space	208
- 368      00000000 
- 368      00000000 
- 368      00000000 
- 368      00000000 
- 369              		.global	hadc
- 370              		.section	.bss.hadc,"aw",%nobits
- 371              		.align	2
- 374              	hadc:
- 375 0000 00000000 		.space	4
- 376              		.text
- 377              	.Letext0:
- 378              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 379              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 380              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 381              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 382              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
- 383              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 384              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 385              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
- 386              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 387              		.file 12 "controller/types.h"
- 388              		.file 13 "controller/IO/analog_inputs.h"
- 389              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
- 390              		.file 15 "controller/utils/error_handling.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s 			page 12
+ 388              		.align	2
+ 389              	.L27:
+ 390 0028 00F07F45 		.word	1166012416
+ 391 002c 00000000 		.word	0
+ 392              		.cfi_endproc
+ 393              	.LFE243:
+ 395              		.section	.bss.analog_data,"aw",%nobits
+ 396              		.align	2
+ 399              	analog_data:
+ 400 0000 00000000 		.space	208
+ 400      00000000 
+ 400      00000000 
+ 400      00000000 
+ 400      00000000 
+ 401              		.global	hadc
+ 402              		.section	.bss.hadc,"aw",%nobits
+ 403              		.align	2
+ 406              	hadc:
+ 407 0000 00000000 		.space	4
+ 408              		.text
+ 409              	.Letext0:
+ 410              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 411              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 412              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 413              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 414              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 415              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 416              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 417              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 418              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 419              		.file 12 "controller/types.h"
+ 420              		.file 13 "controller/IO/analog_inputs.h"
+ 421              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ 422              		.file 15 "controller/utils/error_handling.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s 			page 13
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 analog_inputs.c
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:21     .text.HAL_ADC_ConvCpltCallback:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:27     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:41     .rodata.analog_inputs_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:46     .text.analog_inputs_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:52     .text.analog_inputs_init:00000000 analog_inputs_init
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:168    .text.analog_inputs_init:00000060 $d
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:374    .bss.hadc:00000000 hadc
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:367    .bss.analog_data:00000000 analog_data
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:175    .text.analog_inputs_start_conversion:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:181    .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:196    .text.analog_inputs_start_conversion_injected:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:202    .text.analog_inputs_start_conversion_injected:00000000 analog_inputs_start_conversion_injected
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:215    .rodata.analog_inputs_get_data.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:219    .text.analog_inputs_get_data:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:225    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:292    .text.analog_inputs_get_data:00000038 $d
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:298    .text.analog_inputs_get_voltage:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:304    .text.analog_inputs_get_voltage:00000000 analog_inputs_get_voltage
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:358    .text.analog_inputs_get_voltage:00000028 $d
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:364    .bss.analog_data:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccv52gOf.s:371    .bss.hadc:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:21     .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:27     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:41     .rodata.analog_inputs_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:46     .text.analog_inputs_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:52     .text.analog_inputs_init:00000000 analog_inputs_init
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:168    .text.analog_inputs_init:00000060 $d
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:406    .bss.hadc:00000000 hadc
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:399    .bss.analog_data:00000000 analog_data
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:175    .text.analog_inputs_start_conversion:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:181    .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:196    .text.analog_inputs_start_conversion_injected:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:202    .text.analog_inputs_start_conversion_injected:00000000 analog_inputs_start_conversion_injected
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:215    .rodata.analog_inputs_get_data.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:219    .text.analog_inputs_get_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:225    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:324    .text.analog_inputs_get_data:00000050 $d
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:330    .text.analog_inputs_get_voltage:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:336    .text.analog_inputs_get_voltage:00000000 analog_inputs_get_voltage
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:390    .text.analog_inputs_get_voltage:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:396    .bss.analog_data:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc7jBGoK.s:403    .bss.hadc:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_RCC_GetPCLK1Freq

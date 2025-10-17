@@ -17,7 +17,6 @@
 #define SENSOR_IAT_FAIL_SAFE (temperature_t)40
 #define SENSOR_CLT_FAIL_SAFE (temperature_t)60
 #define SENSOR_EGT_THERMOCOUPLE_CONSTANT (float)41e-6
-#define VBAT_DIVIDER_RATIO (float)10.4
 typedef struct
 {
     percent_t _prev_position;

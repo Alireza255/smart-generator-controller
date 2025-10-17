@@ -90,7 +90,15 @@
 #define TS_COMPOSITE_READ 3
 #define TS_CRC_CHECK_COMMAND 'k'
 #define TS_CRC_CHECK_COMMAND_char k
-#define TS_EXECUTE 'E'
+
+#define TS_CONTROLLER_COMMANDS 'E'
+#define TS_CONTROLLER_COMMAND_REBOOT 1
+#define TS_CONTROLLER_COMMAND_AUTO_CALIB_ETB1 2
+#define TS_CONTROLLER_COMMAND_AUTO_CALIB_ETB2 3
+#define TS_CONTROLLER_COMMAND_TPS1_CALIB_SAVE_FROM_AUTO_CALIB 4
+#define TS_CONTROLLER_COMMAND_TPS2_CALIB_SAVE_FROM_AUTO_CALIB 5
+
+
 #define TS_TEST_COMMS_COMMAND 'C'
 #define TS_EXECUTE_char E
 #define TS_FILE_VERSION 20250101
@@ -141,6 +149,8 @@
 #define TS_SET_LOGGER_SWITCH 'l'
 #define TS_SET_LOGGER_SWITCH_char l
 
+#define COMMS_SAVE_CONFIG_FLAG 0x00000001
+
 // ==================== Type Definitions ====================
 typedef enum
 {
@@ -163,7 +173,8 @@ typedef struct {
 } usb_packet_ptr_t;
 
 extern osMessageQueueId_t usb_rx_queue;
-
+extern osEventFlagsId_t controller_command_flag;
+extern osEventFlagsId_t comms_os_flags;
 // ==================== Function Prototypes ====================
 void comms_init();
 void comms_task(void *argument);

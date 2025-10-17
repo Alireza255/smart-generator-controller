@@ -27,6 +27,7 @@ void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps
     // electronic_throttle_update(etb);
 
     etb->state = ETB_STATE_NORMAL;
+    etb->control_loop_give_up_control = false;
 }
 
 void electronic_throttle_set(electronic_throttle_t *etb, percent_t position)
@@ -48,6 +49,11 @@ void electronic_throttle_update(void *arg)
         log_error("Electronic throttle not initialized");
         return;
     }
+    if (etb->control_loop_give_up_control)
+    {
+        return;
+    }
+    
     percent_t position = sensor_tps_get(etb->sensor);
     etb->current_position = position;
     pid_set_setpoint(etb->pid, etb->target_position);
@@ -112,6 +118,12 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
         log_error("ETB Auto-Tune failed. Vbat too low!");
         return;
     }
+    if (runtime.spinning_state != SS_STOPPED)
+    {
+        return;
+    }
+    
+    etb->control_loop_give_up_control = true;
 
     float vbat_compensation = 1;
     voltage_t nominal_vbat = (voltage_t)12.6;
@@ -384,6 +396,7 @@ void electronic_throttle_tone_fail(electronic_throttle_t *etb)
     }
 
     dc_motor_set(etb->motor, MOTOR_DIRECTION_FORWARD, 0);
+    etb->control_loop_give_up_control = false;
 }
 
 void electronic_throttle_enable_end_of_travel_protection(electronic_throttle_t *etb, percent_t duty_limit_closing, percent_t duty_limit_opening)

@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "error_handling.h"
 #include "math.h"
+#include "trigger.h"
 
 #define ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION (percent_t)0
 #define ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD (percent_t)0.8f
@@ -38,6 +39,7 @@ typedef struct
     percent_t duty_cycle_limiting_lower;
     percent_t duty_cycle_limiting_upper;
     bool is_duty_cycle_limiting_enabled;
+    bool control_loop_give_up_control;
 } electronic_throttle_t;
 
 /**

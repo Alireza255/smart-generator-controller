@@ -108,6 +108,11 @@ uint16_t analog_inputs_get_data(analog_input_channel_t input_index)
         log_error("Invalid index in analog input.");
         return 0;
     }
+    if (input_index != ANALOG_INPUT_VBAT_SENSE_PIN && analog_inputs_get_data(ANALOG_INPUT_VBAT_SENSE_PIN) < (uint16_t)(ANALOG_INPUTS_MIN_VBAT / VBAT_DIVIDER_RATIO / ADC_REF_VOLTAGE * (float)4095))
+    {
+        return 0;
+    }
+    
     uint_fast32_t sum = 0;
     for (uint_fast8_t i = 0; i < ANALOG_INPUTS_NUMBER_OF_SAMPLES; i++)
     {

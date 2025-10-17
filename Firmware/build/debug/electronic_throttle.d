@@ -50,7 +50,8 @@ build/debug/electronic_throttle.o: \
  Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  controller/IO/thermistor.h controller/constants.h controller/types.h \
  controller/utils/timing.h controller/config_and_runtime.h \
- controller/constants.h controller/tables.h
+ controller/constants.h controller/tables.h \
+ controller/engine_cycle/trigger.h
 controller/actuators/electronic_throttle.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/actuators/dc_motors.h:
@@ -116,3 +117,4 @@ controller/utils/timing.h:
 controller/config_and_runtime.h:
 controller/constants.h:
 controller/tables.h:
+controller/engine_cycle/trigger.h:

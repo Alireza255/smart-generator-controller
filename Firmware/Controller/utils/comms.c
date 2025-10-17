@@ -45,6 +45,8 @@ usb_rx_packet_t rx_packet;
 uint8_t tx_buffer[TS_BLOCKING_FACTOR + 30];
 uint8_t rx_buffer[TS_BLOCKING_FACTOR + 30];
 
+osEventFlagsId_t controller_command_flag = 0;
+osEventFlagsId_t comms_os_flags = 0;
 /* Function delcearations  */
 /**
  * @note size can be zero to transmit an empty packet
@@ -56,6 +58,8 @@ void process_command(uint8_t *request, uint16_t size);
 void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count);
 void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count);
 
+void run_controller_command(void *arg);
+void comms_activities_task(void *arg);
 /* Function definations */
 
 void send_response(uint8_t flag, uint8_t *data, size_t size, comms_response_format_t mode)
@@ -129,6 +133,21 @@ void comms_init(void)
     };
     osThreadNew(comms_task, NULL, &comms_task_attrs);
 
+    const osThreadAttr_t controller_run_controller_cmdmands_attr = {
+      .name = "controller_cmds",
+      .stack_size = 1024 * 2,
+      .priority = osPriorityNormal,
+  };
+  const osThreadAttr_t comms_activities_task_attr = {
+      .name = "commzzzz",
+      .stack_size = 1024 * 1,
+      .priority = osPriorityAboveNormal,
+  };
+  volatile osThreadId_t test_id = 0;
+  osThreadNew(run_controller_command, NULL, &controller_run_controller_cmdmands_attr);
+  test_id = osThreadNew(comms_activities_task, NULL, &comms_activities_task_attr);
+  controller_command_flag = osEventFlagsNew(NULL);
+  comms_os_flags = osEventFlagsNew(NULL);
 }
 
 // ==================== Communication Task ====================
@@ -282,9 +301,7 @@ void process_command(uint8_t *request, uint16_t size)
 
     case TS_BURN_COMMAND:
         // handle burn command and if it was ok, then send ok status
-        if (controller_save_configuration())
-        {
-        }
+        osEventFlagsSet(comms_os_flags, COMMS_SAVE_CONFIG_FLAG);
         send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
         return;
         break;
@@ -306,6 +323,10 @@ void process_command(uint8_t *request, uint16_t size)
             }
 			break;
             }
+    case TS_CONTROLLER_COMMANDS:
+        uint16_t controller_command = swap_endian_uint16(*(uint16_t *)&request[3]);
+        osEventFlagsSet(controller_command_flag, controller_command);
+        break;
     default:
         break;
     }
@@ -340,4 +361,15 @@ void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count)
 	
 }
 
+void comms_activities_task(void *arg)
+{
+
+    for (;;)
+    {
+        osEventFlagsWait(comms_os_flags, COMMS_SAVE_CONFIG_FLAG, osFlagsWaitAny, osWaitForever);
+        controller_save_configuration();
+        osEventFlagsClear(comms_os_flags, COMMS_SAVE_CONFIG_FLAG);
+    }
+    
+}
 #endif

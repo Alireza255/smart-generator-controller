@@ -7,6 +7,7 @@ void controller_sensor_task(void *arg);
 void controller_test_task(void *arg);
 void controller_long_routines_task(void *arg);
 void controller_test2_task(void *arg);
+void controller_run_controller_commands(void *arg);
 
 static sensor_tps_t tps1 = {
     .status_bit = STATUS_TPS1_ERROR,
@@ -28,7 +29,6 @@ static pid_t etb1_pid = {.derivative_filter_tau = 0.01f, .Kp = 15.0f, .Ki = 10, 
 static electronic_throttle_t etb2 = {0};
 static dc_motor_t etb2_motor = {0};
 static pid_t etb2_pid = {0};
-
 
 static thermistor_t sensor_clt = {0};
 static thermistor_t sensor_iat = {0};
@@ -198,14 +198,6 @@ void controller_load_test_configuration()
   config.tps1_type = 0;
   config.tps2_type = 0;
 
-  // ---------- Padding ----------
-  config._padding[0] = 0;
-  config._padding[1] = 0;
-  config._padding[2] = 0;
-
-  // ---------- Checksum ----------
-  config.checksum = 0;
-
   config.gas_control_etb_flowrate_grams_per_sec = 8.6f; // 8.6 default
   config.gas_reference_pressure = 2.0f;
 }
@@ -223,11 +215,7 @@ void controller_init()
     log_error("Not able to init eeprom");
   }
   controller_load_configuration();
-  if (config.checksum != CONFIG_CHECKSUM) // check the data and if it is wrong, throw an error and load defaults-- add a better check
-  {
-    controller_load_test_configuration();
-    log_error("EEPROM data is invalid");
-  }
+
 
   // controller_load_test_configuration();
   /* Start controller timing */
@@ -236,7 +224,8 @@ void controller_init()
   /* Init analog inputs*/
   analog_inputs_init(&hadc1, &htim5);
 
-  if (config.trigger_cam_enabled) trigger_camshaft_init(config.trigger_cam_type, &config.trigger_cam_filtering);
+  if (config.trigger_cam_enabled)
+    trigger_camshaft_init(config.trigger_cam_type, &config.trigger_cam_filtering);
 
   trigger_crankshaft_init(config.trigger_crank_type);
 
@@ -250,8 +239,6 @@ void controller_init()
 
   /* MAP */
   sensor_map_init(&sensor_map, config.sensor_map_type);
-
-
 
   /* Initialize analog sensors END*/
 
@@ -274,7 +261,7 @@ void controller_init()
 
     pid_init(&etb1_pid);
     electronic_throttle_init(&etb1, &etb1_pid, &tps1, &etb1_motor, &config.etb1_feedforward_table);
-    //electronic_throttle_auto_tune(&etb1);
+
     if (config.etb1_end_of_travel_duty_cycle_limit_enabled)
     {
       electronic_throttle_enable_end_of_travel_protection(&etb1, (percent_t)config.etb1_end_of_travel_duty_cycle_limit_lower, (percent_t)config.etb1_end_of_travel_duty_cycle_limit_upper);
@@ -327,10 +314,8 @@ void controller_init()
   /* Init governer */
   if (config.etb1_enabled)
   {
-  //  governer_init(&etb1);
+    governer_init(&etb1);
   }
-  
-
 
   comms_init();
 
@@ -356,8 +341,8 @@ void controller_init()
       .priority = osPriorityNormal,
   };
 
-  //osThreadNew(controller_test_task, NULL, &controller_test_attr);
-  // osThreadNew(controller_test2_task, NULL, &controller_test2_attr);
+  // osThreadNew(controller_test_task, NULL, &controller_test_attr);
+  //  osThreadNew(controller_test2_task, NULL, &controller_test2_attr);
   osThreadNew(controller_sensor_task, NULL, &controller_sensor_task_attr);
   osThreadNew(controller_long_routines_task, NULL, &controller_long_routines_attr);
 }
@@ -371,7 +356,6 @@ void controller_load_configuration()
 bool controller_save_configuration()
 {
   bool state = false;
-  config.checksum = CONFIG_CHECKSUM; // implement a proper checksum later
   state = EE_Write();
   return state;
 }
@@ -396,13 +380,18 @@ void controller_sensor_task(void *arg)
   {
     runtime.tps1 = sensor_tps_get(&tps1);
     runtime.tps2 = sensor_tps_get(&tps2);
-    
+
     runtime.clt_degc = sensor_clt_get();
     runtime.iat_degc = sensor_iat_get();
     runtime.map_kpa = sensor_map_get();
     change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, sensor_ops_get());
     runtime.egt_degc = sensor_egt_get();
     runtime.vbatt_volts = vbat_get();
+    
+    runtime.etb1_target = etb1.target_position;
+    runtime.etb1_motor_effort = etb1.motor->current_direction ? (float)-1 * (float)(etb1.motor->current_duty_cycle) : (float)(etb1.motor->current_duty_cycle);
+    runtime.etb2_target = etb2.target_position;
+    runtime.etb2_motor_effort = etb2.motor->current_direction ? (float)-1 * (float)(etb2.motor->current_duty_cycle) : (float)(etb2.motor->current_duty_cycle);
     osDelay(1);
   }
 }
@@ -445,10 +434,9 @@ void trigger_driven_events_callback()
   angle_t crank_angle = crankshaft_get_angle();
   rpm_t rpm = crankshaft_get_rpm();
   time_us_t current_time_us = get_time_us();
-  
+
   ignition_trigger_event_handle(crank_angle, rpm, current_time_us);
   injection_trigger_event_handle(crank_angle, rpm, current_time_us);
-
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -462,5 +450,39 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {
     trigger_camshaft_signal_handle(HAL_GPIO_ReadPin(SENSOR_VR2_GPIO_Port, SENSOR_VR2_Pin));
   }
-  
+}
+
+void run_controller_command(void *arg)
+{
+  for (;;)
+  {
+    uint32_t command = osEventFlagsWait(controller_command_flag, 0x0000FFFF, osFlagsWaitAny, osWaitForever);
+    switch (command)
+    {
+    case TS_CONTROLLER_COMMAND_REBOOT:
+      NVIC_SystemReset();
+      break;
+    case TS_CONTROLLER_COMMAND_AUTO_CALIB_ETB1:
+      if (config.etb1_enabled)
+        electronic_throttle_auto_tune(&etb1);
+      break;
+    case TS_CONTROLLER_COMMAND_AUTO_CALIB_ETB2:
+      if (config.etb2_enabled)
+        electronic_throttle_auto_tune(&etb2);
+      break;
+    case TS_CONTROLLER_COMMAND_TPS1_CALIB_SAVE_FROM_AUTO_CALIB:
+      config.tps1_calib_closed_throttle_adc_value = tps1.closed_throttle_adc_value;
+      config.tps1_calib_wide_open_throttle_adc_value = tps1.wide_open_throttle_adc_value;
+      config.tps1_calib_is_inverted = tps1.is_inverted;
+      break;
+    case TS_CONTROLLER_COMMAND_TPS2_CALIB_SAVE_FROM_AUTO_CALIB:
+      config.tps2_calib_closed_throttle_adc_value = tps2.closed_throttle_adc_value;
+      config.tps2_calib_wide_open_throttle_adc_value = tps2.wide_open_throttle_adc_value;
+      config.tps2_calib_is_inverted = tps2.is_inverted;
+      break;
+    default:
+      break;
+    }
+    osEventFlagsClear(controller_command_flag, 0x0000FFFF);
+  }
 }
