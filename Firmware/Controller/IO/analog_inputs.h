@@ -101,4 +101,6 @@ uint16_t analog_inputs_get_data(analog_input_channel_t input_index);
 
 voltage_t analog_inputs_get_voltage(analog_input_channel_t input_index);
 
+extern void controller_analog_inputs_read_callback();
+
 #endif // ANALOG_INPUTS_H

@@ -1,6 +1,5 @@
-build/debug/controller.o: controller/controller.c controller/controller.h \
- controller/utils/timing.h controller/types.h \
- Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+build/debug/outputs.o: controller/IO/outputs.c controller/IO/outputs.h \
+ Core/Inc/main.h Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  Core/Inc/stm32f4xx_hal_conf.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -33,25 +32,8 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
- Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h Core/Inc/tim.h \
- Core/Inc/main.h controller/types.h controller/utils/comms.h \
- Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- USB_DEVICE/App/usbd_cdc_if.h \
- Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- USB_DEVICE/Target/usbd_conf.h Core/Inc/main.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- controller/config_and_runtime.h controller/constants.h \
- controller/tables.h controller/engine_cycle/trigger.h \
- controller/utils/error_handling.h controller/actuators/dc_motors.h \
- controller/IO/sensors.h controller/IO/analog_inputs.h \
- controller/utils/utils.h controller/IO/resistor.h \
- controller/IO/thermistor.h controller/constants.h \
- controller/engine_cycle/ignition.h controller/tables.h \
- controller/engine_cycle/trigger.h controller/IO/outputs.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
+ controller/types.h controller/constants.h controller/types.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  Core/Inc/FreeRTOSConfig.h \
@@ -62,19 +44,9 @@ build/debug/controller.o: controller/controller.c controller/controller.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
- Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- controller/IO/thermistor.h controller/utils/pid.h \
- controller/utils/timing.h controller/actuators/electronic_throttle.h \
- controller/actuators/dc_motors.h Core/Inc/adc.h \
- controller/algorithm/governer.h controller/actuators/fan_control.h \
- controller/utils/trigger_simulator.h controller/utils/utils.h \
- controller/config_and_runtime.h controller/utils/ee.h \
- controller/engine_cycle/gas_injection.h \
- controller/algorithm/fuel/fuel_math.h \
- controller/engine_cycle/injection.h controller/controller.h
-controller/controller.h:
-controller/utils/timing.h:
-controller/types.h:
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+controller/IO/outputs.h:
+Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
@@ -111,36 +83,9 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
-Core/Inc/tim.h:
-Core/Inc/main.h:
 controller/types.h:
-controller/utils/comms.h:
-Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
-USB_DEVICE/App/usbd_cdc_if.h:
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-USB_DEVICE/Target/usbd_conf.h:
-Core/Inc/main.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
-controller/config_and_runtime.h:
 controller/constants.h:
-controller/tables.h:
-controller/engine_cycle/trigger.h:
-controller/utils/error_handling.h:
-controller/actuators/dc_motors.h:
-controller/IO/sensors.h:
-controller/IO/analog_inputs.h:
-controller/utils/utils.h:
-controller/IO/resistor.h:
-controller/IO/thermistor.h:
-controller/constants.h:
-controller/engine_cycle/ignition.h:
-controller/tables.h:
-controller/engine_cycle/trigger.h:
-controller/IO/outputs.h:
+controller/types.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 Core/Inc/FreeRTOSConfig.h:
@@ -152,19 +97,3 @@ Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
-controller/IO/thermistor.h:
-controller/utils/pid.h:
-controller/utils/timing.h:
-controller/actuators/electronic_throttle.h:
-controller/actuators/dc_motors.h:
-Core/Inc/adc.h:
-controller/algorithm/governer.h:
-controller/actuators/fan_control.h:
-controller/utils/trigger_simulator.h:
-controller/utils/utils.h:
-controller/config_and_runtime.h:
-controller/utils/ee.h:
-controller/engine_cycle/gas_injection.h:
-controller/algorithm/fuel/fuel_math.h:
-controller/engine_cycle/injection.h:
-controller/controller.h:

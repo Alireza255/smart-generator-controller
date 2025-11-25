@@ -103,6 +103,8 @@ void trigger_driven_events_callback();
 
 angle_t crankshaft_get_next_trigger_angle();
 
+spinning_state_t trigger_spinning_state_get();
+
 void trigger_tooth_logger_start();
 void trigger_tooth_logger_stop();
 void trigger_tooth_logger_reset();

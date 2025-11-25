@@ -4,8 +4,7 @@
 #include "types.h"
 #include "error_handling.h"
 #include "sensors.h"
-#include "controller.h"
-
+#include "outputs.h"
 
 void fan_control_update();
 

@@ -42,7 +42,7 @@ float pid_compute(pid_t *pid, time_us_t current_time_us, float input)
 
     /* Finding the integral term*/
     pid->integrator = pid->integrator + 0.5f * pid->Ki * T_sec *(error + pid->prev_error);
-
+    
     /* Anti-windup - works by clamping the integrator */
     if (pid->integrator > pid->limit_integrator_max)
     {

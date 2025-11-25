@@ -20,16 +20,9 @@
 #define ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD (percent_t)0.8f
 #define ELECTRONIC_THROTTLE_AUTO_CALIB_MIN_VBAT (voltage_t)11
 
-typedef enum
-{
-    ETB_STATE_NO_INIT,
-    ETB_STATE_NORMAL,
-    ETB_STATE_ERROR,
-} electronic_throttle_state_t;
-
 typedef struct
 {
-    electronic_throttle_state_t state;
+    status_t status_flag; // true when ok
     dc_motor_t *motor;
     pid_t *pid;
     sensor_tps_t *sensor;
@@ -45,14 +38,18 @@ typedef struct
 /**
  * @note sensor and motor have to be initialized before calling this function
  */
-void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor, table_1d_t *feed_forward_table);
+void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor, table_1d_t *feed_forward_table, status_t status_flag);
 
 void electronic_throttle_auto_tune(electronic_throttle_t *etb);
 
 void electronic_throttle_set(electronic_throttle_t *etb, percent_t position);
 
+void electronic_throttle_disable(electronic_throttle_t *etb);
+void electronic_throttle_enable(electronic_throttle_t *etb);
+
+
 void electronic_throttle_update(void *arg);
- 
+
 /**
  * @brief Limits the duty cycle in order to not burn out the motor in case the control loop asks the motor to something stupid.
  * 
@@ -61,4 +58,9 @@ void electronic_throttle_update(void *arg);
  * @param duty_limit_closing Duty cycle limit of the motor when protection is active (percent)
  */
 void electronic_throttle_enable_end_of_travel_protection(electronic_throttle_t *etb, percent_t duty_limit_closing, percent_t duty_limit_opening);
+
+void electronic_throttle_tone_fail(electronic_throttle_t *etb);
+void electronic_throttle_tone_success(electronic_throttle_t *etb);
+
+
 #endif // ELECTRONIC_THROTTLE_H

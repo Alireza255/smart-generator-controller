@@ -1,9 +1,7 @@
 #include "electronic_throttle.h"
 
-void electronic_throttle_tone_fail(electronic_throttle_t *etb);
-void electronic_throttle_tone_success(electronic_throttle_t *etb);
 
-void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor, table_1d_t *feed_forward_table)
+void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor, table_1d_t *feed_forward_table, status_t status_flag)
 {
     if (etb == NULL || sensor == NULL || motor == NULL || feed_forward_table == NULL)
     {
@@ -26,7 +24,8 @@ void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps
 
     // electronic_throttle_update(etb);
 
-    etb->state = ETB_STATE_NORMAL;
+    etb->status_flag = status_flag;
+    change_bit(&runtime.status, status_flag, true);
     etb->control_loop_give_up_control = false;
 }
 
@@ -55,6 +54,15 @@ void electronic_throttle_update(void *arg)
     }
     
     percent_t position = sensor_tps_get(etb->sensor);
+    if (isnan(position))
+    {
+        // we cannot assert control over the etb without knowing the position of it
+        // so we raise the flag and let other parts of the controller deal with it
+        change_bit(&runtime.status, etb->status_flag, false);
+        dc_motor_set(etb->motor, MOTOR_DIRECTION_FORWARD, 0);
+        return;
+    }
+    
     etb->current_position = position;
     pid_set_setpoint(etb->pid, etb->target_position);
     // feed-forward table value + pid control
@@ -103,6 +111,17 @@ void electronic_throttle_update(void *arg)
         motor_effort = CLAMP(motor_effort, etb->feed_forward_table->data[0] - margine, (float)255);
     }
     dc_motor_set(etb->motor, dir, (uint8_t)ABS(motor_effort));
+}
+
+void electronic_throttle_disable(electronic_throttle_t *etb)
+{
+    etb->control_loop_give_up_control = true;
+    dc_motor_set(etb->motor, MOTOR_DIRECTION_FORWARD, 0);
+}
+
+void electronic_throttle_enable(electronic_throttle_t *etb)
+{
+    etb->control_loop_give_up_control = false;
 }
 
 void electronic_throttle_auto_tune(electronic_throttle_t *etb)
@@ -154,7 +173,7 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
     {
         dc_motor_set(etb->motor, MOTOR_DIRECTION_REVERSE, i);
         osDelay(settling_time_delay);
-        current_adc_value = etb->sensor->is_inverted ? (4095 - analog_inputs_get_data(etb->sensor->analog_channel)) : analog_inputs_get_data(etb->sensor->analog_channel);
+        current_adc_value = etb->sensor->config.is_inverted ? (4095 - analog_inputs_get_data(etb->sensor->config.analog_channel)) : analog_inputs_get_data(etb->sensor->config.analog_channel);
 
         if (ABS(prev_adc_value - current_adc_value) < settled_state_adc_value_hystersis)
         {
@@ -181,7 +200,7 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
     osDelay(2 * settling_time_delay);
 
     // now the plate should be in the resting position
-    resting_adc_value = etb->sensor->is_inverted ? (4095 - analog_inputs_get_data(etb->sensor->analog_channel)) : analog_inputs_get_data(etb->sensor->analog_channel);
+    resting_adc_value = etb->sensor->config.is_inverted ? (4095 - analog_inputs_get_data(etb->sensor->config.analog_channel)) : analog_inputs_get_data(etb->sensor->config.analog_channel);
 
     dc_motor_enable(etb->motor);
 
@@ -196,7 +215,7 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
     {
         dc_motor_set(etb->motor, MOTOR_DIRECTION_FORWARD, i);
         osDelay(settling_time_delay);
-        current_adc_value = etb->sensor->is_inverted ? (4095 - analog_inputs_get_data(etb->sensor->analog_channel)) : analog_inputs_get_data(etb->sensor->analog_channel);
+        current_adc_value = etb->sensor->config.is_inverted ? (4095 - analog_inputs_get_data(etb->sensor->config.analog_channel)) : analog_inputs_get_data(etb->sensor->config.analog_channel);
 
         if (ABS(prev_adc_value - current_adc_value) < settled_state_adc_value_hystersis)
         {
@@ -236,8 +255,8 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
          */
         // etb->sensor->closed_throttle_adc_value = closed_adc_value + (uint16_t)((float)0.05 * (float)(opened_adc_value - closed_adc_value)); // add a small offset to avoid hitting the mechanical stop
         // etb->sensor->wide_open_throttle_adc_value = opened_adc_value - (uint16_t)((float)0.05 * (float)(opened_adc_value - closed_adc_value)); // a small offset to avoid hitting the mechanical stop;
-        etb->sensor->closed_throttle_adc_value = closed_adc_value;
-        etb->sensor->wide_open_throttle_adc_value = opened_adc_value;
+        etb->sensor->config.fully_closed_adc_value = closed_adc_value;
+        etb->sensor->config.fully_open_adc_value = opened_adc_value;
         electronic_throttle_tone_success(etb);
         resting_position = sensor_tps_get(etb->sensor);
     }
@@ -349,6 +368,7 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
     else
     {
         electronic_throttle_tone_success(etb);
+        electronic_throttle_enable(etb);
     }
 
     osDelay(1000);

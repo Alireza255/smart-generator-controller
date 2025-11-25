@@ -1,13 +1,11 @@
 #include "injection.h"
 
-injection_output_pin_conf_t *injector_pin_conf = NULL;
-
 injection_event_t injection_events[FIRMWARE_MAX_NUMBER_OF_CYLINDERS] = {0};
 
 static uint8_t number_of_events = 0;
 static uint8_t number_of_injections = 0;
 static bool injection_initialized = false;
-
+static bool is_injection_allowed = true;
 static bool operating_in_forced_batch_injection = false;
 
 float_time_ms_t get_pulse_width();
@@ -18,17 +16,10 @@ static void injection_switch_to_batch();
 static void injection_switch_to_sequential();
 static void injection_watchdog_check();
 
-bool injection_init(injection_output_pin_conf_t *output_pin_conf)
+bool injection_init()
 {
-    if (output_pin_conf == NULL)
-    {
-        change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
-        change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
-        log_error("injection init failed. No output config");
-        return false;
-    }
-    controller_output_pin_t *outputs = &output_pin_conf->pin[0];
-    injector_pin_conf = output_pin_conf;
+
+    controller_output_pin_t *outputs = &injector_output[0];
 
     if (config.injection_mode == INJECTION_MODE_NO_FUEL_INJECTION)
         return true;
@@ -36,6 +27,7 @@ bool injection_init(injection_output_pin_conf_t *output_pin_conf)
     switch (config.firing_order)
     {
     case FO_1342: // Common inline-4
+        number_of_injections = 4;
         switch (config.injection_mode)
         {
         case INJECTION_MODE_SINGLE_POINT:
@@ -44,7 +36,6 @@ bool injection_init(injection_output_pin_conf_t *output_pin_conf)
 
             injection_events[0].crank_angle_at_end_of_injection = (angle_t)0;
             injection_events[1].crank_angle_at_end_of_injection = (angle_t)180;
-            number_of_injections = 4;
             number_of_events = 2;
             break;
         case INJECTION_MODE_BATCH:
@@ -56,7 +47,6 @@ bool injection_init(injection_output_pin_conf_t *output_pin_conf)
 
             injection_events[1].primary_output = &outputs[1];
             injection_events[1].secondary_output = &outputs[2];
-            number_of_injections = 4;   
             number_of_events = 2;
             break;
         case INJECTION_MODE_SEQUENTIAL:
@@ -69,7 +59,6 @@ bool injection_init(injection_output_pin_conf_t *output_pin_conf)
             injection_events[1].primary_output = &outputs[1];
             injection_events[2].primary_output = &outputs[2];
             injection_events[3].primary_output = &outputs[3];
-            number_of_injections = 4;
             number_of_events = 4;
             break;
 
@@ -78,6 +67,7 @@ bool injection_init(injection_output_pin_conf_t *output_pin_conf)
         }
         break;
     case FO_153624: // Common inline-6
+        number_of_injections = 6;
         switch (config.injection_mode)
         {
         case INJECTION_MODE_SINGLE_POINT:
@@ -88,7 +78,6 @@ bool injection_init(injection_output_pin_conf_t *output_pin_conf)
             injection_events[0].primary_output = &outputs[0];
             injection_events[1].primary_output = &outputs[0];
             injection_events[2].primary_output = &outputs[0];
-            number_of_injections = 6;
             number_of_events = 3;
             break;
 
@@ -100,16 +89,22 @@ bool injection_init(injection_output_pin_conf_t *output_pin_conf)
             injection_events[0].primary_output = &outputs[0];
             injection_events[1].primary_output = &outputs[1];
             injection_events[2].primary_output = &outputs[2];
-            number_of_injections = 6;
             number_of_events = 3;
             break;
 
         case INJECTION_MODE_SEQUENTIAL:
             config.injection_mode = INJECTION_MODE_BATCH;
             change_bit(&runtime.status, STATUS_INJECTOR_ERROR, true);
-            injection_init(output_pin_conf);
+            injection_events[0].crank_angle_at_end_of_injection = (angle_t)0;   // cyl 1 & 6
+            injection_events[1].crank_angle_at_end_of_injection = (angle_t)120; // cyl 5 & 2
+            injection_events[2].crank_angle_at_end_of_injection = (angle_t)240; // cyl 3 & 4
+
+            injection_events[0].primary_output = &outputs[0];
+            injection_events[1].primary_output = &outputs[1];
+            injection_events[2].primary_output = &outputs[2];
+            number_of_events = 3;
             log_error("Sequential injection not possible for 6 cylinders, defaulting to batch fire.");
-            return false;
+
             break;
 
         default:
@@ -158,7 +153,7 @@ void injection_watchdog_check()
 
 void injection_switch_to_batch()
 {
-    controller_output_pin_t *outputs = &injector_pin_conf->pin[0];
+    controller_output_pin_t *outputs = &injector_output[0];
 
     operating_in_forced_batch_injection = true;
     switch (config.firing_order)
@@ -188,7 +183,7 @@ void injection_switch_to_batch()
 
 void injection_switch_to_sequential()
 {
-    controller_output_pin_t *outputs = &injector_pin_conf->pin[0];
+    controller_output_pin_t *outputs = &injector_output[0];
 
     operating_in_forced_batch_injection = false;
     switch (config.firing_order)
@@ -222,7 +217,7 @@ void injection_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us
     /**
      * @todo add the necessary checks and bounds
      */
-    if (config.injection_mode == INJECTION_MODE_NO_FUEL_INJECTION || !injection_initialized)
+    if (config.injection_mode == INJECTION_MODE_NO_FUEL_INJECTION || !injection_initialized || !is_injection_allowed)
     {
         return;
     }
@@ -351,12 +346,12 @@ void injector_start_injection(void *arg)
 
     if (event->primary_output)
     {
-        HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_SET);
+        output_set(event->primary_output, true);
         event->status = INJECTION_EVENT_INJECTING;
     }
     if (event->secondary_output)
     {
-        HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_SET);
+        output_set(event->secondary_output, true);
         event->status = INJECTION_EVENT_INJECTING;
     }
 }
@@ -371,12 +366,12 @@ void injector_stop_injection(void *arg)
 
     if (event->primary_output)
     {
-        HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_RESET);
+        output_set(event->primary_output, false);
         event->status = INJECTION_EVENT_FINISHED;
     }
     if (event->secondary_output)
     {
-        HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_RESET);
+        output_set(event->secondary_output, false);
         event->status = INJECTION_EVENT_FINISHED;
     }
 }
@@ -397,4 +392,9 @@ void schedule_injection_event(injection_event_t *event)
     event->status = INJECTION_EVENT_PENDING;
     scheduler_schedule_event_with_arg(event->injection_stop_time, injector_stop_injection, (void *)event);
     scheduler_schedule_event_with_arg(event->injection_start_time, injector_start_injection, (void *)event);
+}
+
+void injection_disable()
+{
+    is_injection_allowed = false;
 }

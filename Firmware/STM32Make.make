@@ -132,6 +132,7 @@ USB_DEVICE/App/usbd_cdc_if.c \
 USB_DEVICE/App/usbd_desc.c \
 USB_DEVICE/Target/usbd_conf.c \
 controller/IO/analog_inputs.c \
+controller/IO/outputs.c \
 controller/IO/resistor.c \
 controller/IO/sensors.c \
 controller/IO/thermistor.c \

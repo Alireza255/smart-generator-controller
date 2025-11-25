@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -35,7 +35,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 1
   28              		.thumb
   29              		.thumb_func
   31              	governer_update:
-  32              	.LFB239:
+  32              	.LFB243:
    1:controller/algorithm/governer.c **** #include "governer.h"
    2:controller/algorithm/governer.c **** #include "controller.h"
    3:controller/algorithm/governer.c **** 
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 1
   20:controller/algorithm/governer.c **** 
   21:controller/algorithm/governer.c ****     dummy_config.Kp = config.governer_pid_Kp;
   22:controller/algorithm/governer.c ****     dummy_config.Ki = config.governer_pid_Ki;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 2
 
 
   23:controller/algorithm/governer.c ****     dummy_config.Kd = config.governer_pid_Kd;
@@ -86,464 +86,552 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 1
   34              		.cfi_startproc
   35              		@ args = 0, pretend = 0, frame = 0
   36              		@ frame_needed = 0, uses_anonymous_args = 0
-  37 0000 10B5     		push	{r4, lr}
-  38              		.cfi_def_cfa_offset 8
-  39              		.cfi_offset 4, -8
-  40              		.cfi_offset 14, -4
-  41 0002 2DED028B 		vpush.64	{d8}
-  42              		.cfi_def_cfa_offset 16
-  43              		.cfi_offset 80, -16
-  44              		.cfi_offset 81, -12
+  37 0000 70B5     		push	{r4, r5, r6, lr}
+  38              		.cfi_def_cfa_offset 16
+  39              		.cfi_offset 4, -16
+  40              		.cfi_offset 5, -12
+  41              		.cfi_offset 6, -8
+  42              		.cfi_offset 14, -4
+  43 0002 2DED028B 		vpush.64	{d8}
+  44              		.cfi_def_cfa_offset 24
+  45              		.cfi_offset 80, -24
+  46              		.cfi_offset 81, -20
   44:controller/algorithm/governer.c ****     if (governer_etb == NULL)
-  45              		.loc 1 44 5 view .LVU1
-  46              		.loc 1 44 22 is_stmt 0 view .LVU2
-  47 0006 254B     		ldr	r3, .L8
-  48 0008 1B68     		ldr	r3, [r3]
-  49              		.loc 1 44 8 view .LVU3
-  50 000a 43B3     		cbz	r3, .L7
+  47              		.loc 1 44 5 view .LVU1
+  48              		.loc 1 44 22 is_stmt 0 view .LVU2
+  49 0006 3B4B     		ldr	r3, .L15
+  50 0008 1B68     		ldr	r3, [r3]
+  51              		.loc 1 44 8 view .LVU3
+  52 000a 002B     		cmp	r3, #0
+  53 000c 45D0     		beq	.L13
   45:controller/algorithm/governer.c ****     {
   46:controller/algorithm/governer.c ****         log_error("Governer no init!");
   47:controller/algorithm/governer.c ****         return;
   48:controller/algorithm/governer.c ****     }
   49:controller/algorithm/governer.c ****     percent_t throttle_setpoint = ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION;
-  51              		.loc 1 49 5 is_stmt 1 view .LVU4
-  52              	.LVL0:
+  54              		.loc 1 49 5 is_stmt 1 view .LVU4
+  55              	.LVL0:
   50:controller/algorithm/governer.c **** 
   51:controller/algorithm/governer.c ****     governer_pid.Kp = config.governer_pid_Kp;
-  53              		.loc 1 51 5 view .LVU5
-  54              		.loc 1 51 29 is_stmt 0 view .LVU6
-  55 000c 244A     		ldr	r2, .L8+4
-  56 000e D2F8CC16 		ldr	r1, [r2, #1740]	@ unaligned
-  57              		.loc 1 51 21 view .LVU7
-  58 0012 244B     		ldr	r3, .L8+8
-  59 0014 1960     		str	r1, [r3]	@ float
+  56              		.loc 1 51 5 view .LVU5
+  57              		.loc 1 51 29 is_stmt 0 view .LVU6
+  58 000e 3A4A     		ldr	r2, .L15+4
+  59 0010 D2F8D016 		ldr	r1, [r2, #1744]	@ unaligned
+  60              		.loc 1 51 21 view .LVU7
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 3
+
+
+  61 0014 394B     		ldr	r3, .L15+8
+  62 0016 1960     		str	r1, [r3]	@ float
   52:controller/algorithm/governer.c ****     governer_pid.Ki = config.governer_pid_Ki;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 3
-
-
-  60              		.loc 1 52 5 is_stmt 1 view .LVU8
-  61              		.loc 1 52 29 is_stmt 0 view .LVU9
-  62 0016 D2F8D016 		ldr	r1, [r2, #1744]	@ unaligned
-  63              		.loc 1 52 21 view .LVU10
-  64 001a 5960     		str	r1, [r3, #4]	@ float
+  63              		.loc 1 52 5 is_stmt 1 view .LVU8
+  64              		.loc 1 52 29 is_stmt 0 view .LVU9
+  65 0018 D2F8D416 		ldr	r1, [r2, #1748]	@ unaligned
+  66              		.loc 1 52 21 view .LVU10
+  67 001c 5960     		str	r1, [r3, #4]	@ float
   53:controller/algorithm/governer.c ****     governer_pid.Kd = config.governer_pid_Kd;
-  65              		.loc 1 53 5 is_stmt 1 view .LVU11
-  66              		.loc 1 53 29 is_stmt 0 view .LVU12
-  67 001c D2F8D416 		ldr	r1, [r2, #1748]	@ unaligned
-  68              		.loc 1 53 21 view .LVU13
-  69 0020 9960     		str	r1, [r3, #8]	@ float
+  68              		.loc 1 53 5 is_stmt 1 view .LVU11
+  69              		.loc 1 53 29 is_stmt 0 view .LVU12
+  70 001e D2F8D816 		ldr	r1, [r2, #1752]	@ unaligned
+  71              		.loc 1 53 21 view .LVU13
+  72 0022 9960     		str	r1, [r3, #8]	@ float
   54:controller/algorithm/governer.c ****     governer_pid.limit_integrator_min = config.governer_pid_limit_integrator_min;
-  70              		.loc 1 54 5 is_stmt 1 view .LVU14
-  71              		.loc 1 54 47 is_stmt 0 view .LVU15
-  72 0022 D2F8D816 		ldr	r1, [r2, #1752]	@ unaligned
-  73              		.loc 1 54 39 view .LVU16
-  74 0026 9961     		str	r1, [r3, #24]	@ float
+  73              		.loc 1 54 5 is_stmt 1 view .LVU14
+  74              		.loc 1 54 47 is_stmt 0 view .LVU15
+  75 0024 D2F8DC16 		ldr	r1, [r2, #1756]	@ unaligned
+  76              		.loc 1 54 39 view .LVU16
+  77 0028 9961     		str	r1, [r3, #24]	@ float
   55:controller/algorithm/governer.c ****     governer_pid.limit_integrator_max = config.governer_pid_limit_integrator_max;
-  75              		.loc 1 55 5 is_stmt 1 view .LVU17
-  76              		.loc 1 55 47 is_stmt 0 view .LVU18
-  77 0028 D2F8DC16 		ldr	r1, [r2, #1756]	@ unaligned
-  78              		.loc 1 55 39 view .LVU19
-  79 002c D961     		str	r1, [r3, #28]	@ float
+  78              		.loc 1 55 5 is_stmt 1 view .LVU17
+  79              		.loc 1 55 47 is_stmt 0 view .LVU18
+  80 002a D2F8E016 		ldr	r1, [r2, #1760]	@ unaligned
+  81              		.loc 1 55 39 view .LVU19
+  82 002e D961     		str	r1, [r3, #28]	@ float
   56:controller/algorithm/governer.c ****     governer_pid.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
-  80              		.loc 1 56 5 is_stmt 1 view .LVU20
-  81              		.loc 1 56 48 is_stmt 0 view .LVU21
-  82 002e D2F8E026 		ldr	r2, [r2, #1760]	@ unaligned
-  83              		.loc 1 56 40 view .LVU22
-  84 0032 DA60     		str	r2, [r3, #12]	@ float
-  57:controller/algorithm/governer.c **** 
+  83              		.loc 1 56 5 is_stmt 1 view .LVU20
+  84              		.loc 1 56 48 is_stmt 0 view .LVU21
+  85 0030 D2F8E426 		ldr	r2, [r2, #1764]	@ unaligned
+  86              		.loc 1 56 40 view .LVU22
+  87 0034 DA60     		str	r2, [r3, #12]	@ float
+  57:controller/algorithm/governer.c ****     
   58:controller/algorithm/governer.c ****     if (runtime.spinning_state != SS_RUNNING)
-  85              		.loc 1 58 5 is_stmt 1 view .LVU23
-  86              		.loc 1 58 16 is_stmt 0 view .LVU24
-  87 0034 1C4B     		ldr	r3, .L8+12
-  88 0036 93F87830 		ldrb	r3, [r3, #120]	@ zero_extendqisi2
-  89              		.loc 1 58 8 view .LVU25
-  90 003a 032B     		cmp	r3, #3
-  91 003c 13D0     		beq	.L4
+  88              		.loc 1 58 5 is_stmt 1 view .LVU23
+  89              		.loc 1 58 16 is_stmt 0 view .LVU24
+  90 0036 324B     		ldr	r3, .L15+12
+  91 0038 93F87830 		ldrb	r3, [r3, #120]	@ zero_extendqisi2
+  92              		.loc 1 58 8 view .LVU25
+  93 003c 032B     		cmp	r3, #3
+  94 003e 30D0     		beq	.L4
   59:controller/algorithm/governer.c ****     {
   60:controller/algorithm/governer.c ****         throttle_setpoint = config.cranking_throttle;
-  92              		.loc 1 60 9 is_stmt 1 view .LVU26
-  93              		.loc 1 60 27 is_stmt 0 view .LVU27
-  94 003e 184B     		ldr	r3, .L8+4
-  95 0040 D3F88836 		ldr	r3, [r3, #1672]	@ unaligned
-  96 0044 00EE103A 		vmov	s0, r3	@ int
-  97              	.LVL1:
+  95              		.loc 1 60 9 is_stmt 1 view .LVU26
+  96              		.loc 1 60 27 is_stmt 0 view .LVU27
+  97 0040 2D4A     		ldr	r2, .L15+4
+  98 0042 D2F88836 		ldr	r3, [r2, #1672]	@ unaligned
+  99 0046 08EE103A 		vmov	s16, r3	@ int
+ 100              	.LVL1:
   61:controller/algorithm/governer.c ****         runtime.governer_status = GOVERNER_STATUS_IGNORED;
-  98              		.loc 1 61 9 is_stmt 1 view .LVU28
-  99              		.loc 1 61 33 is_stmt 0 view .LVU29
- 100 0048 174B     		ldr	r3, .L8+12
- 101 004a 0022     		movs	r2, #0
- 102 004c 83F87920 		strb	r2, [r3, #121]
- 103              	.LVL2:
- 104              	.L5:
-  62:controller/algorithm/governer.c ****     }
-  63:controller/algorithm/governer.c ****     else
-  64:controller/algorithm/governer.c ****     {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 4
+ 101              		.loc 1 61 9 is_stmt 1 view .LVU28
+ 102              		.loc 1 61 33 is_stmt 0 view .LVU29
+ 103 004a 2D4B     		ldr	r3, .L15+12
+ 104 004c 0021     		movs	r1, #0
+ 105 004e 83F87910 		strb	r1, [r3, #121]
+  62:controller/algorithm/governer.c ****         runtime.governer_target_rpm = config.governer_idle_rpm;
+ 106              		.loc 1 62 9 is_stmt 1 view .LVU30
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 4
 
 
-  65:controller/algorithm/governer.c ****         
-  66:controller/algorithm/governer.c ****         runtime.governer_status = GOVERNER_STATUS_TARGET;
-  67:controller/algorithm/governer.c ****         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
-  68:controller/algorithm/governer.c ****         rpm_t rpm = crankshaft_get_rpm();
-  69:controller/algorithm/governer.c ****         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
-  70:controller/algorithm/governer.c ****     }
-  71:controller/algorithm/governer.c ****     electronic_throttle_set(governer_etb, throttle_setpoint);
- 105              		.loc 1 71 5 is_stmt 1 view .LVU30
- 106 0050 124B     		ldr	r3, .L8
- 107 0052 1868     		ldr	r0, [r3]
- 108 0054 FFF7FEFF 		bl	electronic_throttle_set
- 109              	.LVL3:
- 110              	.L1:
-  72:controller/algorithm/governer.c **** }
- 111              		.loc 1 72 1 is_stmt 0 view .LVU31
- 112 0058 BDEC028B 		vldm	sp!, {d8}
- 113              		.cfi_remember_state
- 114              		.cfi_restore 80
- 115              		.cfi_restore 81
- 116              		.cfi_def_cfa_offset 8
- 117 005c 10BD     		pop	{r4, pc}
- 118              	.L7:
- 119              		.cfi_restore_state
+ 107              		.loc 1 62 45 is_stmt 0 view .LVU31
+ 108 0052 D2F8CC26 		ldr	r2, [r2, #1740]	@ unaligned
+ 109              		.loc 1 62 37 view .LVU32
+ 110 0056 DA61     		str	r2, [r3, #28]	@ float
+ 111              	.L5:
+  63:controller/algorithm/governer.c ****     }
+  64:controller/algorithm/governer.c ****     else
+  65:controller/algorithm/governer.c ****     {
+  66:controller/algorithm/governer.c ****         
+  67:controller/algorithm/governer.c ****         runtime.governer_status = GOVERNER_STATUS_TARGET;
+  68:controller/algorithm/governer.c ****         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
+  69:controller/algorithm/governer.c ****         rpm_t rpm = crankshaft_get_rpm();
+  70:controller/algorithm/governer.c ****         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
+  71:controller/algorithm/governer.c ****         runtime.governer_target_rpm = config.governer_target_rpm;
+  72:controller/algorithm/governer.c ****     }
+  73:controller/algorithm/governer.c ****     electronic_throttle_set(governer_etb, throttle_setpoint);
+ 112              		.loc 1 73 5 is_stmt 1 view .LVU33
+ 113 0058 B0EE480A 		vmov.f32	s0, s16
+ 114 005c 254B     		ldr	r3, .L15
+ 115 005e 1868     		ldr	r0, [r3]
+ 116 0060 FFF7FEFF 		bl	electronic_throttle_set
+ 117              	.LVL2:
+  74:controller/algorithm/governer.c ****     static percent_t prev_setpoint = 0;
+ 118              		.loc 1 74 5 view .LVU34
+  75:controller/algorithm/governer.c ****     if (ABS(throttle_setpoint - prev_setpoint) > (percent_t)80)
+ 119              		.loc 1 75 5 view .LVU35
+ 120              		.loc 1 75 9 is_stmt 0 view .LVU36
+ 121 0064 274B     		ldr	r3, .L15+16
+ 122 0066 D3ED007A 		vldr.32	s15, [r3]
+ 123 006a 78EE677A 		vsub.f32	s15, s16, s15
+ 124              		.loc 1 75 48 view .LVU37
+ 125 006e F5EEC07A 		vcmpe.f32	s15, #0
+ 126 0072 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 127 0076 33D4     		bmi	.L14
+ 128              		.loc 1 75 48 discriminator 2 view .LVU38
+ 129 0078 9FED237A 		vldr.32	s14, .L15+20
+ 130 007c F4EEC77A 		vcmpe.f32	s15, s14
+ 131 0080 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 132 0084 CCBF     		ite	gt
+ 133 0086 0123     		movgt	r3, #1
+ 134 0088 0023     		movle	r3, #0
+ 135              	.L8:
+ 136              		.loc 1 75 8 discriminator 4 view .LVU39
+ 137 008a 03B1     		cbz	r3, .L9
+  76:controller/algorithm/governer.c ****     {
+  77:controller/algorithm/governer.c ****         __NOP();
+ 138              		.loc 1 77 9 is_stmt 1 view .LVU40
+ 139              		.syntax unified
+ 140              	@ 77 "controller/algorithm/governer.c" 1
+ 141 008c 00BF     		nop
+ 142              	@ 0 "" 2
+ 143              		.thumb
+ 144              		.syntax unified
+ 145              	.L9:
+  78:controller/algorithm/governer.c ****     }
+  79:controller/algorithm/governer.c ****     prev_setpoint = throttle_setpoint;
+ 146              		.loc 1 79 5 view .LVU41
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 5
+
+
+ 147              		.loc 1 79 19 is_stmt 0 view .LVU42
+ 148 008e 1D4B     		ldr	r3, .L15+16
+ 149 0090 83ED008A 		vstr.32	s16, [r3]
+ 150              	.LVL3:
+ 151              	.L1:
+  80:controller/algorithm/governer.c ****     
+  81:controller/algorithm/governer.c **** }
+ 152              		.loc 1 81 1 view .LVU43
+ 153 0094 BDEC028B 		vldm	sp!, {d8}
+ 154              		.cfi_remember_state
+ 155              		.cfi_restore 80
+ 156              		.cfi_restore 81
+ 157              		.cfi_def_cfa_offset 16
+ 158 0098 70BD     		pop	{r4, r5, r6, pc}
+ 159              	.L13:
+ 160              		.cfi_restore_state
   46:controller/algorithm/governer.c ****         return;
- 120              		.loc 1 46 9 is_stmt 1 view .LVU32
- 121 005e 1348     		ldr	r0, .L8+16
- 122 0060 FFF7FEFF 		bl	log_error
- 123              	.LVL4:
+ 161              		.loc 1 46 9 is_stmt 1 view .LVU44
+ 162 009a 1C48     		ldr	r0, .L15+24
+ 163 009c FFF7FEFF 		bl	log_error
+ 164              	.LVL4:
   47:controller/algorithm/governer.c ****     }
- 124              		.loc 1 47 9 view .LVU33
- 125 0064 F8E7     		b	.L1
- 126              	.LVL5:
- 127              	.L4:
- 128              	.LBB2:
-  66:controller/algorithm/governer.c ****         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
- 129              		.loc 1 66 9 view .LVU34
-  66:controller/algorithm/governer.c ****         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
- 130              		.loc 1 66 33 is_stmt 0 view .LVU35
- 131 0066 104B     		ldr	r3, .L8+12
- 132 0068 0222     		movs	r2, #2
- 133 006a 83F87920 		strb	r2, [r3, #121]
-  67:controller/algorithm/governer.c ****         rpm_t rpm = crankshaft_get_rpm();
- 134              		.loc 1 67 9 is_stmt 1 view .LVU36
- 135 006e 0C4B     		ldr	r3, .L8+4
- 136 0070 D3F8C436 		ldr	r3, [r3, #1732]	@ unaligned
- 137 0074 00EE103A 		vmov	s0, r3	@ int
- 138 0078 0A4C     		ldr	r4, .L8+8
- 139 007a 2046     		mov	r0, r4
- 140 007c FFF7FEFF 		bl	pid_set_setpoint
- 141              	.LVL6:
-  68:controller/algorithm/governer.c ****         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
- 142              		.loc 1 68 9 view .LVU37
-  68:controller/algorithm/governer.c ****         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
- 143              		.loc 1 68 21 is_stmt 0 view .LVU38
- 144 0080 FFF7FEFF 		bl	crankshaft_get_rpm
- 145              	.LVL7:
- 146 0084 B0EE408A 		vmov.f32	s16, s0
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 5
+ 165              		.loc 1 47 9 view .LVU45
+ 166 00a0 F8E7     		b	.L1
+ 167              	.LVL5:
+ 168              	.L4:
+ 169              	.LBB2:
+  67:controller/algorithm/governer.c ****         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
+ 170              		.loc 1 67 9 view .LVU46
+  67:controller/algorithm/governer.c ****         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
+ 171              		.loc 1 67 33 is_stmt 0 view .LVU47
+ 172 00a2 174C     		ldr	r4, .L15+12
+ 173 00a4 0223     		movs	r3, #2
+ 174 00a6 84F87930 		strb	r3, [r4, #121]
+  68:controller/algorithm/governer.c ****         rpm_t rpm = crankshaft_get_rpm();
+ 175              		.loc 1 68 9 is_stmt 1 view .LVU48
+ 176 00aa 134D     		ldr	r5, .L15+4
+ 177 00ac D5F8C836 		ldr	r3, [r5, #1736]	@ unaligned
+ 178 00b0 00EE103A 		vmov	s0, r3	@ int
+ 179 00b4 114E     		ldr	r6, .L15+8
+ 180 00b6 3046     		mov	r0, r6
+ 181 00b8 FFF7FEFF 		bl	pid_set_setpoint
+ 182              	.LVL6:
+  69:controller/algorithm/governer.c ****         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
+ 183              		.loc 1 69 9 view .LVU49
+  69:controller/algorithm/governer.c ****         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
+ 184              		.loc 1 69 21 is_stmt 0 view .LVU50
+ 185 00bc FFF7FEFF 		bl	crankshaft_get_rpm
+ 186              	.LVL7:
+ 187 00c0 B0EE408A 		vmov.f32	s16, s0
+ 188              	.LVL8:
+  70:controller/algorithm/governer.c ****         runtime.governer_target_rpm = config.governer_target_rpm;
+ 189              		.loc 1 70 9 is_stmt 1 view .LVU51
+  70:controller/algorithm/governer.c ****         runtime.governer_target_rpm = config.governer_target_rpm;
+ 190              		.loc 1 70 29 is_stmt 0 view .LVU52
+ 191 00c4 FFF7FEFF 		bl	get_time_us
+ 192              	.LVL9:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 6
 
 
- 147              	.LVL8:
-  69:controller/algorithm/governer.c ****     }
- 148              		.loc 1 69 9 is_stmt 1 view .LVU39
-  69:controller/algorithm/governer.c ****     }
- 149              		.loc 1 69 29 is_stmt 0 view .LVU40
- 150 0088 FFF7FEFF 		bl	get_time_us
- 151              	.LVL9:
-  69:controller/algorithm/governer.c ****     }
- 152              		.loc 1 69 29 view .LVU41
- 153 008c 0146     		mov	r1, r0
-  69:controller/algorithm/governer.c ****     }
- 154              		.loc 1 69 29 discriminator 1 view .LVU42
- 155 008e B0EE480A 		vmov.f32	s0, s16
- 156 0092 2046     		mov	r0, r4
- 157 0094 FFF7FEFF 		bl	pid_compute
- 158              	.LVL10:
- 159 0098 DAE7     		b	.L5
- 160              	.L9:
- 161 009a 00BF     		.align	2
- 162              	.L8:
- 163 009c 00000000 		.word	governer_etb
- 164 00a0 00100000 		.word	config+4096
- 165 00a4 00000000 		.word	governer_pid
- 166 00a8 00000000 		.word	runtime
- 167 00ac 00000000 		.word	.LC0
- 168              	.LBE2:
- 169              		.cfi_endproc
- 170              	.LFE239:
- 172              		.section	.rodata.governer_init.str1.4,"aMS",%progbits,1
- 173              		.align	2
- 174              	.LC1:
- 175 0000 476F7665 		.ascii	"Governer init failed!\000"
- 175      726E6572 
- 175      20696E69 
- 175      74206661 
- 175      696C6564 
- 176              		.section	.text.governer_init,"ax",%progbits
- 177              		.align	1
- 178              		.global	governer_init
- 179              		.syntax unified
- 180              		.thumb
- 181              		.thumb_func
- 183              	governer_init:
- 184              	.LVL11:
- 185              	.LFB238:
+  70:controller/algorithm/governer.c ****         runtime.governer_target_rpm = config.governer_target_rpm;
+ 193              		.loc 1 70 29 view .LVU53
+ 194 00c8 0146     		mov	r1, r0
+  70:controller/algorithm/governer.c ****         runtime.governer_target_rpm = config.governer_target_rpm;
+ 195              		.loc 1 70 29 discriminator 1 view .LVU54
+ 196 00ca B0EE480A 		vmov.f32	s0, s16
+ 197 00ce 3046     		mov	r0, r6
+ 198 00d0 FFF7FEFF 		bl	pid_compute
+ 199              	.LVL10:
+ 200 00d4 B0EE408A 		vmov.f32	s16, s0
+ 201              	.LVL11:
+  71:controller/algorithm/governer.c ****     }
+ 202              		.loc 1 71 9 is_stmt 1 view .LVU55
+  71:controller/algorithm/governer.c ****     }
+ 203              		.loc 1 71 45 is_stmt 0 view .LVU56
+ 204 00d8 D5F8C836 		ldr	r3, [r5, #1736]	@ unaligned
+  71:controller/algorithm/governer.c ****     }
+ 205              		.loc 1 71 37 view .LVU57
+ 206 00dc E361     		str	r3, [r4, #28]	@ float
+ 207 00de BBE7     		b	.L5
+ 208              	.LVL12:
+ 209              	.L14:
+  71:controller/algorithm/governer.c ****     }
+ 210              		.loc 1 71 37 view .LVU58
+ 211              	.LBE2:
+  75:controller/algorithm/governer.c ****     {
+ 212              		.loc 1 75 48 discriminator 1 view .LVU59
+ 213 00e0 9FED0B7A 		vldr.32	s14, .L15+28
+ 214 00e4 F4EEC77A 		vcmpe.f32	s15, s14
+ 215 00e8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 216 00ec 4CBF     		ite	mi
+ 217 00ee 0123     		movmi	r3, #1
+ 218 00f0 0023     		movpl	r3, #0
+ 219 00f2 CAE7     		b	.L8
+ 220              	.L16:
+ 221              		.align	2
+ 222              	.L15:
+ 223 00f4 00000000 		.word	governer_etb
+ 224 00f8 00100000 		.word	config+4096
+ 225 00fc 00000000 		.word	governer_pid
+ 226 0100 00000000 		.word	runtime
+ 227 0104 00000000 		.word	prev_setpoint.0
+ 228 0108 0000A042 		.word	1117782016
+ 229 010c 00000000 		.word	.LC0
+ 230 0110 0000A0C2 		.word	-1029701632
+ 231              		.cfi_endproc
+ 232              	.LFE243:
+ 234              		.section	.rodata.governer_init.str1.4,"aMS",%progbits,1
+ 235              		.align	2
+ 236              	.LC1:
+ 237 0000 476F7665 		.ascii	"Governer init failed!\000"
+ 237      726E6572 
+ 237      20696E69 
+ 237      74206661 
+ 237      696C6564 
+ 238              		.section	.text.governer_init,"ax",%progbits
+ 239              		.align	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 7
+
+
+ 240              		.global	governer_init
+ 241              		.syntax unified
+ 242              		.thumb
+ 243              		.thumb_func
+ 245              	governer_init:
+ 246              	.LVL13:
+ 247              	.LFB242:
    8:controller/algorithm/governer.c ****     if (etb == NULL)
- 186              		.loc 1 8 1 is_stmt 1 view -0
- 187              		.cfi_startproc
- 188              		@ args = 0, pretend = 0, frame = 24
- 189              		@ frame_needed = 0, uses_anonymous_args = 0
+ 248              		.loc 1 8 1 is_stmt 1 view -0
+ 249              		.cfi_startproc
+ 250              		@ args = 0, pretend = 0, frame = 24
+ 251              		@ frame_needed = 0, uses_anonymous_args = 0
    8:controller/algorithm/governer.c ****     if (etb == NULL)
- 190              		.loc 1 8 1 is_stmt 0 view .LVU44
- 191 0000 30B5     		push	{r4, r5, lr}
- 192              		.cfi_def_cfa_offset 12
- 193              		.cfi_offset 4, -12
- 194              		.cfi_offset 5, -8
- 195              		.cfi_offset 14, -4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 6
-
-
- 196 0002 87B0     		sub	sp, sp, #28
- 197              		.cfi_def_cfa_offset 40
+ 252              		.loc 1 8 1 is_stmt 0 view .LVU61
+ 253 0000 30B5     		push	{r4, r5, lr}
+ 254              		.cfi_def_cfa_offset 12
+ 255              		.cfi_offset 4, -12
+ 256              		.cfi_offset 5, -8
+ 257              		.cfi_offset 14, -4
+ 258 0002 87B0     		sub	sp, sp, #28
+ 259              		.cfi_def_cfa_offset 40
    9:controller/algorithm/governer.c ****     {
- 198              		.loc 1 9 5 is_stmt 1 view .LVU45
+ 260              		.loc 1 9 5 is_stmt 1 view .LVU62
    9:controller/algorithm/governer.c ****     {
- 199              		.loc 1 9 8 is_stmt 0 view .LVU46
- 200 0004 0028     		cmp	r0, #0
- 201 0006 32D0     		beq	.L14
+ 261              		.loc 1 9 8 is_stmt 0 view .LVU63
+ 262 0004 0028     		cmp	r0, #0
+ 263 0006 32D0     		beq	.L21
   14:controller/algorithm/governer.c **** 
- 202              		.loc 1 14 5 is_stmt 1 view .LVU47
+ 264              		.loc 1 14 5 is_stmt 1 view .LVU64
   14:controller/algorithm/governer.c **** 
- 203              		.loc 1 14 18 is_stmt 0 view .LVU48
- 204 0008 1B4A     		ldr	r2, .L15
- 205 000a 1060     		str	r0, [r2]
+ 265              		.loc 1 14 18 is_stmt 0 view .LVU65
+ 266 0008 1B4A     		ldr	r2, .L22
+ 267 000a 1060     		str	r0, [r2]
   16:controller/algorithm/governer.c ****     governer_pid.limit_output_max = (percent_t)100;
- 206              		.loc 1 16 5 is_stmt 1 view .LVU49
- 207 000c 1B4D     		ldr	r5, .L15+4
- 208 000e 2846     		mov	r0, r5
- 209              	.LVL12:
+ 268              		.loc 1 16 5 is_stmt 1 view .LVU66
+ 269 000c 1B4D     		ldr	r5, .L22+4
+ 270 000e 2846     		mov	r0, r5
+ 271              	.LVL14:
   16:controller/algorithm/governer.c ****     governer_pid.limit_output_max = (percent_t)100;
- 210              		.loc 1 16 5 is_stmt 0 view .LVU50
- 211 0010 FFF7FEFF 		bl	pid_init
- 212              	.LVL13:
+ 272              		.loc 1 16 5 is_stmt 0 view .LVU67
+ 273 0010 FFF7FEFF 		bl	pid_init
+ 274              	.LVL15:
   17:controller/algorithm/governer.c ****     governer_pid.limit_output_min = (percent_t)0;
- 213              		.loc 1 17 5 is_stmt 1 view .LVU51
+ 275              		.loc 1 17 5 is_stmt 1 view .LVU68
   17:controller/algorithm/governer.c ****     governer_pid.limit_output_min = (percent_t)0;
- 214              		.loc 1 17 35 is_stmt 0 view .LVU52
- 215 0014 1A4B     		ldr	r3, .L15+8
- 216 0016 6B61     		str	r3, [r5, #20]	@ float
+ 276              		.loc 1 17 35 is_stmt 0 view .LVU69
+ 277 0014 1A4B     		ldr	r3, .L22+8
+ 278 0016 6B61     		str	r3, [r5, #20]	@ float
   18:controller/algorithm/governer.c ****     pid_configuration_t dummy_config = {0};
- 217              		.loc 1 18 5 is_stmt 1 view .LVU53
+ 279              		.loc 1 18 5 is_stmt 1 view .LVU70
   18:controller/algorithm/governer.c ****     pid_configuration_t dummy_config = {0};
- 218              		.loc 1 18 35 is_stmt 0 view .LVU54
- 219 0018 0023     		movs	r3, #0
- 220 001a 2B61     		str	r3, [r5, #16]	@ float
+ 280              		.loc 1 18 35 is_stmt 0 view .LVU71
+ 281 0018 0023     		movs	r3, #0
+ 282 001a 2B61     		str	r3, [r5, #16]	@ float
   19:controller/algorithm/governer.c **** 
- 221              		.loc 1 19 5 is_stmt 1 view .LVU55
+ 283              		.loc 1 19 5 is_stmt 1 view .LVU72
   19:controller/algorithm/governer.c **** 
- 222              		.loc 1 19 25 is_stmt 0 view .LVU56
- 223 001c 6946     		mov	r1, sp
- 224 001e 0024     		movs	r4, #0
- 225 0020 0094     		str	r4, [sp]
- 226 0022 0194     		str	r4, [sp, #4]
- 227 0024 0294     		str	r4, [sp, #8]
- 228 0026 0394     		str	r4, [sp, #12]
- 229 0028 0494     		str	r4, [sp, #16]
- 230 002a 0594     		str	r4, [sp, #20]
-  21:controller/algorithm/governer.c ****     dummy_config.Ki = config.governer_pid_Ki;
- 231              		.loc 1 21 5 is_stmt 1 view .LVU57
-  21:controller/algorithm/governer.c ****     dummy_config.Ki = config.governer_pid_Ki;
- 232              		.loc 1 21 29 is_stmt 0 view .LVU58
- 233 002c 154B     		ldr	r3, .L15+12
- 234 002e D3F8CC26 		ldr	r2, [r3, #1740]	@ unaligned
-  21:controller/algorithm/governer.c ****     dummy_config.Ki = config.governer_pid_Ki;
- 235              		.loc 1 21 21 view .LVU59
- 236 0032 0092     		str	r2, [sp]	@ float
-  22:controller/algorithm/governer.c ****     dummy_config.Kd = config.governer_pid_Kd;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 7
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 8
 
 
- 237              		.loc 1 22 5 is_stmt 1 view .LVU60
+ 284              		.loc 1 19 25 is_stmt 0 view .LVU73
+ 285 001c 6946     		mov	r1, sp
+ 286 001e 0024     		movs	r4, #0
+ 287 0020 0094     		str	r4, [sp]
+ 288 0022 0194     		str	r4, [sp, #4]
+ 289 0024 0294     		str	r4, [sp, #8]
+ 290 0026 0394     		str	r4, [sp, #12]
+ 291 0028 0494     		str	r4, [sp, #16]
+ 292 002a 0594     		str	r4, [sp, #20]
+  21:controller/algorithm/governer.c ****     dummy_config.Ki = config.governer_pid_Ki;
+ 293              		.loc 1 21 5 is_stmt 1 view .LVU74
+  21:controller/algorithm/governer.c ****     dummy_config.Ki = config.governer_pid_Ki;
+ 294              		.loc 1 21 29 is_stmt 0 view .LVU75
+ 295 002c 154B     		ldr	r3, .L22+12
+ 296 002e D3F8D026 		ldr	r2, [r3, #1744]	@ unaligned
+  21:controller/algorithm/governer.c ****     dummy_config.Ki = config.governer_pid_Ki;
+ 297              		.loc 1 21 21 view .LVU76
+ 298 0032 0092     		str	r2, [sp]	@ float
   22:controller/algorithm/governer.c ****     dummy_config.Kd = config.governer_pid_Kd;
- 238              		.loc 1 22 29 is_stmt 0 view .LVU61
- 239 0034 D3F8D026 		ldr	r2, [r3, #1744]	@ unaligned
+ 299              		.loc 1 22 5 is_stmt 1 view .LVU77
   22:controller/algorithm/governer.c ****     dummy_config.Kd = config.governer_pid_Kd;
- 240              		.loc 1 22 21 view .LVU62
- 241 0038 0192     		str	r2, [sp, #4]	@ float
+ 300              		.loc 1 22 29 is_stmt 0 view .LVU78
+ 301 0034 D3F8D426 		ldr	r2, [r3, #1748]	@ unaligned
+  22:controller/algorithm/governer.c ****     dummy_config.Kd = config.governer_pid_Kd;
+ 302              		.loc 1 22 21 view .LVU79
+ 303 0038 0192     		str	r2, [sp, #4]	@ float
   23:controller/algorithm/governer.c ****     dummy_config.limit_integrator_min = config.governer_pid_limit_integrator_min;
- 242              		.loc 1 23 5 is_stmt 1 view .LVU63
+ 304              		.loc 1 23 5 is_stmt 1 view .LVU80
   23:controller/algorithm/governer.c ****     dummy_config.limit_integrator_min = config.governer_pid_limit_integrator_min;
- 243              		.loc 1 23 29 is_stmt 0 view .LVU64
- 244 003a D3F8D426 		ldr	r2, [r3, #1748]	@ unaligned
+ 305              		.loc 1 23 29 is_stmt 0 view .LVU81
+ 306 003a D3F8D826 		ldr	r2, [r3, #1752]	@ unaligned
   23:controller/algorithm/governer.c ****     dummy_config.limit_integrator_min = config.governer_pid_limit_integrator_min;
- 245              		.loc 1 23 21 view .LVU65
- 246 003e 0292     		str	r2, [sp, #8]	@ float
+ 307              		.loc 1 23 21 view .LVU82
+ 308 003e 0292     		str	r2, [sp, #8]	@ float
   24:controller/algorithm/governer.c ****     dummy_config.limit_integrator_max = config.governer_pid_limit_integrator_max;
- 247              		.loc 1 24 5 is_stmt 1 view .LVU66
+ 309              		.loc 1 24 5 is_stmt 1 view .LVU83
   24:controller/algorithm/governer.c ****     dummy_config.limit_integrator_max = config.governer_pid_limit_integrator_max;
- 248              		.loc 1 24 47 is_stmt 0 view .LVU67
- 249 0040 D3F8D826 		ldr	r2, [r3, #1752]	@ unaligned
+ 310              		.loc 1 24 47 is_stmt 0 view .LVU84
+ 311 0040 D3F8DC26 		ldr	r2, [r3, #1756]	@ unaligned
   24:controller/algorithm/governer.c ****     dummy_config.limit_integrator_max = config.governer_pid_limit_integrator_max;
- 250              		.loc 1 24 39 view .LVU68
- 251 0044 0392     		str	r2, [sp, #12]	@ float
+ 312              		.loc 1 24 39 view .LVU85
+ 313 0044 0392     		str	r2, [sp, #12]	@ float
   25:controller/algorithm/governer.c ****     dummy_config.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
- 252              		.loc 1 25 5 is_stmt 1 view .LVU69
+ 314              		.loc 1 25 5 is_stmt 1 view .LVU86
   25:controller/algorithm/governer.c ****     dummy_config.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
- 253              		.loc 1 25 47 is_stmt 0 view .LVU70
- 254 0046 D3F8DC26 		ldr	r2, [r3, #1756]	@ unaligned
+ 315              		.loc 1 25 47 is_stmt 0 view .LVU87
+ 316 0046 D3F8E026 		ldr	r2, [r3, #1760]	@ unaligned
   25:controller/algorithm/governer.c ****     dummy_config.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
- 255              		.loc 1 25 39 view .LVU71
- 256 004a 0492     		str	r2, [sp, #16]	@ float
+ 317              		.loc 1 25 39 view .LVU88
+ 318 004a 0492     		str	r2, [sp, #16]	@ float
   26:controller/algorithm/governer.c **** 
- 257              		.loc 1 26 5 is_stmt 1 view .LVU72
+ 319              		.loc 1 26 5 is_stmt 1 view .LVU89
   26:controller/algorithm/governer.c **** 
- 258              		.loc 1 26 48 is_stmt 0 view .LVU73
- 259 004c D3F8E036 		ldr	r3, [r3, #1760]	@ unaligned
+ 320              		.loc 1 26 48 is_stmt 0 view .LVU90
+ 321 004c D3F8E436 		ldr	r3, [r3, #1764]	@ unaligned
   26:controller/algorithm/governer.c **** 
- 260              		.loc 1 26 40 view .LVU74
- 261 0050 0593     		str	r3, [sp, #20]	@ float
+ 322              		.loc 1 26 40 view .LVU91
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 9
+
+
+ 323 0050 0593     		str	r3, [sp, #20]	@ float
   28:controller/algorithm/governer.c **** 
- 262              		.loc 1 28 5 is_stmt 1 view .LVU75
- 263 0052 2846     		mov	r0, r5
- 264 0054 FFF7FEFF 		bl	pid_set_tuning
- 265              	.LVL14:
+ 324              		.loc 1 28 5 is_stmt 1 view .LVU92
+ 325 0052 2846     		mov	r0, r5
+ 326 0054 FFF7FEFF 		bl	pid_set_tuning
+ 327              	.LVL16:
   30:controller/algorithm/governer.c ****     osTimerStart(timer, 1);
- 266              		.loc 1 30 5 view .LVU76
+ 328              		.loc 1 30 5 view .LVU93
   30:controller/algorithm/governer.c ****     osTimerStart(timer, 1);
- 267              		.loc 1 30 25 is_stmt 0 view .LVU77
- 268 0058 2346     		mov	r3, r4
- 269 005a 2246     		mov	r2, r4
- 270 005c 0121     		movs	r1, #1
- 271 005e 0A48     		ldr	r0, .L15+16
- 272 0060 FFF7FEFF 		bl	osTimerNew
- 273              	.LVL15:
+ 329              		.loc 1 30 25 is_stmt 0 view .LVU94
+ 330 0058 2346     		mov	r3, r4
+ 331 005a 2246     		mov	r2, r4
+ 332 005c 0121     		movs	r1, #1
+ 333 005e 0A48     		ldr	r0, .L22+16
+ 334 0060 FFF7FEFF 		bl	osTimerNew
+ 335              	.LVL17:
   31:controller/algorithm/governer.c ****     /**
- 274              		.loc 1 31 5 is_stmt 1 view .LVU78
- 275 0064 0121     		movs	r1, #1
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 8
-
-
- 276 0066 FFF7FEFF 		bl	osTimerStart
- 277              	.LVL16:
- 278              	.L10:
+ 336              		.loc 1 31 5 is_stmt 1 view .LVU95
+ 337 0064 0121     		movs	r1, #1
+ 338 0066 FFF7FEFF 		bl	osTimerStart
+ 339              	.LVL18:
+ 340              	.L17:
   40:controller/algorithm/governer.c **** 
- 279              		.loc 1 40 1 is_stmt 0 view .LVU79
- 280 006a 07B0     		add	sp, sp, #28
- 281              		.cfi_remember_state
- 282              		.cfi_def_cfa_offset 12
- 283              		@ sp needed
- 284 006c 30BD     		pop	{r4, r5, pc}
- 285              	.LVL17:
- 286              	.L14:
- 287              		.cfi_restore_state
+ 341              		.loc 1 40 1 is_stmt 0 view .LVU96
+ 342 006a 07B0     		add	sp, sp, #28
+ 343              		.cfi_remember_state
+ 344              		.cfi_def_cfa_offset 12
+ 345              		@ sp needed
+ 346 006c 30BD     		pop	{r4, r5, pc}
+ 347              	.LVL19:
+ 348              	.L21:
+ 349              		.cfi_restore_state
   11:controller/algorithm/governer.c ****         return;
- 288              		.loc 1 11 9 is_stmt 1 view .LVU80
- 289 006e 0748     		ldr	r0, .L15+20
- 290              	.LVL18:
+ 350              		.loc 1 11 9 is_stmt 1 view .LVU97
+ 351 006e 0748     		ldr	r0, .L22+20
+ 352              	.LVL20:
   11:controller/algorithm/governer.c ****         return;
- 291              		.loc 1 11 9 is_stmt 0 view .LVU81
- 292 0070 FFF7FEFF 		bl	log_error
- 293              	.LVL19:
+ 353              		.loc 1 11 9 is_stmt 0 view .LVU98
+ 354 0070 FFF7FEFF 		bl	log_error
+ 355              	.LVL21:
   12:controller/algorithm/governer.c ****     }
- 294              		.loc 1 12 9 is_stmt 1 view .LVU82
- 295 0074 F9E7     		b	.L10
- 296              	.L16:
- 297 0076 00BF     		.align	2
- 298              	.L15:
- 299 0078 00000000 		.word	governer_etb
- 300 007c 00000000 		.word	governer_pid
- 301 0080 0000C842 		.word	1120403456
- 302 0084 00100000 		.word	config+4096
- 303 0088 00000000 		.word	governer_update
- 304 008c 00000000 		.word	.LC1
- 305              		.cfi_endproc
- 306              	.LFE238:
- 308              		.section	.text.governer_get_status,"ax",%progbits
- 309              		.align	1
- 310              		.global	governer_get_status
- 311              		.syntax unified
- 312              		.thumb
- 313              		.thumb_func
- 315              	governer_get_status:
- 316              	.LFB240:
-  73:controller/algorithm/governer.c **** governer_status_t governer_get_status()
-  74:controller/algorithm/governer.c **** {
- 317              		.loc 1 74 1 view -0
- 318              		.cfi_startproc
- 319              		@ args = 0, pretend = 0, frame = 0
- 320              		@ frame_needed = 0, uses_anonymous_args = 0
- 321              		@ link register save eliminated.
-  75:controller/algorithm/governer.c ****     return runtime.governer_status;
- 322              		.loc 1 75 5 view .LVU84
-  76:controller/algorithm/governer.c **** }
- 323              		.loc 1 76 1 is_stmt 0 view .LVU85
- 324 0000 014B     		ldr	r3, .L18
- 325 0002 93F87900 		ldrb	r0, [r3, #121]	@ zero_extendqisi2
- 326 0006 7047     		bx	lr
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 9
+ 356              		.loc 1 12 9 is_stmt 1 view .LVU99
+ 357 0074 F9E7     		b	.L17
+ 358              	.L23:
+ 359 0076 00BF     		.align	2
+ 360              	.L22:
+ 361 0078 00000000 		.word	governer_etb
+ 362 007c 00000000 		.word	governer_pid
+ 363 0080 0000C842 		.word	1120403456
+ 364 0084 00100000 		.word	config+4096
+ 365 0088 00000000 		.word	governer_update
+ 366 008c 00000000 		.word	.LC1
+ 367              		.cfi_endproc
+ 368              	.LFE242:
+ 370              		.section	.text.governer_get_status,"ax",%progbits
+ 371              		.align	1
+ 372              		.global	governer_get_status
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 10
 
 
- 327              	.L19:
- 328              		.align	2
- 329              	.L18:
- 330 0008 00000000 		.word	runtime
- 331              		.cfi_endproc
- 332              	.LFE240:
- 334              		.section	.bss.governer_pid,"aw",%nobits
- 335              		.align	2
- 338              	governer_pid:
- 339 0000 00000000 		.space	60
- 339      00000000 
- 339      00000000 
- 339      00000000 
- 339      00000000 
- 340              		.global	governer_etb
- 341              		.section	.bss.governer_etb,"aw",%nobits
- 342              		.align	2
- 345              	governer_etb:
- 346 0000 00000000 		.space	4
- 347              		.text
- 348              	.Letext0:
- 349              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 350              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 351              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 352              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 353              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 354              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 355              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 356              		.file 9 "controller/types.h"
- 357              		.file 10 "controller/actuators/dc_motors.h"
- 358              		.file 11 "controller/utils/pid.h"
- 359              		.file 12 "controller/IO/analog_inputs.h"
- 360              		.file 13 "controller/IO/resistor.h"
- 361              		.file 14 "controller/IO/thermistor.h"
- 362              		.file 15 "controller/tables.h"
- 363              		.file 16 "controller/config_and_runtime.h"
- 364              		.file 17 "controller/IO/sensors.h"
- 365              		.file 18 "controller/engine_cycle/trigger.h"
- 366              		.file 19 "controller/actuators/electronic_throttle.h"
- 367              		.file 20 "controller/algorithm/governer.h"
- 368              		.file 21 "controller/controller.h"
- 369              		.file 22 "controller/utils/error_handling.h"
- 370              		.file 23 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s 			page 10
+ 373              		.syntax unified
+ 374              		.thumb
+ 375              		.thumb_func
+ 377              	governer_get_status:
+ 378              	.LFB244:
+  82:controller/algorithm/governer.c **** governer_status_t governer_get_status()
+  83:controller/algorithm/governer.c **** {
+ 379              		.loc 1 83 1 view -0
+ 380              		.cfi_startproc
+ 381              		@ args = 0, pretend = 0, frame = 0
+ 382              		@ frame_needed = 0, uses_anonymous_args = 0
+ 383              		@ link register save eliminated.
+  84:controller/algorithm/governer.c ****     return runtime.governer_status;
+ 384              		.loc 1 84 5 view .LVU101
+  85:controller/algorithm/governer.c **** }
+ 385              		.loc 1 85 1 is_stmt 0 view .LVU102
+ 386 0000 014B     		ldr	r3, .L25
+ 387 0002 93F87900 		ldrb	r0, [r3, #121]	@ zero_extendqisi2
+ 388 0006 7047     		bx	lr
+ 389              	.L26:
+ 390              		.align	2
+ 391              	.L25:
+ 392 0008 00000000 		.word	runtime
+ 393              		.cfi_endproc
+ 394              	.LFE244:
+ 396              		.section	.bss.prev_setpoint.0,"aw",%nobits
+ 397              		.align	2
+ 400              	prev_setpoint.0:
+ 401 0000 00000000 		.space	4
+ 402              		.section	.bss.governer_pid,"aw",%nobits
+ 403              		.align	2
+ 406              	governer_pid:
+ 407 0000 00000000 		.space	60
+ 407      00000000 
+ 407      00000000 
+ 407      00000000 
+ 407      00000000 
+ 408              		.global	governer_etb
+ 409              		.section	.bss.governer_etb,"aw",%nobits
+ 410              		.align	2
+ 413              	governer_etb:
+ 414 0000 00000000 		.space	4
+ 415              		.text
+ 416              	.Letext0:
+ 417              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 418              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 419              		.file 4 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 420              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 421              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 422              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 423              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 424              		.file 9 "controller/types.h"
+ 425              		.file 10 "controller/actuators/dc_motors.h"
+ 426              		.file 11 "controller/utils/pid.h"
+ 427              		.file 12 "controller/IO/analog_inputs.h"
+ 428              		.file 13 "controller/IO/resistor.h"
+ 429              		.file 14 "controller/IO/thermistor.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 11
+
+
+ 430              		.file 15 "controller/tables.h"
+ 431              		.file 16 "controller/config_and_runtime.h"
+ 432              		.file 17 "controller/IO/sensors.h"
+ 433              		.file 18 "controller/engine_cycle/trigger.h"
+ 434              		.file 19 "controller/actuators/electronic_throttle.h"
+ 435              		.file 20 "controller/algorithm/governer.h"
+ 436              		.file 21 "controller/controller.h"
+ 437              		.file 22 "controller/utils/error_handling.h"
+ 438              		.file 23 "controller/utils/timing.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s 			page 12
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 governer.c
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:21     .rodata.governer_update.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:25     .text.governer_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:31     .text.governer_update:00000000 governer_update
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:163    .text.governer_update:0000009c $d
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:345    .bss.governer_etb:00000000 governer_etb
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:338    .bss.governer_pid:00000000 governer_pid
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:173    .rodata.governer_init.str1.4:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:177    .text.governer_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:183    .text.governer_init:00000000 governer_init
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:299    .text.governer_init:00000078 $d
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:309    .text.governer_get_status:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:315    .text.governer_get_status:00000000 governer_get_status
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:330    .text.governer_get_status:00000008 $d
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:335    .bss.governer_pid:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\ccpmvEp3.s:342    .bss.governer_etb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:21     .rodata.governer_update.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:25     .text.governer_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:31     .text.governer_update:00000000 governer_update
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:223    .text.governer_update:000000f4 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:413    .bss.governer_etb:00000000 governer_etb
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:406    .bss.governer_pid:00000000 governer_pid
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:400    .bss.prev_setpoint.0:00000000 prev_setpoint.0
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:235    .rodata.governer_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:239    .text.governer_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:245    .text.governer_init:00000000 governer_init
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:361    .text.governer_init:00000078 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:371    .text.governer_get_status:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:377    .text.governer_get_status:00000000 governer_get_status
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:392    .text.governer_get_status:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:397    .bss.prev_setpoint.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:403    .bss.governer_pid:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccihwN3F.s:410    .bss.governer_etb:00000000 $d
 
 UNDEFINED SYMBOLS
 electronic_throttle_set

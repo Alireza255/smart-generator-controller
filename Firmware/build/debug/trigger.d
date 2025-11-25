@@ -51,7 +51,19 @@ build/debug/trigger.o: controller/engine_cycle/trigger.c \
  controller/IO/analog_inputs.h controller/utils/utils.h \
  controller/IO/resistor.h controller/IO/thermistor.h \
  controller/constants.h controller/engine_cycle/ignition.h \
- controller/tables.h controller/IO/thermistor.h controller/utils/pid.h \
+ controller/tables.h controller/IO/outputs.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ Core/Inc/FreeRTOSConfig.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ controller/IO/thermistor.h controller/utils/pid.h \
  controller/utils/timing.h controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/actuators/fan_control.h \
@@ -128,6 +140,18 @@ controller/IO/thermistor.h:
 controller/constants.h:
 controller/engine_cycle/ignition.h:
 controller/tables.h:
+controller/IO/outputs.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
+Core/Inc/FreeRTOSConfig.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
+Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/IO/thermistor.h:
 controller/utils/pid.h:
 controller/utils/timing.h:

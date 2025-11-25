@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccs39DyZ.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -20,39 +20,449 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccs39DyZ.s 			page 1
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
   19              		.file 1 "controller/algorithm/protection.c"
-  20              		.section	.text.protections_update,"ax",%progbits
+  20              		.section	.text.protection_shutdown_gracefully,"ax",%progbits
   21              		.align	1
-  22              		.global	protections_update
+  22              		.global	protection_shutdown_gracefully
   23              		.syntax unified
   24              		.thumb
   25              		.thumb_func
-  27              	protections_update:
-  28              	.LFB238:
+  27              	protection_shutdown_gracefully:
+  28              	.LFB243:
    1:controller/algorithm/protection.c **** #include "protection.h"
    2:controller/algorithm/protection.c **** 
-   3:controller/algorithm/protection.c **** 
-   4:controller/algorithm/protection.c **** void protections_update()
-   5:controller/algorithm/protection.c **** {
-  29              		.loc 1 5 1 view -0
+   3:controller/algorithm/protection.c **** /* protections that need to be implemented */
+   4:controller/algorithm/protection.c **** /**
+   5:controller/algorithm/protection.c ****  * close the gas solenoid when gas control etb fails
+   6:controller/algorithm/protection.c ****  * 
+   7:controller/algorithm/protection.c ****  */
+   8:controller/algorithm/protection.c **** void protections_update(time_us_t time)
+   9:controller/algorithm/protection.c **** {
+  10:controller/algorithm/protection.c ****     static time_us_t prev_time = 0;
+  11:controller/algorithm/protection.c ****     time_us_t delta_time = time - prev_time;
+  12:controller/algorithm/protection.c **** 
+  13:controller/algorithm/protection.c ****     /* Gas control ETB fail protection */
+  14:controller/algorithm/protection.c ****     bool is_gas_fuel_injected = config.fuel_type == FUEL_TYPE_DUAL_FUEL || config.fuel_type == FUEL
+  15:controller/algorithm/protection.c ****     bool is_etb2_healthy = get_bit(runtime.status, STATUS_ETB2_OK);
+  16:controller/algorithm/protection.c **** 
+  17:controller/algorithm/protection.c ****     if (is_gas_fuel_injected && !is_etb2_healthy)
+  18:controller/algorithm/protection.c ****     {
+  19:controller/algorithm/protection.c ****         /* Gracefully shut down the engine or do not allow it to start*/
+  20:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+  21:controller/algorithm/protection.c ****     }
+  22:controller/algorithm/protection.c ****     
+  23:controller/algorithm/protection.c ****     /* Oil pressure protection */
+  24:controller/algorithm/protection.c ****     bool is_oil_pressure_good = sensor_ops_get();
+  25:controller/algorithm/protection.c ****     time_ms_t low_oil_pressure_counter = 0;
+  26:controller/algorithm/protection.c ****     if(!is_oil_pressure_good && runtime.spinning_state == SS_RUNNING)
+  27:controller/algorithm/protection.c ****     {
+  28:controller/algorithm/protection.c ****         low_oil_pressure_counter += delta_time;
+  29:controller/algorithm/protection.c ****     }
+  30:controller/algorithm/protection.c ****     if (low_oil_pressure_counter > (config.protection_oil_pressure_time * 1000) && config.protectio
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 2
+
+
+  31:controller/algorithm/protection.c ****     {
+  32:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+  33:controller/algorithm/protection.c ****     }
+  34:controller/algorithm/protection.c ****     
+  35:controller/algorithm/protection.c ****     /* CLT protection */
+  36:controller/algorithm/protection.c ****     bool is_clt_acceptable = sensor_clt_get() < config.protection_clt_shutdown_temprature;
+  37:controller/algorithm/protection.c ****     if (!is_clt_acceptable && config.protection_clt_enabled)
+  38:controller/algorithm/protection.c ****     {
+  39:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+  40:controller/algorithm/protection.c ****     }
+  41:controller/algorithm/protection.c **** 
+  42:controller/algorithm/protection.c **** }
+  43:controller/algorithm/protection.c **** 
+  44:controller/algorithm/protection.c **** void protection_shutdown_gracefully()
+  45:controller/algorithm/protection.c **** {
+  29              		.loc 1 45 1 view -0
   30              		.cfi_startproc
   31              		@ args = 0, pretend = 0, frame = 0
   32              		@ frame_needed = 0, uses_anonymous_args = 0
-  33              		@ link register save eliminated.
-   6:controller/algorithm/protection.c **** 
-   7:controller/algorithm/protection.c **** 
-   8:controller/algorithm/protection.c **** }
-  34              		.loc 1 8 1 view .LVU1
-  35 0000 7047     		bx	lr
-  36              		.cfi_endproc
-  37              	.LFE238:
-  39              		.text
-  40              	.Letext0:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccs39DyZ.s 			page 2
+  33 0000 08B5     		push	{r3, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  46:controller/algorithm/protection.c ****     static bool protection_has_tripped = false;
+  37              		.loc 1 46 5 view .LVU1
+  47:controller/algorithm/protection.c ****     if (protection_has_tripped == true)
+  38              		.loc 1 47 5 view .LVU2
+  39              		.loc 1 47 32 is_stmt 0 view .LVU3
+  40 0002 064B     		ldr	r3, .L5
+  41 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  42              		.loc 1 47 8 view .LVU4
+  43 0006 03B1     		cbz	r3, .L4
+  44              	.L1:
+  48:controller/algorithm/protection.c ****     {
+  49:controller/algorithm/protection.c ****         return;
+  50:controller/algorithm/protection.c ****     }
+  51:controller/algorithm/protection.c ****     protection_has_tripped = true;
+  52:controller/algorithm/protection.c **** 
+  53:controller/algorithm/protection.c **** 
+  54:controller/algorithm/protection.c ****     bool is_etb1_healthy = get_bit(runtime.status, STATUS_ETB1_OK);
+  55:controller/algorithm/protection.c ****     if (is_etb1_healthy)
+  56:controller/algorithm/protection.c ****     {
+  57:controller/algorithm/protection.c ****         /* Choke the engine from air ? */
+  58:controller/algorithm/protection.c ****     }
+  59:controller/algorithm/protection.c ****     
+  60:controller/algorithm/protection.c ****     output_gas_solenoid_set(false); // Shut off the gas going to the engine
+  61:controller/algorithm/protection.c ****     injection_disable();            // Stop the fuel injection
+  62:controller/algorithm/protection.c ****     
+  63:controller/algorithm/protection.c **** }...
+  45              		.loc 1 63 1 view .LVU5
+  46 0008 08BD     		pop	{r3, pc}
+  47              	.L4:
+  51:controller/algorithm/protection.c ****     protection_has_tripped = true;
+  48              		.loc 1 51 5 is_stmt 1 view .LVU6
+  51:controller/algorithm/protection.c ****     protection_has_tripped = true;
+  49              		.loc 1 51 28 is_stmt 0 view .LVU7
+  50 000a 044B     		ldr	r3, .L5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 3
+
+
+  51 000c 0122     		movs	r2, #1
+  52 000e 1A70     		strb	r2, [r3]
+  54:controller/algorithm/protection.c ****     bool is_etb1_healthy = get_bit(runtime.status, STATUS_ETB1_OK);
+  53              		.loc 1 54 5 is_stmt 1 view .LVU8
+  54              	.LVL0:
+  55:controller/algorithm/protection.c ****     if (is_etb1_healthy)
+  55              		.loc 1 55 5 view .LVU9
+  58:controller/algorithm/protection.c ****     }
+  56              		.loc 1 58 5 view .LVU10
+  60:controller/algorithm/protection.c ****     output_gas_solenoid_set(false); // Shut off the gas going to the engine
+  57              		.loc 1 60 5 view .LVU11
+  58 0010 0020     		movs	r0, #0
+  59 0012 FFF7FEFF 		bl	output_gas_solenoid_set
+  60              	.LVL1:
+  61:controller/algorithm/protection.c ****     injection_disable();            // Stop the fuel injection
+  61              		.loc 1 61 5 view .LVU12
+  62 0016 FFF7FEFF 		bl	injection_disable
+  63              	.LVL2:
+  64 001a F5E7     		b	.L1
+  65              	.L6:
+  66              		.align	2
+  67              	.L5:
+  68 001c 00000000 		.word	protection_has_tripped.0
+  69              		.cfi_endproc
+  70              	.LFE243:
+  72              		.section	.text.protections_update,"ax",%progbits
+  73              		.align	1
+  74              		.global	protections_update
+  75              		.syntax unified
+  76              		.thumb
+  77              		.thumb_func
+  79              	protections_update:
+  80              	.LVL3:
+  81              	.LFB242:
+   9:controller/algorithm/protection.c **** {
+  82              		.loc 1 9 1 view -0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 0
+  85              		@ frame_needed = 0, uses_anonymous_args = 0
+   9:controller/algorithm/protection.c **** {
+  86              		.loc 1 9 1 is_stmt 0 view .LVU14
+  87 0000 10B5     		push	{r4, lr}
+  88              		.cfi_def_cfa_offset 8
+  89              		.cfi_offset 4, -8
+  90              		.cfi_offset 14, -4
+  91 0002 0446     		mov	r4, r0
+  10:controller/algorithm/protection.c ****     static time_us_t prev_time = 0;
+  92              		.loc 1 10 5 is_stmt 1 view .LVU15
+  11:controller/algorithm/protection.c ****     time_us_t delta_time = time - prev_time;
+  93              		.loc 1 11 5 view .LVU16
+  94              	.LVL4:
+  14:controller/algorithm/protection.c ****     bool is_gas_fuel_injected = config.fuel_type == FUEL_TYPE_DUAL_FUEL || config.fuel_type == FUEL
+  95              		.loc 1 14 5 view .LVU17
+  14:controller/algorithm/protection.c ****     bool is_gas_fuel_injected = config.fuel_type == FUEL_TYPE_DUAL_FUEL || config.fuel_type == FUEL
+  96              		.loc 1 14 39 is_stmt 0 view .LVU18
+  97 0004 214B     		ldr	r3, .L20
+  98 0006 93F8CF3A 		ldrb	r3, [r3, #2767]	@ zero_extendqisi2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 4
+
+
+  14:controller/algorithm/protection.c ****     bool is_gas_fuel_injected = config.fuel_type == FUEL_TYPE_DUAL_FUEL || config.fuel_type == FUEL
+  99              		.loc 1 14 73 view .LVU19
+ 100 000a 022B     		cmp	r3, #2
+ 101 000c 02D0     		beq	.L13
+  14:controller/algorithm/protection.c ****     bool is_gas_fuel_injected = config.fuel_type == FUEL_TYPE_DUAL_FUEL || config.fuel_type == FUEL
+ 102              		.loc 1 14 73 discriminator 2 view .LVU20
+ 103 000e 93B9     		cbnz	r3, .L14
+  14:controller/algorithm/protection.c ****     bool is_gas_fuel_injected = config.fuel_type == FUEL_TYPE_DUAL_FUEL || config.fuel_type == FUEL
+ 104              		.loc 1 14 73 discriminator 3 view .LVU21
+ 105 0010 0122     		movs	r2, #1
+ 106 0012 00E0     		b	.L8
+ 107              	.L13:
+ 108 0014 0122     		movs	r2, #1
+ 109              	.L8:
+ 110              	.LVL5:
+  15:controller/algorithm/protection.c ****     bool is_etb2_healthy = get_bit(runtime.status, STATUS_ETB2_OK);
+ 111              		.loc 1 15 5 is_stmt 1 view .LVU22
+  15:controller/algorithm/protection.c ****     bool is_etb2_healthy = get_bit(runtime.status, STATUS_ETB2_OK);
+ 112              		.loc 1 15 28 is_stmt 0 view .LVU23
+ 113 0016 1E4B     		ldr	r3, .L20+4
+ 114 0018 1B68     		ldr	r3, [r3]
+ 115              	.LVL6:
+ 116              	.LBB6:
+ 117              	.LBI6:
+ 118              		.file 2 "controller/utils/utils.h"
+   1:controller/utils/utils.h **** /**
+   2:controller/utils/utils.h ****  * @file utils.h
+   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
+   4:controller/utils/utils.h ****  *
+   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
+   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
+   7:controller/utils/utils.h ****  *
+   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
+   9:controller/utils/utils.h ****  */
+  10:controller/utils/utils.h **** #ifndef UTILS_H
+  11:controller/utils/utils.h **** #define UTILS_H
+  12:controller/utils/utils.h **** 
+  13:controller/utils/utils.h **** #include "types.h"
+  14:controller/utils/utils.h **** #include "math.h"
+  15:controller/utils/utils.h **** 
+  16:controller/utils/utils.h **** #define PI 3.14159265358979323846f
+  17:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  18:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  19:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** #define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
+  22:controller/utils/utils.h **** 
+  23:controller/utils/utils.h **** bool is_phase_in_range(float test, float current, float next);
+  24:controller/utils/utils.h **** 
+  25:controller/utils/utils.h **** size_t nearest_index_float(const float *arr, size_t size, float target);
+  26:controller/utils/utils.h **** size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target);
+  27:controller/utils/utils.h **** size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target);
+  28:controller/utils/utils.h **** size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
+  29:controller/utils/utils.h **** 
+  30:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
+  31:controller/utils/utils.h **** {
+  32:controller/utils/utils.h ****     if (bit > 31)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 5
+
+
+  33:controller/utils/utils.h ****     {
+  34:controller/utils/utils.h ****         return;
+  35:controller/utils/utils.h ****     }
+  36:controller/utils/utils.h ****     if (state)
+  37:controller/utils/utils.h ****     {
+  38:controller/utils/utils.h ****         *var |= (1u << bit);
+  39:controller/utils/utils.h ****     }
+  40:controller/utils/utils.h ****     else
+  41:controller/utils/utils.h ****     {
+  42:controller/utils/utils.h ****         *var &= ~(1u << bit);
+  43:controller/utils/utils.h ****     }
+  44:controller/utils/utils.h **** }
+  45:controller/utils/utils.h **** 
+  46:controller/utils/utils.h **** static inline bool get_bit(uint32_t flags, uint8_t bit)
+ 119              		.loc 2 46 20 is_stmt 1 view .LVU24
+ 120              	.LBB7:
+  47:controller/utils/utils.h **** {
+  48:controller/utils/utils.h ****     if (bit < 32)
+ 121              		.loc 2 48 5 view .LVU25
+  49:controller/utils/utils.h ****     {
+  50:controller/utils/utils.h ****         return (flags >> bit) & 1u;
+ 122              		.loc 2 50 9 view .LVU26
+ 123              		.loc 2 50 31 is_stmt 0 view .LVU27
+ 124 001a C3F3C053 		ubfx	r3, r3, #23, #1
+ 125              	.LVL7:
+ 126              		.loc 2 50 31 view .LVU28
+ 127              	.LBE7:
+ 128              	.LBE6:
+  17:controller/algorithm/protection.c ****     if (is_gas_fuel_injected && !is_etb2_healthy)
+ 129              		.loc 1 17 5 is_stmt 1 view .LVU29
+  17:controller/algorithm/protection.c ****     if (is_gas_fuel_injected && !is_etb2_healthy)
+ 130              		.loc 1 17 8 is_stmt 0 view .LVU30
+ 131 001e 02B1     		cbz	r2, .L9
+  17:controller/algorithm/protection.c ****     if (is_gas_fuel_injected && !is_etb2_healthy)
+ 132              		.loc 1 17 30 discriminator 1 view .LVU31
+ 133 0020 5BB1     		cbz	r3, .L17
+ 134              	.LVL8:
+ 135              	.L9:
+  24:controller/algorithm/protection.c ****     bool is_oil_pressure_good = sensor_ops_get();
+ 136              		.loc 1 24 5 is_stmt 1 view .LVU32
+  24:controller/algorithm/protection.c ****     bool is_oil_pressure_good = sensor_ops_get();
+ 137              		.loc 1 24 33 is_stmt 0 view .LVU33
+ 138 0022 FFF7FEFF 		bl	sensor_ops_get
+ 139              	.LVL9:
+  25:controller/algorithm/protection.c ****     time_ms_t low_oil_pressure_counter = 0;
+ 140              		.loc 1 25 5 is_stmt 1 view .LVU34
+  26:controller/algorithm/protection.c ****     if(!is_oil_pressure_good && runtime.spinning_state == SS_RUNNING)
+ 141              		.loc 1 26 5 view .LVU35
+  26:controller/algorithm/protection.c ****     if(!is_oil_pressure_good && runtime.spinning_state == SS_RUNNING)
+ 142              		.loc 1 26 7 is_stmt 0 view .LVU36
+ 143 0026 58B9     		cbnz	r0, .L15
+  26:controller/algorithm/protection.c ****     if(!is_oil_pressure_good && runtime.spinning_state == SS_RUNNING)
+ 144              		.loc 1 26 40 discriminator 1 view .LVU37
+ 145 0028 194B     		ldr	r3, .L20+4
+ 146 002a 93F87830 		ldrb	r3, [r3, #120]	@ zero_extendqisi2
+  26:controller/algorithm/protection.c ****     if(!is_oil_pressure_good && runtime.spinning_state == SS_RUNNING)
+ 147              		.loc 1 26 30 discriminator 1 view .LVU38
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 6
+
+
+ 148 002e 032B     		cmp	r3, #3
+ 149 0030 07D0     		beq	.L10
+  25:controller/algorithm/protection.c ****     time_ms_t low_oil_pressure_counter = 0;
+ 150              		.loc 1 25 15 view .LVU39
+ 151 0032 0024     		movs	r4, #0
+ 152              	.LVL10:
+  25:controller/algorithm/protection.c ****     time_ms_t low_oil_pressure_counter = 0;
+ 153              		.loc 1 25 15 view .LVU40
+ 154 0034 05E0     		b	.L10
+ 155              	.LVL11:
+ 156              	.L14:
+  14:controller/algorithm/protection.c ****     bool is_gas_fuel_injected = config.fuel_type == FUEL_TYPE_DUAL_FUEL || config.fuel_type == FUEL
+ 157              		.loc 1 14 73 discriminator 4 view .LVU41
+ 158 0036 0022     		movs	r2, #0
+ 159 0038 EDE7     		b	.L8
+ 160              	.LVL12:
+ 161              	.L17:
+  20:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+ 162              		.loc 1 20 9 is_stmt 1 view .LVU42
+ 163 003a FFF7FEFF 		bl	protection_shutdown_gracefully
+ 164              	.LVL13:
+  20:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+ 165              		.loc 1 20 9 is_stmt 0 view .LVU43
+ 166 003e F0E7     		b	.L9
+ 167              	.LVL14:
+ 168              	.L15:
+  25:controller/algorithm/protection.c ****     time_ms_t low_oil_pressure_counter = 0;
+ 169              		.loc 1 25 15 view .LVU44
+ 170 0040 0024     		movs	r4, #0
+ 171              	.LVL15:
+ 172              	.L10:
+  30:controller/algorithm/protection.c ****     if (low_oil_pressure_counter > (config.protection_oil_pressure_time * 1000) && config.protectio
+ 173              		.loc 1 30 5 is_stmt 1 view .LVU45
+  30:controller/algorithm/protection.c ****     if (low_oil_pressure_counter > (config.protection_oil_pressure_time * 1000) && config.protectio
+ 174              		.loc 1 30 43 is_stmt 0 view .LVU46
+ 175 0042 124B     		ldr	r3, .L20
+ 176 0044 93F8E13A 		ldrb	r3, [r3, #2785]	@ zero_extendqisi2
+  30:controller/algorithm/protection.c ****     if (low_oil_pressure_counter > (config.protection_oil_pressure_time * 1000) && config.protectio
+ 177              		.loc 1 30 73 view .LVU47
+ 178 0048 4FF47A72 		mov	r2, #1000
+ 179 004c 02FB03F3 		mul	r3, r2, r3
+  30:controller/algorithm/protection.c ****     if (low_oil_pressure_counter > (config.protection_oil_pressure_time * 1000) && config.protectio
+ 180              		.loc 1 30 8 view .LVU48
+ 181 0050 A342     		cmp	r3, r4
+ 182 0052 03D2     		bcs	.L11
+  30:controller/algorithm/protection.c ****     if (low_oil_pressure_counter > (config.protection_oil_pressure_time * 1000) && config.protectio
+ 183              		.loc 1 30 90 discriminator 1 view .LVU49
+ 184 0054 0D4B     		ldr	r3, .L20
+ 185 0056 93F8E23A 		ldrb	r3, [r3, #2786]	@ zero_extendqisi2
+  30:controller/algorithm/protection.c ****     if (low_oil_pressure_counter > (config.protection_oil_pressure_time * 1000) && config.protectio
+ 186              		.loc 1 30 81 discriminator 1 view .LVU50
+ 187 005a 83B9     		cbnz	r3, .L18
+ 188              	.LVL16:
+ 189              	.L11:
+  36:controller/algorithm/protection.c ****     bool is_clt_acceptable = sensor_clt_get() < config.protection_clt_shutdown_temprature;
+ 190              		.loc 1 36 5 is_stmt 1 view .LVU51
+  36:controller/algorithm/protection.c ****     bool is_clt_acceptable = sensor_clt_get() < config.protection_clt_shutdown_temprature;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 7
+
+
+ 191              		.loc 1 36 30 is_stmt 0 view .LVU52
+ 192 005c FFF7FEFF 		bl	sensor_clt_get
+ 193              	.LVL17:
+  36:controller/algorithm/protection.c ****     bool is_clt_acceptable = sensor_clt_get() < config.protection_clt_shutdown_temprature;
+ 194              		.loc 1 36 55 discriminator 1 view .LVU53
+ 195 0060 0A4B     		ldr	r3, .L20
+ 196 0062 D3F82838 		ldr	r3, [r3, #2088]	@ unaligned
+ 197              	.LVL18:
+  37:controller/algorithm/protection.c ****     if (!is_clt_acceptable && config.protection_clt_enabled)
+ 198              		.loc 1 37 5 is_stmt 1 view .LVU54
+  37:controller/algorithm/protection.c ****     if (!is_clt_acceptable && config.protection_clt_enabled)
+ 199              		.loc 1 37 8 is_stmt 0 view .LVU55
+ 200 0066 07EE903A 		vmov	s15, r3
+ 201 006a B4EEE70A 		vcmpe.f32	s0, s15
+ 202 006e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 203 0072 03D4     		bmi	.L7
+  37:controller/algorithm/protection.c ****     if (!is_clt_acceptable && config.protection_clt_enabled)
+ 204              		.loc 1 37 37 discriminator 1 view .LVU56
+ 205 0074 054B     		ldr	r3, .L20
+ 206              	.LVL19:
+  37:controller/algorithm/protection.c ****     if (!is_clt_acceptable && config.protection_clt_enabled)
+ 207              		.loc 1 37 37 discriminator 1 view .LVU57
+ 208 0076 93F8E33A 		ldrb	r3, [r3, #2787]	@ zero_extendqisi2
+  37:controller/algorithm/protection.c ****     if (!is_clt_acceptable && config.protection_clt_enabled)
+ 209              		.loc 1 37 28 discriminator 1 view .LVU58
+ 210 007a 1BB9     		cbnz	r3, .L19
+ 211              	.LVL20:
+ 212              	.L7:
+  42:controller/algorithm/protection.c **** }
+ 213              		.loc 1 42 1 view .LVU59
+ 214 007c 10BD     		pop	{r4, pc}
+ 215              	.LVL21:
+ 216              	.L18:
+  32:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+ 217              		.loc 1 32 9 is_stmt 1 view .LVU60
+ 218 007e FFF7FEFF 		bl	protection_shutdown_gracefully
+ 219              	.LVL22:
+  32:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+ 220              		.loc 1 32 9 is_stmt 0 view .LVU61
+ 221 0082 EBE7     		b	.L11
+ 222              	.LVL23:
+ 223              	.L19:
+  39:controller/algorithm/protection.c ****         protection_shutdown_gracefully();
+ 224              		.loc 1 39 9 is_stmt 1 view .LVU62
+ 225 0084 FFF7FEFF 		bl	protection_shutdown_gracefully
+ 226              	.LVL24:
+  42:controller/algorithm/protection.c **** }
+ 227              		.loc 1 42 1 is_stmt 0 view .LVU63
+ 228 0088 F8E7     		b	.L7
+ 229              	.L21:
+ 230 008a 00BF     		.align	2
+ 231              	.L20:
+ 232 008c 00100000 		.word	config+4096
+ 233 0090 00000000 		.word	runtime
+ 234              		.cfi_endproc
+ 235              	.LFE242:
+ 237              		.section	.bss.protection_has_tripped.0,"aw",%nobits
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 8
+
+
+ 240              	protection_has_tripped.0:
+ 241 0000 00       		.space	1
+ 242              		.text
+ 243              	.Letext0:
+ 244              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 245              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 246              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 247              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 248              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 249              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 250              		.file 9 "controller/types.h"
+ 251              		.file 10 "controller/tables.h"
+ 252              		.file 11 "controller/config_and_runtime.h"
+ 253              		.file 12 "controller/engine_cycle/trigger.h"
+ 254              		.file 13 "controller/IO/analog_inputs.h"
+ 255              		.file 14 "controller/IO/resistor.h"
+ 256              		.file 15 "controller/IO/thermistor.h"
+ 257              		.file 16 "controller/IO/sensors.h"
+ 258              		.file 17 "controller/actuators/dc_motors.h"
+ 259              		.file 18 "controller/utils/pid.h"
+ 260              		.file 19 "controller/actuators/electronic_throttle.h"
+ 261              		.file 20 "controller/controller.h"
+ 262              		.file 21 "controller/IO/outputs.h"
+ 263              		.file 22 "controller/engine_cycle/injection.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 protection.c
-C:\Users\alireza\AppData\Local\Temp\ccs39DyZ.s:21     .text.protections_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccs39DyZ.s:27     .text.protections_update:00000000 protections_update
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:21     .text.protection_shutdown_gracefully:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:27     .text.protection_shutdown_gracefully:00000000 protection_shutdown_gracefully
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:68     .text.protection_shutdown_gracefully:0000001c $d
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:240    .bss.protection_has_tripped.0:00000000 protection_has_tripped.0
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:73     .text.protections_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:79     .text.protections_update:00000000 protections_update
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:232    .text.protections_update:0000008c $d
+C:\Users\alireza\AppData\Local\Temp\ccKV38XZ.s:241    .bss.protection_has_tripped.0:00000000 $d
 
-NO UNDEFINED SYMBOLS
+UNDEFINED SYMBOLS
+output_gas_solenoid_set
+injection_disable
+sensor_ops_get
+sensor_clt_get
+config
+runtime

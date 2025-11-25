@@ -6,6 +6,8 @@
 #include "trigger.h"
 #include "sensors.h"
 #include "ignition.h"
+#include "outputs.h"
+#include "injection.h"
 
 typedef enum
 {
@@ -16,8 +18,8 @@ typedef enum
     REV_LIMIT_SPARK_CUT = 8,
 } protection_rev_limit_modes_t;
 
-void protections_update();
+void protections_update(time_us_t time);
 
-
+void protection_shutdown_gracefully();
 
 #endif // PROTECTION_H

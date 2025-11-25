@@ -54,11 +54,23 @@ build/debug/governer.o: controller/algorithm/governer.c \
  controller/engine_cycle/trigger.h controller/controller.h \
  controller/utils/comms.h controller/actuators/dc_motors.h \
  controller/engine_cycle/ignition.h controller/tables.h \
- controller/engine_cycle/trigger.h controller/IO/thermistor.h \
- Core/Inc/adc.h controller/algorithm/governer.h \
- controller/actuators/fan_control.h controller/utils/trigger_simulator.h \
- controller/utils/utils.h controller/config_and_runtime.h \
- controller/utils/ee.h controller/engine_cycle/gas_injection.h \
+ controller/engine_cycle/trigger.h controller/IO/outputs.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ Core/Inc/FreeRTOSConfig.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ controller/IO/thermistor.h Core/Inc/adc.h \
+ controller/algorithm/governer.h controller/actuators/fan_control.h \
+ controller/utils/trigger_simulator.h controller/utils/utils.h \
+ controller/config_and_runtime.h controller/utils/ee.h \
+ controller/engine_cycle/gas_injection.h \
  controller/algorithm/fuel/fuel_math.h \
  controller/engine_cycle/injection.h
 controller/algorithm/governer.h:
@@ -134,6 +146,18 @@ controller/actuators/dc_motors.h:
 controller/engine_cycle/ignition.h:
 controller/tables.h:
 controller/engine_cycle/trigger.h:
+controller/IO/outputs.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
+Core/Inc/FreeRTOSConfig.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
+Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 controller/IO/thermistor.h:
 Core/Inc/adc.h:
 controller/algorithm/governer.h:

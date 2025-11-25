@@ -1,7 +1,5 @@
 #include "ignition.h"
 
-ignition_output_pin_conf_t *output_conf = NULL;
-
 void schedule_ignition_event(ignition_event_t *event);
 void ignition_switch_to_coil_on_plug_wasted_spark();
 void ignition_switch_to_coil_on_plug();
@@ -16,21 +14,15 @@ static bool operating_in_forced_wasted_spark = false;
 // We are going to have at most the same number of events as the number of cylinders
 static ignition_event_t ignition_events[FIRMWARE_LIMIT_NUMBER_OF_CYLINDERS_MAX] = {0};
 
-bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
+bool ignition_init()
 {
-    if (output_pin_conf == NULL)
-    {
-        change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-        change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
-        log_error("ignition init failed. No output config");
-        return false;
-    }
-    controller_output_pin_t *outputs = &output_pin_conf->pin[0];
-    output_conf = output_pin_conf;
-    
+
+    controller_output_pin_t *outputs = &ignition_output[0];
+
     switch (config.firing_order)
     {
     case FO_1342: // Common inline-4
+        number_of_cylinders = 4;
         switch (config.ignition_mode)
         {
         case IGNITION_MODE_ONE_COIL:
@@ -41,7 +33,6 @@ bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
             ignition_events[1].crank_angle_at_tdc = (angle_t)180;
 
             number_of_events = 2;
-            number_of_cylinders = 4;
             break;
         case IGNITION_MODE_WASTED_SPARK:
             ignition_events[0].crank_angle_at_tdc = (angle_t)0;
@@ -51,7 +42,6 @@ bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
             ignition_events[1].primary_output = &outputs[1];
 
             number_of_events = 2;
-            number_of_cylinders = 4;
             break;
         case IGNITION_MODE_COIL_ON_PLUG_WASTED_SPARK:
             ignition_events[0].crank_angle_at_tdc = (angle_t)0;
@@ -64,7 +54,6 @@ bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
             ignition_events[1].secondary_output = &outputs[2];
 
             number_of_events = 2;
-            number_of_cylinders = 4;
             break;
         case IGNITION_MODE_COIL_ON_PLUG:
             ignition_events[0].crank_angle_at_tdc = (angle_t)0;
@@ -78,13 +67,13 @@ bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
             ignition_events[3].primary_output = &outputs[3];
 
             number_of_events = 4;
-            number_of_cylinders = 4;
             break;
         default:
             break;
         }
         break;
     case FO_153624: // Common inline-6
+        number_of_cylinders = 6;
         switch (config.ignition_mode)
         {
         case IGNITION_MODE_ONE_COIL:
@@ -96,7 +85,6 @@ bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
             ignition_events[1].primary_output = &outputs[0];
             ignition_events[2].primary_output = &outputs[0];
             number_of_events = 3;
-            number_of_cylinders = 6;
             break;
 
         case IGNITION_MODE_WASTED_SPARK:
@@ -108,23 +96,34 @@ bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
             ignition_events[1].primary_output = &outputs[1];
             ignition_events[2].primary_output = &outputs[2];
             number_of_events = 3;
-            number_of_cylinders = 6;
             break;
 
         case IGNITION_MODE_COIL_ON_PLUG:
             config.ignition_mode = IGNITION_MODE_WASTED_SPARK;
             change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-            ignition_init(output_pin_conf);
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;   // cyl 1 & 6
+            ignition_events[1].crank_angle_at_tdc = (angle_t)120; // cyl 5 & 2
+            ignition_events[2].crank_angle_at_tdc = (angle_t)240; // cyl 3 & 4
+
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[1].primary_output = &outputs[1];
+            ignition_events[2].primary_output = &outputs[2];
+            number_of_events = 3;
             log_error("Coil on plug not possible for 6 cylinders, defaulting to watesd spark.");
-            return false;
             break;
 
         case IGNITION_MODE_COIL_ON_PLUG_WASTED_SPARK:
             config.ignition_mode = IGNITION_MODE_WASTED_SPARK;
             change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-            ignition_init(output_pin_conf);
+            ignition_events[0].crank_angle_at_tdc = (angle_t)0;   // cyl 1 & 6
+            ignition_events[1].crank_angle_at_tdc = (angle_t)120; // cyl 5 & 2
+            ignition_events[2].crank_angle_at_tdc = (angle_t)240; // cyl 3 & 4
+
+            ignition_events[0].primary_output = &outputs[0];
+            ignition_events[1].primary_output = &outputs[1];
+            ignition_events[2].primary_output = &outputs[2];
+            number_of_events = 3;
             log_error("Coil on plug not possible for 6 cylinders, defaulting to watesd spark.");
-            return false;
             break;
 
         default:
@@ -136,7 +135,7 @@ bool ignition_init(ignition_output_pin_conf_t *output_pin_conf)
         log_error("ignition init failed. unkown firing order.");
         break;
     }
-
+    
     if (number_of_cylinders == 0)
     {
         change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
@@ -176,7 +175,7 @@ void ignition_watchdog_check()
 }
 void ignition_switch_to_coil_on_plug()
 {
-    controller_output_pin_t *outputs = &output_conf->pin[0];
+    controller_output_pin_t *outputs = &ignition_output[0];
 
     operating_in_forced_wasted_spark = false;
     switch (config.firing_order)
@@ -210,7 +209,7 @@ void ignition_switch_to_coil_on_plug()
 
 void ignition_switch_to_coil_on_plug_wasted_spark()
 {
-    controller_output_pin_t *outputs = &output_conf->pin[0];
+    controller_output_pin_t *outputs = &ignition_output[0];
 
     operating_in_forced_wasted_spark = true;
     switch (config.firing_order)

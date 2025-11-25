@@ -54,11 +54,12 @@ void governer_update()
     governer_pid.limit_integrator_min = config.governer_pid_limit_integrator_min;
     governer_pid.limit_integrator_max = config.governer_pid_limit_integrator_max;
     governer_pid.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
-
+    
     if (runtime.spinning_state != SS_RUNNING)
     {
         throttle_setpoint = config.cranking_throttle;
         runtime.governer_status = GOVERNER_STATUS_IGNORED;
+        runtime.governer_target_rpm = config.governer_idle_rpm;
     }
     else
     {
@@ -67,8 +68,16 @@ void governer_update()
         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
         rpm_t rpm = crankshaft_get_rpm();
         throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
+        runtime.governer_target_rpm = config.governer_target_rpm;
     }
     electronic_throttle_set(governer_etb, throttle_setpoint);
+    static percent_t prev_setpoint = 0;
+    if (ABS(throttle_setpoint - prev_setpoint) > (percent_t)80)
+    {
+        __NOP();
+    }
+    prev_setpoint = throttle_setpoint;
+    
 }
 governer_status_t governer_get_status()
 {

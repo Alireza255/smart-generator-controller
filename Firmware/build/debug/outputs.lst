@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -15,154 +15,100 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
   12              		.eabi_attribute 30, 1
   13              		.eabi_attribute 34, 1
   14              		.eabi_attribute 18, 4
-  15              		.file	"stm32f4xx_it.c"
+  15              		.file	"outputs.c"
   16              		.text
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
-  19              		.file 1 "Core/Src/stm32f4xx_it.c"
-  20              		.section	.text.NMI_Handler,"ax",%progbits
+  19              		.file 1 "controller/IO/outputs.c"
+  20              		.section	.text.output_set,"ax",%progbits
   21              		.align	1
-  22              		.global	NMI_Handler
+  22              		.global	output_set
   23              		.syntax unified
   24              		.thumb
   25              		.thumb_func
-  27              	NMI_Handler:
-  28              	.LFB220:
-   1:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN Header */
-   2:Core/Src/stm32f4xx_it.c **** /**
-   3:Core/Src/stm32f4xx_it.c ****   ******************************************************************************
-   4:Core/Src/stm32f4xx_it.c ****   * @file    stm32f4xx_it.c
-   5:Core/Src/stm32f4xx_it.c ****   * @brief   Interrupt Service Routines.
-   6:Core/Src/stm32f4xx_it.c ****   ******************************************************************************
-   7:Core/Src/stm32f4xx_it.c ****   * @attention
-   8:Core/Src/stm32f4xx_it.c ****   *
-   9:Core/Src/stm32f4xx_it.c ****   * Copyright (c) 2025 STMicroelectronics.
-  10:Core/Src/stm32f4xx_it.c ****   * All rights reserved.
-  11:Core/Src/stm32f4xx_it.c ****   *
-  12:Core/Src/stm32f4xx_it.c ****   * This software is licensed under terms that can be found in the LICENSE file
-  13:Core/Src/stm32f4xx_it.c ****   * in the root directory of this software component.
-  14:Core/Src/stm32f4xx_it.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
-  15:Core/Src/stm32f4xx_it.c ****   *
-  16:Core/Src/stm32f4xx_it.c ****   ******************************************************************************
-  17:Core/Src/stm32f4xx_it.c ****   */
-  18:Core/Src/stm32f4xx_it.c **** /* USER CODE END Header */
-  19:Core/Src/stm32f4xx_it.c **** 
-  20:Core/Src/stm32f4xx_it.c **** /* Includes ------------------------------------------------------------------*/
-  21:Core/Src/stm32f4xx_it.c **** #include "main.h"
-  22:Core/Src/stm32f4xx_it.c **** #include "stm32f4xx_it.h"
-  23:Core/Src/stm32f4xx_it.c **** /* Private includes ----------------------------------------------------------*/
-  24:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN Includes */
-  25:Core/Src/stm32f4xx_it.c **** #include "timing.h"
-  26:Core/Src/stm32f4xx_it.c **** /* USER CODE END Includes */
-  27:Core/Src/stm32f4xx_it.c **** 
-  28:Core/Src/stm32f4xx_it.c **** /* Private typedef -----------------------------------------------------------*/
-  29:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN TD */
-  30:Core/Src/stm32f4xx_it.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 2
+  27              	output_set:
+  28              	.LVL0:
+  29              	.LFB224:
+   1:controller/IO/outputs.c **** #include "outputs.h"
+   2:controller/IO/outputs.c **** 
+   3:controller/IO/outputs.c **** controller_output_pin_t main_relay_output =
+   4:controller/IO/outputs.c **** {
+   5:controller/IO/outputs.c ****     .gpio = PWM_OUT_3_GPIO_Port,
+   6:controller/IO/outputs.c ****     .pin = PWM_OUT_3_Pin,
+   7:controller/IO/outputs.c ****     .override_active = false,
+   8:controller/IO/outputs.c ****     .last_normal_state = false
+   9:controller/IO/outputs.c **** };
+  10:controller/IO/outputs.c **** 
+  11:controller/IO/outputs.c **** controller_output_pin_t gas_solenoid_output =
+  12:controller/IO/outputs.c **** {
+  13:controller/IO/outputs.c ****     .gpio = PWM_OUT_2_GPIO_Port,
+  14:controller/IO/outputs.c ****     .pin = PWM_OUT_2_Pin,
+  15:controller/IO/outputs.c ****     .override_active = false,
+  16:controller/IO/outputs.c ****     .last_normal_state = false
+  17:controller/IO/outputs.c **** };
+  18:controller/IO/outputs.c **** controller_output_pin_t fuel_pump_output =
+  19:controller/IO/outputs.c **** {
+  20:controller/IO/outputs.c ****     .gpio = FUEL_PUMP_RELAY_GPIO_Port,
+  21:controller/IO/outputs.c ****     .pin = FUEL_PUMP_RELAY_Pin,
+  22:controller/IO/outputs.c ****     .override_active = false,
+  23:controller/IO/outputs.c ****     .last_normal_state = false
+  24:controller/IO/outputs.c **** };
+  25:controller/IO/outputs.c **** controller_output_pin_t fan1_output =
+  26:controller/IO/outputs.c **** {
+  27:controller/IO/outputs.c ****     .gpio = PWM_OUT_1_GPIO_Port,
+  28:controller/IO/outputs.c ****     .pin = PWM_OUT_1_Pin,
+  29:controller/IO/outputs.c ****     .override_active = false,
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 2
 
 
-  31:Core/Src/stm32f4xx_it.c **** /* USER CODE END TD */
-  32:Core/Src/stm32f4xx_it.c **** 
-  33:Core/Src/stm32f4xx_it.c **** /* Private define ------------------------------------------------------------*/
-  34:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN PD */
-  35:Core/Src/stm32f4xx_it.c **** 
-  36:Core/Src/stm32f4xx_it.c **** /* USER CODE END PD */
-  37:Core/Src/stm32f4xx_it.c **** 
-  38:Core/Src/stm32f4xx_it.c **** /* Private macro -------------------------------------------------------------*/
-  39:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN PM */
-  40:Core/Src/stm32f4xx_it.c **** 
-  41:Core/Src/stm32f4xx_it.c **** /* USER CODE END PM */
-  42:Core/Src/stm32f4xx_it.c **** 
-  43:Core/Src/stm32f4xx_it.c **** /* Private variables ---------------------------------------------------------*/
-  44:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN PV */
-  45:Core/Src/stm32f4xx_it.c **** 
-  46:Core/Src/stm32f4xx_it.c **** /* USER CODE END PV */
-  47:Core/Src/stm32f4xx_it.c **** 
-  48:Core/Src/stm32f4xx_it.c **** /* Private function prototypes -----------------------------------------------*/
-  49:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN PFP */
-  50:Core/Src/stm32f4xx_it.c **** 
-  51:Core/Src/stm32f4xx_it.c **** /* USER CODE END PFP */
-  52:Core/Src/stm32f4xx_it.c **** 
-  53:Core/Src/stm32f4xx_it.c **** /* Private user code ---------------------------------------------------------*/
-  54:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN 0 */
-  55:Core/Src/stm32f4xx_it.c **** 
-  56:Core/Src/stm32f4xx_it.c **** /* USER CODE END 0 */
-  57:Core/Src/stm32f4xx_it.c **** 
-  58:Core/Src/stm32f4xx_it.c **** /* External variables --------------------------------------------------------*/
-  59:Core/Src/stm32f4xx_it.c **** extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
-  60:Core/Src/stm32f4xx_it.c **** extern DMA_HandleTypeDef hdma_adc1;
-  61:Core/Src/stm32f4xx_it.c **** extern TIM_HandleTypeDef htim2;
-  62:Core/Src/stm32f4xx_it.c **** extern TIM_HandleTypeDef htim11;
-  63:Core/Src/stm32f4xx_it.c **** 
-  64:Core/Src/stm32f4xx_it.c **** /* USER CODE BEGIN EV */
-  65:Core/Src/stm32f4xx_it.c **** 
-  66:Core/Src/stm32f4xx_it.c **** /* USER CODE END EV */
-  67:Core/Src/stm32f4xx_it.c **** 
-  68:Core/Src/stm32f4xx_it.c **** /******************************************************************************/
-  69:Core/Src/stm32f4xx_it.c **** /*           Cortex-M4 Processor Interruption and Exception Handlers          */
-  70:Core/Src/stm32f4xx_it.c **** /******************************************************************************/
-  71:Core/Src/stm32f4xx_it.c **** /**
-  72:Core/Src/stm32f4xx_it.c ****   * @brief This function handles Non maskable interrupt.
-  73:Core/Src/stm32f4xx_it.c ****   */
-  74:Core/Src/stm32f4xx_it.c **** void NMI_Handler(void)
-  75:Core/Src/stm32f4xx_it.c **** {
-  29              		.loc 1 75 1 view -0
-  30              		.cfi_startproc
-  31              		@ Volatile: function does not return.
+  30:controller/IO/outputs.c ****     .last_normal_state = false
+  31:controller/IO/outputs.c **** };
+  32:controller/IO/outputs.c **** controller_output_pin_t fan2_output =
+  33:controller/IO/outputs.c **** {
+  34:controller/IO/outputs.c ****     .gpio = FAN_2_GPIO_Port,
+  35:controller/IO/outputs.c ****     .pin = FAN_2_Pin,
+  36:controller/IO/outputs.c ****     .override_active = false,
+  37:controller/IO/outputs.c ****     .last_normal_state = false
+  38:controller/IO/outputs.c **** };
+  39:controller/IO/outputs.c **** controller_output_pin_t injector_output[FIRMWARE_INJECTOR_OUTPUT_COUNT] = {
+  40:controller/IO/outputs.c ****     {.gpio = INJECTOR_OUTPUT_1_GPIO_Port, .pin = INJECTOR_OUTPUT_1_Pin, .override_active = false, .
+  41:controller/IO/outputs.c ****     {.gpio = INJECTOR_OUTPUT_2_GPIO_Port, .pin = INJECTOR_OUTPUT_2_Pin, .override_active = false, .
+  42:controller/IO/outputs.c ****     {.gpio = INJECTOR_OUTPUT_3_GPIO_Port, .pin = INJECTOR_OUTPUT_3_Pin, .override_active = false, .
+  43:controller/IO/outputs.c ****     {.gpio = INJECTOR_OUTPUT_4_GPIO_Port, .pin = INJECTOR_OUTPUT_4_Pin, .override_active = false, .
+  44:controller/IO/outputs.c **** };
+  45:controller/IO/outputs.c **** controller_output_pin_t ignition_output[FIRMWARE_IGNITION_OUTPUT_COUNT] = {
+  46:controller/IO/outputs.c ****     {.gpio = IGNITION_OUTPUT_1_GPIO_Port, .pin = IGNITION_OUTPUT_1_Pin, .override_active = false, .
+  47:controller/IO/outputs.c ****     {.gpio = IGNITION_OUTPUT_2_GPIO_Port, .pin = IGNITION_OUTPUT_2_Pin, .override_active = false, .
+  48:controller/IO/outputs.c ****     {.gpio = IGNITION_OUTPUT_3_GPIO_Port, .pin = IGNITION_OUTPUT_3_Pin, .override_active = false, .
+  49:controller/IO/outputs.c ****     {.gpio = IGNITION_OUTPUT_4_GPIO_Port, .pin = IGNITION_OUTPUT_4_Pin, .override_active = false, .
+  50:controller/IO/outputs.c **** };
+  51:controller/IO/outputs.c **** 
+  52:controller/IO/outputs.c **** 
+  53:controller/IO/outputs.c **** void output_set(controller_output_pin_t *pin, bool state)
+  54:controller/IO/outputs.c **** {
+  30              		.loc 1 54 1 view -0
+  31              		.cfi_startproc
   32              		@ args = 0, pretend = 0, frame = 0
   33              		@ frame_needed = 0, uses_anonymous_args = 0
-  34              		@ link register save eliminated.
-  35              	.L2:
-  76:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
-  77:Core/Src/stm32f4xx_it.c **** 
-  78:Core/Src/stm32f4xx_it.c ****   /* USER CODE END NonMaskableInt_IRQn 0 */
-  79:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-  80:Core/Src/stm32f4xx_it.c ****    while (1)
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 3
-
-
-  36              		.loc 1 80 4 view .LVU1
-  81:Core/Src/stm32f4xx_it.c ****   {
-  82:Core/Src/stm32f4xx_it.c ****   }
-  37              		.loc 1 82 3 view .LVU2
-  80:Core/Src/stm32f4xx_it.c ****   {
-  38              		.loc 1 80 10 view .LVU3
-  39 0000 FEE7     		b	.L2
-  40              		.cfi_endproc
-  41              	.LFE220:
-  43              		.section	.text.HardFault_Handler,"ax",%progbits
-  44              		.align	1
-  45              		.global	HardFault_Handler
-  46              		.syntax unified
-  47              		.thumb
-  48              		.thumb_func
-  50              	HardFault_Handler:
-  51              	.LFB221:
-  83:Core/Src/stm32f4xx_it.c ****   /* USER CODE END NonMaskableInt_IRQn 1 */
-  84:Core/Src/stm32f4xx_it.c **** }
-  85:Core/Src/stm32f4xx_it.c **** 
-  86:Core/Src/stm32f4xx_it.c **** /**
-  87:Core/Src/stm32f4xx_it.c ****   * @brief This function handles Hard fault interrupt.
-  88:Core/Src/stm32f4xx_it.c ****   */
-  89:Core/Src/stm32f4xx_it.c **** void HardFault_Handler(void)
-  90:Core/Src/stm32f4xx_it.c **** {
-  52              		.loc 1 90 1 view -0
-  53              		.cfi_startproc
-  54              		@ args = 0, pretend = 0, frame = 64
-  55              		@ frame_needed = 0, uses_anonymous_args = 0
-  56              		@ link register save eliminated.
-  57 0000 90B0     		sub	sp, sp, #64
-  58              		.cfi_def_cfa_offset 64
-  91:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN HardFault_IRQn 0 */
-  92:Core/Src/stm32f4xx_it.c ****   uint32_t *stacked_regs;
-  59              		.loc 1 92 3 view .LVU5
-  93:Core/Src/stm32f4xx_it.c **** 
-  94:Core/Src/stm32f4xx_it.c ****   /* Figure out which stack pointer was active */
-  95:Core/Src/stm32f4xx_it.c ****   if (__get_CONTROL() & 2) {
-  60              		.loc 1 95 3 view .LVU6
-  61              	.LBB4:
-  62              	.LBI4:
-  63              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+  55:controller/IO/outputs.c ****     if (pin == NULL)
+  34              		.loc 1 55 5 view .LVU1
+  35              		.loc 1 55 8 is_stmt 0 view .LVU2
+  36 0000 58B1     		cbz	r0, .L5
+  54:controller/IO/outputs.c ****     if (pin == NULL)
+  37              		.loc 1 54 1 view .LVU3
+  38 0002 08B5     		push	{r3, lr}
+  39              		.cfi_def_cfa_offset 8
+  40              		.cfi_offset 3, -8
+  41              		.cfi_offset 14, -4
+  56:controller/IO/outputs.c ****     {
+  57:controller/IO/outputs.c ****         return;
+  58:controller/IO/outputs.c ****     }
+  59:controller/IO/outputs.c **** 
+  60:controller/IO/outputs.c ****     __disable_irq();
+  42              		.loc 1 60 5 is_stmt 1 view .LVU4
+  43              	.LBB14:
+  44              	.LBI14:
+  45              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
    1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
    2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
    3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
@@ -172,15 +118,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
    7:Drivers/CMSIS/Include/cmsis_gcc.h **** /*
    8:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2021 Arm Limited. All rights reserved.
    9:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 3
+
+
   10:Drivers/CMSIS/Include/cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
   11:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
   12:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
   13:Drivers/CMSIS/Include/cmsis_gcc.h ****  * not use this file except in compliance with the License.
   14:Drivers/CMSIS/Include/cmsis_gcc.h ****  * You may obtain a copy of the License at
   15:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 4
-
-
   16:Drivers/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
   17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
   18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
@@ -232,15 +178,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
   64:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
   65:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
   66:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 4
+
+
   67:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_UNION
   68:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
   69:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   70:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32        /* deprecated */
   71:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
   72:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 5
-
-
   73:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
   74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
   75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
@@ -292,15 +238,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  121:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  122:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __PROGRAM_START
  123:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 5
+
+
  124:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  125:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Initializes data and bss sections
  126:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details This default implementations initialized all data and additional bss
  127:Drivers/CMSIS/Include/cmsis_gcc.h ****            sections relying on .copy.table and .zero.table specified properly
  128:Drivers/CMSIS/Include/cmsis_gcc.h ****            in the used linker script.
  129:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 6
-
-
  130:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  131:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
  132:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -352,15 +298,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  178:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE            __Vectors
  179:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  180:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 6
+
+
  181:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE_ATTRIBUTE
  182:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE_ATTRIBUTE  __attribute__((used, section(".vectors")))
  183:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  184:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  185:Drivers/CMSIS/Include/cmsis_gcc.h **** #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
  186:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_SEAL
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 7
-
-
  187:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_SEAL              __StackSeal
  188:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  189:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -412,15 +358,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  235:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  236:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  237:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 7
+
+
  238:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Event
  239:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Event is a hint instruction that permits the processor to enter
  240:Drivers/CMSIS/Include/cmsis_gcc.h ****            a low-power state until one of a number of events occurs.
  241:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  242:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFE()                             __ASM volatile ("wfe":::"memory")
  243:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 8
-
-
  244:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  245:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  246:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Send Event
@@ -472,15 +418,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  292:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __REV(uint32_t value)
  293:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  294:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 8
+
+
  295:Drivers/CMSIS/Include/cmsis_gcc.h ****   return __builtin_bswap32(value);
  296:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
  297:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
  298:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  299:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM ("rev %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
  300:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 9
-
-
  301:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  302:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  303:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -532,15 +478,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  349:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (op2 == 0U)
  350:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
  351:Drivers/CMSIS/Include/cmsis_gcc.h ****     return op1;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 9
+
+
  352:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
  353:Drivers/CMSIS/Include/cmsis_gcc.h ****   return (op1 >> op2) | (op1 << (32U - op2));
  354:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  355:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  356:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  357:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 10
-
-
  358:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Breakpoint
  359:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Causes the processor to enter Debug state.
  360:Drivers/CMSIS/Include/cmsis_gcc.h ****            Debug tools can use this to investigate system state when the instruction at a particula
@@ -592,15 +538,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  406:Drivers/CMSIS/Include/cmsis_gcc.h ****      __builtin_clz(0) is undefined behaviour, so handle this case specially.
  407:Drivers/CMSIS/Include/cmsis_gcc.h ****      This guarantees ARM-compatible results if happening to compile on a non-ARM
  408:Drivers/CMSIS/Include/cmsis_gcc.h ****      target, and ensures the compiler doesn't decide to activate any
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 10
+
+
  409:Drivers/CMSIS/Include/cmsis_gcc.h ****      optimisations using the logic "value was passed to __builtin_clz, so it
  410:Drivers/CMSIS/Include/cmsis_gcc.h ****      is non-zero".
  411:Drivers/CMSIS/Include/cmsis_gcc.h ****      ARM GCC 7.3 and possibly earlier will optimise this test away, leaving a
  412:Drivers/CMSIS/Include/cmsis_gcc.h ****      single CLZ instruction.
  413:Drivers/CMSIS/Include/cmsis_gcc.h ****    */
  414:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (value == 0U)
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 11
-
-
  415:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
  416:Drivers/CMSIS/Include/cmsis_gcc.h ****     return 32U;
  417:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
@@ -652,15 +598,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  463:Drivers/CMSIS/Include/cmsis_gcc.h ****     */
  464:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
  465:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 11
+
+
  466:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);    /* Add explicit type cast here */
  467:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  468:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  469:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  470:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  471:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDR Exclusive (32 bit)
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 12
-
-
  472:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive LDR instruction for 32 bit values.
  473:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  474:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
@@ -712,15 +658,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  520:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STR Exclusive (32 bit)
  521:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive STR instruction for 32 bit values.
  522:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 12
+
+
  523:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
  524:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
  525:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
  526:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  527:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STREXW(uint32_t value, volatile uint32_t *addr)
  528:Drivers/CMSIS/Include/cmsis_gcc.h **** {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 13
-
-
  529:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
  530:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  531:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strex %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" (value) );
@@ -772,15 +718,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  577:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __USAT(ARG1, ARG2) \
  578:Drivers/CMSIS/Include/cmsis_gcc.h **** __extension__ \
  579:Drivers/CMSIS/Include/cmsis_gcc.h **** ({                          \
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 13
+
+
  580:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t __RES, __ARG1 = (ARG1); \
  581:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("usat %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) : "cc" ); \
  582:Drivers/CMSIS/Include/cmsis_gcc.h ****   __RES; \
  583:Drivers/CMSIS/Include/cmsis_gcc.h ****  })
  584:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  585:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 14
-
-
  586:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  587:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Rotate Right with Extend (32 bit)
  588:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Moves each bit of a bitstring right by one bit.
@@ -832,15 +778,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  634:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
  635:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrht %0, %1" : "=r" (result) : "Q" (*ptr) );
  636:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 14
+
+
  637:Drivers/CMSIS/Include/cmsis_gcc.h ****     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
  638:Drivers/CMSIS/Include/cmsis_gcc.h ****        accepted by assembler. So has to use following less efficient pattern.
  639:Drivers/CMSIS/Include/cmsis_gcc.h ****     */
  640:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrht %0, [%1]" : "=r" (result) : "r" (ptr) : "memory" );
  641:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  642:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);    /* Add explicit type cast here */
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 15
-
-
  643:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  644:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  645:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -892,15 +838,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  691:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STRT(uint32_t value, volatile uint32_t *ptr)
  692:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  693:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strt %1, %0" : "=Q" (*ptr) : "r" (value) );
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 15
+
+
  694:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  695:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  696:Drivers/CMSIS/Include/cmsis_gcc.h **** #else  /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
  697:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
  698:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1))    ) */
  699:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 16
-
-
  700:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  701:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Signed Saturate
  702:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Saturates a signed value.
@@ -952,15 +898,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  748:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  749:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
  750:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 16
+
+
  751:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1))    ) */
  752:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  753:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  754:Drivers/CMSIS/Include/cmsis_gcc.h **** #if ((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
  755:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    )
  756:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 17
-
-
  757:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire (8 bit)
  758:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDAB instruction for 8 bit value.
  759:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
@@ -1012,15 +958,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  805:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
  806:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  807:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STLB(uint8_t value, volatile uint8_t *ptr)
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 17
+
+
  808:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  809:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlb %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) : "memory" );
  810:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  811:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  812:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  813:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 18
-
-
  814:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release (16 bit)
  815:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLH instruction for 16 bit values.
  816:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
@@ -1072,15 +1018,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  862:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaexh %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
  863:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);
  864:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 18
+
+
  865:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  866:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  867:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  868:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire Exclusive (32 bit)
  869:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDA exclusive instruction for 32 bit values.
  870:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 19
-
-
  871:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
  872:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  873:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDAEX(volatile uint32_t *ptr)
@@ -1132,15 +1078,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  919:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
  920:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
  921:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          0  Function succeeded
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 19
+
+
  922:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return          1  Function failed
  923:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  924:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __STLEX(uint32_t value, volatile uint32_t *ptr)
  925:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  926:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
  927:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 20
-
-
  928:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlex %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) : "memo
  929:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
  930:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -1174,630 +1120,776 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 1
  958:Drivers/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
  959:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  960:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __disable_irq(void)
+  46              		.loc 2 960 27 view .LVU5
+  47              	.LBB15:
  961:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  962:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
- 963:Drivers/CMSIS/Include/cmsis_gcc.h **** }
- 964:Drivers/CMSIS/Include/cmsis_gcc.h **** 
- 965:Drivers/CMSIS/Include/cmsis_gcc.h **** 
- 966:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
- 967:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Get Control Register
- 968:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Returns the content of the Control Register.
- 969:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Control Register value
- 970:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
- 971:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_CONTROL(void)
-  64              		.loc 2 971 31 view .LVU7
-  65              	.LBB5:
- 972:Drivers/CMSIS/Include/cmsis_gcc.h **** {
- 973:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
-  66              		.loc 2 973 3 view .LVU8
- 974:Drivers/CMSIS/Include/cmsis_gcc.h **** 
- 975:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, control" : "=r" (result) );
-  67              		.loc 2 975 3 view .LVU9
-  68              		.syntax unified
-  69              	@ 975 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
-  70 0002 EFF31483 		MRS r3, control
-  71              	@ 0 "" 2
-  72              	.LVL0:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 21
+  48              		.loc 2 962 3 view .LVU6
+  49              		.syntax unified
+  50              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  51 0004 72B6     		cpsid i
+  52              	@ 0 "" 2
+  53              		.thumb
+  54              		.syntax unified
+  55              	.LBE15:
+  56              	.LBE14:
+  61:controller/IO/outputs.c ****     if (!pin->override_active)
+  57              		.loc 1 61 5 view .LVU7
+  58              		.loc 1 61 13 is_stmt 0 view .LVU8
+  59 0006 027A     		ldrb	r2, [r0, #8]	@ zero_extendqisi2
+  60              		.loc 1 61 8 view .LVU9
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 20
 
 
- 976:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
-  73              		.loc 2 976 3 view .LVU10
-  74              		.loc 2 976 3 is_stmt 0 view .LVU11
-  75              		.thumb
-  76              		.syntax unified
-  77              	.LBE5:
-  78              	.LBE4:
-  79              		.loc 1 95 6 discriminator 1 view .LVU12
-  80 0006 13F0020F 		tst	r3, #2
-  81 000a 25D0     		beq	.L4
-  96:Core/Src/stm32f4xx_it.c ****       /* Process Stack Pointer was in use */
-  97:Core/Src/stm32f4xx_it.c ****       __asm volatile("MRS %0, PSP" : "=r"(stacked_regs));
-  82              		.loc 1 97 7 is_stmt 1 view .LVU13
-  83              		.syntax unified
-  84              	@ 97 "Core/Src/stm32f4xx_it.c" 1
-  85 000c EFF30983 		MRS r3, PSP
-  86              	@ 0 "" 2
-  87              	.LVL1:
-  88              		.thumb
-  89              		.syntax unified
-  90              	.L5:
-  98:Core/Src/stm32f4xx_it.c ****   } else {
-  99:Core/Src/stm32f4xx_it.c ****       /* Main Stack Pointer was in use */
- 100:Core/Src/stm32f4xx_it.c ****       __asm volatile("MRS %0, MSP" : "=r"(stacked_regs));
- 101:Core/Src/stm32f4xx_it.c ****   }
- 102:Core/Src/stm32f4xx_it.c **** 
- 103:Core/Src/stm32f4xx_it.c ****   /* CPU stacked registers (automatically pushed on exception entry) */
- 104:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_r0  = stacked_regs[0];
-  91              		.loc 1 104 3 view .LVU14
-  92              		.loc 1 104 47 is_stmt 0 view .LVU15
-  93 0010 1A68     		ldr	r2, [r3]
-  94              		.loc 1 104 21 view .LVU16
-  95 0012 0F92     		str	r2, [sp, #60]
- 105:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_r1  = stacked_regs[1];
-  96              		.loc 1 105 3 is_stmt 1 view .LVU17
-  97              		.loc 1 105 21 is_stmt 0 view .LVU18
-  98 0014 5A68     		ldr	r2, [r3, #4]
-  99 0016 0E92     		str	r2, [sp, #56]
- 106:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_r2  = stacked_regs[2];
- 100              		.loc 1 106 3 is_stmt 1 view .LVU19
- 101              		.loc 1 106 21 is_stmt 0 view .LVU20
- 102 0018 9A68     		ldr	r2, [r3, #8]
- 103 001a 0D92     		str	r2, [sp, #52]
- 107:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_r3  = stacked_regs[3];
- 104              		.loc 1 107 3 is_stmt 1 view .LVU21
- 105              		.loc 1 107 21 is_stmt 0 view .LVU22
- 106 001c DA68     		ldr	r2, [r3, #12]
- 107 001e 0C92     		str	r2, [sp, #48]
- 108:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_r12 = stacked_regs[4];
- 108              		.loc 1 108 3 is_stmt 1 view .LVU23
- 109              		.loc 1 108 21 is_stmt 0 view .LVU24
- 110 0020 1A69     		ldr	r2, [r3, #16]
- 111 0022 0B92     		str	r2, [sp, #44]
- 109:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_lr  = stacked_regs[5]; // LR (R14)
- 112              		.loc 1 109 3 is_stmt 1 view .LVU25
- 113              		.loc 1 109 21 is_stmt 0 view .LVU26
- 114 0024 5A69     		ldr	r2, [r3, #20]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 22
+  61 0008 0AB1     		cbz	r2, .L8
+  62              	.LVL1:
+  63              	.L3:
+  62:controller/IO/outputs.c ****     {
+  63:controller/IO/outputs.c ****         HAL_GPIO_WritePin(pin->gpio, pin->pin, state);
+  64:controller/IO/outputs.c ****     }
+  65:controller/IO/outputs.c ****     __enable_irq();
+  64              		.loc 1 65 5 is_stmt 1 view .LVU10
+  65              	.LBB16:
+  66              	.LBI16:
+ 949:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+  67              		.loc 2 949 27 view .LVU11
+  68              	.LBB17:
+ 951:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+  69              		.loc 2 951 3 view .LVU12
+  70              		.syntax unified
+  71              	@ 951 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  72 000a 62B6     		cpsie i
+  73              	@ 0 "" 2
+  74              		.thumb
+  75              		.syntax unified
+  76              	.LBE17:
+  77              	.LBE16:
+  66:controller/IO/outputs.c **** }
+  78              		.loc 1 66 1 is_stmt 0 view .LVU13
+  79 000c 08BD     		pop	{r3, pc}
+  80              	.LVL2:
+  81              	.L8:
+  63:controller/IO/outputs.c ****     }
+  82              		.loc 1 63 9 is_stmt 1 view .LVU14
+  83 000e 0A46     		mov	r2, r1
+  84 0010 8188     		ldrh	r1, [r0, #4]
+  85              	.LVL3:
+  63:controller/IO/outputs.c ****     }
+  86              		.loc 1 63 9 is_stmt 0 view .LVU15
+  87 0012 0068     		ldr	r0, [r0]
+  88              	.LVL4:
+  63:controller/IO/outputs.c ****     }
+  89              		.loc 1 63 9 view .LVU16
+  90 0014 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  91              	.LVL5:
+  92 0018 F7E7     		b	.L3
+  93              	.LVL6:
+  94              	.L5:
+  95              		.cfi_def_cfa_offset 0
+  96              		.cfi_restore 3
+  97              		.cfi_restore 14
+  63:controller/IO/outputs.c ****     }
+  98              		.loc 1 63 9 view .LVU17
+  99 001a 7047     		bx	lr
+ 100              		.cfi_endproc
+ 101              	.LFE224:
+ 103              		.section	.text.output_override,"ax",%progbits
+ 104              		.align	1
+ 105              		.global	output_override
+ 106              		.syntax unified
+ 107              		.thumb
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 21
 
 
- 115 0026 0A92     		str	r2, [sp, #40]
- 110:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_pc  = stacked_regs[6]; // PC at time of fault
- 116              		.loc 1 110 3 is_stmt 1 view .LVU27
- 117              		.loc 1 110 21 is_stmt 0 view .LVU28
- 118 0028 9A69     		ldr	r2, [r3, #24]
- 119 002a 0992     		str	r2, [sp, #36]
- 111:Core/Src/stm32f4xx_it.c ****   volatile uint32_t stacked_psr = stacked_regs[7]; // xPSR
- 120              		.loc 1 111 3 is_stmt 1 view .LVU29
- 121              		.loc 1 111 21 is_stmt 0 view .LVU30
- 122 002c DA69     		ldr	r2, [r3, #28]
- 123 002e 0892     		str	r2, [sp, #32]
- 112:Core/Src/stm32f4xx_it.c **** 
- 113:Core/Src/stm32f4xx_it.c ****   /* System fault status registers */
- 114:Core/Src/stm32f4xx_it.c ****   volatile uint32_t cfsr  = SCB->CFSR;   // Configurable Fault Status
- 124              		.loc 1 114 3 is_stmt 1 view .LVU31
- 125              		.loc 1 114 32 is_stmt 0 view .LVU32
- 126 0030 0B4A     		ldr	r2, .L8
- 127 0032 916A     		ldr	r1, [r2, #40]
- 128              		.loc 1 114 21 view .LVU33
- 129 0034 0791     		str	r1, [sp, #28]
- 115:Core/Src/stm32f4xx_it.c ****   volatile uint32_t hfsr  = SCB->HFSR;   // HardFault Status
- 130              		.loc 1 115 3 is_stmt 1 view .LVU34
- 131              		.loc 1 115 32 is_stmt 0 view .LVU35
- 132 0036 D16A     		ldr	r1, [r2, #44]
- 133              		.loc 1 115 21 view .LVU36
- 134 0038 0691     		str	r1, [sp, #24]
- 116:Core/Src/stm32f4xx_it.c ****   volatile uint32_t mmfar = SCB->MMFAR;  // MemManage Fault Address
- 135              		.loc 1 116 3 is_stmt 1 view .LVU37
- 136              		.loc 1 116 32 is_stmt 0 view .LVU38
- 137 003a 516B     		ldr	r1, [r2, #52]
- 138              		.loc 1 116 21 view .LVU39
- 139 003c 0591     		str	r1, [sp, #20]
- 117:Core/Src/stm32f4xx_it.c ****   volatile uint32_t bfar  = SCB->BFAR;   // BusFault Address
- 140              		.loc 1 117 3 is_stmt 1 view .LVU40
- 141              		.loc 1 117 32 is_stmt 0 view .LVU41
- 142 003e 926B     		ldr	r2, [r2, #56]
- 143              		.loc 1 117 21 view .LVU42
- 144 0040 0492     		str	r2, [sp, #16]
- 118:Core/Src/stm32f4xx_it.c **** 
- 119:Core/Src/stm32f4xx_it.c ****   /* Optional: peek a few words below SP to see if stack is filled with 0xA5 */
- 120:Core/Src/stm32f4xx_it.c ****   volatile uint32_t s_m1 = stacked_regs[-1];
- 145              		.loc 1 120 3 is_stmt 1 view .LVU43
- 146              		.loc 1 120 21 is_stmt 0 view .LVU44
- 147 0042 53F8042C 		ldr	r2, [r3, #-4]
- 148 0046 0392     		str	r2, [sp, #12]
- 121:Core/Src/stm32f4xx_it.c ****   volatile uint32_t s_m2 = stacked_regs[-2];
- 149              		.loc 1 121 3 is_stmt 1 view .LVU45
- 150              		.loc 1 121 21 is_stmt 0 view .LVU46
- 151 0048 53F8082C 		ldr	r2, [r3, #-8]
- 152 004c 0292     		str	r2, [sp, #8]
- 122:Core/Src/stm32f4xx_it.c ****   volatile uint32_t s_m3 = stacked_regs[-3];
- 153              		.loc 1 122 3 is_stmt 1 view .LVU47
- 154              		.loc 1 122 21 is_stmt 0 view .LVU48
- 155 004e 53F80C3C 		ldr	r3, [r3, #-12]
- 156              	.LVL2:
- 157              		.loc 1 122 21 view .LVU49
- 158 0052 0193     		str	r3, [sp, #4]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 23
+ 108              		.thumb_func
+ 110              	output_override:
+ 111              	.LVL7:
+ 112              	.LFB225:
+  67:controller/IO/outputs.c **** 
+  68:controller/IO/outputs.c **** void output_override(controller_output_pin_t *pin, bool forced_state)
+  69:controller/IO/outputs.c **** {
+ 113              		.loc 1 69 1 is_stmt 1 view -0
+ 114              		.cfi_startproc
+ 115              		@ args = 0, pretend = 0, frame = 0
+ 116              		@ frame_needed = 0, uses_anonymous_args = 0
+  70:controller/IO/outputs.c ****     if (pin == NULL)
+ 117              		.loc 1 70 5 view .LVU19
+ 118              		.loc 1 70 8 is_stmt 0 view .LVU20
+ 119 0000 A0B1     		cbz	r0, .L12
+  69:controller/IO/outputs.c ****     if (pin == NULL)
+ 120              		.loc 1 69 1 view .LVU21
+ 121 0002 38B5     		push	{r3, r4, r5, lr}
+ 122              		.cfi_def_cfa_offset 16
+ 123              		.cfi_offset 3, -16
+ 124              		.cfi_offset 4, -12
+ 125              		.cfi_offset 5, -8
+ 126              		.cfi_offset 14, -4
+ 127 0004 0D46     		mov	r5, r1
+ 128 0006 0446     		mov	r4, r0
+  71:controller/IO/outputs.c ****     {
+  72:controller/IO/outputs.c ****         return;
+  73:controller/IO/outputs.c ****     }
+  74:controller/IO/outputs.c **** 
+  75:controller/IO/outputs.c ****     __disable_irq();
+ 129              		.loc 1 75 5 is_stmt 1 view .LVU22
+ 130              	.LBB18:
+ 131              	.LBI18:
+ 960:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 132              		.loc 2 960 27 view .LVU23
+ 133              	.LBB19:
+ 134              		.loc 2 962 3 view .LVU24
+ 135              		.syntax unified
+ 136              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 137 0008 72B6     		cpsid i
+ 138              	@ 0 "" 2
+ 139              		.thumb
+ 140              		.syntax unified
+ 141              	.LBE19:
+ 142              	.LBE18:
+  76:controller/IO/outputs.c ****     pin->last_normal_state = HAL_GPIO_ReadPin(pin->gpio, pin->pin);
+ 143              		.loc 1 76 5 view .LVU25
+ 144              		.loc 1 76 30 is_stmt 0 view .LVU26
+ 145 000a 8188     		ldrh	r1, [r0, #4]
+ 146              	.LVL8:
+ 147              		.loc 1 76 30 view .LVU27
+ 148 000c 0068     		ldr	r0, [r0]
+ 149              	.LVL9:
+ 150              		.loc 1 76 30 view .LVU28
+ 151 000e FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 152              	.LVL10:
+ 153              		.loc 1 76 5 discriminator 1 view .LVU29
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 22
 
 
- 123:Core/Src/stm32f4xx_it.c **** 
- 124:Core/Src/stm32f4xx_it.c ****   __NOP();  // <-- Set a breakpoint here and inspect variables above
- 159              		.loc 1 124 3 is_stmt 1 view .LVU50
- 160              		.syntax unified
- 161              	@ 124 "Core/Src/stm32f4xx_it.c" 1
- 162 0054 00BF     		nop
- 163              	@ 0 "" 2
- 164              		.thumb
- 165              		.syntax unified
- 166              	.L6:
- 125:Core/Src/stm32f4xx_it.c ****   /* USER CODE END HardFault_IRQn 0 */
- 126:Core/Src/stm32f4xx_it.c ****   while (1)
- 167              		.loc 1 126 3 view .LVU51
- 127:Core/Src/stm32f4xx_it.c ****   {
- 128:Core/Src/stm32f4xx_it.c ****     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
- 129:Core/Src/stm32f4xx_it.c ****     /* USER CODE END W1_HardFault_IRQn 0 */
- 130:Core/Src/stm32f4xx_it.c ****   }
- 168              		.loc 1 130 3 view .LVU52
- 126:Core/Src/stm32f4xx_it.c ****   {
- 169              		.loc 1 126 9 view .LVU53
- 170 0056 FEE7     		b	.L6
- 171              	.LVL3:
- 172              	.L4:
- 100:Core/Src/stm32f4xx_it.c ****   }
- 173              		.loc 1 100 7 view .LVU54
- 174              		.syntax unified
- 175              	@ 100 "Core/Src/stm32f4xx_it.c" 1
- 176 0058 EFF30883 		MRS r3, MSP
- 177              	@ 0 "" 2
- 178              		.thumb
- 179              		.syntax unified
- 180 005c D8E7     		b	.L5
- 181              	.L9:
- 182 005e 00BF     		.align	2
- 183              	.L8:
- 184 0060 00ED00E0 		.word	-536810240
- 185              		.cfi_endproc
- 186              	.LFE221:
- 188              		.section	.text.MemManage_Handler,"ax",%progbits
- 189              		.align	1
- 190              		.global	MemManage_Handler
- 191              		.syntax unified
- 192              		.thumb
- 193              		.thumb_func
- 195              	MemManage_Handler:
- 196              	.LFB222:
- 131:Core/Src/stm32f4xx_it.c **** }
- 132:Core/Src/stm32f4xx_it.c **** 
- 133:Core/Src/stm32f4xx_it.c **** /**
- 134:Core/Src/stm32f4xx_it.c ****   * @brief This function handles Memory management fault.
- 135:Core/Src/stm32f4xx_it.c ****   */
- 136:Core/Src/stm32f4xx_it.c **** void MemManage_Handler(void)
- 137:Core/Src/stm32f4xx_it.c **** {
- 197              		.loc 1 137 1 view -0
- 198              		.cfi_startproc
- 199              		@ Volatile: function does not return.
- 200              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 24
+ 154 0012 0038     		subs	r0, r0, #0
+ 155 0014 18BF     		it	ne
+ 156 0016 0120     		movne	r0, #1
+ 157              		.loc 1 76 28 discriminator 1 view .LVU30
+ 158 0018 6072     		strb	r0, [r4, #9]
+  77:controller/IO/outputs.c ****     pin->override_active = true;      // renamed for clarity
+ 159              		.loc 1 77 5 is_stmt 1 view .LVU31
+ 160              		.loc 1 77 26 is_stmt 0 view .LVU32
+ 161 001a 0123     		movs	r3, #1
+ 162 001c 2372     		strb	r3, [r4, #8]
+  78:controller/IO/outputs.c ****     HAL_GPIO_WritePin(pin->gpio, pin->pin, forced_state);
+ 163              		.loc 1 78 5 is_stmt 1 view .LVU33
+ 164 001e 2A46     		mov	r2, r5
+ 165 0020 A188     		ldrh	r1, [r4, #4]
+ 166 0022 2068     		ldr	r0, [r4]
+ 167 0024 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 168              	.LVL11:
+  79:controller/IO/outputs.c ****     __enable_irq();
+ 169              		.loc 1 79 5 view .LVU34
+ 170              	.LBB20:
+ 171              	.LBI20:
+ 949:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 172              		.loc 2 949 27 view .LVU35
+ 173              	.LBB21:
+ 951:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 174              		.loc 2 951 3 view .LVU36
+ 175              		.syntax unified
+ 176              	@ 951 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 177 0028 62B6     		cpsie i
+ 178              	@ 0 "" 2
+ 179              		.thumb
+ 180              		.syntax unified
+ 181              	.LBE21:
+ 182              	.LBE20:
+  80:controller/IO/outputs.c **** }
+ 183              		.loc 1 80 1 is_stmt 0 view .LVU37
+ 184 002a 38BD     		pop	{r3, r4, r5, pc}
+ 185              	.LVL12:
+ 186              	.L12:
+ 187              		.cfi_def_cfa_offset 0
+ 188              		.cfi_restore 3
+ 189              		.cfi_restore 4
+ 190              		.cfi_restore 5
+ 191              		.cfi_restore 14
+ 192              		.loc 1 80 1 view .LVU38
+ 193 002c 7047     		bx	lr
+ 194              		.cfi_endproc
+ 195              	.LFE225:
+ 197              		.section	.text.output_override_clear,"ax",%progbits
+ 198              		.align	1
+ 199              		.global	output_override_clear
+ 200              		.syntax unified
+ 201              		.thumb
+ 202              		.thumb_func
+ 204              	output_override_clear:
+ 205              	.LVL13:
+ 206              	.LFB226:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 23
 
 
- 201              		@ frame_needed = 0, uses_anonymous_args = 0
- 202              		@ link register save eliminated.
- 203              	.L11:
- 138:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN MemoryManagement_IRQn 0 */
- 139:Core/Src/stm32f4xx_it.c **** 
- 140:Core/Src/stm32f4xx_it.c ****   /* USER CODE END MemoryManagement_IRQn 0 */
- 141:Core/Src/stm32f4xx_it.c ****   while (1)
- 204              		.loc 1 141 3 view .LVU56
- 142:Core/Src/stm32f4xx_it.c ****   {
- 143:Core/Src/stm32f4xx_it.c ****     /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
- 144:Core/Src/stm32f4xx_it.c ****     /* USER CODE END W1_MemoryManagement_IRQn 0 */
- 145:Core/Src/stm32f4xx_it.c ****   }
- 205              		.loc 1 145 3 view .LVU57
- 141:Core/Src/stm32f4xx_it.c ****   {
- 206              		.loc 1 141 9 view .LVU58
- 207 0000 FEE7     		b	.L11
- 208              		.cfi_endproc
- 209              	.LFE222:
- 211              		.section	.text.BusFault_Handler,"ax",%progbits
- 212              		.align	1
- 213              		.global	BusFault_Handler
- 214              		.syntax unified
- 215              		.thumb
- 216              		.thumb_func
- 218              	BusFault_Handler:
- 219              	.LFB223:
- 146:Core/Src/stm32f4xx_it.c **** }
- 147:Core/Src/stm32f4xx_it.c **** 
- 148:Core/Src/stm32f4xx_it.c **** /**
- 149:Core/Src/stm32f4xx_it.c ****   * @brief This function handles Pre-fetch fault, memory access fault.
- 150:Core/Src/stm32f4xx_it.c ****   */
- 151:Core/Src/stm32f4xx_it.c **** void BusFault_Handler(void)
- 152:Core/Src/stm32f4xx_it.c **** {
- 220              		.loc 1 152 1 view -0
- 221              		.cfi_startproc
- 222              		@ Volatile: function does not return.
- 223              		@ args = 0, pretend = 0, frame = 0
- 224              		@ frame_needed = 0, uses_anonymous_args = 0
- 225              		@ link register save eliminated.
- 226              	.L13:
- 153:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN BusFault_IRQn 0 */
- 154:Core/Src/stm32f4xx_it.c **** 
- 155:Core/Src/stm32f4xx_it.c ****   /* USER CODE END BusFault_IRQn 0 */
- 156:Core/Src/stm32f4xx_it.c ****   while (1)
- 227              		.loc 1 156 3 view .LVU60
- 157:Core/Src/stm32f4xx_it.c ****   {
- 158:Core/Src/stm32f4xx_it.c ****     /* USER CODE BEGIN W1_BusFault_IRQn 0 */
- 159:Core/Src/stm32f4xx_it.c ****     /* USER CODE END W1_BusFault_IRQn 0 */
- 160:Core/Src/stm32f4xx_it.c ****   }
- 228              		.loc 1 160 3 view .LVU61
- 156:Core/Src/stm32f4xx_it.c ****   {
- 229              		.loc 1 156 9 view .LVU62
- 230 0000 FEE7     		b	.L13
- 231              		.cfi_endproc
- 232              	.LFE223:
- 234              		.section	.text.UsageFault_Handler,"ax",%progbits
- 235              		.align	1
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 25
+  81:controller/IO/outputs.c **** 
+  82:controller/IO/outputs.c **** void output_override_clear(controller_output_pin_t *pin)
+  83:controller/IO/outputs.c **** {
+ 207              		.loc 1 83 1 is_stmt 1 view -0
+ 208              		.cfi_startproc
+ 209              		@ args = 0, pretend = 0, frame = 0
+ 210              		@ frame_needed = 0, uses_anonymous_args = 0
+  84:controller/IO/outputs.c ****     if (pin == NULL)
+ 211              		.loc 1 84 5 view .LVU40
+ 212              		.loc 1 84 8 is_stmt 0 view .LVU41
+ 213 0000 50B1     		cbz	r0, .L18
+  83:controller/IO/outputs.c ****     if (pin == NULL)
+ 214              		.loc 1 83 1 view .LVU42
+ 215 0002 08B5     		push	{r3, lr}
+ 216              		.cfi_def_cfa_offset 8
+ 217              		.cfi_offset 3, -8
+ 218              		.cfi_offset 14, -4
+  85:controller/IO/outputs.c ****     {
+  86:controller/IO/outputs.c ****         return;
+  87:controller/IO/outputs.c ****     }
+  88:controller/IO/outputs.c **** 
+  89:controller/IO/outputs.c ****     __disable_irq();
+ 219              		.loc 1 89 5 is_stmt 1 view .LVU43
+ 220              	.LBB22:
+ 221              	.LBI22:
+ 960:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 222              		.loc 2 960 27 view .LVU44
+ 223              	.LBB23:
+ 224              		.loc 2 962 3 view .LVU45
+ 225              		.syntax unified
+ 226              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 227 0004 72B6     		cpsid i
+ 228              	@ 0 "" 2
+ 229              		.thumb
+ 230              		.syntax unified
+ 231              	.LBE23:
+ 232              	.LBE22:
+  90:controller/IO/outputs.c ****     pin->override_active = false;
+ 233              		.loc 1 90 5 view .LVU46
+ 234              		.loc 1 90 26 is_stmt 0 view .LVU47
+ 235 0006 0022     		movs	r2, #0
+ 236 0008 0272     		strb	r2, [r0, #8]
+  91:controller/IO/outputs.c ****     HAL_GPIO_WritePin(pin->gpio, pin->pin, pin->last_normal_state);
+ 237              		.loc 1 91 5 is_stmt 1 view .LVU48
+ 238 000a 427A     		ldrb	r2, [r0, #9]	@ zero_extendqisi2
+ 239 000c 8188     		ldrh	r1, [r0, #4]
+ 240 000e 0068     		ldr	r0, [r0]
+ 241              	.LVL14:
+ 242              		.loc 1 91 5 is_stmt 0 view .LVU49
+ 243 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 244              	.LVL15:
+  92:controller/IO/outputs.c ****     __enable_irq();
+ 245              		.loc 1 92 5 is_stmt 1 view .LVU50
+ 246              	.LBB24:
+ 247              	.LBI24:
+ 949:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 248              		.loc 2 949 27 view .LVU51
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 24
 
 
- 236              		.global	UsageFault_Handler
- 237              		.syntax unified
- 238              		.thumb
- 239              		.thumb_func
- 241              	UsageFault_Handler:
- 242              	.LFB224:
- 161:Core/Src/stm32f4xx_it.c **** }
- 162:Core/Src/stm32f4xx_it.c **** 
- 163:Core/Src/stm32f4xx_it.c **** /**
- 164:Core/Src/stm32f4xx_it.c ****   * @brief This function handles Undefined instruction or illegal state.
- 165:Core/Src/stm32f4xx_it.c ****   */
- 166:Core/Src/stm32f4xx_it.c **** void UsageFault_Handler(void)
- 167:Core/Src/stm32f4xx_it.c **** {
- 243              		.loc 1 167 1 view -0
- 244              		.cfi_startproc
- 245              		@ Volatile: function does not return.
- 246              		@ args = 0, pretend = 0, frame = 0
- 247              		@ frame_needed = 0, uses_anonymous_args = 0
- 248              		@ link register save eliminated.
- 249              	.L15:
- 168:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN UsageFault_IRQn 0 */
- 169:Core/Src/stm32f4xx_it.c **** 
- 170:Core/Src/stm32f4xx_it.c ****   /* USER CODE END UsageFault_IRQn 0 */
- 171:Core/Src/stm32f4xx_it.c ****   while (1)
- 250              		.loc 1 171 3 view .LVU64
- 172:Core/Src/stm32f4xx_it.c ****   {
- 173:Core/Src/stm32f4xx_it.c ****     /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
- 174:Core/Src/stm32f4xx_it.c ****     /* USER CODE END W1_UsageFault_IRQn 0 */
- 175:Core/Src/stm32f4xx_it.c ****   }
- 251              		.loc 1 175 3 view .LVU65
- 171:Core/Src/stm32f4xx_it.c ****   {
- 252              		.loc 1 171 9 view .LVU66
- 253 0000 FEE7     		b	.L15
- 254              		.cfi_endproc
- 255              	.LFE224:
- 257              		.section	.text.DebugMon_Handler,"ax",%progbits
- 258              		.align	1
- 259              		.global	DebugMon_Handler
- 260              		.syntax unified
- 261              		.thumb
- 262              		.thumb_func
- 264              	DebugMon_Handler:
- 265              	.LFB225:
- 176:Core/Src/stm32f4xx_it.c **** }
- 177:Core/Src/stm32f4xx_it.c **** 
- 178:Core/Src/stm32f4xx_it.c **** /**
- 179:Core/Src/stm32f4xx_it.c ****   * @brief This function handles Debug monitor.
- 180:Core/Src/stm32f4xx_it.c ****   */
- 181:Core/Src/stm32f4xx_it.c **** void DebugMon_Handler(void)
- 182:Core/Src/stm32f4xx_it.c **** {
- 266              		.loc 1 182 1 view -0
- 267              		.cfi_startproc
- 268              		@ args = 0, pretend = 0, frame = 0
- 269              		@ frame_needed = 0, uses_anonymous_args = 0
- 270              		@ link register save eliminated.
- 183:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN DebugMonitor_IRQn 0 */
- 184:Core/Src/stm32f4xx_it.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 26
+ 249              	.LBB25:
+ 951:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 250              		.loc 2 951 3 view .LVU52
+ 251              		.syntax unified
+ 252              	@ 951 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 253 0014 62B6     		cpsie i
+ 254              	@ 0 "" 2
+ 255              		.thumb
+ 256              		.syntax unified
+ 257              	.LBE25:
+ 258              	.LBE24:
+  93:controller/IO/outputs.c **** }
+ 259              		.loc 1 93 1 is_stmt 0 view .LVU53
+ 260 0016 08BD     		pop	{r3, pc}
+ 261              	.LVL16:
+ 262              	.L18:
+ 263              		.cfi_def_cfa_offset 0
+ 264              		.cfi_restore 3
+ 265              		.cfi_restore 14
+ 266              		.loc 1 93 1 view .LVU54
+ 267 0018 7047     		bx	lr
+ 268              		.cfi_endproc
+ 269              	.LFE226:
+ 271              		.section	.text.output_main_relay_set,"ax",%progbits
+ 272              		.align	1
+ 273              		.global	output_main_relay_set
+ 274              		.syntax unified
+ 275              		.thumb
+ 276              		.thumb_func
+ 278              	output_main_relay_set:
+ 279              	.LVL17:
+ 280              	.LFB227:
+  94:controller/IO/outputs.c **** 
+  95:controller/IO/outputs.c **** 
+  96:controller/IO/outputs.c **** void output_main_relay_set(bool state)
+  97:controller/IO/outputs.c **** {
+ 281              		.loc 1 97 1 is_stmt 1 view -0
+ 282              		.cfi_startproc
+ 283              		@ args = 0, pretend = 0, frame = 0
+ 284              		@ frame_needed = 0, uses_anonymous_args = 0
+ 285              		.loc 1 97 1 is_stmt 0 view .LVU56
+ 286 0000 08B5     		push	{r3, lr}
+ 287              		.cfi_def_cfa_offset 8
+ 288              		.cfi_offset 3, -8
+ 289              		.cfi_offset 14, -4
+ 290 0002 0146     		mov	r1, r0
+  98:controller/IO/outputs.c ****     output_set(&main_relay_output, state);
+ 291              		.loc 1 98 5 is_stmt 1 view .LVU57
+ 292 0004 0148     		ldr	r0, .L23
+ 293              	.LVL18:
+ 294              		.loc 1 98 5 is_stmt 0 view .LVU58
+ 295 0006 FFF7FEFF 		bl	output_set
+ 296              	.LVL19:
+  99:controller/IO/outputs.c **** }
+ 297              		.loc 1 99 1 view .LVU59
+ 298 000a 08BD     		pop	{r3, pc}
+ 299              	.L24:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 25
 
 
- 185:Core/Src/stm32f4xx_it.c ****   /* USER CODE END DebugMonitor_IRQn 0 */
- 186:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN DebugMonitor_IRQn 1 */
- 187:Core/Src/stm32f4xx_it.c **** 
- 188:Core/Src/stm32f4xx_it.c ****   /* USER CODE END DebugMonitor_IRQn 1 */
- 189:Core/Src/stm32f4xx_it.c **** }
- 271              		.loc 1 189 1 view .LVU68
- 272 0000 7047     		bx	lr
- 273              		.cfi_endproc
- 274              	.LFE225:
- 276              		.section	.text.EXTI9_5_IRQHandler,"ax",%progbits
- 277              		.align	1
- 278              		.global	EXTI9_5_IRQHandler
- 279              		.syntax unified
- 280              		.thumb
- 281              		.thumb_func
- 283              	EXTI9_5_IRQHandler:
- 284              	.LFB226:
- 190:Core/Src/stm32f4xx_it.c **** 
- 191:Core/Src/stm32f4xx_it.c **** /******************************************************************************/
- 192:Core/Src/stm32f4xx_it.c **** /* STM32F4xx Peripheral Interrupt Handlers                                    */
- 193:Core/Src/stm32f4xx_it.c **** /* Add here the Interrupt Handlers for the used peripherals.                  */
- 194:Core/Src/stm32f4xx_it.c **** /* For the available peripheral interrupt handler names,                      */
- 195:Core/Src/stm32f4xx_it.c **** /* please refer to the startup file (startup_stm32f4xx.s).                    */
- 196:Core/Src/stm32f4xx_it.c **** /******************************************************************************/
- 197:Core/Src/stm32f4xx_it.c **** 
- 198:Core/Src/stm32f4xx_it.c **** /**
- 199:Core/Src/stm32f4xx_it.c ****   * @brief This function handles EXTI line[9:5] interrupts.
- 200:Core/Src/stm32f4xx_it.c ****   */
- 201:Core/Src/stm32f4xx_it.c **** void EXTI9_5_IRQHandler(void)
- 202:Core/Src/stm32f4xx_it.c **** {
- 285              		.loc 1 202 1 view -0
- 286              		.cfi_startproc
- 287              		@ args = 0, pretend = 0, frame = 0
- 288              		@ frame_needed = 0, uses_anonymous_args = 0
- 289 0000 08B5     		push	{r3, lr}
- 290              		.cfi_def_cfa_offset 8
- 291              		.cfi_offset 3, -8
- 292              		.cfi_offset 14, -4
- 203:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
- 204:Core/Src/stm32f4xx_it.c **** 
- 205:Core/Src/stm32f4xx_it.c ****   /* USER CODE END EXTI9_5_IRQn 0 */
- 206:Core/Src/stm32f4xx_it.c ****   HAL_GPIO_EXTI_IRQHandler(SENSOR_VR1_Pin);
- 293              		.loc 1 206 3 view .LVU70
- 294 0002 4FF48070 		mov	r0, #256
- 295 0006 FFF7FEFF 		bl	HAL_GPIO_EXTI_IRQHandler
- 296              	.LVL4:
- 207:Core/Src/stm32f4xx_it.c ****   HAL_GPIO_EXTI_IRQHandler(SENSOR_VR2_Pin);
- 297              		.loc 1 207 3 view .LVU71
- 298 000a 4FF40070 		mov	r0, #512
- 299 000e FFF7FEFF 		bl	HAL_GPIO_EXTI_IRQHandler
- 300              	.LVL5:
- 208:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
- 209:Core/Src/stm32f4xx_it.c **** 
- 210:Core/Src/stm32f4xx_it.c ****   /* USER CODE END EXTI9_5_IRQn 1 */
- 211:Core/Src/stm32f4xx_it.c **** }
- 301              		.loc 1 211 1 is_stmt 0 view .LVU72
- 302 0012 08BD     		pop	{r3, pc}
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 27
-
-
+ 300              		.align	2
+ 301              	.L23:
+ 302 000c 00000000 		.word	main_relay_output
  303              		.cfi_endproc
- 304              	.LFE226:
- 306              		.section	.text.TIM1_TRG_COM_TIM11_IRQHandler,"ax",%progbits
+ 304              	.LFE227:
+ 306              		.section	.text.output_gas_solenoid_set,"ax",%progbits
  307              		.align	1
- 308              		.global	TIM1_TRG_COM_TIM11_IRQHandler
+ 308              		.global	output_gas_solenoid_set
  309              		.syntax unified
  310              		.thumb
  311              		.thumb_func
- 313              	TIM1_TRG_COM_TIM11_IRQHandler:
- 314              	.LFB227:
- 212:Core/Src/stm32f4xx_it.c **** 
- 213:Core/Src/stm32f4xx_it.c **** /**
- 214:Core/Src/stm32f4xx_it.c ****   * @brief This function handles TIM1 trigger and commutation interrupts and TIM11 global interrupt
- 215:Core/Src/stm32f4xx_it.c ****   */
- 216:Core/Src/stm32f4xx_it.c **** void TIM1_TRG_COM_TIM11_IRQHandler(void)
- 217:Core/Src/stm32f4xx_it.c **** {
- 315              		.loc 1 217 1 is_stmt 1 view -0
- 316              		.cfi_startproc
- 317              		@ args = 0, pretend = 0, frame = 0
- 318              		@ frame_needed = 0, uses_anonymous_args = 0
- 319 0000 08B5     		push	{r3, lr}
- 320              		.cfi_def_cfa_offset 8
- 321              		.cfi_offset 3, -8
- 322              		.cfi_offset 14, -4
- 218:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 0 */
- 219:Core/Src/stm32f4xx_it.c **** 
- 220:Core/Src/stm32f4xx_it.c ****   /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 0 */
- 221:Core/Src/stm32f4xx_it.c ****   HAL_TIM_IRQHandler(&htim11);
- 323              		.loc 1 221 3 view .LVU74
- 324 0002 0248     		ldr	r0, .L21
- 325 0004 FFF7FEFF 		bl	HAL_TIM_IRQHandler
- 326              	.LVL6:
- 222:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 1 */
- 223:Core/Src/stm32f4xx_it.c **** 
- 224:Core/Src/stm32f4xx_it.c ****   /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 1 */
- 225:Core/Src/stm32f4xx_it.c **** }
- 327              		.loc 1 225 1 is_stmt 0 view .LVU75
- 328 0008 08BD     		pop	{r3, pc}
- 329              	.L22:
- 330 000a 00BF     		.align	2
- 331              	.L21:
- 332 000c 00000000 		.word	htim11
- 333              		.cfi_endproc
- 334              	.LFE227:
- 336              		.section	.text.TIM2_IRQHandler,"ax",%progbits
- 337              		.align	1
- 338              		.global	TIM2_IRQHandler
- 339              		.syntax unified
- 340              		.thumb
- 341              		.thumb_func
- 343              	TIM2_IRQHandler:
- 344              	.LFB228:
- 226:Core/Src/stm32f4xx_it.c **** 
- 227:Core/Src/stm32f4xx_it.c **** /**
- 228:Core/Src/stm32f4xx_it.c ****   * @brief This function handles TIM2 global interrupt.
- 229:Core/Src/stm32f4xx_it.c ****   */
- 230:Core/Src/stm32f4xx_it.c **** void TIM2_IRQHandler(void)
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 28
+ 313              	output_gas_solenoid_set:
+ 314              	.LVL20:
+ 315              	.LFB228:
+ 100:controller/IO/outputs.c **** 
+ 101:controller/IO/outputs.c **** void output_gas_solenoid_set(bool state)
+ 102:controller/IO/outputs.c **** {
+ 316              		.loc 1 102 1 is_stmt 1 view -0
+ 317              		.cfi_startproc
+ 318              		@ args = 0, pretend = 0, frame = 0
+ 319              		@ frame_needed = 0, uses_anonymous_args = 0
+ 320              		.loc 1 102 1 is_stmt 0 view .LVU61
+ 321 0000 08B5     		push	{r3, lr}
+ 322              		.cfi_def_cfa_offset 8
+ 323              		.cfi_offset 3, -8
+ 324              		.cfi_offset 14, -4
+ 325 0002 0146     		mov	r1, r0
+ 103:controller/IO/outputs.c ****     output_set(&gas_solenoid_output, state);
+ 326              		.loc 1 103 5 is_stmt 1 view .LVU62
+ 327 0004 0148     		ldr	r0, .L27
+ 328              	.LVL21:
+ 329              		.loc 1 103 5 is_stmt 0 view .LVU63
+ 330 0006 FFF7FEFF 		bl	output_set
+ 331              	.LVL22:
+ 104:controller/IO/outputs.c **** }
+ 332              		.loc 1 104 1 view .LVU64
+ 333 000a 08BD     		pop	{r3, pc}
+ 334              	.L28:
+ 335              		.align	2
+ 336              	.L27:
+ 337 000c 00000000 		.word	gas_solenoid_output
+ 338              		.cfi_endproc
+ 339              	.LFE228:
+ 341              		.section	.text.output_fuel_pump_set,"ax",%progbits
+ 342              		.align	1
+ 343              		.global	output_fuel_pump_set
+ 344              		.syntax unified
+ 345              		.thumb
+ 346              		.thumb_func
+ 348              	output_fuel_pump_set:
+ 349              	.LVL23:
+ 350              	.LFB229:
+ 105:controller/IO/outputs.c **** 
+ 106:controller/IO/outputs.c **** void output_fuel_pump_set(bool state)
+ 107:controller/IO/outputs.c **** {
+ 351              		.loc 1 107 1 is_stmt 1 view -0
+ 352              		.cfi_startproc
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 26
 
 
- 231:Core/Src/stm32f4xx_it.c **** {
- 345              		.loc 1 231 1 is_stmt 1 view -0
- 346              		.cfi_startproc
- 347              		@ args = 0, pretend = 0, frame = 0
- 348              		@ frame_needed = 0, uses_anonymous_args = 0
- 349 0000 08B5     		push	{r3, lr}
- 350              		.cfi_def_cfa_offset 8
- 351              		.cfi_offset 3, -8
- 352              		.cfi_offset 14, -4
- 232:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN TIM2_IRQn 0 */
- 233:Core/Src/stm32f4xx_it.c ****   scheduler_timer_callback();
- 353              		.loc 1 233 3 view .LVU77
- 354 0002 FFF7FEFF 		bl	scheduler_timer_callback
- 355              	.LVL7:
- 234:Core/Src/stm32f4xx_it.c **** 
- 235:Core/Src/stm32f4xx_it.c ****   /* USER CODE END TIM2_IRQn 0 */
- 236:Core/Src/stm32f4xx_it.c ****   HAL_TIM_IRQHandler(&htim2);
- 356              		.loc 1 236 3 view .LVU78
- 357 0006 0248     		ldr	r0, .L25
- 358 0008 FFF7FEFF 		bl	HAL_TIM_IRQHandler
- 359              	.LVL8:
- 237:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN TIM2_IRQn 1 */
- 238:Core/Src/stm32f4xx_it.c **** 
- 239:Core/Src/stm32f4xx_it.c ****   /* USER CODE END TIM2_IRQn 1 */
- 240:Core/Src/stm32f4xx_it.c **** }
- 360              		.loc 1 240 1 is_stmt 0 view .LVU79
- 361 000c 08BD     		pop	{r3, pc}
- 362              	.L26:
- 363 000e 00BF     		.align	2
- 364              	.L25:
- 365 0010 00000000 		.word	htim2
- 366              		.cfi_endproc
- 367              	.LFE228:
- 369              		.section	.text.DMA2_Stream0_IRQHandler,"ax",%progbits
- 370              		.align	1
- 371              		.global	DMA2_Stream0_IRQHandler
- 372              		.syntax unified
- 373              		.thumb
- 374              		.thumb_func
- 376              	DMA2_Stream0_IRQHandler:
- 377              	.LFB229:
- 241:Core/Src/stm32f4xx_it.c **** 
- 242:Core/Src/stm32f4xx_it.c **** /**
- 243:Core/Src/stm32f4xx_it.c ****   * @brief This function handles DMA2 stream0 global interrupt.
- 244:Core/Src/stm32f4xx_it.c ****   */
- 245:Core/Src/stm32f4xx_it.c **** void DMA2_Stream0_IRQHandler(void)
- 246:Core/Src/stm32f4xx_it.c **** {
- 378              		.loc 1 246 1 is_stmt 1 view -0
- 379              		.cfi_startproc
- 380              		@ args = 0, pretend = 0, frame = 0
- 381              		@ frame_needed = 0, uses_anonymous_args = 0
- 382 0000 08B5     		push	{r3, lr}
- 383              		.cfi_def_cfa_offset 8
- 384              		.cfi_offset 3, -8
- 385              		.cfi_offset 14, -4
- 247:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
- 248:Core/Src/stm32f4xx_it.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 29
+ 353              		@ args = 0, pretend = 0, frame = 0
+ 354              		@ frame_needed = 0, uses_anonymous_args = 0
+ 355              		.loc 1 107 1 is_stmt 0 view .LVU66
+ 356 0000 08B5     		push	{r3, lr}
+ 357              		.cfi_def_cfa_offset 8
+ 358              		.cfi_offset 3, -8
+ 359              		.cfi_offset 14, -4
+ 360 0002 0146     		mov	r1, r0
+ 108:controller/IO/outputs.c ****     output_set(&fuel_pump_output, state);
+ 361              		.loc 1 108 5 is_stmt 1 view .LVU67
+ 362 0004 0148     		ldr	r0, .L31
+ 363              	.LVL24:
+ 364              		.loc 1 108 5 is_stmt 0 view .LVU68
+ 365 0006 FFF7FEFF 		bl	output_set
+ 366              	.LVL25:
+ 109:controller/IO/outputs.c **** }
+ 367              		.loc 1 109 1 view .LVU69
+ 368 000a 08BD     		pop	{r3, pc}
+ 369              	.L32:
+ 370              		.align	2
+ 371              	.L31:
+ 372 000c 00000000 		.word	fuel_pump_output
+ 373              		.cfi_endproc
+ 374              	.LFE229:
+ 376              		.section	.text.output_fan1_set,"ax",%progbits
+ 377              		.align	1
+ 378              		.global	output_fan1_set
+ 379              		.syntax unified
+ 380              		.thumb
+ 381              		.thumb_func
+ 383              	output_fan1_set:
+ 384              	.LVL26:
+ 385              	.LFB230:
+ 110:controller/IO/outputs.c **** 
+ 111:controller/IO/outputs.c **** void output_fan1_set(bool state)
+ 112:controller/IO/outputs.c **** {
+ 386              		.loc 1 112 1 is_stmt 1 view -0
+ 387              		.cfi_startproc
+ 388              		@ args = 0, pretend = 0, frame = 0
+ 389              		@ frame_needed = 0, uses_anonymous_args = 0
+ 390              		.loc 1 112 1 is_stmt 0 view .LVU71
+ 391 0000 08B5     		push	{r3, lr}
+ 392              		.cfi_def_cfa_offset 8
+ 393              		.cfi_offset 3, -8
+ 394              		.cfi_offset 14, -4
+ 395 0002 0146     		mov	r1, r0
+ 113:controller/IO/outputs.c ****     output_set(&fan1_output, state);
+ 396              		.loc 1 113 5 is_stmt 1 view .LVU72
+ 397 0004 0148     		ldr	r0, .L35
+ 398              	.LVL27:
+ 399              		.loc 1 113 5 is_stmt 0 view .LVU73
+ 400 0006 FFF7FEFF 		bl	output_set
+ 401              	.LVL28:
+ 114:controller/IO/outputs.c **** }
+ 402              		.loc 1 114 1 view .LVU74
+ 403 000a 08BD     		pop	{r3, pc}
+ 404              	.L36:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 27
 
 
- 249:Core/Src/stm32f4xx_it.c ****   /* USER CODE END DMA2_Stream0_IRQn 0 */
- 250:Core/Src/stm32f4xx_it.c ****   HAL_DMA_IRQHandler(&hdma_adc1);
- 386              		.loc 1 250 3 view .LVU81
- 387 0002 0248     		ldr	r0, .L29
- 388 0004 FFF7FEFF 		bl	HAL_DMA_IRQHandler
- 389              	.LVL9:
- 251:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
- 252:Core/Src/stm32f4xx_it.c **** 
- 253:Core/Src/stm32f4xx_it.c ****   /* USER CODE END DMA2_Stream0_IRQn 1 */
- 254:Core/Src/stm32f4xx_it.c **** }
- 390              		.loc 1 254 1 is_stmt 0 view .LVU82
- 391 0008 08BD     		pop	{r3, pc}
- 392              	.L30:
- 393 000a 00BF     		.align	2
- 394              	.L29:
- 395 000c 00000000 		.word	hdma_adc1
- 396              		.cfi_endproc
- 397              	.LFE229:
- 399              		.section	.text.OTG_FS_IRQHandler,"ax",%progbits
- 400              		.align	1
- 401              		.global	OTG_FS_IRQHandler
- 402              		.syntax unified
- 403              		.thumb
- 404              		.thumb_func
- 406              	OTG_FS_IRQHandler:
- 407              	.LFB230:
- 255:Core/Src/stm32f4xx_it.c **** 
- 256:Core/Src/stm32f4xx_it.c **** /**
- 257:Core/Src/stm32f4xx_it.c ****   * @brief This function handles USB On The Go FS global interrupt.
- 258:Core/Src/stm32f4xx_it.c ****   */
- 259:Core/Src/stm32f4xx_it.c **** void OTG_FS_IRQHandler(void)
- 260:Core/Src/stm32f4xx_it.c **** {
- 408              		.loc 1 260 1 is_stmt 1 view -0
- 409              		.cfi_startproc
- 410              		@ args = 0, pretend = 0, frame = 0
- 411              		@ frame_needed = 0, uses_anonymous_args = 0
- 412 0000 08B5     		push	{r3, lr}
- 413              		.cfi_def_cfa_offset 8
- 414              		.cfi_offset 3, -8
- 415              		.cfi_offset 14, -4
- 261:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN OTG_FS_IRQn 0 */
- 262:Core/Src/stm32f4xx_it.c **** 
- 263:Core/Src/stm32f4xx_it.c ****   /* USER CODE END OTG_FS_IRQn 0 */
- 264:Core/Src/stm32f4xx_it.c ****   HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
- 416              		.loc 1 264 3 view .LVU84
- 417 0002 0248     		ldr	r0, .L33
- 418 0004 FFF7FEFF 		bl	HAL_PCD_IRQHandler
- 419              	.LVL10:
- 265:Core/Src/stm32f4xx_it.c ****   /* USER CODE BEGIN OTG_FS_IRQn 1 */
- 266:Core/Src/stm32f4xx_it.c **** 
- 267:Core/Src/stm32f4xx_it.c ****   /* USER CODE END OTG_FS_IRQn 1 */
- 268:Core/Src/stm32f4xx_it.c **** }
- 420              		.loc 1 268 1 is_stmt 0 view .LVU85
- 421 0008 08BD     		pop	{r3, pc}
- 422              	.L34:
- 423 000a 00BF     		.align	2
- 424              	.L33:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 30
+ 405              		.align	2
+ 406              	.L35:
+ 407 000c 00000000 		.word	fan1_output
+ 408              		.cfi_endproc
+ 409              	.LFE230:
+ 411              		.section	.text.output_fan2_set,"ax",%progbits
+ 412              		.align	1
+ 413              		.global	output_fan2_set
+ 414              		.syntax unified
+ 415              		.thumb
+ 416              		.thumb_func
+ 418              	output_fan2_set:
+ 419              	.LVL29:
+ 420              	.LFB231:
+ 115:controller/IO/outputs.c **** 
+ 116:controller/IO/outputs.c **** void output_fan2_set(bool state)
+ 117:controller/IO/outputs.c **** {
+ 421              		.loc 1 117 1 is_stmt 1 view -0
+ 422              		.cfi_startproc
+ 423              		@ args = 0, pretend = 0, frame = 0
+ 424              		@ frame_needed = 0, uses_anonymous_args = 0
+ 425              		.loc 1 117 1 is_stmt 0 view .LVU76
+ 426 0000 08B5     		push	{r3, lr}
+ 427              		.cfi_def_cfa_offset 8
+ 428              		.cfi_offset 3, -8
+ 429              		.cfi_offset 14, -4
+ 430 0002 0146     		mov	r1, r0
+ 118:controller/IO/outputs.c ****     output_set(&fan2_output, state);
+ 431              		.loc 1 118 5 is_stmt 1 view .LVU77
+ 432 0004 0148     		ldr	r0, .L39
+ 433              	.LVL30:
+ 434              		.loc 1 118 5 is_stmt 0 view .LVU78
+ 435 0006 FFF7FEFF 		bl	output_set
+ 436              	.LVL31:
+ 119:controller/IO/outputs.c **** }
+ 437              		.loc 1 119 1 view .LVU79
+ 438 000a 08BD     		pop	{r3, pc}
+ 439              	.L40:
+ 440              		.align	2
+ 441              	.L39:
+ 442 000c 00000000 		.word	fan2_output
+ 443              		.cfi_endproc
+ 444              	.LFE231:
+ 446              		.section	.text.output_fire_ignition,"ax",%progbits
+ 447              		.align	1
+ 448              		.global	output_fire_ignition
+ 449              		.syntax unified
+ 450              		.thumb
+ 451              		.thumb_func
+ 453              	output_fire_ignition:
+ 454              	.LVL32:
+ 455              	.LFB232:
+ 120:controller/IO/outputs.c **** 
+ 121:controller/IO/outputs.c **** void output_fire_ignition(controller_output_pin_t *pin)
+ 122:controller/IO/outputs.c **** {
+ 456              		.loc 1 122 1 is_stmt 1 view -0
+ 457              		.cfi_startproc
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 28
 
 
- 425 000c 00000000 		.word	hpcd_USB_OTG_FS
- 426              		.cfi_endproc
- 427              	.LFE230:
- 429              		.text
- 430              	.Letext0:
- 431              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 432              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 433              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
- 434              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 435              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 436              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 437              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 438              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h"
- 439              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h"
- 440              		.file 12 "Core/Inc/tim.h"
- 441              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
- 442              		.file 14 "controller/utils/timing.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s 			page 31
+ 458              		@ args = 0, pretend = 0, frame = 0
+ 459              		@ frame_needed = 0, uses_anonymous_args = 0
+ 123:controller/IO/outputs.c ****     if (pin == NULL)
+ 460              		.loc 1 123 5 view .LVU81
+ 461              		.loc 1 123 8 is_stmt 0 view .LVU82
+ 462 0000 78B1     		cbz	r0, .L44
+ 122:controller/IO/outputs.c ****     if (pin == NULL)
+ 463              		.loc 1 122 1 view .LVU83
+ 464 0002 10B5     		push	{r4, lr}
+ 465              		.cfi_def_cfa_offset 8
+ 466              		.cfi_offset 4, -8
+ 467              		.cfi_offset 14, -4
+ 468 0004 0446     		mov	r4, r0
+ 124:controller/IO/outputs.c ****     {
+ 125:controller/IO/outputs.c ****         return;
+ 126:controller/IO/outputs.c ****     }
+ 127:controller/IO/outputs.c ****     output_override(pin, true);
+ 469              		.loc 1 127 5 is_stmt 1 view .LVU84
+ 470 0006 0121     		movs	r1, #1
+ 471 0008 FFF7FEFF 		bl	output_override
+ 472              	.LVL33:
+ 128:controller/IO/outputs.c ****     osDelay(3);
+ 473              		.loc 1 128 5 view .LVU85
+ 474 000c 0320     		movs	r0, #3
+ 475 000e FFF7FEFF 		bl	osDelay
+ 476              	.LVL34:
+ 129:controller/IO/outputs.c ****     output_override_clear(pin);
+ 477              		.loc 1 129 5 view .LVU86
+ 478 0012 2046     		mov	r0, r4
+ 479 0014 FFF7FEFF 		bl	output_override_clear
+ 480              	.LVL35:
+ 130:controller/IO/outputs.c ****     output_set(pin, false);
+ 481              		.loc 1 130 5 view .LVU87
+ 482 0018 0021     		movs	r1, #0
+ 483 001a 2046     		mov	r0, r4
+ 484 001c FFF7FEFF 		bl	output_set
+ 485              	.LVL36:
+ 131:controller/IO/outputs.c **** }
+ 486              		.loc 1 131 1 is_stmt 0 view .LVU88
+ 487 0020 10BD     		pop	{r4, pc}
+ 488              	.LVL37:
+ 489              	.L44:
+ 490              		.cfi_def_cfa_offset 0
+ 491              		.cfi_restore 4
+ 492              		.cfi_restore 14
+ 493              		.loc 1 131 1 view .LVU89
+ 494 0022 7047     		bx	lr
+ 495              		.cfi_endproc
+ 496              	.LFE232:
+ 498              		.section	.text.output_fire_injection,"ax",%progbits
+ 499              		.align	1
+ 500              		.global	output_fire_injection
+ 501              		.syntax unified
+ 502              		.thumb
+ 503              		.thumb_func
+ 505              	output_fire_injection:
+ 506              	.LVL38:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 29
+
+
+ 507              	.LFB233:
+ 132:controller/IO/outputs.c **** void output_fire_injection(controller_output_pin_t *pin)
+ 133:controller/IO/outputs.c **** {
+ 508              		.loc 1 133 1 is_stmt 1 view -0
+ 509              		.cfi_startproc
+ 510              		@ args = 0, pretend = 0, frame = 0
+ 511              		@ frame_needed = 0, uses_anonymous_args = 0
+ 134:controller/IO/outputs.c ****     if (pin == NULL)
+ 512              		.loc 1 134 5 view .LVU91
+ 513              		.loc 1 134 8 is_stmt 0 view .LVU92
+ 514 0000 78B1     		cbz	r0, .L50
+ 133:controller/IO/outputs.c ****     if (pin == NULL)
+ 515              		.loc 1 133 1 view .LVU93
+ 516 0002 10B5     		push	{r4, lr}
+ 517              		.cfi_def_cfa_offset 8
+ 518              		.cfi_offset 4, -8
+ 519              		.cfi_offset 14, -4
+ 520 0004 0446     		mov	r4, r0
+ 135:controller/IO/outputs.c ****     {
+ 136:controller/IO/outputs.c ****         return;
+ 137:controller/IO/outputs.c ****     }
+ 138:controller/IO/outputs.c ****     output_override(pin, true);
+ 521              		.loc 1 138 5 is_stmt 1 view .LVU94
+ 522 0006 0121     		movs	r1, #1
+ 523 0008 FFF7FEFF 		bl	output_override
+ 524              	.LVL39:
+ 139:controller/IO/outputs.c ****     osDelay(10);
+ 525              		.loc 1 139 5 view .LVU95
+ 526 000c 0A20     		movs	r0, #10
+ 527 000e FFF7FEFF 		bl	osDelay
+ 528              	.LVL40:
+ 140:controller/IO/outputs.c ****     output_override_clear(pin);
+ 529              		.loc 1 140 5 view .LVU96
+ 530 0012 2046     		mov	r0, r4
+ 531 0014 FFF7FEFF 		bl	output_override_clear
+ 532              	.LVL41:
+ 141:controller/IO/outputs.c ****     output_set(pin, false);
+ 533              		.loc 1 141 5 view .LVU97
+ 534 0018 0021     		movs	r1, #0
+ 535 001a 2046     		mov	r0, r4
+ 536 001c FFF7FEFF 		bl	output_set
+ 537              	.LVL42:
+ 142:controller/IO/outputs.c **** 
+ 143:controller/IO/outputs.c **** }...
+ 538              		.loc 1 143 1 is_stmt 0 view .LVU98
+ 539 0020 10BD     		pop	{r4, pc}
+ 540              	.LVL43:
+ 541              	.L50:
+ 542              		.cfi_def_cfa_offset 0
+ 543              		.cfi_restore 4
+ 544              		.cfi_restore 14
+ 545              		.loc 1 143 1 view .LVU99
+ 546 0022 7047     		bx	lr
+ 547              		.cfi_endproc
+ 548              	.LFE233:
+ 550              		.global	ignition_output
+ 551              		.section	.data.ignition_output,"aw"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 30
+
+
+ 552              		.align	2
+ 555              	ignition_output:
+ 556 0000 00040240 		.word	1073873920
+ 557 0004 20000000 		.word	32
+ 558 0008 00       		.byte	0
+ 559 0009 00       		.byte	0
+ 560 000a 0000     		.space	2
+ 561 000c 00040240 		.word	1073873920
+ 562 0010 10000000 		.word	16
+ 563 0014 00       		.byte	0
+ 564 0015 00       		.byte	0
+ 565 0016 0000     		.space	2
+ 566 0018 00040240 		.word	1073873920
+ 567 001c 08000000 		.word	8
+ 568 0020 00       		.byte	0
+ 569 0021 00       		.byte	0
+ 570 0022 0000     		.space	2
+ 571 0024 000C0240 		.word	1073875968
+ 572 0028 04000000 		.word	4
+ 573 002c 00       		.byte	0
+ 574 002d 00       		.byte	0
+ 575 002e 0000     		.space	2
+ 576              		.global	injector_output
+ 577              		.section	.data.injector_output,"aw"
+ 578              		.align	2
+ 581              	injector_output:
+ 582 0000 00080240 		.word	1073874944
+ 583 0004 00100000 		.word	4096
+ 584 0008 00       		.byte	0
+ 585 0009 00       		.byte	0
+ 586 000a 0000     		.space	2
+ 587 000c 00080240 		.word	1073874944
+ 588 0010 00080000 		.word	2048
+ 589 0014 00       		.byte	0
+ 590 0015 00       		.byte	0
+ 591 0016 0000     		.space	2
+ 592 0018 00080240 		.word	1073874944
+ 593 001c 00040000 		.word	1024
+ 594 0020 00       		.byte	0
+ 595 0021 00       		.byte	0
+ 596 0022 0000     		.space	2
+ 597 0024 00000240 		.word	1073872896
+ 598 0028 00800000 		.word	32768
+ 599 002c 00       		.byte	0
+ 600 002d 00       		.byte	0
+ 601 002e 0000     		.space	2
+ 602              		.global	fan2_output
+ 603              		.section	.data.fan2_output,"aw"
+ 604              		.align	2
+ 607              	fan2_output:
+ 608 0000 00040240 		.word	1073873920
+ 609 0004 00040000 		.word	1024
+ 610 0008 00       		.byte	0
+ 611 0009 00       		.byte	0
+ 612 000a 0000     		.space	2
+ 613              		.global	fan1_output
+ 614              		.section	.data.fan1_output,"aw"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 31
+
+
+ 615              		.align	2
+ 618              	fan1_output:
+ 619 0000 00000240 		.word	1073872896
+ 620 0004 00010000 		.word	256
+ 621 0008 00       		.byte	0
+ 622 0009 00       		.byte	0
+ 623 000a 0000     		.space	2
+ 624              		.global	fuel_pump_output
+ 625              		.section	.data.fuel_pump_output,"aw"
+ 626              		.align	2
+ 629              	fuel_pump_output:
+ 630 0000 00040240 		.word	1073873920
+ 631 0004 00400000 		.word	16384
+ 632 0008 00       		.byte	0
+ 633 0009 00       		.byte	0
+ 634 000a 0000     		.space	2
+ 635              		.global	gas_solenoid_output
+ 636              		.section	.data.gas_solenoid_output,"aw"
+ 637              		.align	2
+ 640              	gas_solenoid_output:
+ 641 0000 00000240 		.word	1073872896
+ 642 0004 00020000 		.word	512
+ 643 0008 00       		.byte	0
+ 644 0009 00       		.byte	0
+ 645 000a 0000     		.space	2
+ 646              		.global	main_relay_output
+ 647              		.section	.data.main_relay_output,"aw"
+ 648              		.align	2
+ 651              	main_relay_output:
+ 652 0000 00000240 		.word	1073872896
+ 653 0004 00040000 		.word	1024
+ 654 0008 00       		.byte	0
+ 655 0009 00       		.byte	0
+ 656 000a 0000     		.space	2
+ 657              		.text
+ 658              	.Letext0:
+ 659              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 660              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 661              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 662              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 663              		.file 7 "controller/types.h"
+ 664              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 665              		.file 9 "controller/IO/outputs.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s 			page 32
 
 
 DEFINED SYMBOLS
-                            *ABS*:00000000 stm32f4xx_it.c
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:21     .text.NMI_Handler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:27     .text.NMI_Handler:00000000 NMI_Handler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:44     .text.HardFault_Handler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:50     .text.HardFault_Handler:00000000 HardFault_Handler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:184    .text.HardFault_Handler:00000060 $d
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:189    .text.MemManage_Handler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:195    .text.MemManage_Handler:00000000 MemManage_Handler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:212    .text.BusFault_Handler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:218    .text.BusFault_Handler:00000000 BusFault_Handler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:235    .text.UsageFault_Handler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:241    .text.UsageFault_Handler:00000000 UsageFault_Handler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:258    .text.DebugMon_Handler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:264    .text.DebugMon_Handler:00000000 DebugMon_Handler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:277    .text.EXTI9_5_IRQHandler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:283    .text.EXTI9_5_IRQHandler:00000000 EXTI9_5_IRQHandler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:307    .text.TIM1_TRG_COM_TIM11_IRQHandler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:313    .text.TIM1_TRG_COM_TIM11_IRQHandler:00000000 TIM1_TRG_COM_TIM11_IRQHandler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:332    .text.TIM1_TRG_COM_TIM11_IRQHandler:0000000c $d
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:337    .text.TIM2_IRQHandler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:343    .text.TIM2_IRQHandler:00000000 TIM2_IRQHandler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:365    .text.TIM2_IRQHandler:00000010 $d
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:370    .text.DMA2_Stream0_IRQHandler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:376    .text.DMA2_Stream0_IRQHandler:00000000 DMA2_Stream0_IRQHandler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:395    .text.DMA2_Stream0_IRQHandler:0000000c $d
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:400    .text.OTG_FS_IRQHandler:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:406    .text.OTG_FS_IRQHandler:00000000 OTG_FS_IRQHandler
-C:\Users\alireza\AppData\Local\Temp\cciuTRz8.s:425    .text.OTG_FS_IRQHandler:0000000c $d
+                            *ABS*:00000000 outputs.c
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:21     .text.output_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:27     .text.output_set:00000000 output_set
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:104    .text.output_override:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:110    .text.output_override:00000000 output_override
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:198    .text.output_override_clear:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:204    .text.output_override_clear:00000000 output_override_clear
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:272    .text.output_main_relay_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:278    .text.output_main_relay_set:00000000 output_main_relay_set
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:302    .text.output_main_relay_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:651    .data.main_relay_output:00000000 main_relay_output
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:307    .text.output_gas_solenoid_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:313    .text.output_gas_solenoid_set:00000000 output_gas_solenoid_set
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:337    .text.output_gas_solenoid_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:640    .data.gas_solenoid_output:00000000 gas_solenoid_output
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:342    .text.output_fuel_pump_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:348    .text.output_fuel_pump_set:00000000 output_fuel_pump_set
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:372    .text.output_fuel_pump_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:629    .data.fuel_pump_output:00000000 fuel_pump_output
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:377    .text.output_fan1_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:383    .text.output_fan1_set:00000000 output_fan1_set
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:407    .text.output_fan1_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:618    .data.fan1_output:00000000 fan1_output
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:412    .text.output_fan2_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:418    .text.output_fan2_set:00000000 output_fan2_set
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:442    .text.output_fan2_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:607    .data.fan2_output:00000000 fan2_output
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:447    .text.output_fire_ignition:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:453    .text.output_fire_ignition:00000000 output_fire_ignition
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:499    .text.output_fire_injection:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:505    .text.output_fire_injection:00000000 output_fire_injection
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:555    .data.ignition_output:00000000 ignition_output
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:552    .data.ignition_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:581    .data.injector_output:00000000 injector_output
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:578    .data.injector_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:604    .data.fan2_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:615    .data.fan1_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:626    .data.fuel_pump_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:637    .data.gas_solenoid_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cckUKwlz.s:648    .data.main_relay_output:00000000 $d
 
 UNDEFINED SYMBOLS
-HAL_GPIO_EXTI_IRQHandler
-HAL_TIM_IRQHandler
-htim11
-scheduler_timer_callback
-htim2
-HAL_DMA_IRQHandler
-hdma_adc1
-HAL_PCD_IRQHandler
-hpcd_USB_OTG_FS
+HAL_GPIO_WritePin
+HAL_GPIO_ReadPin
+osDelay

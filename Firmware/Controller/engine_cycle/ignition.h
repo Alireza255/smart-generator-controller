@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "sensors.h"
 #include "trigger.h"
+#include "outputs.h"
 
 #define IGNITION_MIN_DWELL_TIME_MS 0.5f
 #define IGNITION_MAX_DWELL_TIME_MS 4.0f
@@ -43,18 +44,13 @@ typedef struct
     ignition_event_status_t status;
 } ignition_event_t;
 
-typedef struct
-{
-    controller_output_pin_t pin[FIRMWARE_IGNITION_OUTPUT_MAX];
-} ignition_output_pin_conf_t;
 
 /**
  * @brief Initializes the ignition system.
  * 
- * @param outputs Pointer to the controller output pins.
  * @return true if initialization was successful, false otherwise.
  */
-bool ignition_init(ignition_output_pin_conf_t *output_pin_conf);
+bool ignition_init();
 
 /**
  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.

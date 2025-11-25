@@ -4,6 +4,7 @@
 #define INJECTOR_OUTPUTS 4
 #include "controller.h"
 #include "fuel_math.h"
+#include "outputs.h"
 
 
 #define INJECTION_DENSITY_OF_PETROL_GRAM_PER_CC 0.675f
@@ -29,14 +30,10 @@ typedef struct
 } injection_event_t;
 
 
-typedef struct
-{
-    controller_output_pin_t pin[FIRMWARE_INJECTOR_OUTPUT_COUNT];
-} injection_output_pin_conf_t;
-
 void injection_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_t current_time_us);
 
-bool injection_init(injection_output_pin_conf_t *output_pin_conf);
+bool injection_init();
 
+void injection_disable();
 
 #endif

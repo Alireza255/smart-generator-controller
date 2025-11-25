@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -27,7 +27,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   24              		.thumb
   25              		.thumb_func
   27              	fan_control_update:
-  28              	.LFB239:
+  28              	.LFB243:
    1:controller/actuators/fan_control.c **** #include "fan_control.h"
    2:controller/actuators/fan_control.c **** 
    3:controller/actuators/fan_control.c **** static bool thermostat(temperature_t temp, temperature_t on_temp, temperature_t off_temp)
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   40              		.loc 1 16 34 is_stmt 0 view .LVU2
   41 0002 FFF7FEFF 		bl	sensor_clt_get
   42              	.LVL0:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 2
 
 
   17:controller/actuators/fan_control.c **** 
@@ -70,27 +70,27 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   21:controller/actuators/fan_control.c ****     if (config.fan1_enabled)
   45              		.loc 1 21 5 view .LVU5
   46              		.loc 1 21 15 is_stmt 0 view .LVU6
-  47 0006 254B     		ldr	r3, .L19
-  48 0008 93F8E73A 		ldrb	r3, [r3, #2791]	@ zero_extendqisi2
+  47 0006 274B     		ldr	r3, .L21
+  48 0008 93F8EB3A 		ldrb	r3, [r3, #2795]	@ zero_extendqisi2
   49              		.loc 1 21 8 view .LVU7
-  50 000c 5BB1     		cbz	r3, .L10
+  50 000c 5BB1     		cbz	r3, .L11
   22:controller/actuators/fan_control.c ****     {
   23:controller/actuators/fan_control.c ****         if (current_temp > config.fan1_on_temp)
   51              		.loc 1 23 9 is_stmt 1 view .LVU8
   52              		.loc 1 23 34 is_stmt 0 view .LVU9
-  53 000e 234B     		ldr	r3, .L19
-  54 0010 D3F82C38 		ldr	r3, [r3, #2092]	@ unaligned
+  53 000e 254B     		ldr	r3, .L21
+  54 0010 D3F83038 		ldr	r3, [r3, #2096]	@ unaligned
   55              		.loc 1 23 12 view .LVU10
   56 0014 07EE903A 		vmov	s15, r3
   57 0018 F4EEC07A 		vcmpe.f32	s15, s0
   58 001c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
-  59 0020 12D5     		bpl	.L16
+  59 0020 12D5     		bpl	.L18
   24:controller/actuators/fan_control.c ****         {
   25:controller/actuators/fan_control.c ****             fan1_command = true;
   60              		.loc 1 25 26 view .LVU11
-  61 0022 0125     		movs	r5, #1
+  61 0022 0122     		movs	r2, #1
   62 0024 00E0     		b	.L2
-  63              	.L10:
+  63              	.L11:
   26:controller/actuators/fan_control.c ****         }
   27:controller/actuators/fan_control.c ****         else if (current_temp < config.fan1_off_temp)
   28:controller/actuators/fan_control.c ****         {
@@ -101,7 +101,7 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   33:controller/actuators/fan_control.c ****     {
   34:controller/actuators/fan_control.c ****         fan1_command = false;
   64              		.loc 1 34 22 view .LVU12
-  65 0026 0025     		movs	r5, #0
+  65 0026 0022     		movs	r2, #0
   66              	.L2:
   67              	.LVL1:
   35:controller/actuators/fan_control.c ****     }
@@ -109,37 +109,37 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   37:controller/actuators/fan_control.c ****     if (config.fan2_enabled)
   68              		.loc 1 37 5 is_stmt 1 view .LVU13
   69              		.loc 1 37 15 is_stmt 0 view .LVU14
-  70 0028 1C4B     		ldr	r3, .L19
-  71 002a 93F8E83A 		ldrb	r3, [r3, #2792]	@ zero_extendqisi2
+  70 0028 1E4B     		ldr	r3, .L21
+  71 002a 93F8EC3A 		ldrb	r3, [r3, #2796]	@ zero_extendqisi2
   72              		.loc 1 37 8 view .LVU15
-  73 002e 6BB1     		cbz	r3, .L12
+  73 002e 6BB1     		cbz	r3, .L13
   38:controller/actuators/fan_control.c ****     {
   39:controller/actuators/fan_control.c ****         if (current_temp > config.fan2_on_temp)
   74              		.loc 1 39 9 is_stmt 1 view .LVU16
   75              		.loc 1 39 34 is_stmt 0 view .LVU17
-  76 0030 1A4B     		ldr	r3, .L19
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 3
+  76 0030 1C4B     		ldr	r3, .L21
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 3
 
 
-  77 0032 D3F83438 		ldr	r3, [r3, #2100]	@ unaligned
+  77 0032 D3F83838 		ldr	r3, [r3, #2104]	@ unaligned
   78              		.loc 1 39 12 view .LVU18
   79 0036 07EE903A 		vmov	s15, r3
   80 003a F4EEC07A 		vcmpe.f32	s15, s0
   81 003e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
-  82 0042 1CD5     		bpl	.L17
+  82 0042 1FD5     		bpl	.L19
   40:controller/actuators/fan_control.c ****         {
   41:controller/actuators/fan_control.c ****             fan2_command = true;
   83              		.loc 1 41 26 view .LVU19
-  84 0044 0124     		movs	r4, #1
+  84 0044 0125     		movs	r5, #1
   85 0046 02E0     		b	.L4
   86              	.LVL2:
-  87              	.L16:
+  87              	.L18:
   18:controller/actuators/fan_control.c ****     bool fan2_command = false;
   88              		.loc 1 18 10 view .LVU20
-  89 0048 0025     		movs	r5, #0
+  89 0048 0022     		movs	r2, #0
   90 004a EDE7     		b	.L2
   91              	.LVL3:
-  92              	.L12:
+  92              	.L13:
   42:controller/actuators/fan_control.c ****         }
   43:controller/actuators/fan_control.c ****         else if (current_temp < config.fan2_off_temp)
   44:controller/actuators/fan_control.c ****         {
@@ -150,23 +150,15 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   49:controller/actuators/fan_control.c ****     {
   50:controller/actuators/fan_control.c ****        fan2_command = false;
   93              		.loc 1 50 21 view .LVU21
-  94 004c 0024     		movs	r4, #0
+  94 004c 0025     		movs	r5, #0
   95              	.L4:
   96              	.LVL4:
   51:controller/actuators/fan_control.c ****     }
-  52:controller/actuators/fan_control.c ****     
-  53:controller/actuators/fan_control.c ****     HAL_GPIO_WritePin(FAN_1_GPIO_Port, FAN_1_Pin, fan1_command);
-  97              		.loc 1 53 5 is_stmt 1 view .LVU22
-  98 004e 2A46     		mov	r2, r5
-  99 0050 0421     		movs	r1, #4
- 100 0052 1348     		ldr	r0, .L19+4
- 101 0054 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 102              	.LVL5:
-  54:controller/actuators/fan_control.c ****     change_bit(&runtime.status, STATUS_FAN1_ON, fan1_command);
- 103              		.loc 1 54 5 view .LVU23
- 104              	.LBB6:
- 105              	.LBI6:
- 106              		.file 2 "controller/utils/utils.h"
+  52:controller/actuators/fan_control.c ****     if (get_bit(runtime.status, STATUS_CLT_ERROR))
+  97              		.loc 1 52 5 is_stmt 1 view .LVU22
+  98              	.LBB8:
+  99              	.LBI8:
+ 100              		.file 2 "controller/utils/utils.h"
    1:controller/utils/utils.h **** /**
    2:controller/utils/utils.h ****  * @file utils.h
    3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
@@ -178,9 +170,6 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
    9:controller/utils/utils.h ****  */
   10:controller/utils/utils.h **** #ifndef UTILS_H
   11:controller/utils/utils.h **** #define UTILS_H
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 4
-
-
   12:controller/utils/utils.h **** 
   13:controller/utils/utils.h **** #include "types.h"
   14:controller/utils/utils.h **** #include "math.h"
@@ -189,6 +178,9 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   17:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
   18:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
   19:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 4
+
+
   20:controller/utils/utils.h **** 
   21:controller/utils/utils.h **** #define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
   22:controller/utils/utils.h **** 
@@ -200,153 +192,215 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 1
   28:controller/utils/utils.h **** size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
   29:controller/utils/utils.h **** 
   30:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
- 107              		.loc 2 30 20 view .LVU24
- 108              	.LBB7:
   31:controller/utils/utils.h **** {
   32:controller/utils/utils.h ****     if (bit > 31)
- 109              		.loc 2 32 5 view .LVU25
   33:controller/utils/utils.h ****     {
   34:controller/utils/utils.h ****         return;
   35:controller/utils/utils.h ****     }
   36:controller/utils/utils.h ****     if (state)
- 110              		.loc 2 36 5 view .LVU26
- 111              		.loc 2 36 8 is_stmt 0 view .LVU27
- 112 0058 9DB1     		cbz	r5, .L6
   37:controller/utils/utils.h ****     {
   38:controller/utils/utils.h ****         *var |= (1u << bit);
- 113              		.loc 2 38 9 is_stmt 1 view .LVU28
- 114 005a 124A     		ldr	r2, .L19+8
- 115 005c 1368     		ldr	r3, [r2]
- 116              		.loc 2 38 14 is_stmt 0 view .LVU29
- 117 005e 43F04003 		orr	r3, r3, #64
- 118 0062 1360     		str	r3, [r2]
- 119              	.L7:
- 120              	.LVL6:
- 121              		.loc 2 38 14 view .LVU30
- 122              	.LBE7:
- 123              	.LBE6:
-  55:controller/actuators/fan_control.c ****     
-  56:controller/actuators/fan_control.c ****     HAL_GPIO_WritePin(FAN_2_GPIO_Port, FAN_2_Pin, fan2_command);
- 124              		.loc 1 56 5 is_stmt 1 view .LVU31
- 125 0064 2246     		mov	r2, r4
- 126 0066 4FF48061 		mov	r1, #1024
- 127 006a 0D48     		ldr	r0, .L19+4
- 128 006c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 129              	.LVL7:
-  57:controller/actuators/fan_control.c ****     change_bit(&runtime.status, STATUS_FAN2_ON, fan2_command);
- 130              		.loc 1 57 5 view .LVU32
- 131              	.LBB9:
- 132              	.LBI9:
-  30:controller/utils/utils.h **** {
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 5
-
-
- 133              		.loc 2 30 20 view .LVU33
- 134              	.LBB10:
-  32:controller/utils/utils.h ****     {
- 135              		.loc 2 32 5 view .LVU34
-  36:controller/utils/utils.h ****     {
- 136              		.loc 2 36 5 view .LVU35
-  36:controller/utils/utils.h ****     {
- 137              		.loc 2 36 8 is_stmt 0 view .LVU36
- 138 0070 6CB1     		cbz	r4, .L8
- 139              		.loc 2 38 9 is_stmt 1 view .LVU37
- 140 0072 0C4A     		ldr	r2, .L19+8
- 141 0074 1368     		ldr	r3, [r2]
- 142              		.loc 2 38 14 is_stmt 0 view .LVU38
- 143 0076 43F08003 		orr	r3, r3, #128
- 144 007a 1360     		str	r3, [r2]
- 145              	.LVL8:
- 146              	.L1:
- 147              		.loc 2 38 14 view .LVU39
- 148              	.LBE10:
- 149              	.LBE9:
-  58:controller/actuators/fan_control.c **** 
-  59:controller/actuators/fan_control.c **** }...
- 150              		.loc 1 59 1 view .LVU40
- 151 007c 38BD     		pop	{r3, r4, r5, pc}
- 152              	.LVL9:
- 153              	.L17:
-  19:controller/actuators/fan_control.c ****     bool fan2_command = false;
- 154              		.loc 1 19 10 view .LVU41
- 155 007e 0024     		movs	r4, #0
- 156 0080 E5E7     		b	.L4
- 157              	.LVL10:
- 158              	.L6:
- 159              	.LBB12:
- 160              	.LBB8:
   39:controller/utils/utils.h ****     }
   40:controller/utils/utils.h ****     else
   41:controller/utils/utils.h ****     {
   42:controller/utils/utils.h ****         *var &= ~(1u << bit);
- 161              		.loc 2 42 9 is_stmt 1 view .LVU42
- 162 0082 084A     		ldr	r2, .L19+8
- 163 0084 1368     		ldr	r3, [r2]
- 164              		.loc 2 42 14 is_stmt 0 view .LVU43
- 165 0086 23F04003 		bic	r3, r3, #64
- 166 008a 1360     		str	r3, [r2]
- 167 008c EAE7     		b	.L7
- 168              	.LVL11:
- 169              	.L8:
- 170              		.loc 2 42 14 view .LVU44
- 171              	.LBE8:
- 172              	.LBE12:
- 173              	.LBB13:
- 174              	.LBB11:
- 175              		.loc 2 42 9 is_stmt 1 view .LVU45
- 176 008e 054A     		ldr	r2, .L19+8
- 177 0090 1368     		ldr	r3, [r2]
- 178              		.loc 2 42 14 is_stmt 0 view .LVU46
- 179 0092 23F08003 		bic	r3, r3, #128
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 6
+  43:controller/utils/utils.h ****     }
+  44:controller/utils/utils.h **** }
+  45:controller/utils/utils.h **** 
+  46:controller/utils/utils.h **** static inline bool get_bit(uint32_t flags, uint8_t bit)
+ 101              		.loc 2 46 20 view .LVU23
+ 102              	.LBB9:
+  47:controller/utils/utils.h **** {
+  48:controller/utils/utils.h ****     if (bit < 32)
+ 103              		.loc 2 48 5 view .LVU24
+  49:controller/utils/utils.h ****     {
+  50:controller/utils/utils.h ****         return (flags >> bit) & 1u;
+ 104              		.loc 2 50 9 view .LVU25
+ 105              		.loc 2 50 23 is_stmt 0 view .LVU26
+ 106 004e 164B     		ldr	r3, .L21+4
+ 107              	.LVL5:
+ 108              		.loc 2 50 23 view .LVU27
+ 109 0050 5C88     		ldrh	r4, [r3, #2]
+ 110              	.LVL6:
+ 111              		.loc 2 50 23 view .LVU28
+ 112              	.LBE9:
+ 113              	.LBE8:
+ 114              		.loc 1 52 8 discriminator 1 view .LVU29
+ 115 0052 14F00104 		ands	r4, r4, #1
+ 116 0056 17D1     		bne	.L15
+ 117 0058 1446     		mov	r4, r2
+ 118              	.LVL7:
+ 119              	.L6:
+  53:controller/actuators/fan_control.c ****     {
+  54:controller/actuators/fan_control.c ****         fan1_command = true;
+  55:controller/actuators/fan_control.c ****         fan2_command = true;
+  56:controller/actuators/fan_control.c ****     }
+  57:controller/actuators/fan_control.c ****     
+  58:controller/actuators/fan_control.c ****     output_set(&fan1_output, fan1_command);
+ 120              		.loc 1 58 5 is_stmt 1 view .LVU30
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 5
 
 
- 180 0096 1360     		str	r3, [r2]
- 181              	.LVL12:
- 182              		.loc 2 42 14 view .LVU47
- 183              	.LBE11:
- 184              	.LBE13:
- 185              		.loc 1 59 1 view .LVU48
- 186 0098 F0E7     		b	.L1
- 187              	.L20:
- 188 009a 00BF     		.align	2
- 189              	.L19:
- 190 009c 00100000 		.word	config+4096
- 191 00a0 00040240 		.word	1073873920
- 192 00a4 00000000 		.word	runtime
- 193              		.cfi_endproc
- 194              	.LFE239:
- 196              		.text
- 197              	.Letext0:
- 198              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 199              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 200              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
- 201              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 202              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
- 203              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 204              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 205              		.file 10 "controller/types.h"
- 206              		.file 11 "controller/IO/analog_inputs.h"
- 207              		.file 12 "controller/IO/resistor.h"
- 208              		.file 13 "controller/IO/thermistor.h"
- 209              		.file 14 "controller/tables.h"
- 210              		.file 15 "controller/config_and_runtime.h"
- 211              		.file 16 "controller/IO/sensors.h"
- 212              		.file 17 "controller/actuators/dc_motors.h"
- 213              		.file 18 "controller/utils/pid.h"
- 214              		.file 19 "controller/actuators/electronic_throttle.h"
- 215              		.file 20 "controller/controller.h"
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s 			page 7
+ 121 005a 2146     		mov	r1, r4
+ 122 005c 1348     		ldr	r0, .L21+8
+ 123 005e FFF7FEFF 		bl	output_set
+ 124              	.LVL8:
+  59:controller/actuators/fan_control.c ****     change_bit(&runtime.status, STATUS_FAN1_ON, fan1_command);
+ 125              		.loc 1 59 5 view .LVU31
+ 126              	.LBB10:
+ 127              	.LBI10:
+  30:controller/utils/utils.h **** {
+ 128              		.loc 2 30 20 view .LVU32
+ 129              	.LBB11:
+  32:controller/utils/utils.h ****     {
+ 130              		.loc 2 32 5 view .LVU33
+  36:controller/utils/utils.h ****     {
+ 131              		.loc 2 36 5 view .LVU34
+  36:controller/utils/utils.h ****     {
+ 132              		.loc 2 36 8 is_stmt 0 view .LVU35
+ 133 0062 9CB1     		cbz	r4, .L7
+  38:controller/utils/utils.h ****     }
+ 134              		.loc 2 38 9 is_stmt 1 view .LVU36
+ 135 0064 104A     		ldr	r2, .L21+4
+ 136 0066 1368     		ldr	r3, [r2]
+  38:controller/utils/utils.h ****     }
+ 137              		.loc 2 38 14 is_stmt 0 view .LVU37
+ 138 0068 43F04003 		orr	r3, r3, #64
+ 139 006c 1360     		str	r3, [r2]
+ 140              	.L8:
+ 141              	.LVL9:
+  38:controller/utils/utils.h ****     }
+ 142              		.loc 2 38 14 view .LVU38
+ 143              	.LBE11:
+ 144              	.LBE10:
+  60:controller/actuators/fan_control.c ****         
+  61:controller/actuators/fan_control.c ****     output_set(&fan2_output, fan2_command);
+ 145              		.loc 1 61 5 is_stmt 1 view .LVU39
+ 146 006e 2946     		mov	r1, r5
+ 147 0070 0F48     		ldr	r0, .L21+12
+ 148 0072 FFF7FEFF 		bl	output_set
+ 149              	.LVL10:
+  62:controller/actuators/fan_control.c ****     change_bit(&runtime.status, STATUS_FAN2_ON, fan2_command);
+ 150              		.loc 1 62 5 view .LVU40
+ 151              	.LBB13:
+ 152              	.LBI13:
+  30:controller/utils/utils.h **** {
+ 153              		.loc 2 30 20 view .LVU41
+ 154              	.LBB14:
+  32:controller/utils/utils.h ****     {
+ 155              		.loc 2 32 5 view .LVU42
+  36:controller/utils/utils.h ****     {
+ 156              		.loc 2 36 5 view .LVU43
+  36:controller/utils/utils.h ****     {
+ 157              		.loc 2 36 8 is_stmt 0 view .LVU44
+ 158 0076 7DB1     		cbz	r5, .L9
+  38:controller/utils/utils.h ****     }
+ 159              		.loc 2 38 9 is_stmt 1 view .LVU45
+ 160 0078 0B4A     		ldr	r2, .L21+4
+ 161 007a 1368     		ldr	r3, [r2]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 6
+
+
+  38:controller/utils/utils.h ****     }
+ 162              		.loc 2 38 14 is_stmt 0 view .LVU46
+ 163 007c 43F08003 		orr	r3, r3, #128
+ 164 0080 1360     		str	r3, [r2]
+ 165              	.LVL11:
+ 166              	.L1:
+  38:controller/utils/utils.h ****     }
+ 167              		.loc 2 38 14 view .LVU47
+ 168              	.LBE14:
+ 169              	.LBE13:
+  63:controller/actuators/fan_control.c **** 
+  64:controller/actuators/fan_control.c **** }...
+ 170              		.loc 1 64 1 view .LVU48
+ 171 0082 38BD     		pop	{r3, r4, r5, pc}
+ 172              	.LVL12:
+ 173              	.L19:
+  19:controller/actuators/fan_control.c ****     bool fan2_command = false;
+ 174              		.loc 1 19 10 view .LVU49
+ 175 0084 0025     		movs	r5, #0
+ 176 0086 E2E7     		b	.L4
+ 177              	.LVL13:
+ 178              	.L15:
+  55:controller/actuators/fan_control.c ****         fan2_command = true;
+ 179              		.loc 1 55 22 view .LVU50
+ 180 0088 2546     		mov	r5, r4
+ 181              	.LVL14:
+  55:controller/actuators/fan_control.c ****         fan2_command = true;
+ 182              		.loc 1 55 22 view .LVU51
+ 183 008a E6E7     		b	.L6
+ 184              	.LVL15:
+ 185              	.L7:
+ 186              	.LBB16:
+ 187              	.LBB12:
+  42:controller/utils/utils.h ****     }
+ 188              		.loc 2 42 9 is_stmt 1 view .LVU52
+ 189 008c 064A     		ldr	r2, .L21+4
+ 190 008e 1368     		ldr	r3, [r2]
+  42:controller/utils/utils.h ****     }
+ 191              		.loc 2 42 14 is_stmt 0 view .LVU53
+ 192 0090 23F04003 		bic	r3, r3, #64
+ 193 0094 1360     		str	r3, [r2]
+ 194 0096 EAE7     		b	.L8
+ 195              	.LVL16:
+ 196              	.L9:
+  42:controller/utils/utils.h ****     }
+ 197              		.loc 2 42 14 view .LVU54
+ 198              	.LBE12:
+ 199              	.LBE16:
+ 200              	.LBB17:
+ 201              	.LBB15:
+  42:controller/utils/utils.h ****     }
+ 202              		.loc 2 42 9 is_stmt 1 view .LVU55
+ 203 0098 034A     		ldr	r2, .L21+4
+ 204 009a 1368     		ldr	r3, [r2]
+  42:controller/utils/utils.h ****     }
+ 205              		.loc 2 42 14 is_stmt 0 view .LVU56
+ 206 009c 23F08003 		bic	r3, r3, #128
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 7
+
+
+ 207 00a0 1360     		str	r3, [r2]
+ 208              	.LVL17:
+  42:controller/utils/utils.h ****     }
+ 209              		.loc 2 42 14 view .LVU57
+ 210              	.LBE15:
+ 211              	.LBE17:
+ 212              		.loc 1 64 1 view .LVU58
+ 213 00a2 EEE7     		b	.L1
+ 214              	.L22:
+ 215              		.align	2
+ 216              	.L21:
+ 217 00a4 00100000 		.word	config+4096
+ 218 00a8 00000000 		.word	runtime
+ 219 00ac 00000000 		.word	fan1_output
+ 220 00b0 00000000 		.word	fan2_output
+ 221              		.cfi_endproc
+ 222              	.LFE243:
+ 224              		.text
+ 225              	.Letext0:
+ 226              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 227              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 228              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 229              		.file 6 "controller/types.h"
+ 230              		.file 7 "controller/tables.h"
+ 231              		.file 8 "controller/config_and_runtime.h"
+ 232              		.file 9 "controller/IO/outputs.h"
+ 233              		.file 10 "controller/IO/sensors.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 fan_control.c
-C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s:21     .text.fan_control_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s:27     .text.fan_control_update:00000000 fan_control_update
-C:\Users\alireza\AppData\Local\Temp\ccbZe9GG.s:190    .text.fan_control_update:0000009c $d
+C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s:21     .text.fan_control_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s:27     .text.fan_control_update:00000000 fan_control_update
+C:\Users\alireza\AppData\Local\Temp\ccI6MaBh.s:217    .text.fan_control_update:000000a4 $d
 
 UNDEFINED SYMBOLS
 sensor_clt_get
-HAL_GPIO_WritePin
+output_set
 config
 runtime
+fan1_output
+fan2_output

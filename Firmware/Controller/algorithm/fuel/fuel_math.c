@@ -11,6 +11,18 @@
 #define AIR_MOLAR_MASS 28.9647f          // g/mol
 #define UNIVERSAL_GAS_CONST 8.314462618f // J/(K*mol)
 
+static sensor_tps_t *tps_based_enrich_sensor = NULL;
+static sensor_map_t *map_based_enrich_sensor = NULL;
+
+void fuel_math_use_tps_map_sensors(sensor_tps_t *tps, sensor_map_t *map)
+{
+    if (tps == NULL || map == NULL)
+    {
+        return;
+    }
+    tps_based_enrich_sensor = tps;
+    map_based_enrich_sensor = map;
+}
 mass_t air_mass_get()
 {
     mass_t air_mass = 0;
@@ -48,6 +60,7 @@ mass_t air_mass_get()
     // map in kpa, iat in degC, ve in percent (0-100), rpm in revolutions per minute
     // engine_displacement_cc in cubic centimeters
     air_mass = map * (float)config.engine_displacement_cc * rpm * (ve * 0.01f) * AIR_MOLAR_MASS * 1.0e-3f / (120.0f * UNIVERSAL_GAS_CONST * CELSIUS_TO_KELVIN(iat));
+    runtime.airmass_grams_per_sec = air_mass;
     return air_mass;
 }
 
@@ -77,6 +90,22 @@ mass_t fuel_get_required_mass_petrol()
         change_bit(&runtime.status, STATUS_CRITICAL_ERROR, true);
         break;
     }
+
+    /* We apply the accel enrichment here */
+    percent_t accel_enrichment = 0;
+    if (!get_bit(runtime.status, STATUS_TPS1_ERROR) && tps_based_enrich_sensor != NULL)
+    {
+        accel_enrichment += table_1d_get_value(&config.accel_enrichment_tps_table, sensor_tps_rate_of_change_get(tps_based_enrich_sensor));
+    }
+    if (!get_bit(runtime.status, STATUS_MAP_ERROR) && map_based_enrich_sensor != NULL)
+    {
+        accel_enrichment += table_1d_get_value(&config.accel_enrichment_map_table, sensor_map_rate_of_change_get(map_based_enrich_sensor));
+    }
+    if (IS_IN_RANGE(accel_enrichment, (float)-1 * FUEL_ACCEL_ENRICH_RANGE, FUEL_ACCEL_ENRICH_RANGE))
+    {
+        fuel_mass += fuel_mass * accel_enrichment / (percent_t)100;
+    }
+
     percent_t clt_correction = (percent_t)table_1d_get_value(&config.clt_based_fuel_correction_table_petrol, sensor_clt_get());
     if (IS_IN_RANGE(clt_correction, (percent_t)((float)-1 * FUEL_CLT_BASED_CORRECTION_RANGE), (percent_t)(FUEL_CLT_BASED_CORRECTION_RANGE)) && !isnan(clt_correction))
     {
@@ -126,11 +155,31 @@ mass_t fuel_get_required_mass_gas()
         break;
     }
     
+    /* We apply the accel enrichment here */
+    percent_t accel_enrichment = 0;
+    percent_t total_fuel_correction = 0;
+    if (!get_bit(runtime.status, STATUS_TPS1_ERROR) && tps_based_enrich_sensor != NULL)
+    {
+        accel_enrichment += table_1d_get_value(&config.accel_enrichment_tps_table, sensor_tps_rate_of_change_get(tps_based_enrich_sensor));
+    }
+    if (!get_bit(runtime.status, STATUS_MAP_ERROR) && map_based_enrich_sensor != NULL)
+    {
+        accel_enrichment += table_1d_get_value(&config.accel_enrichment_map_table, sensor_map_rate_of_change_get(map_based_enrich_sensor));
+    }
+    if (IS_IN_RANGE(accel_enrichment, (float)-1 * FUEL_ACCEL_ENRICH_RANGE, FUEL_ACCEL_ENRICH_RANGE))
+    {
+        fuel_mass += fuel_mass * accel_enrichment / (percent_t)100;
+        total_fuel_correction += accel_enrichment;
+    }
+    
     percent_t clt_correction = (percent_t)table_1d_get_value(&config.clt_based_fuel_correction_table_gas, sensor_clt_get());
+
     if (IS_IN_RANGE(clt_correction, (percent_t)((float)-1 * FUEL_CLT_BASED_CORRECTION_RANGE), (percent_t)(FUEL_CLT_BASED_CORRECTION_RANGE)) && !isnan(clt_correction))
     {
         fuel_mass += clt_correction / (percent_t)100 * fuel_mass;
+        total_fuel_correction += clt_correction;
     }
 
+    runtime.fuel_correction_percent = total_fuel_correction;
     return fuel_mass;
 }

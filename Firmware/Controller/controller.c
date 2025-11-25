@@ -1,5 +1,15 @@
 #include "controller.h"
 
+/**
+ * @bug tuner studio goes blank after some burns!
+ * @bug memory mapping not correct in tuner studio
+ * @bug save to eeprom not working
+ * 
+ *
+ */
+
+static bool controller_initialized = false;
+
 config_t config = {0};
 runtime_t runtime = {0};
 
@@ -7,20 +17,19 @@ void controller_sensor_task(void *arg);
 void controller_test_task(void *arg);
 void controller_long_routines_task(void *arg);
 void controller_test2_task(void *arg);
-void controller_run_controller_commands(void *arg);
 
-static sensor_tps_t tps1 = {
-    .status_bit = STATUS_TPS1_ERROR,
-    .analog_channel = ANALOG_INPUT_ETB1_SENSE1,
-    .closed_throttle_adc_value = 1500,
-    .wide_open_throttle_adc_value = 3000,
-    .is_inverted = false};
-static sensor_tps_t tps2 = {
-    .status_bit = STATUS_TPS2_ERROR,
-    .analog_channel = ANALOG_INPUT_ETB2_SENSE1,
-    .closed_throttle_adc_value = 1500,
-    .wide_open_throttle_adc_value = 3000,
-    .is_inverted = false};
+sensor_tps_t tps1 = {
+    .config.status_bit = STATUS_TPS1_ERROR,
+    .config.analog_channel = ANALOG_INPUT_ETB1_SENSE1,
+    .config.fully_closed_adc_value = 1313,
+    .config.fully_open_adc_value = 3017,
+    .config.is_inverted = false};
+sensor_tps_t tps2 = {
+    .config.status_bit = STATUS_TPS2_ERROR,
+    .config.analog_channel = ANALOG_INPUT_ETB2_SENSE1,
+    .config.fully_closed_adc_value = 1313,
+    .config.fully_open_adc_value = 3017,
+    .config.is_inverted = false};
 
 static electronic_throttle_t etb1 = {0};
 static dc_motor_t etb1_motor = {0};
@@ -33,18 +42,8 @@ static pid_t etb2_pid = {0};
 static thermistor_t sensor_clt = {0};
 static thermistor_t sensor_iat = {0};
 static sensor_map_t sensor_map = {0};
-static sensor_ops_t sensor_ops = {0};
 
-static injection_output_pin_conf_t injector_output_pin_conf = {
-    .pin[0] = {.gpio = INJECTOR_OUTPUT_1_GPIO_Port, .pin = INJECTOR_OUTPUT_1_Pin},
-    .pin[1] = {.gpio = INJECTOR_OUTPUT_2_GPIO_Port, .pin = INJECTOR_OUTPUT_2_Pin},
-    .pin[2] = {.gpio = INJECTOR_OUTPUT_3_GPIO_Port, .pin = INJECTOR_OUTPUT_3_Pin},
-    .pin[3] = {.gpio = INJECTOR_OUTPUT_4_GPIO_Port, .pin = INJECTOR_OUTPUT_4_Pin}};
-static ignition_output_pin_conf_t ignition_output_pin_conf = {
-    .pin[0] = {.gpio = IGNITION_OUTPUT_1_GPIO_Port, .pin = IGNITION_OUTPUT_1_Pin},
-    .pin[1] = {.gpio = IGNITION_OUTPUT_2_GPIO_Port, .pin = IGNITION_OUTPUT_2_Pin},
-    .pin[2] = {.gpio = IGNITION_OUTPUT_3_GPIO_Port, .pin = IGNITION_OUTPUT_3_Pin},
-    .pin[3] = {.gpio = IGNITION_OUTPUT_4_GPIO_Port, .pin = IGNITION_OUTPUT_4_Pin}};
+static rpm_t trigger_simulator_rpm = 0;
 
 void controller_load_test_configuration()
 {
@@ -92,7 +91,7 @@ void controller_load_test_configuration()
   // ---------- Cranking & ignition floats ----------
   config.cranking_rpm_threshold = 400.0f;
   config.cranking_advance = 8.0f;
-  config.cranking_throttle = 10.0f;
+  config.cranking_throttle = 15.0f;
 
   config.trigger_offset_deg = 114.0f;
 
@@ -109,6 +108,8 @@ void controller_load_test_configuration()
   config.stoich_afr_gas = 12.0f;
   config.stoich_afr_petrol = 14.2f;
 
+  config.gas_priming_time_sec = 5;
+  config.gas_control_etb_priming_position_percent = 20;
   // ---------- Governer (PID) floats ----------
   config.governer_target_rpm = 1500.0f;
   config.governer_idle_rpm = 850.0f;
@@ -120,21 +121,21 @@ void controller_load_test_configuration()
   config.governer_pid_derivative_filter_tau = 0.1f;
 
   // ---------- ETB1 PID floats ----------
-  config.etb1_pid_Kp = 20.0f;
-  config.etb1_pid_Ki = 1.0f;
-  config.etb1_pid_Kd = 0.0f;
-  config.etb1_pid_limit_integrator_min = 0.0f;
-  config.etb1_pid_limit_integrator_max = 255.0f;
-  config.etb1_pid_derivative_filter_tau = 0.1f;
-  config.etb1_end_of_travel_duty_cycle_limit_upper = 45.0f;
-  config.etb1_end_of_travel_duty_cycle_limit_lower = 50.0f;
+  config.etb1_pid_Kp = 15.0f;
+  config.etb1_pid_Ki = 10.0f;
+  config.etb1_pid_Kd = 0.01f;
+  config.etb1_pid_limit_integrator_min = -100.0f;
+  config.etb1_pid_limit_integrator_max = 100.0f;
+  config.etb1_pid_derivative_filter_tau = 0.01f;
+  config.etb1_end_of_travel_duty_cycle_limit_upper = 60.0f;
+  config.etb1_end_of_travel_duty_cycle_limit_lower = 60.0f;
   // ---------- ETB2 PID floats ----------
-  config.etb2_pid_Kp = 20.0f;
-  config.etb2_pid_Ki = 1.0f;
-  config.etb2_pid_Kd = 0.0f;
-  config.etb2_pid_limit_integrator_min = 0.0f;
-  config.etb2_pid_limit_integrator_max = 255.0f;
-  config.etb2_pid_derivative_filter_tau = 0.1f;
+  config.etb2_pid_Kp = 15.0f;
+  config.etb2_pid_Ki = 10.0f;
+  config.etb2_pid_Kd = 0.01f;
+  config.etb2_pid_limit_integrator_min = -100.0f;
+  config.etb2_pid_limit_integrator_max = 100.0f;
+  config.etb2_pid_derivative_filter_tau = 0.01f;
   config.etb2_end_of_travel_duty_cycle_limit_upper = 50.0f;
   config.etb2_end_of_travel_duty_cycle_limit_lower = 60.0f;
 
@@ -160,7 +161,7 @@ void controller_load_test_configuration()
 
   // ---------- uint8_t scalars and flags ----------
   config.firing_order = FO_1342;
-  config.fuel_type = FUEL_TYPE_GASOLINE;
+  config.fuel_type = FUEL_TYPE_GAS;
   config.trigger_crank_type = TRIGGER_WHEEL_TYPE_CRANK_58_TOOTH_2_MISSING;
   config.trigger_crank_filtering = TRIGGER_FILTERING_LITE;
   config.trigger_cam_type = 0;
@@ -170,7 +171,7 @@ void controller_load_test_configuration()
   config.injection_mode = INJECTION_MODE_BATCH;
 
   config.ignition_mode = IGNITION_MODE_WASTED_SPARK;
-  config.multi_spark_enabled = 0;
+  config.multi_spark_enabled = 1;
   config.multi_spark_number_of_sparks = 3;
 
   config.tps1_calib_is_inverted = 0;
@@ -187,13 +188,13 @@ void controller_load_test_configuration()
 
   config.etb1_enabled = 1;
   config.etb2_enabled = 0;
-  config.etb1_motor_inverted = 1;
+  config.etb1_motor_inverted = 0;
   config.etb2_motor_inverted = 0;
-  config.etb1_end_of_travel_duty_cycle_limit_enabled = 1;
-  config.etb2_end_of_travel_duty_cycle_limit_enabled = 1;
+  config.etb1_end_of_travel_duty_cycle_limit_enabled = 0;
+  config.etb2_end_of_travel_duty_cycle_limit_enabled = 0;
 
-  config.fan1_enabled = 0;
-  config.fan2_enabled = 0;
+  config.fan1_enabled = 1;
+  config.fan2_enabled = 1;
 
   config.tps1_type = 0;
   config.tps2_type = 0;
@@ -216,8 +217,7 @@ void controller_init()
   }
   controller_load_configuration();
 
-
-  // controller_load_test_configuration();
+  //controller_load_test_configuration();
   /* Start controller timing */
   controller_timing_start(&htim2);
 
@@ -242,11 +242,14 @@ void controller_init()
 
   /* Initialize analog sensors END*/
 
+  fuel_math_use_tps_map_sensors(&tps1, &sensor_map);
+
   /* Initialize ignition */
 
-  ignition_init(&ignition_output_pin_conf);
-  injection_init(&injector_output_pin_conf);
+  ignition_init();
+  injection_init();
 
+  osDelay(500);
   // Electronic Throttle Body 1
   if (config.etb1_enabled)
   {
@@ -260,13 +263,13 @@ void controller_init()
     }
 
     pid_init(&etb1_pid);
-    electronic_throttle_init(&etb1, &etb1_pid, &tps1, &etb1_motor, &config.etb1_feedforward_table);
+    electronic_throttle_init(&etb1, &etb1_pid, &tps1, &etb1_motor, &config.etb1_feedforward_table, STATUS_ETB1_OK);
 
     if (config.etb1_end_of_travel_duty_cycle_limit_enabled)
     {
       electronic_throttle_enable_end_of_travel_protection(&etb1, (percent_t)config.etb1_end_of_travel_duty_cycle_limit_lower, (percent_t)config.etb1_end_of_travel_duty_cycle_limit_upper);
     }
-    electronic_throttle_set(&etb1, 10);
+    electronic_throttle_set(&etb1, config.cranking_throttle);
 
     static osTimerId_t etb1_software_timer;
     etb1_software_timer = osTimerNew(electronic_throttle_update, osTimerPeriodic, &etb1, NULL);
@@ -288,7 +291,7 @@ void controller_init()
     }
 
     pid_init(&etb2_pid);
-    electronic_throttle_init(&etb2, &etb2_pid, &tps2, &etb2_motor, &config.etb2_feedforward_table);
+    electronic_throttle_init(&etb2, &etb2_pid, &tps2, &etb2_motor, &config.etb2_feedforward_table, STATUS_ETB2_OK);
     if (config.etb2_end_of_travel_duty_cycle_limit_enabled)
     {
       electronic_throttle_enable_end_of_travel_protection(&etb2, (percent_t)config.etb2_end_of_travel_duty_cycle_limit_lower, (percent_t)config.etb2_end_of_travel_duty_cycle_limit_upper);
@@ -302,7 +305,7 @@ void controller_init()
       osTimerStart(etb2_software_timer, 1);
     }
 
-    gas_injection_init(&etb1);
+    gas_injection_init(&etb2);
     static osTimerId_t gas_injection_timer;
     gas_injection_timer = osTimerNew(gas_injection_update, osTimerPeriodic, NULL, NULL);
     if (gas_injection_timer != NULL)
@@ -321,7 +324,7 @@ void controller_init()
 
   const osThreadAttr_t controller_test_attr = {
       .name = "test_task",
-      .stack_size = 2 * 1024,
+      .stack_size = 512,
       .priority = osPriorityRealtime,
   };
   const osThreadAttr_t controller_test2_attr = {
@@ -331,20 +334,23 @@ void controller_init()
   };
   const osThreadAttr_t controller_sensor_task_attr = {
       .name = "sensor_task",
-      .stack_size = 1024,
+      .stack_size = 256,
       .priority = osPriorityAboveNormal,
   };
 
   const osThreadAttr_t controller_long_routines_attr = {
       .name = "long_routines",
-      .stack_size = 1024,
+      .stack_size = 256,
       .priority = osPriorityNormal,
   };
 
-  // osThreadNew(controller_test_task, NULL, &controller_test_attr);
   //  osThreadNew(controller_test2_task, NULL, &controller_test2_attr);
-  osThreadNew(controller_sensor_task, NULL, &controller_sensor_task_attr);
-  osThreadNew(controller_long_routines_task, NULL, &controller_long_routines_attr);
+  volatile osThreadId_t does_it_work = 0;
+  does_it_work = osThreadNew(controller_sensor_task, NULL, &controller_sensor_task_attr);
+  does_it_work = osThreadNew(controller_long_routines_task, NULL, &controller_long_routines_attr);
+  osThreadNew(controller_test_task, NULL, &controller_test_attr);
+
+  controller_initialized = true;
 }
 
 void controller_load_configuration()
@@ -373,37 +379,69 @@ void controller_long_routines_task(void *arg)
     // osDelayUntil(next_routine_time_ticks);
   }
 }
+void controller_analog_inputs_read_callback()
+{
+  if (!controller_initialized)
+  {
+    return;
+  }
 
+  time_us_t time = get_time_us();
+
+  sensor_tps_update(&tps1, time);
+  sensor_tps_update(&tps2, time);
+  sensor_map_update(time);
+  sensor_iat_update();
+  sensor_clt_update();
+  sensor_ops_update(time);
+  vbat_update();
+}
 void controller_sensor_task(void *arg)
 {
   for (;;)
   {
     runtime.tps1 = sensor_tps_get(&tps1);
     runtime.tps2 = sensor_tps_get(&tps2);
-
+    runtime.tps1_dot = sensor_tps_rate_of_change_get(&tps1);
+    runtime.map_dot = sensor_map_rate_of_change_get(&sensor_map);
+    runtime.lambda = 1;
     runtime.clt_degc = sensor_clt_get();
     runtime.iat_degc = sensor_iat_get();
     runtime.map_kpa = sensor_map_get();
-    change_bit(&runtime.status, STATUS_OIL_PRESSURE_LOW, sensor_ops_get());
     runtime.egt_degc = sensor_egt_get();
     runtime.vbatt_volts = vbat_get();
-    
+    runtime.ignition_advance_deg = ignition_get_advance();
     runtime.etb1_target = etb1.target_position;
     runtime.etb1_motor_effort = etb1.motor->current_direction ? (float)-1 * (float)(etb1.motor->current_duty_cycle) : (float)(etb1.motor->current_duty_cycle);
     runtime.etb2_target = etb2.target_position;
     runtime.etb2_motor_effort = etb2.motor->current_direction ? (float)-1 * (float)(etb2.motor->current_duty_cycle) : (float)(etb2.motor->current_duty_cycle);
+    
+    /* Temporary! move to the correct task after testing */
+    etb1.pid->Kp = config.etb1_pid_Kp;
+    etb1.pid->Ki = config.etb1_pid_Ki;
+    etb1.pid->Kd = config.etb1_pid_Kd;
+    etb1.pid->limit_integrator_min = config.etb1_pid_limit_integrator_min;
+    etb1.pid->limit_integrator_max = config.etb1_pid_limit_integrator_max;
+    etb1.pid->derivative_filter_tau = config.etb1_pid_derivative_filter_tau;
+
+    etb2.pid->Kp = config.etb2_pid_Kp;
+    etb2.pid->Ki = config.etb2_pid_Ki;
+    etb2.pid->Kd = config.etb2_pid_Kd;
+    etb2.pid->limit_integrator_min = config.etb2_pid_limit_integrator_min;
+    etb2.pid->limit_integrator_max = config.etb2_pid_limit_integrator_max;
+    etb2.pid->derivative_filter_tau = config.etb2_pid_derivative_filter_tau;
+
     osDelay(1);
   }
 }
 void controller_test_task(void *arg)
 {
   osDelay(100);
-  static rpm_t simulated_rpm = 250;
+
   trigger_simulator_init(60, 2, trigger_camshaft_signal_handle, trigger_crankshaft_signal_handle);
   for (;;)
   {
-    trigger_simulator_update(simulated_rpm);
-    osDelay(1);
+    trigger_simulator_update(trigger_simulator_rpm);
   }
 }
 
@@ -471,14 +509,104 @@ void run_controller_command(void *arg)
         electronic_throttle_auto_tune(&etb2);
       break;
     case TS_CONTROLLER_COMMAND_TPS1_CALIB_SAVE_FROM_AUTO_CALIB:
-      config.tps1_calib_closed_throttle_adc_value = tps1.closed_throttle_adc_value;
-      config.tps1_calib_wide_open_throttle_adc_value = tps1.wide_open_throttle_adc_value;
-      config.tps1_calib_is_inverted = tps1.is_inverted;
+      config.tps1_calib_closed_throttle_adc_value = tps1.config.fully_closed_adc_value;
+      config.tps1_calib_wide_open_throttle_adc_value = tps1.config.fully_open_adc_value;
+      config.tps1_calib_is_inverted = tps1.config.is_inverted;
       break;
     case TS_CONTROLLER_COMMAND_TPS2_CALIB_SAVE_FROM_AUTO_CALIB:
-      config.tps2_calib_closed_throttle_adc_value = tps2.closed_throttle_adc_value;
-      config.tps2_calib_wide_open_throttle_adc_value = tps2.wide_open_throttle_adc_value;
-      config.tps2_calib_is_inverted = tps2.is_inverted;
+      config.tps2_calib_closed_throttle_adc_value = tps2.config.fully_closed_adc_value;
+      config.tps2_calib_wide_open_throttle_adc_value = tps2.config.fully_open_adc_value;
+      config.tps2_calib_is_inverted = tps2.config.is_inverted;
+      break;
+
+    case TS_CONTROLLER_COMMAND_TRIGGER_SIMULATOR_START:
+      trigger_simulator_start();
+      break;
+
+    case TS_CONTROLLER_COMMAND_TRIGGER_SIMULATOR_STOP:
+      trigger_simulator_stop();
+      break;
+    case TS_CONTROLLER_COMMAND_TRIGGER_SIMULATOR_RPM_100:
+      trigger_simulator_rpm = 100;
+      trigger_simulator_start();
+      break;
+    case TS_CONTROLLER_COMMAND_TRIGGER_SIMULATOR_RPM_250:
+      trigger_simulator_rpm = 250;
+      trigger_simulator_start();
+      break;
+    case TS_CONTROLLER_COMMAND_TRIGGER_SIMULATOR_RPM_500:
+      trigger_simulator_rpm = 500;
+      trigger_simulator_start();
+      break;
+
+    case TS_CONTROLLER_COMMAND_IGNITION_FIRE_COIL_1:
+      output_fire_ignition(&ignition_output[0]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_IGNITION_FIRE_COIL_2:
+      output_fire_ignition(&ignition_output[1]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_IGNITION_FIRE_COIL_3:
+      output_fire_ignition(&ignition_output[2]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_IGNITION_FIRE_COIL_4:
+      output_fire_ignition(&ignition_output[3]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_INJECTION_FIRE_INJECTOR_1:
+      output_fire_injection(&injector_output[0]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_INJECTION_FIRE_INJECTOR_2:
+      output_fire_injection(&injector_output[1]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_INJECTION_FIRE_INJECTOR_3:
+      output_fire_injection(&injector_output[2]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_INJECTION_FIRE_INJECTOR_4:
+      output_fire_injection(&injector_output[3]);
+      break;
+
+    case TS_CONTROLLER_COMMAND_FAN1_ON:
+      output_override(&fan1_output, true);
+      break;
+
+    case TS_CONTROLLER_COMMAND_FAN1_OFF:
+      output_override_clear(&fan1_output);
+      break;
+
+    case TS_CONTROLLER_COMMAND_FAN2_ON:
+      output_override(&fan2_output, true);
+      break;
+
+    case TS_CONTROLLER_COMMAND_FAN2_OFF:
+      output_override_clear(&fan2_output);
+      break;
+
+    case TS_CONTROLLER_COMMAND_ETB1_START_TEST:
+      break;
+
+    case TS_CONTROLLER_COMMAND_ETB2_START_TEST:
+      break;
+
+    case TS_CONTROLLER_COMMAND_MAIN_RELAY_ON:
+      output_override(&main_relay_output, true);
+      break;
+
+    case TS_CONTROLLER_COMMAND_MAIN_RELAY_OFF:
+      output_override_clear(&main_relay_output);
+      break;
+
+    case TS_CONTROLLER_COMMAND_GAS_SOLENOID_ON:
+      output_override(&gas_solenoid_output, true);
+      break;
+
+    case TS_CONTROLLER_COMMAND_GAS_SOLENOID_OFF:
+      output_override_clear(&gas_solenoid_output);
       break;
     default:
       break;

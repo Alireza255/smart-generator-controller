@@ -44,6 +44,7 @@ typedef struct __attribute__((packed))
     float gas_control_etb_flowrate_grams_per_sec;
     float gas_reference_pressure;
     float gas_priming_time_sec;
+    float gas_control_etb_priming_position_percent;
     float petrol_priming_time_sec;
 
     /* Injection */
@@ -158,7 +159,6 @@ typedef struct __attribute__((packed))
     uint8_t fan2_enabled;
 
 } config_t;
-
 
 typedef struct {
     /* ---------- 4-byte items (uint32 and floats) ---------- */

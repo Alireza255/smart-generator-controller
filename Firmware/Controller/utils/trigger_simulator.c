@@ -5,7 +5,7 @@ uint8_t wheel_full_teeth = 0;
 uint8_t wheel_missing_teeth = 0;
 
 static bool cam_state = false;
-
+static bool trigger_simulator_running = false;
 static void (*trigger_callback_cam)(bool edge) = NULL;  // pointer to function taking no args, returns void
 static void (*trigger_callback_crank)(void) = NULL;  // pointer to function taking no args, returns void
 
@@ -17,6 +17,16 @@ void trigger_simulator_init(uint8_t full_teeth, uint8_t missing_teeth, void (*cb
     trigger_callback_crank = cb_crank;
 }
 
+void trigger_simulator_start()
+{
+    trigger_simulator_running = true;
+}
+void trigger_simulator_stop()
+{
+    trigger_simulator_running = false;
+}
+
+
 void trigger_simulator_update(rpm_t rpm)
 {
     if (trigger_callback_cam == NULL || trigger_callback_crank == NULL)
@@ -26,17 +36,15 @@ void trigger_simulator_update(rpm_t rpm)
     if (wheel_full_teeth == 0) {
         return; // Prevent division by zero
     }
-    time_us_t tooth_interval = microseconds_per_degree(rpm) * 360 / wheel_full_teeth;
-
-    time_us_t current_time = get_time_us();
-    static time_us_t prev_time = 0;
-
-
-    if ((int32_t)(current_time - prev_time) < tooth_interval)
+    if (rpm == 0 || !trigger_simulator_running)
     {
+        osDelay(1);
         return;
     }
-    prev_time = current_time;
+    
+    time_us_t tooth_interval = (time_us_t)roundf((float)microseconds_per_degree(rpm) * (float)360 / (float)wheel_full_teeth / (float)1000);
+
+    osDelay(tooth_interval);
     
     static uint8_t current_tooth_index = 0;
 

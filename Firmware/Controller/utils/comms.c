@@ -128,24 +128,19 @@ void comms_init(void)
 
     const osThreadAttr_t comms_task_attrs = {
         .name = "comms_task",
-        .stack_size = 1024 * 4,
+        .stack_size = 1024 * 2,
         .priority = osPriorityHigh,
     };
     osThreadNew(comms_task, NULL, &comms_task_attrs);
 
     const osThreadAttr_t controller_run_controller_cmdmands_attr = {
       .name = "controller_cmds",
-      .stack_size = 1024 * 2,
+      .stack_size = 512,
       .priority = osPriorityNormal,
   };
-  const osThreadAttr_t comms_activities_task_attr = {
-      .name = "commzzzz",
-      .stack_size = 1024 * 1,
-      .priority = osPriorityAboveNormal,
-  };
+
   volatile osThreadId_t test_id = 0;
   osThreadNew(run_controller_command, NULL, &controller_run_controller_cmdmands_attr);
-  test_id = osThreadNew(comms_activities_task, NULL, &comms_activities_task_attr);
   controller_command_flag = osEventFlagsNew(NULL);
   comms_os_flags = osEventFlagsNew(NULL);
 }

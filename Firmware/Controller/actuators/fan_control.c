@@ -49,11 +49,16 @@ void fan_control_update()
     {
        fan2_command = false;
     }
+    if (get_bit(runtime.status, STATUS_CLT_ERROR))
+    {
+        fan1_command = true;
+        fan2_command = true;
+    }
     
-    HAL_GPIO_WritePin(FAN_1_GPIO_Port, FAN_1_Pin, fan1_command);
+    output_set(&fan1_output, fan1_command);
     change_bit(&runtime.status, STATUS_FAN1_ON, fan1_command);
-    
-    HAL_GPIO_WritePin(FAN_2_GPIO_Port, FAN_2_Pin, fan2_command);
+        
+    output_set(&fan2_output, fan2_command);
     change_bit(&runtime.status, STATUS_FAN2_ON, fan2_command);
 
 }

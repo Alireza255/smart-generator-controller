@@ -87,6 +87,8 @@ typedef struct
 {
     GPIO_TypeDef *gpio;
     uint32_t pin;
+    bool override_active;
+    bool last_normal_state;
 } controller_output_pin_t;
 
 /**

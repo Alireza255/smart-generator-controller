@@ -1,6 +1,8 @@
 #include "trigger.h"
 #include "controller.h"
 
+static void crank_timeout_callback(void *argument);
+
 static angle_t next_tooth_angle = 0;
 
 static trigger_crankshaft_t crank_trigger = {0};
@@ -9,6 +11,28 @@ static trigger_camshaft_t cam_trigger = {0};
 static time_us_t tooth_logger_buffer[FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES] = {0};
 volatile bool tooth_logger_enabled = false;
 volatile size_t tooth_logger_buffer_index = 0;
+
+static osTimerId_t crank_timeout_timer = NULL;
+
+static void crank_timeout_callback(void *argument)
+{
+    (void)argument;
+
+    // No tooth arrived in time → signal lost
+    runtime.rpm = 0;
+    runtime.crankshaft_angle = 0;
+    next_tooth_angle = 0;
+
+    crank_trigger.counted_teeth = 0;
+
+    change_bit(&runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED, false);
+
+    runtime.spinning_state = SS_STOPPED;
+    change_bit(&runtime.status, STATUS_CRANKING, false);
+    change_bit(&runtime.status, STATUS_RUNNING, false);
+
+
+}
 
 void trigger_crankshaft_init(trigger_wheel_type_crankshaft_t wheel_type)
 {
@@ -38,6 +62,16 @@ void trigger_crankshaft_init(trigger_wheel_type_crankshaft_t wheel_type)
   crank_trigger.filter_time = 100;
   change_bit(&runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED, false);
   change_bit(&runtime.status, STATUS_TRIGGER_ERROR, false);
+
+    crank_timeout_timer = osTimerNew(crank_timeout_callback,
+                                     osTimerOnce,
+                                     NULL,
+                                     NULL);
+
+    if (crank_timeout_timer == NULL)
+    {
+        log_error("Failed to create crank timeout timer");
+    }
   crank_trigger.initialized = true;
 }
 
@@ -61,6 +95,8 @@ void trigger_camshaft_init(trigger_wheel_type_camshaft_t wheel_type, uint8_t *fi
   default:
     break;
   }
+
+  
 
   cam_trigger.initialized = true;
   cam_trigger.filtering = filtering;
@@ -149,7 +185,11 @@ void trigger_crankshaft_signal_handle()
 
   runtime.crankshaft_angle = wrap_angle_360(360.0f / (angle_t)crank_trigger.full_teeth * (angle_t)crank_trigger.counted_teeth + (angle_t)config.trigger_offset_deg);
   
-  runtime.rpm = (rpm_t)((float)CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * (float)CONVERSION_FACTOR_MINUTES_TO_SECONDS / (float)current_tooth_gap / (float)crank_trigger.full_teeth);
+  if (!is_sync_event)
+  {
+    runtime.rpm = (rpm_t)((float)CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * (float)CONVERSION_FACTOR_MINUTES_TO_SECONDS / (float)current_tooth_gap / (float)crank_trigger.full_teeth);
+  }
+  
   
   if (crank_trigger.counted_teeth >= crank_trigger.trigger_actual_teeth - 1)
   {
@@ -223,12 +263,12 @@ void trigger_crankshaft_signal_handle()
     }
   }
   
+  osTimerStart(crank_timeout_timer, 25);
   /* call trigger driven events such as ignition etc... */
   if (!is_trigger_sync_achieved)
   {
     return;
   }
-  
   trigger_driven_events_callback();
 
 }
@@ -350,4 +390,9 @@ void trigger_tooth_logger_stop()
 time_us_t *trigger_tooth_logger_get_buffer()
 {
   return tooth_logger_buffer;
+}
+
+spinning_state_t trigger_spinning_state_get()
+{
+  return (spinning_state_t)runtime.spinning_state;
 }
