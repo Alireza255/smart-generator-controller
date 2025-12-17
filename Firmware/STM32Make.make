@@ -153,6 +153,8 @@ controller/utils/ee.c \
 controller/utils/error_handling.c \
 controller/utils/pid.c \
 controller/utils/timing.c \
+controller/utils/timing_light.c \
+controller/utils/trigger_logger.c \
 controller/utils/trigger_simulator.c \
 controller/utils/utils.c
 

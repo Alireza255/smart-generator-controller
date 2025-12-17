@@ -1,0 +1,202 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"protection.c"
+  16              		.text
+  17              		.section	.text.protections_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	protections_init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	protections_init:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 08B1     		cbz	r0, .L1
+  29 0002 014A     		ldr	r2, .L3
+  30 0004 1060     		str	r0, [r2]
+  31              	.L1:
+  32 0006 7047     		bx	lr
+  33              	.L4:
+  34              		.align	2
+  35              	.L3:
+  36 0008 00000000 		.word	throttle
+  38              		.section	.text.protection_shutdown_gracefully,"ax",%progbits
+  39              		.align	1
+  40              		.global	protection_shutdown_gracefully
+  41              		.syntax unified
+  42              		.thumb
+  43              		.thumb_func
+  45              	protection_shutdown_gracefully:
+  46              		@ args = 0, pretend = 0, frame = 0
+  47              		@ frame_needed = 0, uses_anonymous_args = 0
+  48 0000 08B5     		push	{r3, lr}
+  49 0002 0E4B     		ldr	r3, .L9
+  50 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  51 0006 C3B9     		cbnz	r3, .L5
+  52 0008 0C4B     		ldr	r3, .L9
+  53 000a 0122     		movs	r2, #1
+  54 000c 1A70     		strb	r2, [r3]
+  55 000e 0C4B     		ldr	r3, .L9+4
+  56 0010 1B68     		ldr	r3, [r3]
+  57 0012 0C4A     		ldr	r2, .L9+8
+  58 0014 92F8E52A 		ldrb	r2, [r2, #2789]	@ zero_extendqisi2
+  59 0018 13F4800F 		tst	r3, #4194304
+  60 001c 07D0     		beq	.L7
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s 			page 2
+
+
+  61 001e 32B1     		cbz	r2, .L7
+  62 0020 094B     		ldr	r3, .L9+12
+  63 0022 1868     		ldr	r0, [r3]
+  64 0024 18B1     		cbz	r0, .L7
+  65 0026 9FED090A 		vldr.32	s0, .L9+16
+  66 002a FFF7FEFF 		bl	electronic_throttle_override_enable
+  67              	.L7:
+  68 002e 0021     		movs	r1, #0
+  69 0030 0748     		ldr	r0, .L9+20
+  70 0032 FFF7FEFF 		bl	output_override
+  71 0036 FFF7FEFF 		bl	injection_disable
+  72              	.L5:
+  73 003a 08BD     		pop	{r3, pc}
+  74              	.L10:
+  75              		.align	2
+  76              	.L9:
+  77 003c 00000000 		.word	protection_has_tripped.0
+  78 0040 00000000 		.word	runtime
+  79 0044 00100000 		.word	config+4096
+  80 0048 00000000 		.word	throttle
+  81 004c 00000000 		.word	0
+  82 0050 00000000 		.word	gas_solenoid_output
+  84              		.section	.text.protections_update,"ax",%progbits
+  85              		.align	1
+  86              		.global	protections_update
+  87              		.syntax unified
+  88              		.thumb
+  89              		.thumb_func
+  91              	protections_update:
+  92              		@ args = 0, pretend = 0, frame = 0
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94 0000 10B5     		push	{r4, lr}
+  95 0002 0446     		mov	r4, r0
+  96 0004 214B     		ldr	r3, .L24
+  97 0006 93F8CF3A 		ldrb	r3, [r3, #2767]	@ zero_extendqisi2
+  98 000a 022B     		cmp	r3, #2
+  99 000c 02D0     		beq	.L17
+ 100 000e 93B9     		cbnz	r3, .L18
+ 101 0010 0122     		movs	r2, #1
+ 102 0012 00E0     		b	.L12
+ 103              	.L17:
+ 104 0014 0122     		movs	r2, #1
+ 105              	.L12:
+ 106 0016 1E4B     		ldr	r3, .L24+4
+ 107 0018 1B68     		ldr	r3, [r3]
+ 108 001a C3F3C053 		ubfx	r3, r3, #23, #1
+ 109 001e 02B1     		cbz	r2, .L13
+ 110 0020 5BB1     		cbz	r3, .L21
+ 111              	.L13:
+ 112 0022 FFF7FEFF 		bl	sensor_ops_get
+ 113 0026 58B9     		cbnz	r0, .L19
+ 114 0028 194B     		ldr	r3, .L24+4
+ 115 002a 93F87830 		ldrb	r3, [r3, #120]	@ zero_extendqisi2
+ 116 002e 032B     		cmp	r3, #3
+ 117 0030 07D0     		beq	.L14
+ 118 0032 0024     		movs	r4, #0
+ 119 0034 05E0     		b	.L14
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s 			page 3
+
+
+ 120              	.L18:
+ 121 0036 0022     		movs	r2, #0
+ 122 0038 EDE7     		b	.L12
+ 123              	.L21:
+ 124 003a FFF7FEFF 		bl	protection_shutdown_gracefully
+ 125 003e F0E7     		b	.L13
+ 126              	.L19:
+ 127 0040 0024     		movs	r4, #0
+ 128              	.L14:
+ 129 0042 124B     		ldr	r3, .L24
+ 130 0044 93F8E13A 		ldrb	r3, [r3, #2785]	@ zero_extendqisi2
+ 131 0048 4FF47A72 		mov	r2, #1000
+ 132 004c 02FB03F3 		mul	r3, r2, r3
+ 133 0050 A342     		cmp	r3, r4
+ 134 0052 03D2     		bcs	.L15
+ 135 0054 0D4B     		ldr	r3, .L24
+ 136 0056 93F8E23A 		ldrb	r3, [r3, #2786]	@ zero_extendqisi2
+ 137 005a 83B9     		cbnz	r3, .L22
+ 138              	.L15:
+ 139 005c FFF7FEFF 		bl	sensor_clt_get
+ 140 0060 0A4B     		ldr	r3, .L24
+ 141 0062 D3F82838 		ldr	r3, [r3, #2088]	@ unaligned
+ 142 0066 07EE903A 		vmov	s15, r3
+ 143 006a B4EEE70A 		vcmpe.f32	s0, s15
+ 144 006e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 145 0072 03D4     		bmi	.L11
+ 146 0074 054B     		ldr	r3, .L24
+ 147 0076 93F8E33A 		ldrb	r3, [r3, #2787]	@ zero_extendqisi2
+ 148 007a 1BB9     		cbnz	r3, .L23
+ 149              	.L11:
+ 150 007c 10BD     		pop	{r4, pc}
+ 151              	.L22:
+ 152 007e FFF7FEFF 		bl	protection_shutdown_gracefully
+ 153 0082 EBE7     		b	.L15
+ 154              	.L23:
+ 155 0084 FFF7FEFF 		bl	protection_shutdown_gracefully
+ 156 0088 F8E7     		b	.L11
+ 157              	.L25:
+ 158 008a 00BF     		.align	2
+ 159              	.L24:
+ 160 008c 00100000 		.word	config+4096
+ 161 0090 00000000 		.word	runtime
+ 163              		.section	.bss.protection_has_tripped.0,"aw",%nobits
+ 166              	protection_has_tripped.0:
+ 167 0000 00       		.space	1
+ 168              		.global	throttle
+ 169              		.section	.bss.throttle,"aw",%nobits
+ 170              		.align	2
+ 173              	throttle:
+ 174 0000 00000000 		.space	4
+ 175              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 protection.c
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:18     .text.protections_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:24     .text.protections_init:00000000 protections_init
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:36     .text.protections_init:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:173    .bss.throttle:00000000 throttle
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:39     .text.protection_shutdown_gracefully:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:45     .text.protection_shutdown_gracefully:00000000 protection_shutdown_gracefully
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:77     .text.protection_shutdown_gracefully:0000003c $d
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:166    .bss.protection_has_tripped.0:00000000 protection_has_tripped.0
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:85     .text.protections_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:91     .text.protections_update:00000000 protections_update
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:160    .text.protections_update:0000008c $d
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:167    .bss.protection_has_tripped.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccQ3afhv.s:170    .bss.throttle:00000000 $d
+
+UNDEFINED SYMBOLS
+electronic_throttle_override_enable
+output_override
+injection_disable
+runtime
+config
+gas_solenoid_output
+sensor_ops_get
+sensor_clt_get

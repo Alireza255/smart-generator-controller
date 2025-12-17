@@ -33,22 +33,22 @@ void sensor_tps_init(sensor_tps_t *sensor, status_t status_flag)
         {
             sensor->config.analog_channel = ANALOG_INPUT_ETB1_SENSE1;
             sensor->config.analog_channel_backup = ANALOG_INPUT_ETB1_SENSE2;
-            sensor->config.is_backup_channel_enabled = true;
+            sensor->config.is_backup_channel_enabled = false;
             sensor->config.is_inverted = false;
             sensor->config.status_bit = status_flag;
-            sensor->config.fully_closed_adc_value = 5;
-            sensor->config.fully_open_adc_value = 4090;
+            sensor->config.fully_closed_adc_value = 417;
+            sensor->config.fully_open_adc_value = 3417;
             change_bit(&runtime.status, status_flag, false);
         }
         else if (status_flag == STATUS_TPS2_ERROR)
         {
             sensor->config.analog_channel = ANALOG_INPUT_ETB2_SENSE1;
             sensor->config.analog_channel_backup = ANALOG_INPUT_ETB2_SENSE2;
-            sensor->config.is_backup_channel_enabled = true;
+            sensor->config.is_backup_channel_enabled = false;
             sensor->config.is_inverted = false;
             sensor->config.status_bit = status_flag;
-            sensor->config.fully_closed_adc_value = 5;
-            sensor->config.fully_open_adc_value = 4090;
+            sensor->config.fully_closed_adc_value = 417;
+            sensor->config.fully_open_adc_value = 3417;
             change_bit(&runtime.status, status_flag, false);
         }
 
@@ -156,8 +156,14 @@ void sensor_tps_update(sensor_tps_t *sensor, time_us_t current_time)
     {
         sensor->current_rate_of_change = delta_position / (float)delta_time * (float)CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS;
     }
-
-    change_bit(&runtime.status, sensor->config.status_bit, false);
+    if (sensor->current_position < (percent_t)-2.5 || sensor->current_position > (percent_t)102.5)
+    {
+        change_bit(&runtime.status, sensor->config.status_bit, true);
+    }
+    else
+    {
+        change_bit(&runtime.status, sensor->config.status_bit, false);
+    }
 }
 
 void sensor_map_init(sensor_map_t *sensor, sensor_map_type_t type)
@@ -176,8 +182,8 @@ void sensor_map_init(sensor_map_t *sensor, sensor_map_type_t type)
         /**
          * @todo actually calculate these values!
          */
-        sensor->config.adc_value_0_bar = 100;
-        sensor->config.adc_value_1_bar = 3000;
+        sensor->config.adc_value_0_bar = 327;
+        sensor->config.adc_value_1_bar = 3808;
         sensor->config.analog_channel = ANALOG_INPUT_SENSOR_MAP_PIN;
         change_bit(&runtime.status, STATUS_MAP_ERROR, false);
         break;
@@ -289,9 +295,9 @@ void sensor_iat_init(thermistor_t *sensor, sensor_iat_type_t type)
         resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_IAT_PIN);
         thermistor_conf_t genric_5k =
             {
-                .resistance_1 = 22.263e3f,
-                .resistance_2 = 5e3f,
-                .resistance_3 = 588.0f,
+                .resistance_1 = 9395.0f,
+                .resistance_2 = 2056.0f,
+                .resistance_3 = 243.1f,
                 .tempC_1 = -10.0f,
                 .tempC_2 = 25.0f,
                 .tempC_3 = 90.0f};
@@ -352,7 +358,7 @@ void sensor_clt_init(thermistor_t *sensor, sensor_clt_type_t type)
     {
     /* Actually make this a proper thing */
     case SENSOR_CLT_TYPE_NISSAN:
-        resistor_init(&sensor->resistor, 10000, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_CLT_PIN);
+        resistor_init(&sensor->resistor, 4700, RESISTOR_PULL_UP, ANALOG_INPUT_SENSOR_CLT_PIN);
         thermistor_conf_t nissan_clt_conf =
             {
                 .resistance_1 = 15700.0f,
@@ -475,6 +481,7 @@ void vbat_update()
     voltage_t voltage = ((float)adc_value * ADC_REF_VOLTAGE) / ADC_MAX_VALUE * VBAT_DIVIDER_RATIO;
     runtime.vbatt_volts = voltage;
 }
+
 voltage_t vbat_get()
 {
     return runtime.vbatt_volts;

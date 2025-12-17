@@ -1,0 +1,131 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccWscQql.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"fan_control.c"
+  16              		.text
+  17              		.section	.text.fan_control_update,"ax",%progbits
+  18              		.align	1
+  19              		.global	fan_control_update
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	fan_control_update:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 38B5     		push	{r3, r4, r5, lr}
+  28 0002 FFF7FEFF 		bl	sensor_clt_get
+  29 0006 274B     		ldr	r3, .L23
+  30 0008 93F8EB1A 		ldrb	r1, [r3, #2795]	@ zero_extendqisi2
+  31 000c 51B1     		cbz	r1, .L12
+  32 000e D3F83038 		ldr	r3, [r3, #2096]	@ unaligned
+  33 0012 07EE903A 		vmov	s15, r3
+  34 0016 F4EEC07A 		vcmpe.f32	s15, s0
+  35 001a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  36 001e 11D5     		bpl	.L20
+  37 0020 0125     		movs	r5, #1
+  38 0022 00E0     		b	.L2
+  39              	.L12:
+  40 0024 0025     		movs	r5, #0
+  41              	.L2:
+  42 0026 1F4B     		ldr	r3, .L23
+  43 0028 93F8EC2A 		ldrb	r2, [r3, #2796]	@ zero_extendqisi2
+  44 002c 62B1     		cbz	r2, .L14
+  45 002e D3F83838 		ldr	r3, [r3, #2104]	@ unaligned
+  46 0032 07EE903A 		vmov	s15, r3
+  47 0036 F4EEC07A 		vcmpe.f32	s15, s0
+  48 003a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  49 003e 23D5     		bpl	.L21
+  50 0040 0124     		movs	r4, #1
+  51 0042 02E0     		b	.L4
+  52              	.L20:
+  53 0044 0025     		movs	r5, #0
+  54 0046 EEE7     		b	.L2
+  55              	.L14:
+  56 0048 0024     		movs	r4, #0
+  57              	.L4:
+  58 004a 174B     		ldr	r3, .L23+4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccWscQql.s 			page 2
+
+
+  59 004c 5B88     		ldrh	r3, [r3, #2]
+  60 004e 13F00103 		ands	r3, r3, #1
+  61 0052 01D0     		beq	.L6
+  62 0054 01B1     		cbz	r1, .L6
+  63 0056 1D46     		mov	r5, r3
+  64              	.L6:
+  65 0058 0BB1     		cbz	r3, .L7
+  66 005a 02B1     		cbz	r2, .L7
+  67 005c 1C46     		mov	r4, r3
+  68              	.L7:
+  69 005e 2946     		mov	r1, r5
+  70 0060 1248     		ldr	r0, .L23+8
+  71 0062 FFF7FEFF 		bl	output_set
+  72 0066 8DB1     		cbz	r5, .L8
+  73 0068 0F4A     		ldr	r2, .L23+4
+  74 006a 1368     		ldr	r3, [r2]
+  75 006c 43F04003 		orr	r3, r3, #64
+  76 0070 1360     		str	r3, [r2]
+  77              	.L9:
+  78 0072 2146     		mov	r1, r4
+  79 0074 0E48     		ldr	r0, .L23+12
+  80 0076 FFF7FEFF 		bl	output_set
+  81 007a 6CB1     		cbz	r4, .L10
+  82 007c 0A4A     		ldr	r2, .L23+4
+  83 007e 1368     		ldr	r3, [r2]
+  84 0080 43F08003 		orr	r3, r3, #128
+  85 0084 1360     		str	r3, [r2]
+  86              	.L1:
+  87 0086 38BD     		pop	{r3, r4, r5, pc}
+  88              	.L21:
+  89 0088 0024     		movs	r4, #0
+  90 008a DEE7     		b	.L4
+  91              	.L8:
+  92 008c 064A     		ldr	r2, .L23+4
+  93 008e 1368     		ldr	r3, [r2]
+  94 0090 23F04003 		bic	r3, r3, #64
+  95 0094 1360     		str	r3, [r2]
+  96 0096 ECE7     		b	.L9
+  97              	.L10:
+  98 0098 034A     		ldr	r2, .L23+4
+  99 009a 1368     		ldr	r3, [r2]
+ 100 009c 23F08003 		bic	r3, r3, #128
+ 101 00a0 1360     		str	r3, [r2]
+ 102 00a2 F0E7     		b	.L1
+ 103              	.L24:
+ 104              		.align	2
+ 105              	.L23:
+ 106 00a4 00100000 		.word	config+4096
+ 107 00a8 00000000 		.word	runtime
+ 108 00ac 00000000 		.word	fan1_output
+ 109 00b0 00000000 		.word	fan2_output
+ 111              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccWscQql.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fan_control.c
+C:\Users\alireza\AppData\Local\Temp\ccWscQql.s:18     .text.fan_control_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccWscQql.s:24     .text.fan_control_update:00000000 fan_control_update
+C:\Users\alireza\AppData\Local\Temp\ccWscQql.s:106    .text.fan_control_update:000000a4 $d
+
+UNDEFINED SYMBOLS
+sensor_clt_get
+output_set
+config
+runtime
+fan1_output
+fan2_output

@@ -10,6 +10,7 @@
 #include "sensors.h"
 #include "trigger.h"
 #include "outputs.h"
+#include "timing_light.h"
 
 #define IGNITION_MIN_DWELL_TIME_MS 0.5f
 #define IGNITION_MAX_DWELL_TIME_MS 4.0f
@@ -81,5 +82,7 @@ percent_t ignition_get_coil_duty_cycle();
  * @return The current ignition advance angle.
  */
 angle_t ignition_get_advance();
+
+float_time_ms_t ignition_dwell_get();
 
 #endif // IGNITION_H

@@ -1,0 +1,183 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"timing_light.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/utils/timing_light.c"
+  20              		.section	.text.turn_off_pin,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	turn_off_pin:
+  27              	.LVL0:
+  28              	.LFB225:
+   1:controller/utils/timing_light.c **** #include "timing_light.h"
+   2:controller/utils/timing_light.c **** 
+   3:controller/utils/timing_light.c **** static void turn_off_pin(void *arg);
+   4:controller/utils/timing_light.c **** 
+   5:controller/utils/timing_light.c **** void timing_light_pulse_a_pin(controller_output_pin_t *pin)
+   6:controller/utils/timing_light.c **** {
+   7:controller/utils/timing_light.c ****     if (pin == NULL)
+   8:controller/utils/timing_light.c ****     {
+   9:controller/utils/timing_light.c ****         return;
+  10:controller/utils/timing_light.c ****     }
+  11:controller/utils/timing_light.c ****     
+  12:controller/utils/timing_light.c ****     time_us_t current_time = get_time_us();
+  13:controller/utils/timing_light.c ****     time_us_t light_turn_off_time = current_time + TIMING_LIGHT_PULSE_LENGTH_MICROSECONDS;
+  14:controller/utils/timing_light.c ****     scheduler_schedule_event_with_arg(light_turn_off_time, turn_off_pin, (void*)pin);
+  15:controller/utils/timing_light.c ****     output_override(pin, true);
+  16:controller/utils/timing_light.c **** }
+  17:controller/utils/timing_light.c **** 
+  18:controller/utils/timing_light.c **** 
+  19:controller/utils/timing_light.c **** static void turn_off_pin(void *arg)
+  20:controller/utils/timing_light.c **** {
+  29              		.loc 1 20 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  21:controller/utils/timing_light.c ****     if (arg == NULL)
+  33              		.loc 1 21 5 view .LVU1
+  34              		.loc 1 21 8 is_stmt 0 view .LVU2
+  35 0000 18B1     		cbz	r0, .L4
+  20:controller/utils/timing_light.c ****     if (arg == NULL)
+  36              		.loc 1 20 1 view .LVU3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s 			page 2
+
+
+  37 0002 08B5     		push	{r3, lr}
+  38              		.cfi_def_cfa_offset 8
+  39              		.cfi_offset 3, -8
+  40              		.cfi_offset 14, -4
+  22:controller/utils/timing_light.c ****     {
+  23:controller/utils/timing_light.c ****         return;
+  24:controller/utils/timing_light.c ****     }
+  25:controller/utils/timing_light.c ****     controller_output_pin_t *pin = (controller_output_pin_t*)arg;
+  41              		.loc 1 25 5 is_stmt 1 view .LVU4
+  42              	.LVL1:
+  26:controller/utils/timing_light.c ****     output_override_clear(pin);
+  43              		.loc 1 26 5 view .LVU5
+  44 0004 FFF7FEFF 		bl	output_override_clear
+  45              	.LVL2:
+  27:controller/utils/timing_light.c **** }...
+  46              		.loc 1 27 1 is_stmt 0 view .LVU6
+  47 0008 08BD     		pop	{r3, pc}
+  48              	.LVL3:
+  49              	.L4:
+  50              		.cfi_def_cfa_offset 0
+  51              		.cfi_restore 3
+  52              		.cfi_restore 14
+  53              		.loc 1 27 1 view .LVU7
+  54 000a 7047     		bx	lr
+  55              		.cfi_endproc
+  56              	.LFE225:
+  58              		.section	.text.timing_light_pulse_a_pin,"ax",%progbits
+  59              		.align	1
+  60              		.global	timing_light_pulse_a_pin
+  61              		.syntax unified
+  62              		.thumb
+  63              		.thumb_func
+  65              	timing_light_pulse_a_pin:
+  66              	.LVL4:
+  67              	.LFB224:
+   6:controller/utils/timing_light.c **** {
+  68              		.loc 1 6 1 is_stmt 1 view -0
+  69              		.cfi_startproc
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+   7:controller/utils/timing_light.c ****     if (pin == NULL)
+  72              		.loc 1 7 5 view .LVU9
+   7:controller/utils/timing_light.c ****     if (pin == NULL)
+  73              		.loc 1 7 8 is_stmt 0 view .LVU10
+  74 0000 68B1     		cbz	r0, .L10
+   6:controller/utils/timing_light.c **** {
+  75              		.loc 1 6 1 view .LVU11
+  76 0002 10B5     		push	{r4, lr}
+  77              		.cfi_def_cfa_offset 8
+  78              		.cfi_offset 4, -8
+  79              		.cfi_offset 14, -4
+  80 0004 0446     		mov	r4, r0
+  12:controller/utils/timing_light.c ****     time_us_t current_time = get_time_us();
+  81              		.loc 1 12 5 is_stmt 1 view .LVU12
+  12:controller/utils/timing_light.c ****     time_us_t current_time = get_time_us();
+  82              		.loc 1 12 30 is_stmt 0 view .LVU13
+  83 0006 FFF7FEFF 		bl	get_time_us
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s 			page 3
+
+
+  84              	.LVL5:
+  13:controller/utils/timing_light.c ****     time_us_t light_turn_off_time = current_time + TIMING_LIGHT_PULSE_LENGTH_MICROSECONDS;
+  85              		.loc 1 13 5 is_stmt 1 view .LVU14
+  14:controller/utils/timing_light.c ****     scheduler_schedule_event_with_arg(light_turn_off_time, turn_off_pin, (void*)pin);
+  86              		.loc 1 14 5 view .LVU15
+  87 000a 2246     		mov	r2, r4
+  88 000c 0449     		ldr	r1, .L13
+  89 000e 6430     		adds	r0, r0, #100
+  90              	.LVL6:
+  14:controller/utils/timing_light.c ****     scheduler_schedule_event_with_arg(light_turn_off_time, turn_off_pin, (void*)pin);
+  91              		.loc 1 14 5 is_stmt 0 view .LVU16
+  92 0010 FFF7FEFF 		bl	scheduler_schedule_event_with_arg
+  93              	.LVL7:
+  15:controller/utils/timing_light.c ****     output_override(pin, true);
+  94              		.loc 1 15 5 is_stmt 1 view .LVU17
+  95 0014 0121     		movs	r1, #1
+  96 0016 2046     		mov	r0, r4
+  97 0018 FFF7FEFF 		bl	output_override
+  98              	.LVL8:
+  16:controller/utils/timing_light.c **** }
+  99              		.loc 1 16 1 is_stmt 0 view .LVU18
+ 100 001c 10BD     		pop	{r4, pc}
+ 101              	.LVL9:
+ 102              	.L10:
+ 103              		.cfi_def_cfa_offset 0
+ 104              		.cfi_restore 4
+ 105              		.cfi_restore 14
+  16:controller/utils/timing_light.c **** }
+ 106              		.loc 1 16 1 view .LVU19
+ 107 001e 7047     		bx	lr
+ 108              	.L14:
+ 109              		.align	2
+ 110              	.L13:
+ 111 0020 00000000 		.word	turn_off_pin
+ 112              		.cfi_endproc
+ 113              	.LFE224:
+ 115              		.text
+ 116              	.Letext0:
+ 117              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 118              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 119              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h"
+ 120              		.file 5 "controller/types.h"
+ 121              		.file 6 "controller/IO/outputs.h"
+ 122              		.file 7 "controller/utils/timing.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 timing_light.c
+C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s:21     .text.turn_off_pin:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s:26     .text.turn_off_pin:00000000 turn_off_pin
+C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s:59     .text.timing_light_pulse_a_pin:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s:65     .text.timing_light_pulse_a_pin:00000000 timing_light_pulse_a_pin
+C:\Users\alireza\AppData\Local\Temp\cci6Q8LZ.s:111    .text.timing_light_pulse_a_pin:00000020 $d
+
+UNDEFINED SYMBOLS
+output_override_clear
+get_time_us
+scheduler_schedule_event_with_arg
+output_override

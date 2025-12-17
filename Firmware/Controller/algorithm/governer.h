@@ -12,10 +12,10 @@ typedef enum
     GOVERNER_STATUS_TARGET,
 } governer_status_t;
 
-void governer_init(electronic_throttle_t *etb);
+void governer_init(electronic_throttle_t *etb, pid_parameters_config_t *config);
 
 governer_status_t governer_get_status();
 
-void governer_update();
+void governer_update(time_us_t timestamp);
 
 #endif // GOVERNER_H

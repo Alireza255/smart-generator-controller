@@ -2,33 +2,21 @@
 #include "controller.h"
 
 electronic_throttle_t *governer_etb = NULL;
-static pid_t governer_pid;
+static pid_t governer_pid = {0};
 
-void governer_init(electronic_throttle_t *etb)
+void governer_init(electronic_throttle_t *etb, pid_parameters_config_t *config)
 {
-    if (etb == NULL)
+    if (etb == NULL || config == NULL)
     {
         log_error("Governer init failed!");
         return;
     }
     governer_etb = etb;
 
-    pid_init(&governer_pid);
+    pid_init(&governer_pid, config);
     governer_pid.limit_output_max = (percent_t)100;
     governer_pid.limit_output_min = (percent_t)0;
-    pid_configuration_t dummy_config = {0};
 
-    dummy_config.Kp = config.governer_pid_Kp;
-    dummy_config.Ki = config.governer_pid_Ki;
-    dummy_config.Kd = config.governer_pid_Kd;
-    dummy_config.limit_integrator_min = config.governer_pid_limit_integrator_min;
-    dummy_config.limit_integrator_max = config.governer_pid_limit_integrator_max;
-    dummy_config.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
-
-    pid_set_tuning(&governer_pid, &dummy_config);
-
-    osTimerId_t timer = osTimerNew(governer_update, osTimerPeriodic, NULL, NULL);
-    osTimerStart(timer, 1);
     /**
      * Can this lead to windup? imagine the motor is running at a low rpm (say 800rpm) so the rpm gets updated at a rate of
      * 800Hz, this means that sometimes, the pid algorithm runs over old data which can lead to windup since it doesn't see
@@ -39,22 +27,15 @@ void governer_init(electronic_throttle_t *etb)
      */
 }
 
-void governer_update()
+void governer_update(time_us_t timestamp)
 {
     if (governer_etb == NULL)
     {
-        log_error("Governer no init!");
         return;
     }
+    
     percent_t throttle_setpoint = ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION;
 
-    governer_pid.Kp = config.governer_pid_Kp;
-    governer_pid.Ki = config.governer_pid_Ki;
-    governer_pid.Kd = config.governer_pid_Kd;
-    governer_pid.limit_integrator_min = config.governer_pid_limit_integrator_min;
-    governer_pid.limit_integrator_max = config.governer_pid_limit_integrator_max;
-    governer_pid.derivative_filter_tau = config.governer_pid_derivative_filter_tau;
-    
     if (runtime.spinning_state != SS_RUNNING)
     {
         throttle_setpoint = config.cranking_throttle;
@@ -63,20 +44,13 @@ void governer_update()
     }
     else
     {
-        
         runtime.governer_status = GOVERNER_STATUS_TARGET;
         pid_set_setpoint(&governer_pid, config.governer_target_rpm);
         rpm_t rpm = crankshaft_get_rpm();
-        throttle_setpoint = pid_compute(&governer_pid, get_time_us(), rpm);
+        throttle_setpoint = pid_compute(&governer_pid, timestamp, rpm);
         runtime.governer_target_rpm = config.governer_target_rpm;
     }
     electronic_throttle_set(governer_etb, throttle_setpoint);
-    static percent_t prev_setpoint = 0;
-    if (ABS(throttle_setpoint - prev_setpoint) > (percent_t)80)
-    {
-        __NOP();
-    }
-    prev_setpoint = throttle_setpoint;
     
 }
 governer_status_t governer_get_status()

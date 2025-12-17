@@ -1,0 +1,2041 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"controller.c"
+  16              		.text
+  17              		.section	.text.__NVIC_SystemReset,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	__NVIC_SystemReset:
+  24              		@ Volatile: function does not return.
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28              		.syntax unified
+  29              	@ 271 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  30 0000 BFF34F8F 		dsb 0xF
+  31              	@ 0 "" 2
+  32              		.thumb
+  33              		.syntax unified
+  34 0004 0549     		ldr	r1, .L3
+  35 0006 CA68     		ldr	r2, [r1, #12]
+  36 0008 02F4E062 		and	r2, r2, #1792
+  37 000c 044B     		ldr	r3, .L3+4
+  38 000e 1343     		orrs	r3, r3, r2
+  39 0010 CB60     		str	r3, [r1, #12]
+  40              		.syntax unified
+  41              	@ 271 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  42 0012 BFF34F8F 		dsb 0xF
+  43              	@ 0 "" 2
+  44              		.thumb
+  45              		.syntax unified
+  46              	.L2:
+  47              		.syntax unified
+  48              	@ 1949 "Drivers/CMSIS/Include/core_cm4.h" 1
+  49 0016 00BF     		nop
+  50              	@ 0 "" 2
+  51              		.thumb
+  52              		.syntax unified
+  53 0018 FDE7     		b	.L2
+  54              	.L4:
+  55 001a 00BF     		.align	2
+  56              	.L3:
+  57 001c 00ED00E0 		.word	-536810240
+  58 0020 0400FA05 		.word	100270084
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 2
+
+
+  60              		.section	.text.task_long_routines,"ax",%progbits
+  61              		.align	1
+  62              		.global	task_long_routines
+  63              		.syntax unified
+  64              		.thumb
+  65              		.thumb_func
+  67              	task_long_routines:
+  68              		@ Volatile: function does not return.
+  69              		@ args = 0, pretend = 0, frame = 0
+  70              		@ frame_needed = 0, uses_anonymous_args = 0
+  71 0000 08B5     		push	{r3, lr}
+  72              	.L6:
+  73 0002 FFF7FEFF 		bl	get_time_ms
+  74 0006 094B     		ldr	r3, .L8
+  75 0008 A3FB0030 		umull	r3, r0, r3, r0
+  76 000c 8009     		lsrs	r0, r0, #6
+  77 000e 084B     		ldr	r3, .L8+4
+  78 0010 D860     		str	r0, [r3, #12]
+  79 0012 FFF7FEFF 		bl	fan_control_update
+  80 0016 4FF40051 		mov	r1, #8192
+  81 001a 0648     		ldr	r0, .L8+8
+  82 001c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  83 0020 4FF47A70 		mov	r0, #1000
+  84 0024 FFF7FEFF 		bl	osDelay
+  85 0028 EBE7     		b	.L6
+  86              	.L9:
+  87 002a 00BF     		.align	2
+  88              	.L8:
+  89 002c D34D6210 		.word	274877907
+  90 0030 00000000 		.word	runtime
+  91 0034 00080240 		.word	1073874944
+  93              		.section	.text.task_sensor,"ax",%progbits
+  94              		.align	1
+  95              		.global	task_sensor
+  96              		.syntax unified
+  97              		.thumb
+  98              		.thumb_func
+ 100              	task_sensor:
+ 101              		@ args = 0, pretend = 0, frame = 0
+ 102              		@ frame_needed = 0, uses_anonymous_args = 0
+ 103 0000 70B5     		push	{r4, r5, r6, lr}
+ 104 0002 15E0     		b	.L15
+ 105              	.L11:
+ 106 0004 5B7D     		ldrb	r3, [r3, #21]	@ zero_extendqisi2
+ 107 0006 07EE903A 		vmov	s15, r3	@ int
+ 108 000a F8EE677A 		vcvt.f32.u32	s15, s15
+ 109 000e 76E0     		b	.L12
+ 110              	.L13:
+ 111 0010 5B7D     		ldrb	r3, [r3, #21]	@ zero_extendqisi2
+ 112 0012 07EE903A 		vmov	s15, r3	@ int
+ 113 0016 F8EE677A 		vcvt.f32.u32	s15, s15
+ 114              	.L14:
+ 115 001a 424B     		ldr	r3, .L17
+ 116 001c C3ED197A 		vstr.32	s15, [r3, #100]
+ 117 0020 FFF7FEFF 		bl	trigger_spinning_state_get
+ 118 0024 404B     		ldr	r3, .L17+4
+ 119 0026 1870     		strb	r0, [r3]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 3
+
+
+ 120 0028 FFF7FEFF 		bl	governer_get_status
+ 121 002c 3F4B     		ldr	r3, .L17+8
+ 122 002e 1870     		strb	r0, [r3]
+ 123              	.L15:
+ 124 0030 3F4C     		ldr	r4, .L17+12
+ 125 0032 4FF0FF33 		mov	r3, #-1
+ 126 0036 0022     		movs	r2, #0
+ 127 0038 0321     		movs	r1, #3
+ 128 003a 2068     		ldr	r0, [r4]
+ 129 003c FFF7FEFF 		bl	osEventFlagsWait
+ 130 0040 0221     		movs	r1, #2
+ 131 0042 2068     		ldr	r0, [r4]
+ 132 0044 FFF7FEFF 		bl	osEventFlagsClear
+ 133 0048 FFF7FEFF 		bl	get_time_us
+ 134 004c 0446     		mov	r4, r0
+ 135 004e 394D     		ldr	r5, .L17+16
+ 136 0050 0146     		mov	r1, r0
+ 137 0052 2846     		mov	r0, r5
+ 138 0054 FFF7FEFF 		bl	sensor_tps_update
+ 139 0058 374E     		ldr	r6, .L17+20
+ 140 005a 2146     		mov	r1, r4
+ 141 005c 3046     		mov	r0, r6
+ 142 005e FFF7FEFF 		bl	sensor_tps_update
+ 143 0062 2046     		mov	r0, r4
+ 144 0064 FFF7FEFF 		bl	sensor_map_update
+ 145 0068 FFF7FEFF 		bl	sensor_iat_update
+ 146 006c FFF7FEFF 		bl	sensor_clt_update
+ 147 0070 2046     		mov	r0, r4
+ 148 0072 FFF7FEFF 		bl	sensor_ops_update
+ 149 0076 FFF7FEFF 		bl	vbat_update
+ 150 007a 2846     		mov	r0, r5
+ 151 007c FFF7FEFF 		bl	sensor_tps_get
+ 152 0080 284C     		ldr	r4, .L17
+ 153 0082 84ED0A0A 		vstr.32	s0, [r4, #40]
+ 154 0086 3046     		mov	r0, r6
+ 155 0088 FFF7FEFF 		bl	sensor_tps_get
+ 156 008c 84ED0B0A 		vstr.32	s0, [r4, #44]
+ 157 0090 2846     		mov	r0, r5
+ 158 0092 FFF7FEFF 		bl	sensor_tps_rate_of_change_get
+ 159 0096 84ED0C0A 		vstr.32	s0, [r4, #48]
+ 160 009a 2848     		ldr	r0, .L17+24
+ 161 009c FFF7FEFF 		bl	sensor_map_rate_of_change_get
+ 162 00a0 84ED0E0A 		vstr.32	s0, [r4, #56]
+ 163 00a4 4FF07E53 		mov	r3, #1065353216
+ 164 00a8 E364     		str	r3, [r4, #76]	@ float
+ 165 00aa FFF7FEFF 		bl	ignition_dwell_get
+ 166 00ae 84ED1C0A 		vstr.32	s0, [r4, #112]
+ 167 00b2 FFF7FEFF 		bl	sensor_clt_get
+ 168 00b6 84ED100A 		vstr.32	s0, [r4, #64]
+ 169 00ba FFF7FEFF 		bl	sensor_iat_get
+ 170 00be 84ED110A 		vstr.32	s0, [r4, #68]
+ 171 00c2 FFF7FEFF 		bl	sensor_map_get
+ 172 00c6 84ED0D0A 		vstr.32	s0, [r4, #52]
+ 173 00ca FFF7FEFF 		bl	sensor_egt_get
+ 174 00ce 84ED120A 		vstr.32	s0, [r4, #72]
+ 175 00d2 FFF7FEFF 		bl	vbat_get
+ 176 00d6 84ED150A 		vstr.32	s0, [r4, #84]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 4
+
+
+ 177 00da FFF7FEFF 		bl	ignition_get_advance
+ 178 00de 84ED090A 		vstr.32	s0, [r4, #36]
+ 179 00e2 174B     		ldr	r3, .L17+28
+ 180 00e4 5A69     		ldr	r2, [r3, #20]	@ float
+ 181 00e6 A265     		str	r2, [r4, #88]	@ float
+ 182 00e8 5B68     		ldr	r3, [r3, #4]
+ 183 00ea 1A7D     		ldrb	r2, [r3, #20]	@ zero_extendqisi2
+ 184 00ec 002A     		cmp	r2, #0
+ 185 00ee 89D0     		beq	.L11
+ 186 00f0 5B7D     		ldrb	r3, [r3, #21]	@ zero_extendqisi2
+ 187 00f2 07EE903A 		vmov	s15, r3	@ int
+ 188 00f6 F8EE677A 		vcvt.f32.u32	s15, s15
+ 189 00fa F1EE677A 		vneg.f32	s15, s15
+ 190              	.L12:
+ 191 00fe 094A     		ldr	r2, .L17
+ 192 0100 C2ED187A 		vstr.32	s15, [r2, #96]
+ 193 0104 0F4B     		ldr	r3, .L17+32
+ 194 0106 5969     		ldr	r1, [r3, #20]	@ float
+ 195 0108 D165     		str	r1, [r2, #92]	@ float
+ 196 010a 5B68     		ldr	r3, [r3, #4]
+ 197 010c 1A7D     		ldrb	r2, [r3, #20]	@ zero_extendqisi2
+ 198 010e 002A     		cmp	r2, #0
+ 199 0110 3FF47EAF 		beq	.L13
+ 200 0114 5B7D     		ldrb	r3, [r3, #21]	@ zero_extendqisi2
+ 201 0116 07EE903A 		vmov	s15, r3	@ int
+ 202 011a F8EE677A 		vcvt.f32.u32	s15, s15
+ 203 011e F1EE677A 		vneg.f32	s15, s15
+ 204 0122 7AE7     		b	.L14
+ 205              	.L18:
+ 206              		.align	2
+ 207              	.L17:
+ 208 0124 00000000 		.word	runtime
+ 209 0128 00000000 		.word	diagnostic_spinning_state
+ 210 012c 00000000 		.word	diagnostic_governer_status
+ 211 0130 00000000 		.word	controller_flags
+ 212 0134 00000000 		.word	tps1
+ 213 0138 00000000 		.word	tps2
+ 214 013c 00000000 		.word	sensor_map
+ 215 0140 00000000 		.word	etb1
+ 216 0144 00000000 		.word	etb2
+ 218              		.section	.text.task_controller_test,"ax",%progbits
+ 219              		.align	1
+ 220              		.global	task_controller_test
+ 221              		.syntax unified
+ 222              		.thumb
+ 223              		.thumb_func
+ 225              	task_controller_test:
+ 226              		@ Volatile: function does not return.
+ 227              		@ args = 0, pretend = 0, frame = 0
+ 228              		@ frame_needed = 0, uses_anonymous_args = 0
+ 229 0000 08B5     		push	{r3, lr}
+ 230 0002 6420     		movs	r0, #100
+ 231 0004 FFF7FEFF 		bl	osDelay
+ 232 0008 034B     		ldr	r3, .L22
+ 233 000a 1968     		ldr	r1, [r3]
+ 234 000c 0020     		movs	r0, #0
+ 235 000e FFF7FEFF 		bl	trigger_simulator_crank_init
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 5
+
+
+ 236              	.L20:
+ 237 0012 FFF7FEFF 		bl	trigger_simulator_update
+ 238 0016 FCE7     		b	.L20
+ 239              	.L23:
+ 240              		.align	2
+ 241              	.L22:
+ 242 0018 00000000 		.word	trigger_signal_queue_id
+ 244              		.section	.text.task_updater,"ax",%progbits
+ 245              		.align	1
+ 246              		.global	task_updater
+ 247              		.syntax unified
+ 248              		.thumb
+ 249              		.thumb_func
+ 251              	task_updater:
+ 252              		@ args = 0, pretend = 0, frame = 0
+ 253              		@ frame_needed = 0, uses_anonymous_args = 0
+ 254 0000 10B5     		push	{r4, lr}
+ 255              	.L25:
+ 256 0002 FFF7FEFF 		bl	get_time_us
+ 257 0006 0446     		mov	r4, r0
+ 258 0008 FFF7FEFF 		bl	governer_update
+ 259 000c 2046     		mov	r0, r4
+ 260 000e FFF7FEFF 		bl	gas_injection_update
+ 261 0012 2146     		mov	r1, r4
+ 262 0014 0648     		ldr	r0, .L27
+ 263 0016 FFF7FEFF 		bl	electronic_throttle_update
+ 264 001a 2146     		mov	r1, r4
+ 265 001c 0548     		ldr	r0, .L27+4
+ 266 001e FFF7FEFF 		bl	electronic_throttle_update
+ 267 0022 2046     		mov	r0, r4
+ 268 0024 FFF7FEFF 		bl	protections_update
+ 269 0028 0120     		movs	r0, #1
+ 270 002a FFF7FEFF 		bl	osDelay
+ 271 002e E8E7     		b	.L25
+ 272              	.L28:
+ 273              		.align	2
+ 274              	.L27:
+ 275 0030 00000000 		.word	etb1
+ 276 0034 00000000 		.word	etb2
+ 278              		.section	.text.task_trigger_driven,"ax",%progbits
+ 279              		.align	1
+ 280              		.global	task_trigger_driven
+ 281              		.syntax unified
+ 282              		.thumb
+ 283              		.thumb_func
+ 285              	task_trigger_driven:
+ 286              		@ args = 0, pretend = 0, frame = 8
+ 287              		@ frame_needed = 0, uses_anonymous_args = 0
+ 288 0000 10B5     		push	{r4, lr}
+ 289 0002 2DED028B 		vpush.64	{d8}
+ 290 0006 82B0     		sub	sp, sp, #8
+ 291 0008 11E0     		b	.L34
+ 292              	.L38:
+ 293 000a 0323     		movs	r3, #3
+ 294 000c 8DF80530 		strb	r3, [sp, #5]
+ 295 0010 0023     		movs	r3, #0
+ 296 0012 8DF80430 		strb	r3, [sp, #4]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 6
+
+
+ 297 0016 FFF7FEFF 		bl	get_time_us
+ 298 001a 0090     		str	r0, [sp]
+ 299 001c 11E0     		b	.L30
+ 300              	.L33:
+ 301 001e 0098     		ldr	r0, [sp]
+ 302 0020 FFF7FEFF 		bl	trigger_logger_entry_add_tooth
+ 303              	.L32:
+ 304 0024 1A4B     		ldr	r3, .L39
+ 305 0026 1B68     		ldr	r3, [r3]
+ 306 0028 13F0080F 		tst	r3, #8
+ 307 002c 1AD1     		bne	.L37
+ 308              	.L34:
+ 309 002e 3223     		movs	r3, #50
+ 310 0030 0022     		movs	r2, #0
+ 311 0032 6946     		mov	r1, sp
+ 312 0034 1748     		ldr	r0, .L39+4
+ 313 0036 0068     		ldr	r0, [r0]
+ 314 0038 FFF7FEFF 		bl	osMessageQueueGet
+ 315 003c 10F1020F 		cmn	r0, #2
+ 316 0040 E3D0     		beq	.L38
+ 317              	.L30:
+ 318 0042 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 319 0046 4BB1     		cbz	r3, .L31
+ 320 0048 012B     		cmp	r3, #1
+ 321 004a EBD1     		bne	.L32
+ 322 004c 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+ 323 0050 002B     		cmp	r3, #0
+ 324 0052 E4D1     		bne	.L33
+ 325 0054 6846     		mov	r0, sp
+ 326 0056 FFF7FEFF 		bl	trigger_crank_handle
+ 327 005a E0E7     		b	.L33
+ 328              	.L31:
+ 329 005c 6846     		mov	r0, sp
+ 330 005e FFF7FEFF 		bl	trigger_crank_handle
+ 331 0062 DFE7     		b	.L32
+ 332              	.L37:
+ 333 0064 FFF7FEFF 		bl	crankshaft_get_rpm
+ 334 0068 B0EE408A 		vmov.f32	s16, s0
+ 335 006c FFF7FEFF 		bl	crankshaft_get_angle
+ 336 0070 F0EE408A 		vmov.f32	s17, s0
+ 337 0074 009C     		ldr	r4, [sp]
+ 338 0076 2046     		mov	r0, r4
+ 339 0078 F0EE480A 		vmov.f32	s1, s16
+ 340 007c FFF7FEFF 		bl	ignition_trigger_event_handle
+ 341 0080 2046     		mov	r0, r4
+ 342 0082 F0EE480A 		vmov.f32	s1, s16
+ 343 0086 B0EE680A 		vmov.f32	s0, s17
+ 344 008a FFF7FEFF 		bl	injection_trigger_event_handle
+ 345 008e CEE7     		b	.L34
+ 346              	.L40:
+ 347              		.align	2
+ 348              	.L39:
+ 349 0090 00000000 		.word	runtime
+ 350 0094 00000000 		.word	trigger_signal_queue_id
+ 352              		.section	.text.controller_configuration_load_default,"ax",%progbits
+ 353              		.align	1
+ 354              		.global	controller_configuration_load_default
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 7
+
+
+ 355              		.syntax unified
+ 356              		.thumb
+ 357              		.thumb_func
+ 359              	controller_configuration_load_default:
+ 360              		@ args = 0, pretend = 0, frame = 0
+ 361              		@ frame_needed = 0, uses_anonymous_args = 0
+ 362 0000 10B5     		push	{r4, lr}
+ 363 0002 0022     		movs	r2, #0
+ 364 0004 28E0     		b	.L42
+ 365              	.L43:
+ 366 0006 41F27073 		movw	r3, #6000
+ 367 000a 02FB03F3 		mul	r3, r2, r3
+ 368 000e 1B09     		lsrs	r3, r3, #4
+ 369 0010 07EE903A 		vmov	s15, r3	@ int
+ 370 0014 F8EE677A 		vcvt.f32.u32	s15, s15
+ 371 0018 554B     		ldr	r3, .L56
+ 372 001a 02F58071 		add	r1, r2, #256
+ 373 001e 03EB8101 		add	r1, r3, r1, lsl #2
+ 374 0022 C1ED007A 		vstr.32	s15, [r1]
+ 375 0026 02F50871 		add	r1, r2, #544
+ 376 002a 03EB8101 		add	r1, r3, r1, lsl #2
+ 377 002e C1ED007A 		vstr.32	s15, [r1]
+ 378 0032 02F55071 		add	r1, r2, #832
+ 379 0036 03EB8101 		add	r1, r3, r1, lsl #2
+ 380 003a C1ED007A 		vstr.32	s15, [r1]
+ 381 003e 02F58C61 		add	r1, r2, #1120
+ 382 0042 03EB8101 		add	r1, r3, r1, lsl #2
+ 383 0046 C1ED007A 		vstr.32	s15, [r1]
+ 384 004a 02F5B061 		add	r1, r2, #1408
+ 385 004e 03EB8103 		add	r3, r3, r1, lsl #2
+ 386 0052 C3ED007A 		vstr.32	s15, [r3]
+ 387 0056 0132     		adds	r2, r2, #1
+ 388              	.L42:
+ 389 0058 0F2A     		cmp	r2, #15
+ 390 005a D4D9     		bls	.L43
+ 391 005c 0023     		movs	r3, #0
+ 392 005e 2BE0     		b	.L44
+ 393              	.L45:
+ 394 0060 07EE903A 		vmov	s15, r3	@ int
+ 395 0064 F8EE677A 		vcvt.f32.u32	s15, s15
+ 396 0068 9FED427A 		vldr.32	s14, .L56+4
+ 397 006c 67EE877A 		vmul.f32	s15, s15, s14
+ 398 0070 9FED417A 		vldr.32	s14, .L56+8
+ 399 0074 67EE877A 		vmul.f32	s15, s15, s14
+ 400 0078 3D4A     		ldr	r2, .L56
+ 401 007a 03F58871 		add	r1, r3, #272
+ 402 007e 02EB8101 		add	r1, r2, r1, lsl #2
+ 403 0082 C1ED007A 		vstr.32	s15, [r1]
+ 404 0086 03F50C71 		add	r1, r3, #560
+ 405 008a 02EB8101 		add	r1, r2, r1, lsl #2
+ 406 008e C1ED007A 		vstr.32	s15, [r1]
+ 407 0092 03F55471 		add	r1, r3, #848
+ 408 0096 02EB8101 		add	r1, r2, r1, lsl #2
+ 409 009a C1ED007A 		vstr.32	s15, [r1]
+ 410 009e 03F58E61 		add	r1, r3, #1136
+ 411 00a2 02EB8101 		add	r1, r2, r1, lsl #2
+ 412 00a6 C1ED007A 		vstr.32	s15, [r1]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 8
+
+
+ 413 00aa 03F5B261 		add	r1, r3, #1424
+ 414 00ae 02EB8102 		add	r2, r2, r1, lsl #2
+ 415 00b2 C2ED007A 		vstr.32	s15, [r2]
+ 416 00b6 0133     		adds	r3, r3, #1
+ 417              	.L44:
+ 418 00b8 0F2B     		cmp	r3, #15
+ 419 00ba D1D9     		bls	.L45
+ 420 00bc 4FF0000E 		mov	lr, #0
+ 421 00c0 27E0     		b	.L46
+ 422              	.L47:
+ 423 00c2 2B4B     		ldr	r3, .L56
+ 424 00c4 01EB0E12 		add	r2, r1, lr, lsl #4
+ 425 00c8 03EB8200 		add	r0, r3, r2, lsl #2
+ 426 00cc DFF8B4C0 		ldr	ip, .L56+20
+ 427 00d0 C0F800C0 		str	ip, [r0]	@ float
+ 428 00d4 02F59070 		add	r0, r2, #288
+ 429 00d8 03EB8000 		add	r0, r3, r0, lsl #2
+ 430 00dc C0F800C0 		str	ip, [r0]	@ float
+ 431 00e0 02F51070 		add	r0, r2, #576
+ 432 00e4 03EB8000 		add	r0, r3, r0, lsl #2
+ 433 00e8 DFF894C0 		ldr	ip, .L56+16
+ 434 00ec C0F800C0 		str	ip, [r0]	@ float
+ 435 00f0 02F55870 		add	r0, r2, #864
+ 436 00f4 03EB8000 		add	r0, r3, r0, lsl #2
+ 437 00f8 C0F800C0 		str	ip, [r0]	@ float
+ 438 00fc 02F59062 		add	r2, r2, #1152
+ 439 0100 03EB8203 		add	r3, r3, r2, lsl #2
+ 440 0104 1D4A     		ldr	r2, .L56+12
+ 441 0106 1A60     		str	r2, [r3]	@ float
+ 442 0108 0131     		adds	r1, r1, #1
+ 443              	.L48:
+ 444 010a 0F29     		cmp	r1, #15
+ 445 010c D9D9     		bls	.L47
+ 446 010e 0EF1010E 		add	lr, lr, #1
+ 447              	.L46:
+ 448 0112 BEF10F0F 		cmp	lr, #15
+ 449 0116 01D8     		bhi	.L55
+ 450 0118 0021     		movs	r1, #0
+ 451 011a F6E7     		b	.L48
+ 452              	.L55:
+ 453 011c 0022     		movs	r2, #0
+ 454 011e 23E0     		b	.L49
+ 455              	.L50:
+ 456 0120 1349     		ldr	r1, .L56
+ 457 0122 02F5C263 		add	r3, r2, #1552
+ 458 0126 01EB8303 		add	r3, r1, r3, lsl #2
+ 459 012a 0020     		movs	r0, #0
+ 460 012c 1860     		str	r0, [r3]	@ float
+ 461 012e A2F10803 		sub	r3, r2, #8
+ 462 0132 DB08     		lsrs	r3, r3, #3
+ 463 0134 4FF4FA6C 		mov	ip, #2000
+ 464 0138 0CFB03F3 		mul	r3, ip, r3
+ 465 013c 07EE903A 		vmov	s15, r3	@ int
+ 466 0140 F8EE677A 		vcvt.f32.u32	s15, s15
+ 467 0144 02F5C463 		add	r3, r2, #1568
+ 468 0148 01EB8303 		add	r3, r1, r3, lsl #2
+ 469 014c C3ED007A 		vstr.32	s15, [r3]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 9
+
+
+ 470 0150 02F5C663 		add	r3, r2, #1584
+ 471 0154 01EB8303 		add	r3, r1, r3, lsl #2
+ 472 0158 1860     		str	r0, [r3]	@ float
+ 473 015a 02F5C863 		add	r3, r2, #1600
+ 474 015e 01EB8301 		add	r1, r1, r3, lsl #2
+ 475 0162 C1ED007A 		vstr.32	s15, [r1]
+ 476 0166 0132     		adds	r2, r2, #1
+ 477              	.L49:
+ 478 0168 0F2A     		cmp	r2, #15
+ 479 016a D9D9     		bls	.L50
+ 480 016c 0023     		movs	r3, #0
+ 481 016e 3FE0     		b	.L51
+ 482              	.L57:
+ 483              		.align	2
+ 484              	.L56:
+ 485 0170 00000000 		.word	config
+ 486 0174 0000F042 		.word	1123024896
+ 487 0178 0000803D 		.word	1031798784
+ 488 017c 0000C842 		.word	1120403456
+ 489 0180 0000C841 		.word	1103626240
+ 490 0184 0000A042 		.word	1117782016
+ 491              	.L52:
+ 492 0188 AA4A     		ldr	r2, .L58
+ 493 018a 03F5CA61 		add	r1, r3, #1616
+ 494 018e 02EB8101 		add	r1, r2, r1, lsl #2
+ 495 0192 0020     		movs	r0, #0
+ 496 0194 0860     		str	r0, [r1]	@ float
+ 497 0196 03F5CE61 		add	r1, r3, #1648
+ 498 019a 02EB8101 		add	r1, r2, r1, lsl #2
+ 499 019e 0860     		str	r0, [r1]	@ float
+ 500 01a0 03F5D261 		add	r1, r3, #1680
+ 501 01a4 02EB8101 		add	r1, r2, r1, lsl #2
+ 502 01a8 0860     		str	r0, [r1]	@ float
+ 503 01aa 07EE903A 		vmov	s15, r3	@ int
+ 504 01ae B8EE677A 		vcvt.f32.u32	s14, s15
+ 505 01b2 DFEDA17A 		vldr.32	s15, .L58+4
+ 506 01b6 27EE277A 		vmul.f32	s14, s14, s15
+ 507 01ba F2EE0E6A 		vmov.f32	s13, #1.5e+1
+ 508 01be C7EE267A 		vdiv.f32	s15, s14, s13
+ 509 01c2 9FED9E7A 		vldr.32	s14, .L58+8
+ 510 01c6 77EEC77A 		vsub.f32	s15, s15, s14
+ 511 01ca 03F5CC61 		add	r1, r3, #1632
+ 512 01ce 02EB8101 		add	r1, r2, r1, lsl #2
+ 513 01d2 C1ED007A 		vstr.32	s15, [r1]
+ 514 01d6 03F5D061 		add	r1, r3, #1664
+ 515 01da 02EB8101 		add	r1, r2, r1, lsl #2
+ 516 01de C1ED007A 		vstr.32	s15, [r1]
+ 517 01e2 03F5D461 		add	r1, r3, #1696
+ 518 01e6 02EB8102 		add	r2, r2, r1, lsl #2
+ 519 01ea C2ED007A 		vstr.32	s15, [r2]
+ 520 01ee 0133     		adds	r3, r3, #1
+ 521              	.L51:
+ 522 01f0 0F2B     		cmp	r3, #15
+ 523 01f2 C9D9     		bls	.L52
+ 524 01f4 8F4A     		ldr	r2, .L58
+ 525 01f6 02F58053 		add	r3, r2, #4096
+ 526 01fa 02F5B451 		add	r1, r2, #5760
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 10
+
+
+ 527 01fe 9048     		ldr	r0, .L58+12
+ 528 0200 0860     		str	r0, [r1]	@ float
+ 529 0202 03F28461 		addw	r1, r3, #1668
+ 530 0206 8F48     		ldr	r0, .L58+16
+ 531 0208 0860     		str	r0, [r1]	@ float
+ 532 020a 03F5D160 		add	r0, r3, #1672
+ 533 020e 8E49     		ldr	r1, .L58+20
+ 534 0210 0160     		str	r1, [r0]	@ float
+ 535 0212 03F28C60 		addw	r0, r3, #1676
+ 536 0216 8D4C     		ldr	r4, .L58+24
+ 537 0218 0460     		str	r4, [r0]	@ float
+ 538 021a 03F5D260 		add	r0, r3, #1680
+ 539 021e 4FF08144 		mov	r4, #1082130432
+ 540 0222 0460     		str	r4, [r0]	@ float
+ 541 0224 03F29460 		addw	r0, r3, #1684
+ 542 0228 894C     		ldr	r4, .L58+28
+ 543 022a 0460     		str	r4, [r0]	@ float
+ 544 022c 03F5D360 		add	r0, r3, #1688
+ 545 0230 884C     		ldr	r4, .L58+32
+ 546 0232 0460     		str	r4, [r0]	@ float
+ 547 0234 03F29C60 		addw	r0, r3, #1692
+ 548 0238 874C     		ldr	r4, .L58+36
+ 549 023a 0460     		str	r4, [r0]	@ float
+ 550 023c 02F5B550 		add	r0, r2, #5792
+ 551 0240 0160     		str	r1, [r0]	@ float
+ 552 0242 03F2A461 		addw	r1, r3, #1700
+ 553 0246 8548     		ldr	r0, .L58+40
+ 554 0248 0860     		str	r0, [r1]	@ float
+ 555 024a 03F5D561 		add	r1, r3, #1704
+ 556 024e 8448     		ldr	r0, .L58+44
+ 557 0250 0860     		str	r0, [r1]	@ float
+ 558 0252 03F2AC61 		addw	r1, r3, #1708
+ 559 0256 8348     		ldr	r0, .L58+48
+ 560 0258 0860     		str	r0, [r1]	@ float
+ 561 025a 03F5D660 		add	r0, r3, #1712
+ 562 025e 4FF08041 		mov	r1, #1073741824
+ 563 0262 0160     		str	r1, [r0]	@ float
+ 564 0264 03F2B460 		addw	r0, r3, #1716
+ 565 0268 0160     		str	r1, [r0]	@ float
+ 566 026a 03F5D761 		add	r1, r3, #1720
+ 567 026e 7E48     		ldr	r0, .L58+52
+ 568 0270 0860     		str	r0, [r1]	@ float
+ 569 0272 03F2BC61 		addw	r1, r3, #1724
+ 570 0276 F1EE047A 		vmov.f32	s15, #5.0e+0
+ 571 027a C1ED007A 		vstr.32	s15, [r1]
+ 572 027e 02F5B651 		add	r1, r2, #5824
+ 573 0282 7A48     		ldr	r0, .L58+56
+ 574 0284 0860     		str	r0, [r1]	@ float
+ 575 0286 03F2C461 		addw	r1, r3, #1732
+ 576 028a 7948     		ldr	r0, .L58+60
+ 577 028c 0860     		str	r0, [r1]	@ float
+ 578 028e 03F5D961 		add	r1, r3, #1736
+ 579 0292 7848     		ldr	r0, .L58+64
+ 580 0294 0860     		str	r0, [r1]	@ float
+ 581 0296 03F2CC61 		addw	r1, r3, #1740
+ 582 029a 7748     		ldr	r0, .L58+68
+ 583 029c 0860     		str	r0, [r1]	@ float
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 11
+
+
+ 584 029e 03F5DA60 		add	r0, r3, #1744
+ 585 02a2 7649     		ldr	r1, .L58+72
+ 586 02a4 0160     		str	r1, [r0]	@ float
+ 587 02a6 03F2D460 		addw	r0, r3, #1748
+ 588 02aa 754C     		ldr	r4, .L58+76
+ 589 02ac 0460     		str	r4, [r0]	@ float
+ 590 02ae 03F5DB60 		add	r0, r3, #1752
+ 591 02b2 744C     		ldr	r4, .L58+80
+ 592 02b4 0460     		str	r4, [r0]	@ float
+ 593 02b6 02F5B750 		add	r0, r2, #5856
+ 594 02ba DFF8E4C1 		ldr	ip, .L58+108
+ 595 02be C0F800C0 		str	ip, [r0]	@ float
+ 596 02c2 03F2DC60 		addw	r0, r3, #1756
+ 597 02c6 DFF8DCE1 		ldr	lr, .L58+112
+ 598 02ca C0F800E0 		str	lr, [r0]	@ float
+ 599 02ce 03F2E460 		addw	r0, r3, #1764
+ 600 02d2 0160     		str	r1, [r0]	@ float
+ 601 02d4 03F5ED60 		add	r0, r3, #1896
+ 602 02d8 B1EE0E7A 		vmov.f32	s14, #7.5e+0
+ 603 02dc 80ED007A 		vstr.32	s14, [r0]
+ 604 02e0 03F26C70 		addw	r0, r3, #1900
+ 605 02e4 C0ED007A 		vstr.32	s15, [r0]
+ 606 02e8 03F5EE60 		add	r0, r3, #1904
+ 607 02ec 0160     		str	r1, [r0]	@ float
+ 608 02ee 03F27470 		addw	r0, r3, #1908
+ 609 02f2 C0F800E0 		str	lr, [r0]	@ float
+ 610 02f6 03F5EF60 		add	r0, r3, #1912
+ 611 02fa C0F800C0 		str	ip, [r0]	@ float
+ 612 02fe 03F27C70 		addw	r0, r3, #1916
+ 613 0302 0160     		str	r1, [r0]	@ float
+ 614 0304 02F5BC54 		add	r4, r2, #6016
+ 615 0308 5F48     		ldr	r0, .L58+84
+ 616 030a 2060     		str	r0, [r4]	@ float
+ 617 030c 03F28474 		addw	r4, r3, #1924
+ 618 0310 2060     		str	r0, [r4]	@ float
+ 619 0312 03F60804 		addw	r4, r3, #2056
+ 620 0316 84ED007A 		vstr.32	s14, [r4]
+ 621 031a 03F60C04 		addw	r4, r3, #2060
+ 622 031e C4ED007A 		vstr.32	s15, [r4]
+ 623 0322 03F50164 		add	r4, r3, #2064
+ 624 0326 2160     		str	r1, [r4]	@ float
+ 625 0328 03F61404 		addw	r4, r3, #2068
+ 626 032c C4F800E0 		str	lr, [r4]	@ float
+ 627 0330 03F6180E 		addw	lr, r3, #2072
+ 628 0334 CEF800C0 		str	ip, [lr]	@ float
+ 629 0338 03F61C0C 		addw	ip, r3, #2076
+ 630 033c CCF80010 		str	r1, [ip]	@ float
+ 631 0340 02F5C152 		add	r2, r2, #6176
+ 632 0344 1060     		str	r0, [r2]	@ float
+ 633 0346 03F62402 		addw	r2, r3, #2084
+ 634 034a 1060     		str	r0, [r2]	@ float
+ 635 034c 03F62802 		addw	r2, r3, #2088
+ 636 0350 4E49     		ldr	r1, .L58+88
+ 637 0352 1160     		str	r1, [r2]	@ float
+ 638 0354 6922     		movs	r2, #105
+ 639 0356 83F8E42A 		strb	r2, [r3, #2788]
+ 640 035a 03F50361 		add	r1, r3, #2096
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 12
+
+
+ 641 035e 4C4A     		ldr	r2, .L58+92
+ 642 0360 0A60     		str	r2, [r1]	@ float
+ 643 0362 03F63401 		addw	r1, r3, #2100
+ 644 0366 4B48     		ldr	r0, .L58+96
+ 645 0368 0860     		str	r0, [r1]	@ float
+ 646 036a 03F63801 		addw	r1, r3, #2104
+ 647 036e 4A48     		ldr	r0, .L58+100
+ 648 0370 0860     		str	r0, [r1]	@ float
+ 649 0372 03F63C01 		addw	r1, r3, #2108
+ 650 0376 0A60     		str	r2, [r1]	@ float
+ 651 0378 40F6C412 		movw	r2, #2500
+ 652 037c A3F8C02A 		strh	r2, [r3, #2752]	@ movhi
+ 653 0380 4FF4FA72 		mov	r2, #500
+ 654 0384 A3F8C22A 		strh	r2, [r3, #2754]	@ movhi
+ 655 0388 4FF41662 		mov	r2, #2400
+ 656 038c A3F8C42A 		strh	r2, [r3, #2756]	@ movhi
+ 657 0390 40F6E961 		movw	r1, #3817
+ 658 0394 A3F8C61A 		strh	r1, [r3, #2758]	@ movhi
+ 659 0398 40F2A112 		movw	r2, #417
+ 660 039c A3F8C82A 		strh	r2, [r3, #2760]	@ movhi
+ 661 03a0 A3F8CA1A 		strh	r1, [r3, #2762]	@ movhi
+ 662 03a4 A3F8CC2A 		strh	r2, [r3, #2764]	@ movhi
+ 663 03a8 0022     		movs	r2, #0
+ 664 03aa 83F8CE2A 		strb	r2, [r3, #2766]
+ 665 03ae 83F8CF2A 		strb	r2, [r3, #2767]
+ 666 03b2 83F8D02A 		strb	r2, [r3, #2768]
+ 667 03b6 83F8D12A 		strb	r2, [r3, #2769]
+ 668 03ba 83F8D22A 		strb	r2, [r3, #2770]
+ 669 03be 83F8D32A 		strb	r2, [r3, #2771]
+ 670 03c2 83F8D42A 		strb	r2, [r3, #2772]
+ 671 03c6 83F8D52A 		strb	r2, [r3, #2773]
+ 672 03ca 0221     		movs	r1, #2
+ 673 03cc 83F8D61A 		strb	r1, [r3, #2774]
+ 674 03d0 83F8D72A 		strb	r2, [r3, #2775]
+ 675 03d4 83F8D82A 		strb	r2, [r3, #2776]
+ 676 03d8 0320     		movs	r0, #3
+ 677 03da 83F8D90A 		strb	r0, [r3, #2777]
+ 678 03de 83F8DA2A 		strb	r2, [r3, #2778]
+ 679 03e2 83F8DB2A 		strb	r2, [r3, #2779]
+ 680 03e6 0121     		movs	r1, #1
+ 681 03e8 83F8DC1A 		strb	r1, [r3, #2780]
+ 682 03ec 83F8DD1A 		strb	r1, [r3, #2781]
+ 683 03f0 83F8DE1A 		strb	r1, [r3, #2782]
+ 684 03f4 83F8DF1A 		strb	r1, [r3, #2783]
+ 685 03f8 83F8E01A 		strb	r1, [r3, #2784]
+ 686 03fc 83F8E10A 		strb	r0, [r3, #2785]
+ 687 0400 83F8E22A 		strb	r2, [r3, #2786]
+ 688 0404 83F8E32A 		strb	r2, [r3, #2787]
+ 689 0408 83F8E42A 		strb	r2, [r3, #2788]
+ 690 040c 83F8E51A 		strb	r1, [r3, #2789]
+ 691 0410 83F8E61A 		strb	r1, [r3, #2790]
+ 692 0414 83F8E72A 		strb	r2, [r3, #2791]
+ 693 0418 83F8E82A 		strb	r2, [r3, #2792]
+ 694 041c 83F8E92A 		strb	r2, [r3, #2793]
+ 695 0420 83F8EA2A 		strb	r2, [r3, #2794]
+ 696 0424 83F8EB1A 		strb	r1, [r3, #2795]
+ 697 0428 83F8EC1A 		strb	r1, [r3, #2796]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 13
+
+
+ 698 042c 1B4B     		ldr	r3, .L58+104
+ 699 042e 1A70     		strb	r2, [r3]
+ 700 0430 5A70     		strb	r2, [r3, #1]
+ 701 0432 10BD     		pop	{r4, pc}
+ 702              	.L59:
+ 703              		.align	2
+ 704              	.L58:
+ 705 0434 00000000 		.word	config
+ 706 0438 00004843 		.word	1128792064
+ 707 043c 00004842 		.word	1112014848
+ 708 0440 0000C843 		.word	1137180672
+ 709 0444 00002041 		.word	1092616192
+ 710 0448 00007041 		.word	1097859072
+ 711 044c 0000E442 		.word	1122238464
+ 712 0450 0000C841 		.word	1103626240
+ 713 0454 0000FA44 		.word	1157234688
+ 714 0458 CDCC4C3E 		.word	1045220557
+ 715 045c 00004041 		.word	1094713344
+ 716 0460 00006041 		.word	1096810496
+ 717 0464 9A990941 		.word	1091148186
+ 718 0468 0000A041 		.word	1101004800
+ 719 046c 00003443 		.word	1127481344
+ 720 0470 00007A43 		.word	1132068864
+ 721 0474 0080BB44 		.word	1153138688
+ 722 0478 00805444 		.word	1146388480
+ 723 047c 0AD7233C 		.word	1008981770
+ 724 0480 0AD7A33B 		.word	1000593162
+ 725 0484 6F12833A 		.word	981668463
+ 726 0488 00008C42 		.word	1116471296
+ 727 048c 0000DC42 		.word	1121714176
+ 728 0490 0000A842 		.word	1118306304
+ 729 0494 0000A042 		.word	1117782016
+ 730 0498 0000B042 		.word	1118830592
+ 731 049c 00000000 		.word	diagnostics_config
+ 732 04a0 0000C842 		.word	1120403456
+ 733 04a4 0000C8C2 		.word	-1027080192
+ 735              		.section	.text.controller_load_configuration,"ax",%progbits
+ 736              		.align	1
+ 737              		.global	controller_load_configuration
+ 738              		.syntax unified
+ 739              		.thumb
+ 740              		.thumb_func
+ 742              	controller_load_configuration:
+ 743              		@ args = 0, pretend = 0, frame = 0
+ 744              		@ frame_needed = 0, uses_anonymous_args = 0
+ 745 0000 08B5     		push	{r3, lr}
+ 746 0002 FFF7FEFF 		bl	EE_Read
+ 747 0006 08BD     		pop	{r3, pc}
+ 749              		.section	.rodata.controller_init.str1.4,"aMS",%progbits,1
+ 750              		.align	2
+ 751              	.LC0:
+ 752 0000 4E6F7420 		.ascii	"Not able to init eeprom\000"
+ 752      61626C65 
+ 752      20746F20 
+ 752      696E6974 
+ 752      20656570 
+ 753              		.section	.text.controller_init,"ax",%progbits
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 14
+
+
+ 754              		.align	1
+ 755              		.global	controller_init
+ 756              		.syntax unified
+ 757              		.thumb
+ 758              		.thumb_func
+ 760              	controller_init:
+ 761              		@ args = 0, pretend = 0, frame = 0
+ 762              		@ frame_needed = 0, uses_anonymous_args = 0
+ 763 0000 70B5     		push	{r4, r5, r6, lr}
+ 764 0002 82B0     		sub	sp, sp, #8
+ 765 0004 7C22     		movs	r2, #124
+ 766 0006 0021     		movs	r1, #0
+ 767 0008 9148     		ldr	r0, .L81
+ 768 000a FFF7FEFF 		bl	memset
+ 769 000e 914C     		ldr	r4, .L81+4
+ 770 0010 41F6ED25 		movw	r5, #6893
+ 771 0014 2A46     		mov	r2, r5
+ 772 0016 0021     		movs	r1, #0
+ 773 0018 2046     		mov	r0, r4
+ 774 001a FFF7FEFF 		bl	memset
+ 775 001e 2946     		mov	r1, r5
+ 776 0020 2046     		mov	r0, r4
+ 777 0022 FFF7FEFF 		bl	EE_Init
+ 778 0026 0028     		cmp	r0, #0
+ 779 0028 00F0D280 		beq	.L75
+ 780              	.L63:
+ 781 002c FFF7FEFF 		bl	controller_load_configuration
+ 782 0030 8948     		ldr	r0, .L81+8
+ 783 0032 FFF7FEFF 		bl	controller_timing_start
+ 784 0036 8948     		ldr	r0, .L81+12
+ 785 0038 FFF7FEFF 		bl	osEventFlagsNew
+ 786 003c 884B     		ldr	r3, .L81+16
+ 787 003e 1860     		str	r0, [r3]
+ 788 0040 0028     		cmp	r0, #0
+ 789 0042 00F0CB80 		beq	.L76
+ 790              	.L64:
+ 791 0046 8749     		ldr	r1, .L81+20
+ 792 0048 8748     		ldr	r0, .L81+24
+ 793 004a FFF7FEFF 		bl	analog_inputs_init
+ 794 004e 874B     		ldr	r3, .L81+28
+ 795 0050 93F8D43A 		ldrb	r3, [r3, #2772]	@ zero_extendqisi2
+ 796 0054 002B     		cmp	r3, #0
+ 797 0056 40F0C380 		bne	.L77
+ 798              	.L65:
+ 799 005a 844C     		ldr	r4, .L81+28
+ 800 005c 94F8D00A 		ldrb	r0, [r4, #2768]	@ zero_extendqisi2
+ 801 0060 FFF7FEFF 		bl	trigger_crankshaft_init
+ 802 0064 824A     		ldr	r2, .L81+32
+ 803 0066 0821     		movs	r1, #8
+ 804 0068 1020     		movs	r0, #16
+ 805 006a FFF7FEFF 		bl	osMessageQueueNew
+ 806 006e 814B     		ldr	r3, .L81+36
+ 807 0070 1860     		str	r0, [r3]
+ 808 0072 814A     		ldr	r2, .L81+40
+ 809 0074 0021     		movs	r1, #0
+ 810 0076 8148     		ldr	r0, .L81+44
+ 811 0078 FFF7FEFF 		bl	osThreadNew
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 15
+
+
+ 812 007c 804D     		ldr	r5, .L81+48
+ 813 007e 0D21     		movs	r1, #13
+ 814 0080 2846     		mov	r0, r5
+ 815 0082 FFF7FEFF 		bl	sensor_tps_init
+ 816 0086 0E21     		movs	r1, #14
+ 817 0088 7E48     		ldr	r0, .L81+52
+ 818 008a FFF7FEFF 		bl	sensor_tps_init
+ 819 008e 94F8DE1A 		ldrb	r1, [r4, #2782]	@ zero_extendqisi2
+ 820 0092 7D48     		ldr	r0, .L81+56
+ 821 0094 FFF7FEFF 		bl	sensor_clt_init
+ 822 0098 94F8DF1A 		ldrb	r1, [r4, #2783]	@ zero_extendqisi2
+ 823 009c 7B48     		ldr	r0, .L81+60
+ 824 009e FFF7FEFF 		bl	sensor_iat_init
+ 825 00a2 7B4E     		ldr	r6, .L81+64
+ 826 00a4 94F8E01A 		ldrb	r1, [r4, #2784]	@ zero_extendqisi2
+ 827 00a8 3046     		mov	r0, r6
+ 828 00aa FFF7FEFF 		bl	sensor_map_init
+ 829 00ae 3146     		mov	r1, r6
+ 830 00b0 2846     		mov	r0, r5
+ 831 00b2 FFF7FEFF 		bl	fuel_math_use_tps_map_sensors
+ 832 00b6 FFF7FEFF 		bl	ignition_init
+ 833 00ba FFF7FEFF 		bl	injection_init
+ 834 00be 4FF4FA70 		mov	r0, #500
+ 835 00c2 FFF7FEFF 		bl	osDelay
+ 836 00c6 94F8E53A 		ldrb	r3, [r4, #2789]	@ zero_extendqisi2
+ 837 00ca 002B     		cmp	r3, #0
+ 838 00cc 2FD0     		beq	.L66
+ 839 00ce 94F8E73A 		ldrb	r3, [r4, #2791]	@ zero_extendqisi2
+ 840 00d2 002B     		cmp	r3, #0
+ 841 00d4 00F08C80 		beq	.L67
+ 842 00d8 44F62063 		movw	r3, #20000
+ 843 00dc 0093     		str	r3, [sp]
+ 844 00de 0823     		movs	r3, #8
+ 845 00e0 0C22     		movs	r2, #12
+ 846 00e2 6C49     		ldr	r1, .L81+68
+ 847 00e4 6C48     		ldr	r0, .L81+72
+ 848 00e6 FFF7FEFF 		bl	dc_motor_init
+ 849              	.L68:
+ 850 00ea 6C4C     		ldr	r4, .L81+76
+ 851 00ec 6C4D     		ldr	r5, .L81+80
+ 852 00ee 2146     		mov	r1, r4
+ 853 00f0 2846     		mov	r0, r5
+ 854 00f2 FFF7FEFF 		bl	pid_init
+ 855 00f6 1623     		movs	r3, #22
+ 856 00f8 0193     		str	r3, [sp, #4]
+ 857 00fa 803C     		subs	r4, r4, #128
+ 858 00fc 0094     		str	r4, [sp]
+ 859 00fe 664B     		ldr	r3, .L81+72
+ 860 0100 5F4A     		ldr	r2, .L81+48
+ 861 0102 2946     		mov	r1, r5
+ 862 0104 6748     		ldr	r0, .L81+84
+ 863 0106 FFF7FEFF 		bl	electronic_throttle_init
+ 864 010a A4F5DD63 		sub	r3, r4, #1768
+ 865 010e 93F8E93A 		ldrb	r3, [r3, #2793]	@ zero_extendqisi2
+ 866 0112 002B     		cmp	r3, #0
+ 867 0114 76D1     		bne	.L78
+ 868              	.L69:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 16
+
+
+ 869 0116 554C     		ldr	r4, .L81+28
+ 870 0118 04F5D163 		add	r3, r4, #1672
+ 871 011c 93ED000A 		vldr.32	s0, [r3]
+ 872 0120 6048     		ldr	r0, .L81+84
+ 873 0122 FFF7FEFF 		bl	electronic_throttle_set
+ 874 0126 94F8E53A 		ldrb	r3, [r4, #2789]	@ zero_extendqisi2
+ 875 012a 002B     		cmp	r3, #0
+ 876 012c 75D1     		bne	.L79
+ 877              	.L66:
+ 878 012e 4F4B     		ldr	r3, .L81+28
+ 879 0130 93F8E63A 		ldrb	r3, [r3, #2790]	@ zero_extendqisi2
+ 880 0134 63B3     		cbz	r3, .L70
+ 881 0136 4D4B     		ldr	r3, .L81+28
+ 882 0138 93F8E83A 		ldrb	r3, [r3, #2792]	@ zero_extendqisi2
+ 883 013c 002B     		cmp	r3, #0
+ 884 013e 72D0     		beq	.L71
+ 885 0140 44F62063 		movw	r3, #20000
+ 886 0144 0093     		str	r3, [sp]
+ 887 0146 0023     		movs	r3, #0
+ 888 0148 0422     		movs	r2, #4
+ 889 014a 5249     		ldr	r1, .L81+68
+ 890 014c 5648     		ldr	r0, .L81+88
+ 891 014e FFF7FEFF 		bl	dc_motor_init
+ 892              	.L72:
+ 893 0152 564C     		ldr	r4, .L81+92
+ 894 0154 564D     		ldr	r5, .L81+96
+ 895 0156 2146     		mov	r1, r4
+ 896 0158 2846     		mov	r0, r5
+ 897 015a FFF7FEFF 		bl	pid_init
+ 898 015e 1723     		movs	r3, #23
+ 899 0160 0193     		str	r3, [sp, #4]
+ 900 0162 803C     		subs	r4, r4, #128
+ 901 0164 0094     		str	r4, [sp]
+ 902 0166 504B     		ldr	r3, .L81+88
+ 903 0168 464A     		ldr	r2, .L81+52
+ 904 016a 2946     		mov	r1, r5
+ 905 016c 5148     		ldr	r0, .L81+100
+ 906 016e FFF7FEFF 		bl	electronic_throttle_init
+ 907 0172 A4F5F163 		sub	r3, r4, #1928
+ 908 0176 93F8EA3A 		ldrb	r3, [r3, #2794]	@ zero_extendqisi2
+ 909 017a 002B     		cmp	r3, #0
+ 910 017c 5DD1     		bne	.L80
+ 911              	.L73:
+ 912 017e 4D4C     		ldr	r4, .L81+100
+ 913 0180 9FED4D0A 		vldr.32	s0, .L81+104
+ 914 0184 2046     		mov	r0, r4
+ 915 0186 FFF7FEFF 		bl	electronic_throttle_set
+ 916 018a 2046     		mov	r0, r4
+ 917 018c FFF7FEFF 		bl	gas_injection_init
+ 918              	.L70:
+ 919 0190 4448     		ldr	r0, .L81+84
+ 920 0192 FFF7FEFF 		bl	protections_init
+ 921 0196 FFF7FEFF 		bl	comms_init
+ 922 019a 484A     		ldr	r2, .L81+108
+ 923 019c 0021     		movs	r1, #0
+ 924 019e 4848     		ldr	r0, .L81+112
+ 925 01a0 FFF7FEFF 		bl	osThreadNew
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 17
+
+
+ 926 01a4 474A     		ldr	r2, .L81+116
+ 927 01a6 0021     		movs	r1, #0
+ 928 01a8 4748     		ldr	r0, .L81+120
+ 929 01aa FFF7FEFF 		bl	osThreadNew
+ 930 01ae 474A     		ldr	r2, .L81+124
+ 931 01b0 0021     		movs	r1, #0
+ 932 01b2 4748     		ldr	r0, .L81+128
+ 933 01b4 FFF7FEFF 		bl	osThreadNew
+ 934 01b8 464A     		ldr	r2, .L81+132
+ 935 01ba 0021     		movs	r1, #0
+ 936 01bc 4648     		ldr	r0, .L81+136
+ 937 01be FFF7FEFF 		bl	osThreadNew
+ 938 01c2 0121     		movs	r1, #1
+ 939 01c4 264B     		ldr	r3, .L81+16
+ 940 01c6 1868     		ldr	r0, [r3]
+ 941 01c8 FFF7FEFF 		bl	osEventFlagsSet
+ 942 01cc 02B0     		add	sp, sp, #8
+ 943              		@ sp needed
+ 944 01ce 70BD     		pop	{r4, r5, r6, pc}
+ 945              	.L75:
+ 946 01d0 FFF7FEFF 		bl	controller_configuration_load_default
+ 947 01d4 4148     		ldr	r0, .L81+140
+ 948 01d6 FFF7FEFF 		bl	log_error
+ 949 01da 27E7     		b	.L63
+ 950              	.L76:
+ 951              		.syntax unified
+ 952              	@ 312 "controller/controller.c" 1
+ 953 01dc 00BF     		nop
+ 954              	@ 0 "" 2
+ 955              		.thumb
+ 956              		.syntax unified
+ 957 01de 32E7     		b	.L64
+ 958              	.L77:
+ 959 01e0 3F49     		ldr	r1, .L81+144
+ 960 01e2 A1F6D323 		subw	r3, r1, #2771
+ 961 01e6 93F8D20A 		ldrb	r0, [r3, #2770]	@ zero_extendqisi2
+ 962 01ea FFF7FEFF 		bl	trigger_camshaft_init
+ 963 01ee 34E7     		b	.L65
+ 964              	.L67:
+ 965 01f0 44F62063 		movw	r3, #20000
+ 966 01f4 0093     		str	r3, [sp]
+ 967 01f6 0C23     		movs	r3, #12
+ 968 01f8 0822     		movs	r2, #8
+ 969 01fa 2649     		ldr	r1, .L81+68
+ 970 01fc 2648     		ldr	r0, .L81+72
+ 971 01fe FFF7FEFF 		bl	dc_motor_init
+ 972 0202 72E7     		b	.L68
+ 973              	.L78:
+ 974 0204 134B     		ldr	r3, .L81+4
+ 975 0206 03F5BC52 		add	r2, r3, #6016
+ 976 020a D2ED000A 		vldr.32	s1, [r2]
+ 977 020e 92ED010A 		vldr.32	s0, [r2, #4]
+ 978 0212 2448     		ldr	r0, .L81+84
+ 979 0214 FFF7FEFF 		bl	electronic_throttle_enable_end_of_travel_protection
+ 980 0218 7DE7     		b	.L69
+ 981              	.L79:
+ 982 021a 04F5DA61 		add	r1, r4, #1744
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 18
+
+
+ 983 021e 2148     		ldr	r0, .L81+84
+ 984 0220 FFF7FEFF 		bl	governer_init
+ 985 0224 83E7     		b	.L66
+ 986              	.L71:
+ 987 0226 44F62063 		movw	r3, #20000
+ 988 022a 0093     		str	r3, [sp]
+ 989 022c 0423     		movs	r3, #4
+ 990 022e 0022     		movs	r2, #0
+ 991 0230 1849     		ldr	r1, .L81+68
+ 992 0232 1D48     		ldr	r0, .L81+88
+ 993 0234 FFF7FEFF 		bl	dc_motor_init
+ 994 0238 8BE7     		b	.L72
+ 995              	.L80:
+ 996 023a 064B     		ldr	r3, .L81+4
+ 997 023c 03F5C152 		add	r2, r3, #6176
+ 998 0240 D2ED000A 		vldr.32	s1, [r2]
+ 999 0244 92ED010A 		vldr.32	s0, [r2, #4]
+ 1000 0248 1A48     		ldr	r0, .L81+100
+ 1001 024a FFF7FEFF 		bl	electronic_throttle_enable_end_of_travel_protection
+ 1002 024e 96E7     		b	.L73
+ 1003              	.L82:
+ 1004              		.align	2
+ 1005              	.L81:
+ 1006 0250 00000000 		.word	runtime
+ 1007 0254 00000000 		.word	config
+ 1008 0258 00000000 		.word	htim2
+ 1009 025c 00000000 		.word	controller_flags_attr
+ 1010 0260 00000000 		.word	controller_flags
+ 1011 0264 00000000 		.word	htim5
+ 1012 0268 00000000 		.word	hadc1
+ 1013 026c 00100000 		.word	config+4096
+ 1014 0270 00000000 		.word	trigger_signal_queue_attr
+ 1015 0274 00000000 		.word	trigger_signal_queue_id
+ 1016 0278 00000000 		.word	task_trigger_driven_attr
+ 1017 027c 00000000 		.word	task_trigger_driven
+ 1018 0280 00000000 		.word	tps1
+ 1019 0284 00000000 		.word	tps2
+ 1020 0288 00000000 		.word	sensor_clt
+ 1021 028c 00000000 		.word	sensor_iat
+ 1022 0290 00000000 		.word	sensor_map
+ 1023 0294 00000000 		.word	htim3
+ 1024 0298 00000000 		.word	etb1_motor
+ 1025 029c 68170000 		.word	config+5992
+ 1026 02a0 00000000 		.word	etb1_pid
+ 1027 02a4 00000000 		.word	etb1
+ 1028 02a8 00000000 		.word	etb2_motor
+ 1029 02ac 08180000 		.word	config+6152
+ 1030 02b0 00000000 		.word	etb2_pid
+ 1031 02b4 00000000 		.word	etb2
+ 1032 02b8 00000000 		.word	0
+ 1033 02bc 00000000 		.word	task_updater_attr
+ 1034 02c0 00000000 		.word	task_updater
+ 1035 02c4 00000000 		.word	task_controller_test_attr
+ 1036 02c8 00000000 		.word	task_controller_test
+ 1037 02cc 00000000 		.word	task_sensor_attr
+ 1038 02d0 00000000 		.word	task_sensor
+ 1039 02d4 00000000 		.word	task_long_routines_attr
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 19
+
+
+ 1040 02d8 00000000 		.word	task_long_routines
+ 1041 02dc 00000000 		.word	.LC0
+ 1042 02e0 D31A0000 		.word	config+6867
+ 1044              		.section	.text.controller_save_configuration,"ax",%progbits
+ 1045              		.align	1
+ 1046              		.global	controller_save_configuration
+ 1047              		.syntax unified
+ 1048              		.thumb
+ 1049              		.thumb_func
+ 1051              	controller_save_configuration:
+ 1052              		@ args = 0, pretend = 0, frame = 0
+ 1053              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1054 0000 08B5     		push	{r3, lr}
+ 1055 0002 FFF7FEFF 		bl	EE_Write
+ 1056 0006 08BD     		pop	{r3, pc}
+ 1058              		.section	.text.controller_analog_inputs_read_callback,"ax",%progbits
+ 1059              		.align	1
+ 1060              		.global	controller_analog_inputs_read_callback
+ 1061              		.syntax unified
+ 1062              		.thumb
+ 1063              		.thumb_func
+ 1065              	controller_analog_inputs_read_callback:
+ 1066              		@ args = 0, pretend = 0, frame = 0
+ 1067              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1068 0000 08B5     		push	{r3, lr}
+ 1069 0002 0221     		movs	r1, #2
+ 1070 0004 024B     		ldr	r3, .L87
+ 1071 0006 1868     		ldr	r0, [r3]
+ 1072 0008 FFF7FEFF 		bl	osEventFlagsSet
+ 1073 000c 08BD     		pop	{r3, pc}
+ 1074              	.L88:
+ 1075 000e 00BF     		.align	2
+ 1076              	.L87:
+ 1077 0010 00000000 		.word	controller_flags
+ 1079              		.section	.text.HAL_GPIO_EXTI_Callback,"ax",%progbits
+ 1080              		.align	1
+ 1081              		.global	HAL_GPIO_EXTI_Callback
+ 1082              		.syntax unified
+ 1083              		.thumb
+ 1084              		.thumb_func
+ 1086              	HAL_GPIO_EXTI_Callback:
+ 1087              		@ args = 0, pretend = 0, frame = 8
+ 1088              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1089 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 1090 0002 83B0     		sub	sp, sp, #12
+ 1091 0004 0446     		mov	r4, r0
+ 1092 0006 0023     		movs	r3, #0
+ 1093 0008 0093     		str	r3, [sp]
+ 1094 000a 0193     		str	r3, [sp, #4]
+ 1095 000c FFF7FEFF 		bl	get_time_us
+ 1096 0010 0090     		str	r0, [sp]
+ 1097 0012 174E     		ldr	r6, .L95
+ 1098 0014 4FF48071 		mov	r1, #256
+ 1099 0018 3046     		mov	r0, r6
+ 1100 001a FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 1101 001e 0546     		mov	r5, r0
+ 1102 0020 071E     		subs	r7, r0, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 20
+
+
+ 1103 0022 18BF     		it	ne
+ 1104 0024 0127     		movne	r7, #1
+ 1105 0026 4FF40071 		mov	r1, #512
+ 1106 002a 3046     		mov	r0, r6
+ 1107 002c FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 1108 0030 0038     		subs	r0, r0, #0
+ 1109 0032 18BF     		it	ne
+ 1110 0034 0120     		movne	r0, #1
+ 1111 0036 B4F5807F 		cmp	r4, #256
+ 1112 003a 0BD0     		beq	.L93
+ 1113              	.L90:
+ 1114 003c B4F5007F 		cmp	r4, #512
+ 1115 0040 10D0     		beq	.L94
+ 1116              	.L91:
+ 1117 0042 0023     		movs	r3, #0
+ 1118 0044 1A46     		mov	r2, r3
+ 1119 0046 6946     		mov	r1, sp
+ 1120 0048 0A48     		ldr	r0, .L95+4
+ 1121 004a 0068     		ldr	r0, [r0]
+ 1122 004c FFF7FEFF 		bl	osMessageQueuePut
+ 1123 0050 03B0     		add	sp, sp, #12
+ 1124              		@ sp needed
+ 1125 0052 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1126              	.L93:
+ 1127 0054 002D     		cmp	r5, #0
+ 1128 0056 F1D1     		bne	.L90
+ 1129 0058 0123     		movs	r3, #1
+ 1130 005a 8DF80430 		strb	r3, [sp, #4]
+ 1131 005e 8DF80570 		strb	r7, [sp, #5]
+ 1132 0062 EEE7     		b	.L91
+ 1133              	.L94:
+ 1134 0064 0223     		movs	r3, #2
+ 1135 0066 8DF80430 		strb	r3, [sp, #4]
+ 1136 006a 8DF80500 		strb	r0, [sp, #5]
+ 1137 006e E8E7     		b	.L91
+ 1138              	.L96:
+ 1139              		.align	2
+ 1140              	.L95:
+ 1141 0070 00040240 		.word	1073873920
+ 1142 0074 00000000 		.word	trigger_signal_queue_id
+ 1144              		.section	.text.task_controller_cmds,"ax",%progbits
+ 1145              		.align	1
+ 1146              		.global	task_controller_cmds
+ 1147              		.syntax unified
+ 1148              		.thumb
+ 1149              		.thumb_func
+ 1151              	task_controller_cmds:
+ 1152              		@ args = 0, pretend = 0, frame = 0
+ 1153              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1154 0000 08B5     		push	{r3, lr}
+ 1155 0002 22E0     		b	.L130
+ 1156              	.L129:
+ 1157 0004 FFF7FEFF 		bl	__NVIC_SystemReset
+ 1158              	.L127:
+ 1159 0008 714B     		ldr	r3, .L133
+ 1160 000a 93F8E53A 		ldrb	r3, [r3, #2789]	@ zero_extendqisi2
+ 1161 000e B3B1     		cbz	r3, .L98
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 21
+
+
+ 1162 0010 7048     		ldr	r0, .L133+4
+ 1163 0012 FFF7FEFF 		bl	electronic_throttle_auto_tune
+ 1164 0016 12E0     		b	.L98
+ 1165              	.L126:
+ 1166 0018 6D4B     		ldr	r3, .L133
+ 1167 001a 93F8E63A 		ldrb	r3, [r3, #2790]	@ zero_extendqisi2
+ 1168 001e 73B1     		cbz	r3, .L98
+ 1169 0020 6D48     		ldr	r0, .L133+8
+ 1170 0022 FFF7FEFF 		bl	electronic_throttle_auto_tune
+ 1171 0026 0AE0     		b	.L98
+ 1172              	.L125:
+ 1173 0028 6C4A     		ldr	r2, .L133+12
+ 1174 002a 518A     		ldrh	r1, [r2, #18]
+ 1175 002c 684B     		ldr	r3, .L133
+ 1176 002e A3F8C81A 		strh	r1, [r3, #2760]	@ movhi
+ 1177 0032 118A     		ldrh	r1, [r2, #16]
+ 1178 0034 A3F8C61A 		strh	r1, [r3, #2758]	@ movhi
+ 1179 0038 127E     		ldrb	r2, [r2, #24]	@ zero_extendqisi2
+ 1180 003a 83F8DA2A 		strb	r2, [r3, #2778]
+ 1181              	.L98:
+ 1182 003e 4FF6FF71 		movw	r1, #65535
+ 1183 0042 674B     		ldr	r3, .L133+16
+ 1184 0044 1868     		ldr	r0, [r3]
+ 1185 0046 FFF7FEFF 		bl	osEventFlagsClear
+ 1186              	.L130:
+ 1187 004a 4FF0FF33 		mov	r3, #-1
+ 1188 004e 0022     		movs	r2, #0
+ 1189 0050 4FF6FF71 		movw	r1, #65535
+ 1190 0054 6248     		ldr	r0, .L133+16
+ 1191 0056 0068     		ldr	r0, [r0]
+ 1192 0058 FFF7FEFF 		bl	osEventFlagsWait
+ 1193 005c 0138     		subs	r0, r0, #1
+ 1194 005e 1D28     		cmp	r0, #29
+ 1195 0060 EDD8     		bhi	.L98
+ 1196 0062 01A3     		adr	r3, .L100
+ 1197 0064 53F820F0 		ldr	pc, [r3, r0, lsl #2]
+ 1198              		.p2align 2
+ 1199              	.L100:
+ 1200 0068 05000000 		.word	.L129+1
+ 1201 006c C9010000 		.word	.L128+1
+ 1202 0070 09000000 		.word	.L127+1
+ 1203 0074 19000000 		.word	.L126+1
+ 1204 0078 29000000 		.word	.L125+1
+ 1205 007c E1000000 		.word	.L124+1
+ 1206 0080 F9000000 		.word	.L123+1
+ 1207 0084 FF000000 		.word	.L122+1
+ 1208 0088 09010000 		.word	.L121+1
+ 1209 008c 13010000 		.word	.L120+1
+ 1210 0090 1D010000 		.word	.L119+1
+ 1211 0094 25010000 		.word	.L118+1
+ 1212 0098 2D010000 		.word	.L117+1
+ 1213 009c 35010000 		.word	.L116+1
+ 1214 00a0 3D010000 		.word	.L115+1
+ 1215 00a4 45010000 		.word	.L114+1
+ 1216 00a8 4D010000 		.word	.L113+1
+ 1217 00ac 55010000 		.word	.L112+1
+ 1218 00b0 5D010000 		.word	.L111+1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 22
+
+
+ 1219 00b4 67010000 		.word	.L110+1
+ 1220 00b8 6F010000 		.word	.L109+1
+ 1221 00bc 79010000 		.word	.L108+1
+ 1222 00c0 81010000 		.word	.L107+1
+ 1223 00c4 8B010000 		.word	.L106+1
+ 1224 00c8 93010000 		.word	.L105+1
+ 1225 00cc 9D010000 		.word	.L104+1
+ 1226 00d0 A5010000 		.word	.L103+1
+ 1227 00d4 B1010000 		.word	.L102+1
+ 1228 00d8 B9010000 		.word	.L101+1
+ 1229 00dc C1010000 		.word	.L99+1
+ 1230              		.p2align 1
+ 1231              	.L124:
+ 1232 00e0 404A     		ldr	r2, .L133+20
+ 1233 00e2 518A     		ldrh	r1, [r2, #18]
+ 1234 00e4 3A4B     		ldr	r3, .L133
+ 1235 00e6 A3F8CC1A 		strh	r1, [r3, #2764]	@ movhi
+ 1236 00ea 118A     		ldrh	r1, [r2, #16]
+ 1237 00ec A3F8CA1A 		strh	r1, [r3, #2762]	@ movhi
+ 1238 00f0 127E     		ldrb	r2, [r2, #24]	@ zero_extendqisi2
+ 1239 00f2 83F8DB2A 		strb	r2, [r3, #2779]
+ 1240 00f6 A2E7     		b	.L98
+ 1241              	.L123:
+ 1242 00f8 FFF7FEFF 		bl	trigger_simulator_stop
+ 1243 00fc 9FE7     		b	.L98
+ 1244              	.L122:
+ 1245 00fe 9FED3A0A 		vldr.32	s0, .L133+24
+ 1246 0102 FFF7FEFF 		bl	trigger_simulator_set_rpm_and_start
+ 1247 0106 9AE7     		b	.L98
+ 1248              	.L121:
+ 1249 0108 9FED380A 		vldr.32	s0, .L133+28
+ 1250 010c FFF7FEFF 		bl	trigger_simulator_set_rpm_and_start
+ 1251 0110 95E7     		b	.L98
+ 1252              	.L120:
+ 1253 0112 9FED370A 		vldr.32	s0, .L133+32
+ 1254 0116 FFF7FEFF 		bl	trigger_simulator_set_rpm_and_start
+ 1255 011a 90E7     		b	.L98
+ 1256              	.L119:
+ 1257 011c 3548     		ldr	r0, .L133+36
+ 1258 011e FFF7FEFF 		bl	output_fire_ignition
+ 1259 0122 8CE7     		b	.L98
+ 1260              	.L118:
+ 1261 0124 3448     		ldr	r0, .L133+40
+ 1262 0126 FFF7FEFF 		bl	output_fire_ignition
+ 1263 012a 88E7     		b	.L98
+ 1264              	.L117:
+ 1265 012c 3348     		ldr	r0, .L133+44
+ 1266 012e FFF7FEFF 		bl	output_fire_ignition
+ 1267 0132 84E7     		b	.L98
+ 1268              	.L116:
+ 1269 0134 3248     		ldr	r0, .L133+48
+ 1270 0136 FFF7FEFF 		bl	output_fire_ignition
+ 1271 013a 80E7     		b	.L98
+ 1272              	.L115:
+ 1273 013c 3148     		ldr	r0, .L133+52
+ 1274 013e FFF7FEFF 		bl	output_fire_injection
+ 1275 0142 7CE7     		b	.L98
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 23
+
+
+ 1276              	.L114:
+ 1277 0144 3048     		ldr	r0, .L133+56
+ 1278 0146 FFF7FEFF 		bl	output_fire_injection
+ 1279 014a 78E7     		b	.L98
+ 1280              	.L113:
+ 1281 014c 2F48     		ldr	r0, .L133+60
+ 1282 014e FFF7FEFF 		bl	output_fire_injection
+ 1283 0152 74E7     		b	.L98
+ 1284              	.L112:
+ 1285 0154 2E48     		ldr	r0, .L133+64
+ 1286 0156 FFF7FEFF 		bl	output_fire_injection
+ 1287 015a 70E7     		b	.L98
+ 1288              	.L111:
+ 1289 015c 0121     		movs	r1, #1
+ 1290 015e 2D48     		ldr	r0, .L133+68
+ 1291 0160 FFF7FEFF 		bl	output_override
+ 1292 0164 6BE7     		b	.L98
+ 1293              	.L110:
+ 1294 0166 2B48     		ldr	r0, .L133+68
+ 1295 0168 FFF7FEFF 		bl	output_override_clear
+ 1296 016c 67E7     		b	.L98
+ 1297              	.L109:
+ 1298 016e 0121     		movs	r1, #1
+ 1299 0170 2948     		ldr	r0, .L133+72
+ 1300 0172 FFF7FEFF 		bl	output_override
+ 1301 0176 62E7     		b	.L98
+ 1302              	.L108:
+ 1303 0178 2748     		ldr	r0, .L133+72
+ 1304 017a FFF7FEFF 		bl	output_override_clear
+ 1305 017e 5EE7     		b	.L98
+ 1306              	.L107:
+ 1307 0180 0121     		movs	r1, #1
+ 1308 0182 2648     		ldr	r0, .L133+76
+ 1309 0184 FFF7FEFF 		bl	output_override
+ 1310 0188 59E7     		b	.L98
+ 1311              	.L106:
+ 1312 018a 2448     		ldr	r0, .L133+76
+ 1313 018c FFF7FEFF 		bl	output_override_clear
+ 1314 0190 55E7     		b	.L98
+ 1315              	.L105:
+ 1316 0192 0121     		movs	r1, #1
+ 1317 0194 2248     		ldr	r0, .L133+80
+ 1318 0196 FFF7FEFF 		bl	output_override
+ 1319 019a 50E7     		b	.L98
+ 1320              	.L104:
+ 1321 019c 2048     		ldr	r0, .L133+80
+ 1322 019e FFF7FEFF 		bl	output_override_clear
+ 1323 01a2 4CE7     		b	.L98
+ 1324              	.L103:
+ 1325 01a4 1F4B     		ldr	r3, .L133+84
+ 1326 01a6 0122     		movs	r2, #1
+ 1327 01a8 1A70     		strb	r2, [r3]
+ 1328 01aa FFF7FEFF 		bl	trigger_logger_composite_start
+ 1329 01ae 46E7     		b	.L98
+ 1330              	.L102:
+ 1331 01b0 1C4B     		ldr	r3, .L133+84
+ 1332 01b2 0022     		movs	r2, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 24
+
+
+ 1333 01b4 1A70     		strb	r2, [r3]
+ 1334 01b6 42E7     		b	.L98
+ 1335              	.L101:
+ 1336 01b8 1A4B     		ldr	r3, .L133+84
+ 1337 01ba 0122     		movs	r2, #1
+ 1338 01bc 5A70     		strb	r2, [r3, #1]
+ 1339 01be 3EE7     		b	.L98
+ 1340              	.L99:
+ 1341 01c0 184B     		ldr	r3, .L133+84
+ 1342 01c2 0022     		movs	r2, #0
+ 1343 01c4 5A70     		strb	r2, [r3, #1]
+ 1344 01c6 3AE7     		b	.L98
+ 1345              	.L128:
+ 1346 01c8 FFF7FEFF 		bl	controller_configuration_load_default
+ 1347 01cc 37E7     		b	.L98
+ 1348              	.L134:
+ 1349 01ce 00BF     		.align	2
+ 1350              	.L133:
+ 1351 01d0 00100000 		.word	config+4096
+ 1352 01d4 00000000 		.word	etb1
+ 1353 01d8 00000000 		.word	etb2
+ 1354 01dc 00000000 		.word	tps1
+ 1355 01e0 00000000 		.word	controller_command_flag
+ 1356 01e4 00000000 		.word	tps2
+ 1357 01e8 0000C842 		.word	1120403456
+ 1358 01ec 00007A43 		.word	1132068864
+ 1359 01f0 0000FA43 		.word	1140457472
+ 1360 01f4 00000000 		.word	ignition_output
+ 1361 01f8 0C000000 		.word	ignition_output+12
+ 1362 01fc 18000000 		.word	ignition_output+24
+ 1363 0200 24000000 		.word	ignition_output+36
+ 1364 0204 00000000 		.word	injector_output
+ 1365 0208 0C000000 		.word	injector_output+12
+ 1366 020c 18000000 		.word	injector_output+24
+ 1367 0210 24000000 		.word	injector_output+36
+ 1368 0214 00000000 		.word	fan1_output
+ 1369 0218 00000000 		.word	fan2_output
+ 1370 021c 00000000 		.word	main_relay_output
+ 1371 0220 00000000 		.word	gas_solenoid_output
+ 1372 0224 00000000 		.word	diagnostics_config
+ 1374              		.section	.bss.sensor_map,"aw",%nobits
+ 1375              		.align	2
+ 1378              	sensor_map:
+ 1379 0000 00000000 		.space	24
+ 1379      00000000 
+ 1379      00000000 
+ 1379      00000000 
+ 1379      00000000 
+ 1380              		.section	.bss.sensor_iat,"aw",%nobits
+ 1381              		.align	2
+ 1384              	sensor_iat:
+ 1385 0000 00000000 		.space	24
+ 1385      00000000 
+ 1385      00000000 
+ 1385      00000000 
+ 1385      00000000 
+ 1386              		.section	.bss.sensor_clt,"aw",%nobits
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 25
+
+
+ 1387              		.align	2
+ 1390              	sensor_clt:
+ 1391 0000 00000000 		.space	24
+ 1391      00000000 
+ 1391      00000000 
+ 1391      00000000 
+ 1391      00000000 
+ 1392              		.section	.bss.etb2_pid,"aw",%nobits
+ 1393              		.align	2
+ 1396              	etb2_pid:
+ 1397 0000 00000000 		.space	40
+ 1397      00000000 
+ 1397      00000000 
+ 1397      00000000 
+ 1397      00000000 
+ 1398              		.section	.bss.etb2_motor,"aw",%nobits
+ 1399              		.align	2
+ 1402              	etb2_motor:
+ 1403 0000 00000000 		.space	24
+ 1403      00000000 
+ 1403      00000000 
+ 1403      00000000 
+ 1403      00000000 
+ 1404              		.section	.bss.etb2,"aw",%nobits
+ 1405              		.align	2
+ 1408              	etb2:
+ 1409 0000 00000000 		.space	88
+ 1409      00000000 
+ 1409      00000000 
+ 1409      00000000 
+ 1409      00000000 
+ 1410              		.section	.bss.etb1_pid,"aw",%nobits
+ 1411              		.align	2
+ 1414              	etb1_pid:
+ 1415 0000 00000000 		.space	40
+ 1415      00000000 
+ 1415      00000000 
+ 1415      00000000 
+ 1415      00000000 
+ 1416              		.section	.bss.etb1_motor,"aw",%nobits
+ 1417              		.align	2
+ 1420              	etb1_motor:
+ 1421 0000 00000000 		.space	24
+ 1421      00000000 
+ 1421      00000000 
+ 1421      00000000 
+ 1421      00000000 
+ 1422              		.section	.bss.etb1,"aw",%nobits
+ 1423              		.align	2
+ 1426              	etb1:
+ 1427 0000 00000000 		.space	88
+ 1427      00000000 
+ 1427      00000000 
+ 1427      00000000 
+ 1427      00000000 
+ 1428              		.global	tps2
+ 1429              		.section	.data.tps2,"aw"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 26
+
+
+ 1430              		.align	2
+ 1433              	tps2:
+ 1434 0000 00000000 		.space	16
+ 1434      00000000 
+ 1434      00000000 
+ 1434      00000000 
+ 1435 0010 C90B     		.short	3017
+ 1436 0012 2105     		.short	1313
+ 1437 0014 03       		.byte	3
+ 1438 0015 00       		.space	1
+ 1439 0016 0E       		.byte	14
+ 1440 0017 00       		.space	1
+ 1441 0018 00       		.byte	0
+ 1442 0019 00       		.space	1
+ 1443 001a 0000     		.space	2
+ 1444              		.global	tps1
+ 1445              		.section	.data.tps1,"aw"
+ 1446              		.align	2
+ 1449              	tps1:
+ 1450 0000 00000000 		.space	16
+ 1450      00000000 
+ 1450      00000000 
+ 1450      00000000 
+ 1451 0010 C90B     		.short	3017
+ 1452 0012 2105     		.short	1313
+ 1453 0014 01       		.byte	1
+ 1454 0015 00       		.space	1
+ 1455 0016 0D       		.byte	13
+ 1456 0017 00       		.space	1
+ 1457 0018 00       		.byte	0
+ 1458 0019 00       		.space	1
+ 1459 001a 0000     		.space	2
+ 1460              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 1461              		.align	2
+ 1462              	.LC1:
+ 1463 0000 75706461 		.ascii	"updater\000"
+ 1463      74657200 
+ 1464              		.section	.rodata.task_updater_attr,"a"
+ 1465              		.align	2
+ 1468              	task_updater_attr:
+ 1469 0000 00000000 		.word	.LC1
+ 1470 0004 00000000 		.space	4
+ 1471 0008 00000000 		.word	task_updater_cb
+ 1472 000c 5C000000 		.word	92
+ 1473 0010 00000000 		.word	task_updater_mem
+ 1474 0014 00040000 		.word	1024
+ 1475 0018 20000000 		.word	32
+ 1476 001c 00000000 		.space	8
+ 1476      00000000 
+ 1477              		.section	.bss.task_updater_cb,"aw",%nobits
+ 1478              		.align	2
+ 1481              	task_updater_cb:
+ 1482 0000 00000000 		.space	92
+ 1482      00000000 
+ 1482      00000000 
+ 1482      00000000 
+ 1482      00000000 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 27
+
+
+ 1483              		.section	.bss.task_updater_mem,"aw",%nobits
+ 1484              		.align	2
+ 1487              	task_updater_mem:
+ 1488 0000 00000000 		.space	1024
+ 1488      00000000 
+ 1488      00000000 
+ 1488      00000000 
+ 1488      00000000 
+ 1489              		.section	.rodata.str1.4
+ 1490              		.align	2
+ 1491              	.LC2:
+ 1492 0008 6C6F6E67 		.ascii	"long_routines\000"
+ 1492      5F726F75 
+ 1492      74696E65 
+ 1492      7300
+ 1493              		.section	.rodata.task_long_routines_attr,"a"
+ 1494              		.align	2
+ 1497              	task_long_routines_attr:
+ 1498 0000 08000000 		.word	.LC2
+ 1499 0004 00000000 		.space	4
+ 1500 0008 00000000 		.word	task_long_routines_cb
+ 1501 000c 5C000000 		.word	92
+ 1502 0010 00000000 		.word	task_long_routines_mem
+ 1503 0014 00020000 		.word	512
+ 1504 0018 18000000 		.word	24
+ 1505 001c 00000000 		.space	8
+ 1505      00000000 
+ 1506              		.section	.bss.task_long_routines_cb,"aw",%nobits
+ 1507              		.align	2
+ 1510              	task_long_routines_cb:
+ 1511 0000 00000000 		.space	92
+ 1511      00000000 
+ 1511      00000000 
+ 1511      00000000 
+ 1511      00000000 
+ 1512              		.section	.bss.task_long_routines_mem,"aw",%nobits
+ 1513              		.align	2
+ 1516              	task_long_routines_mem:
+ 1517 0000 00000000 		.space	512
+ 1517      00000000 
+ 1517      00000000 
+ 1517      00000000 
+ 1517      00000000 
+ 1518              		.section	.rodata.str1.4
+ 1519 0016 0000     		.align	2
+ 1520              	.LC3:
+ 1521 0018 73656E73 		.ascii	"sensor_task\000"
+ 1521      6F725F74 
+ 1521      61736B00 
+ 1522              		.section	.rodata.task_sensor_attr,"a"
+ 1523              		.align	2
+ 1526              	task_sensor_attr:
+ 1527 0000 18000000 		.word	.LC3
+ 1528 0004 00000000 		.space	4
+ 1529 0008 00000000 		.word	task_sensor_cb
+ 1530 000c 5C000000 		.word	92
+ 1531 0010 00000000 		.word	task_sensor_mem
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 28
+
+
+ 1532 0014 00040000 		.word	1024
+ 1533 0018 28000000 		.word	40
+ 1534 001c 00000000 		.space	8
+ 1534      00000000 
+ 1535              		.section	.bss.task_sensor_cb,"aw",%nobits
+ 1536              		.align	2
+ 1539              	task_sensor_cb:
+ 1540 0000 00000000 		.space	92
+ 1540      00000000 
+ 1540      00000000 
+ 1540      00000000 
+ 1540      00000000 
+ 1541              		.section	.bss.task_sensor_mem,"aw",%nobits
+ 1542              		.align	2
+ 1545              	task_sensor_mem:
+ 1546 0000 00000000 		.space	1024
+ 1546      00000000 
+ 1546      00000000 
+ 1546      00000000 
+ 1546      00000000 
+ 1547              		.section	.rodata.str1.4
+ 1548              		.align	2
+ 1549              	.LC4:
+ 1550 0024 636F6E74 		.ascii	"controller test\000"
+ 1550      726F6C6C 
+ 1550      65722074 
+ 1550      65737400 
+ 1551              		.section	.rodata.task_controller_test_attr,"a"
+ 1552              		.align	2
+ 1555              	task_controller_test_attr:
+ 1556 0000 24000000 		.word	.LC4
+ 1557 0004 00000000 		.space	4
+ 1558 0008 00000000 		.word	task_controller_test_cb
+ 1559 000c 5C000000 		.word	92
+ 1560 0010 00000000 		.word	task_controller_test_mem
+ 1561 0014 00020000 		.word	512
+ 1562 0018 2F000000 		.word	47
+ 1563 001c 00000000 		.space	8
+ 1563      00000000 
+ 1564              		.section	.bss.task_controller_test_cb,"aw",%nobits
+ 1565              		.align	2
+ 1568              	task_controller_test_cb:
+ 1569 0000 00000000 		.space	92
+ 1569      00000000 
+ 1569      00000000 
+ 1569      00000000 
+ 1569      00000000 
+ 1570              		.section	.bss.task_controller_test_mem,"aw",%nobits
+ 1571              		.align	2
+ 1574              	task_controller_test_mem:
+ 1575 0000 00000000 		.space	512
+ 1575      00000000 
+ 1575      00000000 
+ 1575      00000000 
+ 1575      00000000 
+ 1576              		.section	.rodata.str1.4
+ 1577              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 29
+
+
+ 1578              	.LC5:
+ 1579 0034 74726967 		.ascii	"trigger driven\000"
+ 1579      67657220 
+ 1579      64726976 
+ 1579      656E00
+ 1580              		.section	.rodata.task_trigger_driven_attr,"a"
+ 1581              		.align	2
+ 1584              	task_trigger_driven_attr:
+ 1585 0000 34000000 		.word	.LC5
+ 1586 0004 00000000 		.space	4
+ 1587 0008 00000000 		.word	task_trigger_driven_cb
+ 1588 000c 5C000000 		.word	92
+ 1589 0010 00000000 		.word	task_trigger_driven_mem
+ 1590 0014 00100000 		.word	4096
+ 1591 0018 2E000000 		.word	46
+ 1592 001c 00000000 		.space	8
+ 1592      00000000 
+ 1593              		.section	.bss.task_trigger_driven_cb,"aw",%nobits
+ 1594              		.align	2
+ 1597              	task_trigger_driven_cb:
+ 1598 0000 00000000 		.space	92
+ 1598      00000000 
+ 1598      00000000 
+ 1598      00000000 
+ 1598      00000000 
+ 1599              		.section	.bss.task_trigger_driven_mem,"aw",%nobits
+ 1600              		.align	2
+ 1603              	task_trigger_driven_mem:
+ 1604 0000 00000000 		.space	4096
+ 1604      00000000 
+ 1604      00000000 
+ 1604      00000000 
+ 1604      00000000 
+ 1605              		.section	.rodata.str1.4
+ 1606 0043 00       		.align	2
+ 1607              	.LC6:
+ 1608 0044 636F6E74 		.ascii	"controller flags\000"
+ 1608      726F6C6C 
+ 1608      65722066 
+ 1608      6C616773 
+ 1608      00
+ 1609              		.section	.rodata.controller_flags_attr,"a"
+ 1610              		.align	2
+ 1613              	controller_flags_attr:
+ 1614 0000 44000000 		.word	.LC6
+ 1615 0004 00000000 		.space	4
+ 1616 0008 00000000 		.word	eventflags_controller_flags_cb
+ 1617 000c 20000000 		.word	32
+ 1618              		.section	.bss.eventflags_controller_flags_cb,"aw",%nobits
+ 1619              		.align	2
+ 1622              	eventflags_controller_flags_cb:
+ 1623 0000 00000000 		.space	32
+ 1623      00000000 
+ 1623      00000000 
+ 1623      00000000 
+ 1623      00000000 
+ 1624              		.section	.bss.controller_flags,"aw",%nobits
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 30
+
+
+ 1625              		.align	2
+ 1628              	controller_flags:
+ 1629 0000 00000000 		.space	4
+ 1630              		.section	.rodata.str1.4
+ 1631 0055 000000   		.align	2
+ 1632              	.LC7:
+ 1633 0058 74726967 		.ascii	"trigger queue\000"
+ 1633      67657220 
+ 1633      71756575 
+ 1633      6500
+ 1634              		.section	.rodata.trigger_signal_queue_attr,"a"
+ 1635              		.align	2
+ 1638              	trigger_signal_queue_attr:
+ 1639 0000 58000000 		.word	.LC7
+ 1640 0004 00000000 		.space	4
+ 1641 0008 00000000 		.word	trigger_queue_cb
+ 1642 000c 50000000 		.word	80
+ 1643 0010 00000000 		.word	trigger_queue_mem
+ 1644 0014 80000000 		.word	128
+ 1645              		.section	.bss.trigger_queue_cb,"aw",%nobits
+ 1646              		.align	2
+ 1649              	trigger_queue_cb:
+ 1650 0000 00000000 		.space	80
+ 1650      00000000 
+ 1650      00000000 
+ 1650      00000000 
+ 1650      00000000 
+ 1651              		.section	.bss.trigger_queue_mem,"aw",%nobits
+ 1652              		.align	2
+ 1655              	trigger_queue_mem:
+ 1656 0000 00000000 		.space	128
+ 1656      00000000 
+ 1656      00000000 
+ 1656      00000000 
+ 1656      00000000 
+ 1657              		.global	trigger_signal_queue_id
+ 1658              		.section	.bss.trigger_signal_queue_id,"aw",%nobits
+ 1659              		.align	2
+ 1662              	trigger_signal_queue_id:
+ 1663 0000 00000000 		.space	4
+ 1664              		.global	diagnostic_governer_status
+ 1665              		.section	.bss.diagnostic_governer_status,"aw",%nobits
+ 1668              	diagnostic_governer_status:
+ 1669 0000 00       		.space	1
+ 1670              		.global	diagnostic_spinning_state
+ 1671              		.section	.bss.diagnostic_spinning_state,"aw",%nobits
+ 1674              	diagnostic_spinning_state:
+ 1675 0000 00       		.space	1
+ 1676              		.global	diagnostics_config
+ 1677              		.section	.bss.diagnostics_config,"aw",%nobits
+ 1678              		.align	2
+ 1681              	diagnostics_config:
+ 1682 0000 0000     		.space	2
+ 1683              		.global	runtime
+ 1684              		.section	.bss.runtime,"aw",%nobits
+ 1685              		.align	2
+ 1688              	runtime:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 31
+
+
+ 1689 0000 00000000 		.space	124
+ 1689      00000000 
+ 1689      00000000 
+ 1689      00000000 
+ 1689      00000000 
+ 1690              		.global	config
+ 1691              		.section	.bss.config,"aw",%nobits
+ 1692              		.align	2
+ 1695              	config:
+ 1696 0000 00000000 		.space	6893
+ 1696      00000000 
+ 1696      00000000 
+ 1696      00000000 
+ 1696      00000000 
+ 1697              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 32
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 controller.c
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:18     .text.__NVIC_SystemReset:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:23     .text.__NVIC_SystemReset:00000000 __NVIC_SystemReset
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:57     .text.__NVIC_SystemReset:0000001c $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:61     .text.task_long_routines:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:67     .text.task_long_routines:00000000 task_long_routines
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:89     .text.task_long_routines:0000002c $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1688   .bss.runtime:00000000 runtime
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:94     .text.task_sensor:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:100    .text.task_sensor:00000000 task_sensor
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:208    .text.task_sensor:00000124 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1674   .bss.diagnostic_spinning_state:00000000 diagnostic_spinning_state
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1668   .bss.diagnostic_governer_status:00000000 diagnostic_governer_status
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1628   .bss.controller_flags:00000000 controller_flags
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1449   .data.tps1:00000000 tps1
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1433   .data.tps2:00000000 tps2
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1378   .bss.sensor_map:00000000 sensor_map
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1426   .bss.etb1:00000000 etb1
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1408   .bss.etb2:00000000 etb2
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:219    .text.task_controller_test:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:225    .text.task_controller_test:00000000 task_controller_test
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:242    .text.task_controller_test:00000018 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1662   .bss.trigger_signal_queue_id:00000000 trigger_signal_queue_id
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:245    .text.task_updater:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:251    .text.task_updater:00000000 task_updater
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:275    .text.task_updater:00000030 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:279    .text.task_trigger_driven:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:285    .text.task_trigger_driven:00000000 task_trigger_driven
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:349    .text.task_trigger_driven:00000090 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:353    .text.controller_configuration_load_default:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:359    .text.controller_configuration_load_default:00000000 controller_configuration_load_default
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:485    .text.controller_configuration_load_default:00000170 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1695   .bss.config:00000000 config
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:492    .text.controller_configuration_load_default:00000188 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:705    .text.controller_configuration_load_default:00000434 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1681   .bss.diagnostics_config:00000000 diagnostics_config
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:736    .text.controller_load_configuration:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:742    .text.controller_load_configuration:00000000 controller_load_configuration
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:750    .rodata.controller_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:754    .text.controller_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:760    .text.controller_init:00000000 controller_init
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1006   .text.controller_init:00000250 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1613   .rodata.controller_flags_attr:00000000 controller_flags_attr
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1638   .rodata.trigger_signal_queue_attr:00000000 trigger_signal_queue_attr
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1584   .rodata.task_trigger_driven_attr:00000000 task_trigger_driven_attr
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1390   .bss.sensor_clt:00000000 sensor_clt
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1384   .bss.sensor_iat:00000000 sensor_iat
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1420   .bss.etb1_motor:00000000 etb1_motor
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1414   .bss.etb1_pid:00000000 etb1_pid
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1402   .bss.etb2_motor:00000000 etb2_motor
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1396   .bss.etb2_pid:00000000 etb2_pid
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1468   .rodata.task_updater_attr:00000000 task_updater_attr
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1555   .rodata.task_controller_test_attr:00000000 task_controller_test_attr
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1526   .rodata.task_sensor_attr:00000000 task_sensor_attr
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1497   .rodata.task_long_routines_attr:00000000 task_long_routines_attr
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1045   .text.controller_save_configuration:00000000 $t
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 33
+
+
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1051   .text.controller_save_configuration:00000000 controller_save_configuration
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1059   .text.controller_analog_inputs_read_callback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1065   .text.controller_analog_inputs_read_callback:00000000 controller_analog_inputs_read_callback
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1077   .text.controller_analog_inputs_read_callback:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1080   .text.HAL_GPIO_EXTI_Callback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1086   .text.HAL_GPIO_EXTI_Callback:00000000 HAL_GPIO_EXTI_Callback
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1141   .text.HAL_GPIO_EXTI_Callback:00000070 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1145   .text.task_controller_cmds:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1151   .text.task_controller_cmds:00000000 task_controller_cmds
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1200   .text.task_controller_cmds:00000068 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1230   .text.task_controller_cmds:000000e0 $t
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1351   .text.task_controller_cmds:000001d0 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1375   .bss.sensor_map:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1381   .bss.sensor_iat:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1387   .bss.sensor_clt:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1393   .bss.etb2_pid:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1399   .bss.etb2_motor:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1405   .bss.etb2:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1411   .bss.etb1_pid:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1417   .bss.etb1_motor:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1423   .bss.etb1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1430   .data.tps2:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1446   .data.tps1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1461   .rodata.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1465   .rodata.task_updater_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1481   .bss.task_updater_cb:00000000 task_updater_cb
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1487   .bss.task_updater_mem:00000000 task_updater_mem
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1478   .bss.task_updater_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1484   .bss.task_updater_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1494   .rodata.task_long_routines_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1510   .bss.task_long_routines_cb:00000000 task_long_routines_cb
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1516   .bss.task_long_routines_mem:00000000 task_long_routines_mem
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1507   .bss.task_long_routines_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1513   .bss.task_long_routines_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1523   .rodata.task_sensor_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1539   .bss.task_sensor_cb:00000000 task_sensor_cb
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1545   .bss.task_sensor_mem:00000000 task_sensor_mem
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1536   .bss.task_sensor_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1542   .bss.task_sensor_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1552   .rodata.task_controller_test_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1568   .bss.task_controller_test_cb:00000000 task_controller_test_cb
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1574   .bss.task_controller_test_mem:00000000 task_controller_test_mem
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1565   .bss.task_controller_test_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1571   .bss.task_controller_test_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1581   .rodata.task_trigger_driven_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1597   .bss.task_trigger_driven_cb:00000000 task_trigger_driven_cb
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1603   .bss.task_trigger_driven_mem:00000000 task_trigger_driven_mem
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1594   .bss.task_trigger_driven_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1600   .bss.task_trigger_driven_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1610   .rodata.controller_flags_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1622   .bss.eventflags_controller_flags_cb:00000000 eventflags_controller_flags_cb
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1619   .bss.eventflags_controller_flags_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1625   .bss.controller_flags:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1635   .rodata.trigger_signal_queue_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1649   .bss.trigger_queue_cb:00000000 trigger_queue_cb
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1655   .bss.trigger_queue_mem:00000000 trigger_queue_mem
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1646   .bss.trigger_queue_cb:00000000 $d
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 34
+
+
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1652   .bss.trigger_queue_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1659   .bss.trigger_signal_queue_id:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1669   .bss.diagnostic_governer_status:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1675   .bss.diagnostic_spinning_state:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1678   .bss.diagnostics_config:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1685   .bss.runtime:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s:1692   .bss.config:00000000 $d
+
+UNDEFINED SYMBOLS
+get_time_ms
+fan_control_update
+HAL_GPIO_TogglePin
+osDelay
+trigger_spinning_state_get
+governer_get_status
+osEventFlagsWait
+osEventFlagsClear
+get_time_us
+sensor_tps_update
+sensor_map_update
+sensor_iat_update
+sensor_clt_update
+sensor_ops_update
+vbat_update
+sensor_tps_get
+sensor_tps_rate_of_change_get
+sensor_map_rate_of_change_get
+ignition_dwell_get
+sensor_clt_get
+sensor_iat_get
+sensor_map_get
+sensor_egt_get
+vbat_get
+ignition_get_advance
+trigger_simulator_crank_init
+trigger_simulator_update
+governer_update
+gas_injection_update
+electronic_throttle_update
+protections_update
+trigger_logger_entry_add_tooth
+osMessageQueueGet
+trigger_crank_handle
+crankshaft_get_rpm
+crankshaft_get_angle
+ignition_trigger_event_handle
+injection_trigger_event_handle
+EE_Read
+memset
+EE_Init
+controller_timing_start
+osEventFlagsNew
+analog_inputs_init
+trigger_crankshaft_init
+osMessageQueueNew
+osThreadNew
+sensor_tps_init
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIiju7C.s 			page 35
+
+
+sensor_clt_init
+sensor_iat_init
+sensor_map_init
+fuel_math_use_tps_map_sensors
+ignition_init
+injection_init
+dc_motor_init
+pid_init
+electronic_throttle_init
+electronic_throttle_set
+gas_injection_init
+protections_init
+comms_init
+osEventFlagsSet
+log_error
+trigger_camshaft_init
+electronic_throttle_enable_end_of_travel_protection
+governer_init
+htim2
+htim5
+hadc1
+htim3
+EE_Write
+HAL_GPIO_ReadPin
+osMessageQueuePut
+electronic_throttle_auto_tune
+trigger_simulator_stop
+trigger_simulator_set_rpm_and_start
+output_fire_ignition
+output_fire_injection
+output_override
+output_override_clear
+trigger_logger_composite_start
+controller_command_flag
+ignition_output
+injector_output
+fan1_output
+fan2_output
+main_relay_output
+gas_solenoid_output

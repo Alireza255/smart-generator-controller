@@ -51,8 +51,6 @@ build/debug/gas_injection.o: controller/engine_cycle/gas_injection.c \
  controller/utils/utils.h controller/IO/resistor.h \
  controller/IO/thermistor.h controller/constants.h controller/tables.h \
  controller/actuators/electronic_throttle.h \
- controller/actuators/dc_motors.h controller/utils/pid.h \
- controller/utils/timing.h controller/IO/outputs.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  Core/Inc/FreeRTOSConfig.h \
@@ -63,7 +61,9 @@ build/debug/gas_injection.o: controller/engine_cycle/gas_injection.c \
  Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
- Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ controller/actuators/dc_motors.h controller/utils/pid.h \
+ controller/utils/timing.h controller/IO/outputs.h
 controller/engine_cycle/gas_injection.h:
 controller/types.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -130,10 +130,6 @@ controller/IO/thermistor.h:
 controller/constants.h:
 controller/tables.h:
 controller/actuators/electronic_throttle.h:
-controller/actuators/dc_motors.h:
-controller/utils/pid.h:
-controller/utils/timing.h:
-controller/IO/outputs.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 Core/Inc/FreeRTOSConfig.h:
@@ -145,3 +141,7 @@ Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+controller/actuators/dc_motors.h:
+controller/utils/pid.h:
+controller/utils/timing.h:
+controller/IO/outputs.h:

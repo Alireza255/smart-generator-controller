@@ -1,0 +1,252 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccarg94J.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"freertos.c"
+  16              		.text
+  17              		.section	.text.StartDefaultTask,"ax",%progbits
+  18              		.align	1
+  19              		.global	StartDefaultTask
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	StartDefaultTask:
+  25              		@ Volatile: function does not return.
+  26              		@ args = 0, pretend = 0, frame = 0
+  27              		@ frame_needed = 0, uses_anonymous_args = 0
+  28 0000 08B5     		push	{r3, lr}
+  29 0002 FFF7FEFF 		bl	MX_USB_DEVICE_Init
+  30 0006 6420     		movs	r0, #100
+  31 0008 FFF7FEFF 		bl	osDelay
+  32              	.L2:
+  33 000c 0120     		movs	r0, #1
+  34 000e FFF7FEFF 		bl	osDelay
+  35 0012 FBE7     		b	.L2
+  37              		.section	.text.controller_init_task,"ax",%progbits
+  38              		.align	1
+  39              		.global	controller_init_task
+  40              		.syntax unified
+  41              		.thumb
+  42              		.thumb_func
+  44              	controller_init_task:
+  45              		@ Volatile: function does not return.
+  46              		@ args = 0, pretend = 0, frame = 0
+  47              		@ frame_needed = 0, uses_anonymous_args = 0
+  48 0000 08B5     		push	{r3, lr}
+  49 0002 FFF7FEFF 		bl	controller_init
+  50              	.L5:
+  51 0006 6420     		movs	r0, #100
+  52 0008 FFF7FEFF 		bl	osDelay
+  53 000c FBE7     		b	.L5
+  55              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+  56              		.align	1
+  57              		.global	MX_FREERTOS_Init
+  58              		.syntax unified
+  59              		.thumb
+  60              		.thumb_func
+  62              	MX_FREERTOS_Init:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccarg94J.s 			page 2
+
+
+  63              		@ args = 0, pretend = 0, frame = 0
+  64              		@ frame_needed = 0, uses_anonymous_args = 0
+  65 0000 08B5     		push	{r3, lr}
+  66 0002 0A4A     		ldr	r2, .L9
+  67 0004 0021     		movs	r1, #0
+  68 0006 0A48     		ldr	r0, .L9+4
+  69 0008 FFF7FEFF 		bl	osThreadNew
+  70 000c 094B     		ldr	r3, .L9+8
+  71 000e 1860     		str	r0, [r3]
+  72 0010 094A     		ldr	r2, .L9+12
+  73 0012 0021     		movs	r1, #0
+  74 0014 0948     		ldr	r0, .L9+16
+  75 0016 FFF7FEFF 		bl	osThreadNew
+  76 001a 094B     		ldr	r3, .L9+20
+  77 001c 1860     		str	r0, [r3]
+  78 001e 0948     		ldr	r0, .L9+24
+  79 0020 FFF7FEFF 		bl	osEventFlagsNew
+  80 0024 084B     		ldr	r3, .L9+28
+  81 0026 1860     		str	r0, [r3]
+  82 0028 08BD     		pop	{r3, pc}
+  83              	.L10:
+  84 002a 00BF     		.align	2
+  85              	.L9:
+  86 002c 00000000 		.word	defaultTask_attributes
+  87 0030 00000000 		.word	StartDefaultTask
+  88 0034 00000000 		.word	defaultTaskHandle
+  89 0038 00000000 		.word	init_task_attributes
+  90 003c 00000000 		.word	controller_init_task
+  91 0040 00000000 		.word	init_taskHandle
+  92 0044 00000000 		.word	engine_flags_attributes
+  93 0048 00000000 		.word	engine_flagsHandle
+  95              		.section	.text.toggle_led,"ax",%progbits
+  96              		.align	1
+  97              		.global	toggle_led
+  98              		.syntax unified
+  99              		.thumb
+ 100              		.thumb_func
+ 102              	toggle_led:
+ 103              		@ args = 0, pretend = 0, frame = 0
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+ 105 0000 08B5     		push	{r3, lr}
+ 106 0002 4FF40051 		mov	r1, #8192
+ 107 0006 0248     		ldr	r0, .L13
+ 108 0008 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 109 000c 08BD     		pop	{r3, pc}
+ 110              	.L14:
+ 111 000e 00BF     		.align	2
+ 112              	.L13:
+ 113 0010 00080240 		.word	1073874944
+ 115              		.global	engine_flags_attributes
+ 116              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 117              		.align	2
+ 118              	.LC0:
+ 119 0000 656E6769 		.ascii	"engine_flags\000"
+ 119      6E655F66 
+ 119      6C616773 
+ 119      00
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccarg94J.s 			page 3
+
+
+ 120              		.section	.rodata.engine_flags_attributes,"a"
+ 121              		.align	2
+ 124              	engine_flags_attributes:
+ 125 0000 00000000 		.word	.LC0
+ 126 0004 00000000 		.space	4
+ 127 0008 00000000 		.word	engine_flagsControlBlock
+ 128 000c 20000000 		.word	32
+ 129              		.global	engine_flagsControlBlock
+ 130              		.section	.bss.engine_flagsControlBlock,"aw",%nobits
+ 131              		.align	2
+ 134              	engine_flagsControlBlock:
+ 135 0000 00000000 		.space	32
+ 135      00000000 
+ 135      00000000 
+ 135      00000000 
+ 135      00000000 
+ 136              		.global	engine_flagsHandle
+ 137              		.section	.bss.engine_flagsHandle,"aw",%nobits
+ 138              		.align	2
+ 141              	engine_flagsHandle:
+ 142 0000 00000000 		.space	4
+ 143              		.global	init_task_attributes
+ 144              		.section	.rodata.str1.4
+ 145 000d 000000   		.align	2
+ 146              	.LC1:
+ 147 0010 696E6974 		.ascii	"init_task\000"
+ 147      5F746173 
+ 147      6B00
+ 148              		.section	.rodata.init_task_attributes,"a"
+ 149              		.align	2
+ 152              	init_task_attributes:
+ 153 0000 10000000 		.word	.LC1
+ 154 0004 00000000 		.space	16
+ 154      00000000 
+ 154      00000000 
+ 154      00000000 
+ 155 0014 00100000 		.word	4096
+ 156 0018 30000000 		.word	48
+ 157 001c 00000000 		.space	8
+ 157      00000000 
+ 158              		.global	init_taskHandle
+ 159              		.section	.bss.init_taskHandle,"aw",%nobits
+ 160              		.align	2
+ 163              	init_taskHandle:
+ 164 0000 00000000 		.space	4
+ 165              		.global	defaultTask_attributes
+ 166              		.section	.rodata.str1.4
+ 167 001a 0000     		.align	2
+ 168              	.LC2:
+ 169 001c 64656661 		.ascii	"defaultTask\000"
+ 169      756C7454 
+ 169      61736B00 
+ 170              		.section	.rodata.defaultTask_attributes,"a"
+ 171              		.align	2
+ 174              	defaultTask_attributes:
+ 175 0000 1C000000 		.word	.LC2
+ 176 0004 00000000 		.space	16
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccarg94J.s 			page 4
+
+
+ 176      00000000 
+ 176      00000000 
+ 176      00000000 
+ 177 0014 00080000 		.word	2048
+ 178 0018 30000000 		.word	48
+ 179 001c 00000000 		.space	8
+ 179      00000000 
+ 180              		.global	defaultTaskHandle
+ 181              		.section	.bss.defaultTaskHandle,"aw",%nobits
+ 182              		.align	2
+ 185              	defaultTaskHandle:
+ 186 0000 00000000 		.space	4
+ 187              		.global	table_value
+ 188              		.section	.bss.table_value,"aw",%nobits
+ 189              		.align	2
+ 192              	table_value:
+ 193 0000 00000000 		.space	4
+ 194              		.global	test_table
+ 195              		.section	.bss.test_table,"aw",%nobits
+ 196              		.align	2
+ 199              	test_table:
+ 200 0000 00000000 		.space	1152
+ 200      00000000 
+ 200      00000000 
+ 200      00000000 
+ 200      00000000 
+ 201              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccarg94J.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:18     .text.StartDefaultTask:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:24     .text.StartDefaultTask:00000000 StartDefaultTask
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:38     .text.controller_init_task:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:44     .text.controller_init_task:00000000 controller_init_task
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:56     .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:62     .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:86     .text.MX_FREERTOS_Init:0000002c $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:174    .rodata.defaultTask_attributes:00000000 defaultTask_attributes
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:185    .bss.defaultTaskHandle:00000000 defaultTaskHandle
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:152    .rodata.init_task_attributes:00000000 init_task_attributes
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:163    .bss.init_taskHandle:00000000 init_taskHandle
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:124    .rodata.engine_flags_attributes:00000000 engine_flags_attributes
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:141    .bss.engine_flagsHandle:00000000 engine_flagsHandle
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:96     .text.toggle_led:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:102    .text.toggle_led:00000000 toggle_led
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:113    .text.toggle_led:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:117    .rodata.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:121    .rodata.engine_flags_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:134    .bss.engine_flagsControlBlock:00000000 engine_flagsControlBlock
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:131    .bss.engine_flagsControlBlock:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:138    .bss.engine_flagsHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:149    .rodata.init_task_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:160    .bss.init_taskHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:171    .rodata.defaultTask_attributes:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:182    .bss.defaultTaskHandle:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:192    .bss.table_value:00000000 table_value
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:189    .bss.table_value:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:199    .bss.test_table:00000000 test_table
+C:\Users\alireza\AppData\Local\Temp\ccarg94J.s:196    .bss.test_table:00000000 $d
+
+UNDEFINED SYMBOLS
+MX_USB_DEVICE_Init
+osDelay
+controller_init
+osThreadNew
+osEventFlagsNew
+HAL_GPIO_TogglePin

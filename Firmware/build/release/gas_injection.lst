@@ -1,0 +1,213 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"gas_injection.c"
+  16              		.text
+  17              		.section	.rodata.gas_injection_init.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 67617320 		.ascii	"gas injection init failed!\000"
+  20      696E6A65 
+  20      6374696F 
+  20      6E20696E 
+  20      69742066 
+  21              		.section	.text.gas_injection_init,"ax",%progbits
+  22              		.align	1
+  23              		.global	gas_injection_init
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  28              	gas_injection_init:
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 08B5     		push	{r3, lr}
+  32 0002 10B1     		cbz	r0, .L5
+  33 0004 034A     		ldr	r2, .L6
+  34 0006 1060     		str	r0, [r2]
+  35              	.L1:
+  36 0008 08BD     		pop	{r3, pc}
+  37              	.L5:
+  38 000a 0348     		ldr	r0, .L6+4
+  39 000c FFF7FEFF 		bl	log_error
+  40 0010 FAE7     		b	.L1
+  41              	.L7:
+  42 0012 00BF     		.align	2
+  43              	.L6:
+  44 0014 00000000 		.word	etb
+  45 0018 00000000 		.word	.LC0
+  47              		.section	.text.gas_injection_update,"ax",%progbits
+  48              		.align	1
+  49              		.global	gas_injection_update
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  54              	gas_injection_update:
+  55              		@ args = 0, pretend = 0, frame = 0
+  56              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s 			page 2
+
+
+  57 0000 494B     		ldr	r3, .L28
+  58 0002 1B68     		ldr	r3, [r3]
+  59 0004 002B     		cmp	r3, #0
+  60 0006 00F08E80 		beq	.L24
+  61 000a 10B5     		push	{r4, lr}
+  62 000c 2DED028B 		vpush.64	{d8}
+  63 0010 0446     		mov	r4, r0
+  64 0012 FFF7FEFF 		bl	fuel_get_required_mass_gas
+  65 0016 B0EE408A 		vmov.f32	s16, s0
+  66 001a 444B     		ldr	r3, .L28+4
+  67 001c D3F8B436 		ldr	r3, [r3, #1716]	@ unaligned
+  68 0020 07EE903A 		vmov	s15, r3	@ int
+  69 0024 9FED427A 		vldr.32	s14, .L28+8
+  70 0028 67EE877A 		vmul.f32	s15, s15, s14
+  71 002c FCEEE77A 		vcvt.u32.f32	s15, s15
+  72 0030 17EE903A 		vmov	r3, s15	@ int
+  73 0034 A342     		cmp	r3, r4
+  74 0036 2BD8     		bhi	.L27
+  75              	.L10:
+  76 0038 DFED3E7A 		vldr.32	s15, .L28+12
+  77 003c B4EEE78A 		vcmpe.f32	s16, s15
+  78 0040 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  79 0044 5CDD     		ble	.L12
+  80 0046 3C4B     		ldr	r3, .L28+16
+  81 0048 1B68     		ldr	r3, [r3]
+  82 004a 13F0080F 		tst	r3, #8
+  83 004e 57D0     		beq	.L12
+  84 0050 364B     		ldr	r3, .L28+4
+  85 0052 D3F8AC26 		ldr	r2, [r3, #1708]	@ unaligned
+  86 0056 07EE902A 		vmov	s15, r2
+  87 005a 88EE270A 		vdiv.f32	s0, s16, s15
+  88 005e D3F8B036 		ldr	r3, [r3, #1712]	@ unaligned
+  89 0062 07EE903A 		vmov	s15, r3
+  90 0066 20EE270A 		vmul.f32	s0, s0, s15
+  91 006a F6EE007A 		vmov.f32	s15, #5.0e-1
+  92 006e 20EE270A 		vmul.f32	s0, s0, s15
+  93 0072 B5EEC00A 		vcmpe.f32	s0, #0
+  94 0076 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  95 007a 1BD4     		bmi	.L18
+  96 007c F7EE007A 		vmov.f32	s15, #1.0e+0
+  97 0080 B4EEE70A 		vcmpe.f32	s0, s15
+  98 0084 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  99 0088 16DD     		ble	.L14
+ 100 008a B0EE670A 		vmov.f32	s0, s15
+ 101 008e 13E0     		b	.L14
+ 102              	.L27:
+ 103 0090 FFF7FEFF 		bl	trigger_spinning_state_get
+ 104 0094 0028     		cmp	r0, #0
+ 105 0096 CFD1     		bne	.L10
+ 106 0098 244B     		ldr	r3, .L28+4
+ 107 009a D3F8B836 		ldr	r3, [r3, #1720]	@ unaligned
+ 108 009e 08EE103A 		vmov	s16, r3	@ int
+ 109 00a2 0120     		movs	r0, #1
+ 110 00a4 FFF7FEFF 		bl	output_gas_solenoid_set
+ 111 00a8 234A     		ldr	r2, .L28+16
+ 112 00aa 1368     		ldr	r3, [r2]
+ 113 00ac 43F48063 		orr	r3, r3, #1024
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s 			page 3
+
+
+ 114 00b0 1360     		str	r3, [r2]
+ 115 00b2 2FE0     		b	.L11
+ 116              	.L18:
+ 117 00b4 9FED210A 		vldr.32	s0, .L28+20
+ 118              	.L14:
+ 119 00b8 FFF7FEFF 		bl	asinf
+ 120 00bc DFED207A 		vldr.32	s15, .L28+24
+ 121 00c0 80EE278A 		vdiv.f32	s16, s0, s15
+ 122 00c4 DFED1F7A 		vldr.32	s15, .L28+28
+ 123 00c8 28EE278A 		vmul.f32	s16, s16, s15
+ 124 00cc B5EEC08A 		vcmpe.f32	s16, #0
+ 125 00d0 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 126 00d4 09D4     		bmi	.L19
+ 127 00d6 DFED1C7A 		vldr.32	s15, .L28+32
+ 128 00da B4EEE78A 		vcmpe.f32	s16, s15
+ 129 00de F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 130 00e2 04DD     		ble	.L16
+ 131 00e4 B0EE678A 		vmov.f32	s16, s15
+ 132 00e8 01E0     		b	.L16
+ 133              	.L19:
+ 134 00ea 9FED148A 		vldr.32	s16, .L28+20
+ 135              	.L16:
+ 136 00ee 0120     		movs	r0, #1
+ 137 00f0 FFF7FEFF 		bl	output_gas_solenoid_set
+ 138 00f4 104A     		ldr	r2, .L28+16
+ 139 00f6 1368     		ldr	r3, [r2]
+ 140 00f8 43F48063 		orr	r3, r3, #1024
+ 141 00fc 1360     		str	r3, [r2]
+ 142 00fe 09E0     		b	.L11
+ 143              	.L12:
+ 144 0100 0020     		movs	r0, #0
+ 145 0102 FFF7FEFF 		bl	output_gas_solenoid_set
+ 146 0106 0C4A     		ldr	r2, .L28+16
+ 147 0108 1368     		ldr	r3, [r2]
+ 148 010a 23F48063 		bic	r3, r3, #1024
+ 149 010e 1360     		str	r3, [r2]
+ 150 0110 9FED0A8A 		vldr.32	s16, .L28+20
+ 151              	.L11:
+ 152 0114 B0EE480A 		vmov.f32	s0, s16
+ 153 0118 034B     		ldr	r3, .L28
+ 154 011a 1868     		ldr	r0, [r3]
+ 155 011c FFF7FEFF 		bl	electronic_throttle_set
+ 156 0120 BDEC028B 		vldm	sp!, {d8}
+ 157 0124 10BD     		pop	{r4, pc}
+ 158              	.L24:
+ 159 0126 7047     		bx	lr
+ 160              	.L29:
+ 161              		.align	2
+ 162              	.L28:
+ 163 0128 00000000 		.word	etb
+ 164 012c 00100000 		.word	config+4096
+ 165 0130 00247449 		.word	1232348160
+ 166 0134 CDCCCC3D 		.word	1036831949
+ 167 0138 00000000 		.word	runtime
+ 168 013c 00000000 		.word	0
+ 169 0140 DB0F4940 		.word	1078530011
+ 170 0144 00004843 		.word	1128792064
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s 			page 4
+
+
+ 171 0148 0000C842 		.word	1120403456
+ 173              		.section	.bss.etb,"aw",%nobits
+ 174              		.align	2
+ 177              	etb:
+ 178 0000 00000000 		.space	4
+ 179              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 gas_injection.c
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:18     .rodata.gas_injection_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:22     .text.gas_injection_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:28     .text.gas_injection_init:00000000 gas_injection_init
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:44     .text.gas_injection_init:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:177    .bss.etb:00000000 etb
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:48     .text.gas_injection_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:54     .text.gas_injection_update:00000000 gas_injection_update
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:163    .text.gas_injection_update:00000128 $d
+C:\Users\alireza\AppData\Local\Temp\ccsIjosP.s:174    .bss.etb:00000000 $d
+
+UNDEFINED SYMBOLS
+log_error
+fuel_get_required_mass_gas
+trigger_spinning_state_get
+output_gas_solenoid_set
+asinf
+electronic_throttle_set
+config
+runtime

@@ -14,6 +14,27 @@
 
 typedef enum
 {
+    TRIGGER_EVENT_TYPE_TIMEOUT,
+    TRIGGER_EVENT_TYPE_CRANKSHAFT,
+    TRIGGER_EVENT_TYPE_CAMSHAFT,
+} trigger_event_type_t;
+typedef enum
+{
+    TRIGGER_EVENT_EDGE_FALLING = 0,
+    TRIGGER_EVENT_EDGE_RISING = 1,
+    TRIGGER_EVENT_EDGE_NONE = 3,
+} trigger_event_edge_t;
+
+typedef struct
+{
+    time_us_t timestamp;
+    trigger_event_type_t type;
+    trigger_event_edge_t edge;
+} trigger_event_t;
+
+
+typedef enum
+{
     TRIGGER_FILTERING_NONE = 0,
     TRIGGER_FILTERING_LITE = 1,
     TRIGGER_FILTERING_MEDIUM = 2,
@@ -34,7 +55,7 @@ typedef struct
     
     time_us_t       tooth_time_history[2]; // the higher the index, the older the sample.
     time_us_t       filter_time;
-    uint16_t        counted_teeth;
+    uint16_t        current_tooth_index;
     uint8_t         trigger_actual_teeth;
     uint8_t         full_teeth;
     uint8_t         missing_teeth;
@@ -88,7 +109,7 @@ bool camshaft_get_phase();
 /**
  * @brief called by an interrupt in the middle of the tooth i.e.- zero crossing of the signal
  */
-void trigger_crankshaft_signal_handle();
+void trigger_crank_handle(trigger_event_t *event);
 
 /**
  * @brief gets called on either edge of the camshaft signal
@@ -104,10 +125,5 @@ void trigger_driven_events_callback();
 angle_t crankshaft_get_next_trigger_angle();
 
 spinning_state_t trigger_spinning_state_get();
-
-void trigger_tooth_logger_start();
-void trigger_tooth_logger_stop();
-void trigger_tooth_logger_reset();
-time_us_t *trigger_tooth_logger_get_buffer();
 
 #endif // TRIGGER_H

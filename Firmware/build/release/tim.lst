@@ -1,0 +1,594 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"tim.c"
+  16              		.text
+  17              		.section	.text.MX_TIM2_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	MX_TIM2_Init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	MX_TIM2_Init:
+  25              		@ args = 0, pretend = 0, frame = 56
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 00B5     		push	{lr}
+  28 0002 8FB0     		sub	sp, sp, #60
+  29 0004 0023     		movs	r3, #0
+  30 0006 0A93     		str	r3, [sp, #40]
+  31 0008 0B93     		str	r3, [sp, #44]
+  32 000a 0C93     		str	r3, [sp, #48]
+  33 000c 0D93     		str	r3, [sp, #52]
+  34 000e 0893     		str	r3, [sp, #32]
+  35 0010 0993     		str	r3, [sp, #36]
+  36 0012 0193     		str	r3, [sp, #4]
+  37 0014 0293     		str	r3, [sp, #8]
+  38 0016 0393     		str	r3, [sp, #12]
+  39 0018 0493     		str	r3, [sp, #16]
+  40 001a 0593     		str	r3, [sp, #20]
+  41 001c 0693     		str	r3, [sp, #24]
+  42 001e 0793     		str	r3, [sp, #28]
+  43 0020 1F48     		ldr	r0, .L13
+  44 0022 4FF08042 		mov	r2, #1073741824
+  45 0026 0260     		str	r2, [r0]
+  46 0028 5322     		movs	r2, #83
+  47 002a 4260     		str	r2, [r0, #4]
+  48 002c 8360     		str	r3, [r0, #8]
+  49 002e 4FF0FF32 		mov	r2, #-1
+  50 0032 C260     		str	r2, [r0, #12]
+  51 0034 0361     		str	r3, [r0, #16]
+  52 0036 8361     		str	r3, [r0, #24]
+  53 0038 FFF7FEFF 		bl	HAL_TIM_Base_Init
+  54 003c 00BB     		cbnz	r0, .L8
+  55              	.L2:
+  56 003e 4FF48053 		mov	r3, #4096
+  57 0042 0A93     		str	r3, [sp, #40]
+  58 0044 0AA9     		add	r1, sp, #40
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 2
+
+
+  59 0046 1648     		ldr	r0, .L13
+  60 0048 FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+  61 004c D8B9     		cbnz	r0, .L9
+  62              	.L3:
+  63 004e 1448     		ldr	r0, .L13
+  64 0050 FFF7FEFF 		bl	HAL_TIM_OC_Init
+  65 0054 D0B9     		cbnz	r0, .L10
+  66              	.L4:
+  67 0056 0023     		movs	r3, #0
+  68 0058 0893     		str	r3, [sp, #32]
+  69 005a 0993     		str	r3, [sp, #36]
+  70 005c 08A9     		add	r1, sp, #32
+  71 005e 1048     		ldr	r0, .L13
+  72 0060 FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+  73 0064 A8B9     		cbnz	r0, .L11
+  74              	.L5:
+  75 0066 0022     		movs	r2, #0
+  76 0068 0192     		str	r2, [sp, #4]
+  77 006a 0292     		str	r2, [sp, #8]
+  78 006c 0392     		str	r2, [sp, #12]
+  79 006e 0592     		str	r2, [sp, #20]
+  80 0070 01A9     		add	r1, sp, #4
+  81 0072 0B48     		ldr	r0, .L13
+  82 0074 FFF7FEFF 		bl	HAL_TIM_OC_ConfigChannel
+  83 0078 70B9     		cbnz	r0, .L12
+  84              	.L1:
+  85 007a 0FB0     		add	sp, sp, #60
+  86              		@ sp needed
+  87 007c 5DF804FB 		ldr	pc, [sp], #4
+  88              	.L8:
+  89 0080 FFF7FEFF 		bl	Error_Handler
+  90 0084 DBE7     		b	.L2
+  91              	.L9:
+  92 0086 FFF7FEFF 		bl	Error_Handler
+  93 008a E0E7     		b	.L3
+  94              	.L10:
+  95 008c FFF7FEFF 		bl	Error_Handler
+  96 0090 E1E7     		b	.L4
+  97              	.L11:
+  98 0092 FFF7FEFF 		bl	Error_Handler
+  99 0096 E6E7     		b	.L5
+ 100              	.L12:
+ 101 0098 FFF7FEFF 		bl	Error_Handler
+ 102 009c EDE7     		b	.L1
+ 103              	.L14:
+ 104 009e 00BF     		.align	2
+ 105              	.L13:
+ 106 00a0 00000000 		.word	htim2
+ 108              		.section	.text.MX_TIM5_Init,"ax",%progbits
+ 109              		.align	1
+ 110              		.global	MX_TIM5_Init
+ 111              		.syntax unified
+ 112              		.thumb
+ 113              		.thumb_func
+ 115              	MX_TIM5_Init:
+ 116              		@ args = 0, pretend = 0, frame = 56
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 3
+
+
+ 118 0000 00B5     		push	{lr}
+ 119 0002 8FB0     		sub	sp, sp, #60
+ 120 0004 0023     		movs	r3, #0
+ 121 0006 0A93     		str	r3, [sp, #40]
+ 122 0008 0B93     		str	r3, [sp, #44]
+ 123 000a 0C93     		str	r3, [sp, #48]
+ 124 000c 0D93     		str	r3, [sp, #52]
+ 125 000e 0893     		str	r3, [sp, #32]
+ 126 0010 0993     		str	r3, [sp, #36]
+ 127 0012 0193     		str	r3, [sp, #4]
+ 128 0014 0293     		str	r3, [sp, #8]
+ 129 0016 0393     		str	r3, [sp, #12]
+ 130 0018 0493     		str	r3, [sp, #16]
+ 131 001a 0593     		str	r3, [sp, #20]
+ 132 001c 0693     		str	r3, [sp, #24]
+ 133 001e 0793     		str	r3, [sp, #28]
+ 134 0020 2248     		ldr	r0, .L27
+ 135 0022 234A     		ldr	r2, .L27+4
+ 136 0024 0260     		str	r2, [r0]
+ 137 0026 3F22     		movs	r2, #63
+ 138 0028 4260     		str	r2, [r0, #4]
+ 139 002a 8360     		str	r3, [r0, #8]
+ 140 002c 4FF0FF32 		mov	r2, #-1
+ 141 0030 C260     		str	r2, [r0, #12]
+ 142 0032 0361     		str	r3, [r0, #16]
+ 143 0034 8361     		str	r3, [r0, #24]
+ 144 0036 FFF7FEFF 		bl	HAL_TIM_Base_Init
+ 145 003a 40BB     		cbnz	r0, .L22
+ 146              	.L16:
+ 147 003c 4FF48053 		mov	r3, #4096
+ 148 0040 0A93     		str	r3, [sp, #40]
+ 149 0042 0AA9     		add	r1, sp, #40
+ 150 0044 1948     		ldr	r0, .L27
+ 151 0046 FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+ 152 004a 18BB     		cbnz	r0, .L23
+ 153              	.L17:
+ 154 004c 1748     		ldr	r0, .L27
+ 155 004e FFF7FEFF 		bl	HAL_TIM_OC_Init
+ 156 0052 10BB     		cbnz	r0, .L24
+ 157              	.L18:
+ 158 0054 4023     		movs	r3, #64
+ 159 0056 0893     		str	r3, [sp, #32]
+ 160 0058 0023     		movs	r3, #0
+ 161 005a 0993     		str	r3, [sp, #36]
+ 162 005c 08A9     		add	r1, sp, #32
+ 163 005e 1348     		ldr	r0, .L27
+ 164 0060 FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 165 0064 E0B9     		cbnz	r0, .L25
+ 166              	.L19:
+ 167 0066 3023     		movs	r3, #48
+ 168 0068 0193     		str	r3, [sp, #4]
+ 169 006a 0022     		movs	r2, #0
+ 170 006c 0292     		str	r2, [sp, #8]
+ 171 006e 0392     		str	r2, [sp, #12]
+ 172 0070 0592     		str	r2, [sp, #20]
+ 173 0072 01A9     		add	r1, sp, #4
+ 174 0074 0D48     		ldr	r0, .L27
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 4
+
+
+ 175 0076 FFF7FEFF 		bl	HAL_TIM_OC_ConfigChannel
+ 176 007a A0B9     		cbnz	r0, .L26
+ 177              	.L20:
+ 178 007c 0B4B     		ldr	r3, .L27
+ 179 007e 1A68     		ldr	r2, [r3]
+ 180 0080 9369     		ldr	r3, [r2, #24]
+ 181 0082 43F00803 		orr	r3, r3, #8
+ 182 0086 9361     		str	r3, [r2, #24]
+ 183 0088 0FB0     		add	sp, sp, #60
+ 184              		@ sp needed
+ 185 008a 5DF804FB 		ldr	pc, [sp], #4
+ 186              	.L22:
+ 187 008e FFF7FEFF 		bl	Error_Handler
+ 188 0092 D3E7     		b	.L16
+ 189              	.L23:
+ 190 0094 FFF7FEFF 		bl	Error_Handler
+ 191 0098 D8E7     		b	.L17
+ 192              	.L24:
+ 193 009a FFF7FEFF 		bl	Error_Handler
+ 194 009e D9E7     		b	.L18
+ 195              	.L25:
+ 196 00a0 FFF7FEFF 		bl	Error_Handler
+ 197 00a4 DFE7     		b	.L19
+ 198              	.L26:
+ 199 00a6 FFF7FEFF 		bl	Error_Handler
+ 200 00aa E7E7     		b	.L20
+ 201              	.L28:
+ 202              		.align	2
+ 203              	.L27:
+ 204 00ac 00000000 		.word	htim5
+ 205 00b0 000C0040 		.word	1073744896
+ 207              		.section	.text.HAL_TIM_Base_MspInit,"ax",%progbits
+ 208              		.align	1
+ 209              		.global	HAL_TIM_Base_MspInit
+ 210              		.syntax unified
+ 211              		.thumb
+ 212              		.thumb_func
+ 214              	HAL_TIM_Base_MspInit:
+ 215              		@ args = 0, pretend = 0, frame = 16
+ 216              		@ frame_needed = 0, uses_anonymous_args = 0
+ 217 0000 00B5     		push	{lr}
+ 218 0002 85B0     		sub	sp, sp, #20
+ 219 0004 0368     		ldr	r3, [r0]
+ 220 0006 B3F1804F 		cmp	r3, #1073741824
+ 221 000a 08D0     		beq	.L34
+ 222 000c 1B4A     		ldr	r2, .L37
+ 223 000e 9342     		cmp	r3, r2
+ 224 0010 1AD0     		beq	.L35
+ 225 0012 1B4A     		ldr	r2, .L37+4
+ 226 0014 9342     		cmp	r3, r2
+ 227 0016 24D0     		beq	.L36
+ 228              	.L29:
+ 229 0018 05B0     		add	sp, sp, #20
+ 230              		@ sp needed
+ 231 001a 5DF804FB 		ldr	pc, [sp], #4
+ 232              	.L34:
+ 233 001e 0022     		movs	r2, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 5
+
+
+ 234 0020 0192     		str	r2, [sp, #4]
+ 235 0022 03F50E33 		add	r3, r3, #145408
+ 236 0026 196C     		ldr	r1, [r3, #64]
+ 237 0028 41F00101 		orr	r1, r1, #1
+ 238 002c 1964     		str	r1, [r3, #64]
+ 239 002e 1B6C     		ldr	r3, [r3, #64]
+ 240 0030 03F00103 		and	r3, r3, #1
+ 241 0034 0193     		str	r3, [sp, #4]
+ 242 0036 019B     		ldr	r3, [sp, #4]
+ 243 0038 0621     		movs	r1, #6
+ 244 003a 1C20     		movs	r0, #28
+ 245 003c FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 246 0040 1C20     		movs	r0, #28
+ 247 0042 FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+ 248 0046 E7E7     		b	.L29
+ 249              	.L35:
+ 250 0048 0023     		movs	r3, #0
+ 251 004a 0293     		str	r3, [sp, #8]
+ 252 004c 0D4B     		ldr	r3, .L37+8
+ 253 004e 1A6C     		ldr	r2, [r3, #64]
+ 254 0050 42F00202 		orr	r2, r2, #2
+ 255 0054 1A64     		str	r2, [r3, #64]
+ 256 0056 1B6C     		ldr	r3, [r3, #64]
+ 257 0058 03F00203 		and	r3, r3, #2
+ 258 005c 0293     		str	r3, [sp, #8]
+ 259 005e 029B     		ldr	r3, [sp, #8]
+ 260 0060 DAE7     		b	.L29
+ 261              	.L36:
+ 262 0062 0023     		movs	r3, #0
+ 263 0064 0393     		str	r3, [sp, #12]
+ 264 0066 074B     		ldr	r3, .L37+8
+ 265 0068 1A6C     		ldr	r2, [r3, #64]
+ 266 006a 42F00802 		orr	r2, r2, #8
+ 267 006e 1A64     		str	r2, [r3, #64]
+ 268 0070 1B6C     		ldr	r3, [r3, #64]
+ 269 0072 03F00803 		and	r3, r3, #8
+ 270 0076 0393     		str	r3, [sp, #12]
+ 271 0078 039B     		ldr	r3, [sp, #12]
+ 272 007a CDE7     		b	.L29
+ 273              	.L38:
+ 274              		.align	2
+ 275              	.L37:
+ 276 007c 00040040 		.word	1073742848
+ 277 0080 000C0040 		.word	1073744896
+ 278 0084 00380240 		.word	1073887232
+ 280              		.section	.text.HAL_TIM_MspPostInit,"ax",%progbits
+ 281              		.align	1
+ 282              		.global	HAL_TIM_MspPostInit
+ 283              		.syntax unified
+ 284              		.thumb
+ 285              		.thumb_func
+ 287              	HAL_TIM_MspPostInit:
+ 288              		@ args = 0, pretend = 0, frame = 24
+ 289              		@ frame_needed = 0, uses_anonymous_args = 0
+ 290 0000 00B5     		push	{lr}
+ 291 0002 87B0     		sub	sp, sp, #28
+ 292 0004 0023     		movs	r3, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 6
+
+
+ 293 0006 0193     		str	r3, [sp, #4]
+ 294 0008 0293     		str	r3, [sp, #8]
+ 295 000a 0393     		str	r3, [sp, #12]
+ 296 000c 0493     		str	r3, [sp, #16]
+ 297 000e 0593     		str	r3, [sp, #20]
+ 298 0010 0268     		ldr	r2, [r0]
+ 299 0012 0E4B     		ldr	r3, .L43
+ 300 0014 9A42     		cmp	r2, r3
+ 301 0016 02D0     		beq	.L42
+ 302              	.L39:
+ 303 0018 07B0     		add	sp, sp, #28
+ 304              		@ sp needed
+ 305 001a 5DF804FB 		ldr	pc, [sp], #4
+ 306              	.L42:
+ 307 001e 0023     		movs	r3, #0
+ 308 0020 0093     		str	r3, [sp]
+ 309 0022 0B4B     		ldr	r3, .L43+4
+ 310 0024 1A6B     		ldr	r2, [r3, #48]
+ 311 0026 42F00402 		orr	r2, r2, #4
+ 312 002a 1A63     		str	r2, [r3, #48]
+ 313 002c 1B6B     		ldr	r3, [r3, #48]
+ 314 002e 03F00403 		and	r3, r3, #4
+ 315 0032 0093     		str	r3, [sp]
+ 316 0034 009B     		ldr	r3, [sp]
+ 317 0036 4FF47073 		mov	r3, #960
+ 318 003a 0193     		str	r3, [sp, #4]
+ 319 003c 0223     		movs	r3, #2
+ 320 003e 0293     		str	r3, [sp, #8]
+ 321 0040 0593     		str	r3, [sp, #20]
+ 322 0042 01A9     		add	r1, sp, #4
+ 323 0044 0348     		ldr	r0, .L43+8
+ 324 0046 FFF7FEFF 		bl	HAL_GPIO_Init
+ 325 004a E5E7     		b	.L39
+ 326              	.L44:
+ 327              		.align	2
+ 328              	.L43:
+ 329 004c 00040040 		.word	1073742848
+ 330 0050 00380240 		.word	1073887232
+ 331 0054 00080240 		.word	1073874944
+ 333              		.section	.text.MX_TIM3_Init,"ax",%progbits
+ 334              		.align	1
+ 335              		.global	MX_TIM3_Init
+ 336              		.syntax unified
+ 337              		.thumb
+ 338              		.thumb_func
+ 340              	MX_TIM3_Init:
+ 341              		@ args = 0, pretend = 0, frame = 56
+ 342              		@ frame_needed = 0, uses_anonymous_args = 0
+ 343 0000 00B5     		push	{lr}
+ 344 0002 8FB0     		sub	sp, sp, #60
+ 345 0004 0023     		movs	r3, #0
+ 346 0006 0A93     		str	r3, [sp, #40]
+ 347 0008 0B93     		str	r3, [sp, #44]
+ 348 000a 0C93     		str	r3, [sp, #48]
+ 349 000c 0D93     		str	r3, [sp, #52]
+ 350 000e 0893     		str	r3, [sp, #32]
+ 351 0010 0993     		str	r3, [sp, #36]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 7
+
+
+ 352 0012 0193     		str	r3, [sp, #4]
+ 353 0014 0293     		str	r3, [sp, #8]
+ 354 0016 0393     		str	r3, [sp, #12]
+ 355 0018 0493     		str	r3, [sp, #16]
+ 356 001a 0593     		str	r3, [sp, #20]
+ 357 001c 0693     		str	r3, [sp, #24]
+ 358 001e 0793     		str	r3, [sp, #28]
+ 359 0020 2F48     		ldr	r0, .L63
+ 360 0022 304A     		ldr	r2, .L63+4
+ 361 0024 0260     		str	r2, [r0]
+ 362 0026 4360     		str	r3, [r0, #4]
+ 363 0028 8360     		str	r3, [r0, #8]
+ 364 002a 4FF6FF72 		movw	r2, #65535
+ 365 002e C260     		str	r2, [r0, #12]
+ 366 0030 0361     		str	r3, [r0, #16]
+ 367 0032 8361     		str	r3, [r0, #24]
+ 368 0034 FFF7FEFF 		bl	HAL_TIM_Base_Init
+ 369 0038 0028     		cmp	r0, #0
+ 370 003a 39D1     		bne	.L55
+ 371              	.L46:
+ 372 003c 4FF48053 		mov	r3, #4096
+ 373 0040 0A93     		str	r3, [sp, #40]
+ 374 0042 0AA9     		add	r1, sp, #40
+ 375 0044 2648     		ldr	r0, .L63
+ 376 0046 FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+ 377 004a 0028     		cmp	r0, #0
+ 378 004c 33D1     		bne	.L56
+ 379              	.L47:
+ 380 004e 2448     		ldr	r0, .L63
+ 381 0050 FFF7FEFF 		bl	HAL_TIM_PWM_Init
+ 382 0054 0028     		cmp	r0, #0
+ 383 0056 31D1     		bne	.L57
+ 384              	.L48:
+ 385 0058 0023     		movs	r3, #0
+ 386 005a 0893     		str	r3, [sp, #32]
+ 387 005c 0993     		str	r3, [sp, #36]
+ 388 005e 08A9     		add	r1, sp, #32
+ 389 0060 1F48     		ldr	r0, .L63
+ 390 0062 FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 391 0066 60BB     		cbnz	r0, .L58
+ 392              	.L49:
+ 393 0068 6023     		movs	r3, #96
+ 394 006a 0193     		str	r3, [sp, #4]
+ 395 006c 0022     		movs	r2, #0
+ 396 006e 0292     		str	r2, [sp, #8]
+ 397 0070 0392     		str	r2, [sp, #12]
+ 398 0072 0592     		str	r2, [sp, #20]
+ 399 0074 01A9     		add	r1, sp, #4
+ 400 0076 1A48     		ldr	r0, .L63
+ 401 0078 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 402 007c 20BB     		cbnz	r0, .L59
+ 403              	.L50:
+ 404 007e 0422     		movs	r2, #4
+ 405 0080 0DEB0201 		add	r1, sp, r2
+ 406 0084 1648     		ldr	r0, .L63
+ 407 0086 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 408 008a 00BB     		cbnz	r0, .L60
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 8
+
+
+ 409              	.L51:
+ 410 008c 0822     		movs	r2, #8
+ 411 008e 01A9     		add	r1, sp, #4
+ 412 0090 1348     		ldr	r0, .L63
+ 413 0092 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 414 0096 E8B9     		cbnz	r0, .L61
+ 415              	.L52:
+ 416 0098 0C22     		movs	r2, #12
+ 417 009a 01A9     		add	r1, sp, #4
+ 418 009c 1048     		ldr	r0, .L63
+ 419 009e FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 420 00a2 D0B9     		cbnz	r0, .L62
+ 421              	.L53:
+ 422 00a4 0E48     		ldr	r0, .L63
+ 423 00a6 FFF7FEFF 		bl	HAL_TIM_MspPostInit
+ 424 00aa 0FB0     		add	sp, sp, #60
+ 425              		@ sp needed
+ 426 00ac 5DF804FB 		ldr	pc, [sp], #4
+ 427              	.L55:
+ 428 00b0 FFF7FEFF 		bl	Error_Handler
+ 429 00b4 C2E7     		b	.L46
+ 430              	.L56:
+ 431 00b6 FFF7FEFF 		bl	Error_Handler
+ 432 00ba C8E7     		b	.L47
+ 433              	.L57:
+ 434 00bc FFF7FEFF 		bl	Error_Handler
+ 435 00c0 CAE7     		b	.L48
+ 436              	.L58:
+ 437 00c2 FFF7FEFF 		bl	Error_Handler
+ 438 00c6 CFE7     		b	.L49
+ 439              	.L59:
+ 440 00c8 FFF7FEFF 		bl	Error_Handler
+ 441 00cc D7E7     		b	.L50
+ 442              	.L60:
+ 443 00ce FFF7FEFF 		bl	Error_Handler
+ 444 00d2 DBE7     		b	.L51
+ 445              	.L61:
+ 446 00d4 FFF7FEFF 		bl	Error_Handler
+ 447 00d8 DEE7     		b	.L52
+ 448              	.L62:
+ 449 00da FFF7FEFF 		bl	Error_Handler
+ 450 00de E1E7     		b	.L53
+ 451              	.L64:
+ 452              		.align	2
+ 453              	.L63:
+ 454 00e0 00000000 		.word	htim3
+ 455 00e4 00040040 		.word	1073742848
+ 457              		.section	.text.HAL_TIM_Base_MspDeInit,"ax",%progbits
+ 458              		.align	1
+ 459              		.global	HAL_TIM_Base_MspDeInit
+ 460              		.syntax unified
+ 461              		.thumb
+ 462              		.thumb_func
+ 464              	HAL_TIM_Base_MspDeInit:
+ 465              		@ args = 0, pretend = 0, frame = 0
+ 466              		@ frame_needed = 0, uses_anonymous_args = 0
+ 467 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 9
+
+
+ 468 0002 0368     		ldr	r3, [r0]
+ 469 0004 B3F1804F 		cmp	r3, #1073741824
+ 470 0008 06D0     		beq	.L70
+ 471 000a 0F4A     		ldr	r2, .L73
+ 472 000c 9342     		cmp	r3, r2
+ 473 000e 0CD0     		beq	.L71
+ 474 0010 0E4A     		ldr	r2, .L73+4
+ 475 0012 9342     		cmp	r3, r2
+ 476 0014 10D0     		beq	.L72
+ 477              	.L65:
+ 478 0016 08BD     		pop	{r3, pc}
+ 479              	.L70:
+ 480 0018 0D4A     		ldr	r2, .L73+8
+ 481 001a 136C     		ldr	r3, [r2, #64]
+ 482 001c 23F00103 		bic	r3, r3, #1
+ 483 0020 1364     		str	r3, [r2, #64]
+ 484 0022 1C20     		movs	r0, #28
+ 485 0024 FFF7FEFF 		bl	HAL_NVIC_DisableIRQ
+ 486 0028 F5E7     		b	.L65
+ 487              	.L71:
+ 488 002a 02F50D32 		add	r2, r2, #144384
+ 489 002e 136C     		ldr	r3, [r2, #64]
+ 490 0030 23F00203 		bic	r3, r3, #2
+ 491 0034 1364     		str	r3, [r2, #64]
+ 492 0036 EEE7     		b	.L65
+ 493              	.L72:
+ 494 0038 02F50B32 		add	r2, r2, #142336
+ 495 003c 136C     		ldr	r3, [r2, #64]
+ 496 003e 23F00803 		bic	r3, r3, #8
+ 497 0042 1364     		str	r3, [r2, #64]
+ 498 0044 E7E7     		b	.L65
+ 499              	.L74:
+ 500 0046 00BF     		.align	2
+ 501              	.L73:
+ 502 0048 00040040 		.word	1073742848
+ 503 004c 000C0040 		.word	1073744896
+ 504 0050 00380240 		.word	1073887232
+ 506              		.global	htim5
+ 507              		.section	.bss.htim5,"aw",%nobits
+ 508              		.align	2
+ 511              	htim5:
+ 512 0000 00000000 		.space	72
+ 512      00000000 
+ 512      00000000 
+ 512      00000000 
+ 512      00000000 
+ 513              		.global	htim3
+ 514              		.section	.bss.htim3,"aw",%nobits
+ 515              		.align	2
+ 518              	htim3:
+ 519 0000 00000000 		.space	72
+ 519      00000000 
+ 519      00000000 
+ 519      00000000 
+ 519      00000000 
+ 520              		.global	htim2
+ 521              		.section	.bss.htim2,"aw",%nobits
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 10
+
+
+ 522              		.align	2
+ 525              	htim2:
+ 526 0000 00000000 		.space	72
+ 526      00000000 
+ 526      00000000 
+ 526      00000000 
+ 526      00000000 
+ 527              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 tim.c
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:18     .text.MX_TIM2_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:24     .text.MX_TIM2_Init:00000000 MX_TIM2_Init
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:106    .text.MX_TIM2_Init:000000a0 $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:525    .bss.htim2:00000000 htim2
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:109    .text.MX_TIM5_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:115    .text.MX_TIM5_Init:00000000 MX_TIM5_Init
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:204    .text.MX_TIM5_Init:000000ac $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:511    .bss.htim5:00000000 htim5
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:208    .text.HAL_TIM_Base_MspInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:214    .text.HAL_TIM_Base_MspInit:00000000 HAL_TIM_Base_MspInit
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:276    .text.HAL_TIM_Base_MspInit:0000007c $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:281    .text.HAL_TIM_MspPostInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:287    .text.HAL_TIM_MspPostInit:00000000 HAL_TIM_MspPostInit
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:329    .text.HAL_TIM_MspPostInit:0000004c $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:334    .text.MX_TIM3_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:340    .text.MX_TIM3_Init:00000000 MX_TIM3_Init
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:454    .text.MX_TIM3_Init:000000e0 $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:518    .bss.htim3:00000000 htim3
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:458    .text.HAL_TIM_Base_MspDeInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:464    .text.HAL_TIM_Base_MspDeInit:00000000 HAL_TIM_Base_MspDeInit
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:502    .text.HAL_TIM_Base_MspDeInit:00000048 $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:508    .bss.htim5:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:515    .bss.htim3:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccXlgH9C.s:522    .bss.htim2:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_Base_Init
+HAL_TIM_ConfigClockSource
+HAL_TIM_OC_Init
+HAL_TIMEx_MasterConfigSynchronization
+HAL_TIM_OC_ConfigChannel
+Error_Handler
+HAL_NVIC_SetPriority
+HAL_NVIC_EnableIRQ
+HAL_GPIO_Init
+HAL_TIM_PWM_Init
+HAL_TIM_PWM_ConfigChannel
+HAL_NVIC_DisableIRQ

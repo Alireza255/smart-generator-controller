@@ -1,0 +1,277 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"ee.c"
+  16              		.text
+  17              		.section	.text.EE_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	EE_Init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	EE_Init:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 0246     		mov	r2, r0
+  29 0002 B8B1     		cbz	r0, .L4
+  30 0004 C1B1     		cbz	r1, .L5
+  31 0006 0D4B     		ldr	r3, .L6
+  32 0008 0120     		movs	r0, #1
+  33 000a 5874     		strb	r0, [r3, #17]
+  34 000c 0520     		movs	r0, #5
+  35 000e 1874     		strb	r0, [r3, #16]
+  36 0010 4FF40030 		mov	r0, #131072
+  37 0014 9860     		str	r0, [r3, #8]
+  38 0016 00F10060 		add	r0, r0, #134217728
+  39 001a D860     		str	r0, [r3, #12]
+  40 001c B1F5003F 		cmp	r1, #131072
+  41 0020 03D9     		bls	.L3
+  42 0022 0020     		movs	r0, #0
+  43 0024 5860     		str	r0, [r3, #4]
+  44 0026 1860     		str	r0, [r3]
+  45 0028 7047     		bx	lr
+  46              	.L3:
+  47 002a 044B     		ldr	r3, .L6
+  48 002c 5960     		str	r1, [r3, #4]
+  49 002e 1A60     		str	r2, [r3]
+  50 0030 0120     		movs	r0, #1
+  51 0032 7047     		bx	lr
+  52              	.L4:
+  53 0034 0020     		movs	r0, #0
+  54 0036 7047     		bx	lr
+  55              	.L5:
+  56 0038 0020     		movs	r0, #0
+  57 003a 7047     		bx	lr
+  58              	.L7:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s 			page 2
+
+
+  59              		.align	2
+  60              	.L6:
+  61 003c 00000000 		.word	eeHandle
+  63              		.section	.text.EE_Capacity,"ax",%progbits
+  64              		.align	1
+  65              		.global	EE_Capacity
+  66              		.syntax unified
+  67              		.thumb
+  68              		.thumb_func
+  70              	EE_Capacity:
+  71              		@ args = 0, pretend = 0, frame = 0
+  72              		@ frame_needed = 0, uses_anonymous_args = 0
+  73              		@ link register save eliminated.
+  74 0000 014B     		ldr	r3, .L9
+  75 0002 9868     		ldr	r0, [r3, #8]
+  76 0004 7047     		bx	lr
+  77              	.L10:
+  78 0006 00BF     		.align	2
+  79              	.L9:
+  80 0008 00000000 		.word	eeHandle
+  82              		.section	.text.EE_Format,"ax",%progbits
+  83              		.align	1
+  84              		.global	EE_Format
+  85              		.syntax unified
+  86              		.thumb
+  87              		.thumb_func
+  89              	EE_Format:
+  90              		@ args = 0, pretend = 0, frame = 24
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+  92 0000 10B5     		push	{r4, lr}
+  93 0002 86B0     		sub	sp, sp, #24
+  94 0004 FFF7FEFF 		bl	HAL_FLASH_Unlock
+  95 0008 0023     		movs	r3, #0
+  96 000a 0093     		str	r3, [sp]
+  97 000c 0D4B     		ldr	r3, .L16
+  98 000e 1A7C     		ldrb	r2, [r3, #16]	@ zero_extendqisi2
+  99 0010 0292     		str	r2, [sp, #8]
+ 100 0012 0122     		movs	r2, #1
+ 101 0014 0392     		str	r2, [sp, #12]
+ 102 0016 5B7C     		ldrb	r3, [r3, #17]	@ zero_extendqisi2
+ 103 0018 0193     		str	r3, [sp, #4]
+ 104 001a 0223     		movs	r3, #2
+ 105 001c 0493     		str	r3, [sp, #16]
+ 106 001e 05A9     		add	r1, sp, #20
+ 107 0020 6846     		mov	r0, sp
+ 108 0022 FFF7FEFF 		bl	HAL_FLASHEx_Erase
+ 109 0026 28B9     		cbnz	r0, .L13
+ 110 0028 059B     		ldr	r3, [sp, #20]
+ 111 002a B3F1FF3F 		cmp	r3, #-1
+ 112 002e 07D0     		beq	.L14
+ 113 0030 0024     		movs	r4, #0
+ 114 0032 00E0     		b	.L12
+ 115              	.L13:
+ 116 0034 0024     		movs	r4, #0
+ 117              	.L12:
+ 118 0036 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 119 003a 2046     		mov	r0, r4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s 			page 3
+
+
+ 120 003c 06B0     		add	sp, sp, #24
+ 121              		@ sp needed
+ 122 003e 10BD     		pop	{r4, pc}
+ 123              	.L14:
+ 124 0040 0124     		movs	r4, #1
+ 125 0042 F8E7     		b	.L12
+ 126              	.L17:
+ 127              		.align	2
+ 128              	.L16:
+ 129 0044 00000000 		.word	eeHandle
+ 131              		.section	.text.EE_Read,"ax",%progbits
+ 132              		.align	1
+ 133              		.global	EE_Read
+ 134              		.syntax unified
+ 135              		.thumb
+ 136              		.thumb_func
+ 138              	EE_Read:
+ 139              		@ args = 0, pretend = 0, frame = 0
+ 140              		@ frame_needed = 0, uses_anonymous_args = 0
+ 141              		@ link register save eliminated.
+ 142 0000 084B     		ldr	r3, .L24
+ 143 0002 1A68     		ldr	r2, [r3]
+ 144 0004 0AB1     		cbz	r2, .L23
+ 145 0006 0023     		movs	r3, #0
+ 146 0008 06E0     		b	.L19
+ 147              	.L23:
+ 148 000a 7047     		bx	lr
+ 149              	.L21:
+ 150 000c 0549     		ldr	r1, .L24
+ 151 000e C968     		ldr	r1, [r1, #12]
+ 152 0010 C95C     		ldrb	r1, [r1, r3]	@ zero_extendqisi2
+ 153 0012 02F8011B 		strb	r1, [r2], #1
+ 154 0016 0133     		adds	r3, r3, #1
+ 155              	.L19:
+ 156 0018 0249     		ldr	r1, .L24
+ 157 001a 4968     		ldr	r1, [r1, #4]
+ 158 001c 9942     		cmp	r1, r3
+ 159 001e F5D8     		bhi	.L21
+ 160 0020 7047     		bx	lr
+ 161              	.L25:
+ 162 0022 00BF     		.align	2
+ 163              	.L24:
+ 164 0024 00000000 		.word	eeHandle
+ 166              		.section	.text.EE_Write,"ax",%progbits
+ 167              		.align	1
+ 168              		.global	EE_Write
+ 169              		.syntax unified
+ 170              		.thumb
+ 171              		.thumb_func
+ 173              	EE_Write:
+ 174              		@ args = 0, pretend = 0, frame = 0
+ 175              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176 0000 70B5     		push	{r4, r5, r6, lr}
+ 177 0002 194B     		ldr	r3, .L38
+ 178 0004 1C68     		ldr	r4, [r3]
+ 179 0006 3CB3     		cbz	r4, .L34
+ 180 0008 FFF7FEFF 		bl	EE_Format
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s 			page 4
+
+
+ 181 000c 0646     		mov	r6, r0
+ 182 000e 20B3     		cbz	r0, .L27
+ 183 0010 FFF7FEFF 		bl	HAL_FLASH_Unlock
+ 184 0014 0025     		movs	r5, #0
+ 185              	.L28:
+ 186 0016 144B     		ldr	r3, .L38
+ 187 0018 5B68     		ldr	r3, [r3, #4]
+ 188 001a AB42     		cmp	r3, r5
+ 189 001c 0CD9     		bls	.L30
+ 190 001e 124B     		ldr	r3, .L38
+ 191 0020 D968     		ldr	r1, [r3, #12]
+ 192 0022 2288     		ldrh	r2, [r4]	@ unaligned
+ 193 0024 0023     		movs	r3, #0
+ 194 0026 2944     		add	r1, r1, r5
+ 195 0028 0120     		movs	r0, #1
+ 196 002a FFF7FEFF 		bl	HAL_FLASH_Program
+ 197 002e 10B9     		cbnz	r0, .L37
+ 198 0030 0234     		adds	r4, r4, #2
+ 199 0032 0235     		adds	r5, r5, #2
+ 200 0034 EFE7     		b	.L28
+ 201              	.L37:
+ 202 0036 0026     		movs	r6, #0
+ 203              	.L30:
+ 204 0038 0B4B     		ldr	r3, .L38
+ 205 003a 1A68     		ldr	r2, [r3]
+ 206 003c 0023     		movs	r3, #0
+ 207              	.L32:
+ 208 003e 0A49     		ldr	r1, .L38
+ 209 0040 4968     		ldr	r1, [r1, #4]
+ 210 0042 9942     		cmp	r1, r3
+ 211 0044 09D9     		bls	.L27
+ 212 0046 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 213 0048 0748     		ldr	r0, .L38
+ 214 004a C068     		ldr	r0, [r0, #12]
+ 215 004c C05C     		ldrb	r0, [r0, r3]	@ zero_extendqisi2
+ 216 004e 8842     		cmp	r0, r1
+ 217 0050 07D1     		bne	.L35
+ 218 0052 0132     		adds	r2, r2, #1
+ 219 0054 0133     		adds	r3, r3, #1
+ 220 0056 F2E7     		b	.L32
+ 221              	.L34:
+ 222 0058 0026     		movs	r6, #0
+ 223              	.L27:
+ 224 005a FFF7FEFF 		bl	HAL_FLASH_Lock
+ 225 005e 3046     		mov	r0, r6
+ 226 0060 70BD     		pop	{r4, r5, r6, pc}
+ 227              	.L35:
+ 228 0062 0026     		movs	r6, #0
+ 229 0064 F9E7     		b	.L27
+ 230              	.L39:
+ 231 0066 00BF     		.align	2
+ 232              	.L38:
+ 233 0068 00000000 		.word	eeHandle
+ 235              		.global	eeHandle
+ 236              		.section	.bss.eeHandle,"aw",%nobits
+ 237              		.align	2
+ 240              	eeHandle:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s 			page 5
+
+
+ 241 0000 00000000 		.space	20
+ 241      00000000 
+ 241      00000000 
+ 241      00000000 
+ 241      00000000 
+ 242              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ee.c
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:18     .text.EE_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:24     .text.EE_Init:00000000 EE_Init
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:61     .text.EE_Init:0000003c $d
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:240    .bss.eeHandle:00000000 eeHandle
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:64     .text.EE_Capacity:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:70     .text.EE_Capacity:00000000 EE_Capacity
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:80     .text.EE_Capacity:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:83     .text.EE_Format:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:89     .text.EE_Format:00000000 EE_Format
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:129    .text.EE_Format:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:132    .text.EE_Read:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:138    .text.EE_Read:00000000 EE_Read
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:164    .text.EE_Read:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:167    .text.EE_Write:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:173    .text.EE_Write:00000000 EE_Write
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:233    .text.EE_Write:00000068 $d
+C:\Users\alireza\AppData\Local\Temp\ccPlReTc.s:237    .bss.eeHandle:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_FLASH_Unlock
+HAL_FLASHEx_Erase
+HAL_FLASH_Lock
+HAL_FLASH_Program

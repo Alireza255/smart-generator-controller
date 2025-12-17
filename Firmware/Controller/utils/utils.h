@@ -42,7 +42,22 @@ static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
         *var &= ~(1u << bit);
     }
 }
+static inline void change_bit8(uint8_t *var, uint8_t bit, bool state)
+{
+    if (bit > 7)
+    {
+        return;   // invalid bit index
+    }
 
+    if (state)
+    {
+        *var |= (uint8_t)(1u << bit);     // set bit
+    }
+    else
+    {
+        *var &= (uint8_t)~(1u << bit);    // clear bit
+    }
+}
 static inline bool get_bit(uint32_t flags, uint8_t bit)
 {
     if (bit < 32)

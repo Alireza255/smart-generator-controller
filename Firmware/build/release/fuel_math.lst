@@ -1,0 +1,567 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"fuel_math.c"
+  16              		.text
+  17              		.section	.text.fuel_math_use_tps_map_sensors,"ax",%progbits
+  18              		.align	1
+  19              		.global	fuel_math_use_tps_map_sensors
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	fuel_math_use_tps_map_sensors:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 20B1     		cbz	r0, .L1
+  29 0002 19B1     		cbz	r1, .L1
+  30 0004 024A     		ldr	r2, .L3
+  31 0006 1060     		str	r0, [r2]
+  32 0008 024B     		ldr	r3, .L3+4
+  33 000a 1960     		str	r1, [r3]
+  34              	.L1:
+  35 000c 7047     		bx	lr
+  36              	.L4:
+  37 000e 00BF     		.align	2
+  38              	.L3:
+  39 0010 00000000 		.word	tps_based_enrich_sensor
+  40 0014 00000000 		.word	map_based_enrich_sensor
+  42              		.section	.rodata.air_mass_get.str1.4,"aMS",%progbits,1
+  43              		.align	2
+  44              	.LC0:
+  45 0000 556E6B6E 		.ascii	"Unknown fuel type.\000"
+  45      6F776E20 
+  45      6675656C 
+  45      20747970 
+  45      652E00
+  46              		.section	.text.air_mass_get,"ax",%progbits
+  47              		.align	1
+  48              		.global	air_mass_get
+  49              		.syntax unified
+  50              		.thumb
+  51              		.thumb_func
+  53              	air_mass_get:
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56 0000 10B5     		push	{r4, lr}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 2
+
+
+  57 0002 2DED068B 		vpush.64	{d8, d9, d10}
+  58 0006 FFF7FEFF 		bl	crankshaft_get_rpm
+  59 000a B0EE409A 		vmov.f32	s18, s0
+  60 000e FFF7FEFF 		bl	sensor_map_get
+  61 0012 F0EE409A 		vmov.f32	s19, s0
+  62 0016 FFF7FEFF 		bl	sensor_iat_get
+  63 001a B0EE408A 		vmov.f32	s16, s0
+  64 001e 404B     		ldr	r3, .L11
+  65 0020 93F8CF3A 		ldrb	r3, [r3, #2767]	@ zero_extendqisi2
+  66 0024 012B     		cmp	r3, #1
+  67 0026 35D0     		beq	.L6
+  68 0028 022B     		cmp	r3, #2
+  69 002a 3DD0     		beq	.L7
+  70 002c 002B     		cmp	r3, #0
+  71 002e 6BD1     		bne	.L8
+  72 0030 F0EE690A 		vmov.f32	s1, s19
+  73 0034 B0EE490A 		vmov.f32	s0, s18
+  74 0038 3A48     		ldr	r0, .L11+4
+  75 003a FFF7FEFF 		bl	table_2d_get_value
+  76 003e B0EE407A 		vmov.f32	s14, s0
+  77              	.L9:
+  78 0042 374B     		ldr	r3, .L11
+  79 0044 B3F8C43A 		ldrh	r3, [r3, #2756]	@ unaligned
+  80 0048 07EE903A 		vmov	s15, r3	@ int
+  81 004c F8EE677A 		vcvt.f32.u32	s15, s15
+  82 0050 67EEA97A 		vmul.f32	s15, s15, s19
+  83 0054 67EE897A 		vmul.f32	s15, s15, s18
+  84 0058 DFED336A 		vldr.32	s13, .L11+8
+  85 005c 27EE260A 		vmul.f32	s0, s14, s13
+  86 0060 67EE807A 		vmul.f32	s15, s15, s0
+  87 0064 9FED317A 		vldr.32	s14, .L11+12
+  88 0068 67EE877A 		vmul.f32	s15, s15, s14
+  89 006c 9FED307A 		vldr.32	s14, .L11+16
+  90 0070 67EE877A 		vmul.f32	s15, s15, s14
+  91 0074 9FED2F7A 		vldr.32	s14, .L11+20
+  92 0078 38EE078A 		vadd.f32	s16, s16, s14
+  93 007c 9FED2E7A 		vldr.32	s14, .L11+24
+  94 0080 28EE078A 		vmul.f32	s16, s16, s14
+  95 0084 87EE880A 		vdiv.f32	s0, s15, s16
+  96 0088 2C4B     		ldr	r3, .L11+28
+  97 008a 83ED1A0A 		vstr.32	s0, [r3, #104]
+  98 008e BDEC068B 		vldm	sp!, {d8-d10}
+  99 0092 10BD     		pop	{r4, pc}
+ 100              	.L6:
+ 101 0094 F0EE690A 		vmov.f32	s1, s19
+ 102 0098 B0EE490A 		vmov.f32	s0, s18
+ 103 009c 2848     		ldr	r0, .L11+32
+ 104 009e FFF7FEFF 		bl	table_2d_get_value
+ 105 00a2 B0EE407A 		vmov.f32	s14, s0
+ 106 00a6 CCE7     		b	.L9
+ 107              	.L7:
+ 108 00a8 FFF7FEFF 		bl	crankshaft_get_rpm
+ 109 00ac F0EE408A 		vmov.f32	s17, s0
+ 110 00b0 FFF7FEFF 		bl	sensor_map_get
+ 111 00b4 F0EE400A 		vmov.f32	s1, s0
+ 112 00b8 224C     		ldr	r4, .L11+36
+ 113 00ba B0EE680A 		vmov.f32	s0, s17
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 3
+
+
+ 114 00be 2046     		mov	r0, r4
+ 115 00c0 FFF7FEFF 		bl	table_2d_get_value
+ 116 00c4 B0EE40AA 		vmov.f32	s20, s0
+ 117 00c8 A4F59054 		sub	r4, r4, #4608
+ 118 00cc F0EE690A 		vmov.f32	s1, s19
+ 119 00d0 B0EE490A 		vmov.f32	s0, s18
+ 120 00d4 2046     		mov	r0, r4
+ 121 00d6 FFF7FEFF 		bl	table_2d_get_value
+ 122 00da DFED137A 		vldr.32	s15, .L11+8
+ 123 00de 2AEE27AA 		vmul.f32	s20, s20, s15
+ 124 00e2 60EE0A8A 		vmul.f32	s17, s0, s20
+ 125 00e6 F0EE690A 		vmov.f32	s1, s19
+ 126 00ea B0EE490A 		vmov.f32	s0, s18
+ 127 00ee 04F59060 		add	r0, r4, #1152
+ 128 00f2 FFF7FEFF 		bl	table_2d_get_value
+ 129 00f6 F7EE007A 		vmov.f32	s15, #1.0e+0
+ 130 00fa 77EECA7A 		vsub.f32	s15, s15, s20
+ 131 00fe 20EE270A 		vmul.f32	s0, s0, s15
+ 132 0102 38EE807A 		vadd.f32	s14, s17, s0
+ 133 0106 9CE7     		b	.L9
+ 134              	.L8:
+ 135 0108 0F48     		ldr	r0, .L11+40
+ 136 010a FFF7FEFF 		bl	log_warning
+ 137 010e 0B4A     		ldr	r2, .L11+28
+ 138 0110 1368     		ldr	r3, [r2]
+ 139 0112 43F00103 		orr	r3, r3, #1
+ 140 0116 1360     		str	r3, [r2]
+ 141 0118 9FED0C7A 		vldr.32	s14, .L11+44
+ 142 011c 91E7     		b	.L9
+ 143              	.L12:
+ 144 011e 00BF     		.align	2
+ 145              	.L11:
+ 146 0120 00100000 		.word	config+4096
+ 147 0124 00000000 		.word	config
+ 148 0128 0AD7233C 		.word	1008981770
+ 149 012c B5B7E741 		.word	1105704885
+ 150 0130 6F12833A 		.word	981668463
+ 151 0134 33938843 		.word	1133024051
+ 152 0138 136F7944 		.word	1148808979
+ 153 013c 00000000 		.word	runtime
+ 154 0140 80040000 		.word	config+1152
+ 155 0144 00120000 		.word	config+4608
+ 156 0148 00000000 		.word	.LC0
+ 157 014c 00000000 		.word	0
+ 159              		.section	.text.fuel_get_required_mass_petrol,"ax",%progbits
+ 160              		.align	1
+ 161              		.global	fuel_get_required_mass_petrol
+ 162              		.syntax unified
+ 163              		.thumb
+ 164              		.thumb_func
+ 166              	fuel_get_required_mass_petrol:
+ 167              		@ args = 0, pretend = 0, frame = 0
+ 168              		@ frame_needed = 0, uses_anonymous_args = 0
+ 169 0000 10B5     		push	{r4, lr}
+ 170 0002 2DED028B 		vpush.64	{d8}
+ 171 0006 FFF7FEFF 		bl	air_mass_get
+ 172 000a B0EE408A 		vmov.f32	s16, s0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 4
+
+
+ 173 000e 4D4B     		ldr	r3, .L35
+ 174 0010 93F8CF3A 		ldrb	r3, [r3, #2767]	@ zero_extendqisi2
+ 175 0014 012B     		cmp	r3, #1
+ 176 0016 0ED0     		beq	.L14
+ 177 0018 022B     		cmp	r3, #2
+ 178 001a 26D0     		beq	.L15
+ 179 001c 002B     		cmp	r3, #0
+ 180 001e 43D0     		beq	.L26
+ 181 0020 4948     		ldr	r0, .L35+4
+ 182 0022 FFF7FEFF 		bl	log_warning
+ 183 0026 494A     		ldr	r2, .L35+8
+ 184 0028 1368     		ldr	r3, [r2]
+ 185 002a 43F00103 		orr	r3, r3, #1
+ 186 002e 1360     		str	r3, [r2]
+ 187 0030 DFED478A 		vldr.32	s17, .L35+12
+ 188 0034 06E0     		b	.L16
+ 189              	.L14:
+ 190 0036 434B     		ldr	r3, .L35
+ 191 0038 D3F8A836 		ldr	r3, [r3, #1704]	@ unaligned
+ 192 003c 07EE903A 		vmov	s15, r3
+ 193 0040 C0EE278A 		vdiv.f32	s17, s0, s15
+ 194              	.L16:
+ 195 0044 414B     		ldr	r3, .L35+8
+ 196 0046 1B68     		ldr	r3, [r3]
+ 197 0048 13F4005F 		tst	r3, #8192
+ 198 004c 2FD1     		bne	.L27
+ 199 004e 414B     		ldr	r3, .L35+16
+ 200 0050 1868     		ldr	r0, [r3]
+ 201 0052 0028     		cmp	r0, #0
+ 202 0054 72D0     		beq	.L28
+ 203 0056 FFF7FEFF 		bl	sensor_tps_rate_of_change_get
+ 204 005a 3F48     		ldr	r0, .L35+20
+ 205 005c FFF7FEFF 		bl	table_1d_get_value
+ 206 0060 DFED3B7A 		vldr.32	s15, .L35+12
+ 207 0064 30EE278A 		vadd.f32	s16, s0, s15
+ 208 0068 23E0     		b	.L18
+ 209              	.L15:
+ 210 006a FFF7FEFF 		bl	crankshaft_get_rpm
+ 211 006e F0EE408A 		vmov.f32	s17, s0
+ 212 0072 FFF7FEFF 		bl	sensor_map_get
+ 213 0076 F0EE400A 		vmov.f32	s1, s0
+ 214 007a 384C     		ldr	r4, .L35+24
+ 215 007c B0EE680A 		vmov.f32	s0, s17
+ 216 0080 2046     		mov	r0, r4
+ 217 0082 FFF7FEFF 		bl	table_2d_get_value
+ 218 0086 D4F8A834 		ldr	r3, [r4, #1192]	@ unaligned
+ 219 008a 07EE903A 		vmov	s15, r3
+ 220 008e C8EE278A 		vdiv.f32	s17, s16, s15
+ 221 0092 DFED337A 		vldr.32	s15, .L35+28
+ 222 0096 20EE270A 		vmul.f32	s0, s0, s15
+ 223 009a F7EE007A 		vmov.f32	s15, #1.0e+0
+ 224 009e 77EEC07A 		vsub.f32	s15, s15, s0
+ 225 00a2 68EEA78A 		vmul.f32	s17, s17, s15
+ 226 00a6 CDE7     		b	.L16
+ 227              	.L26:
+ 228 00a8 DFED298A 		vldr.32	s17, .L35+12
+ 229 00ac CAE7     		b	.L16
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 5
+
+
+ 230              	.L27:
+ 231 00ae 9FED288A 		vldr.32	s16, .L35+12
+ 232              	.L18:
+ 233 00b2 264B     		ldr	r3, .L35+8
+ 234 00b4 1B68     		ldr	r3, [r3]
+ 235 00b6 13F4004F 		tst	r3, #32768
+ 236 00ba 09D1     		bne	.L19
+ 237 00bc 294B     		ldr	r3, .L35+32
+ 238 00be 1868     		ldr	r0, [r3]
+ 239 00c0 30B1     		cbz	r0, .L19
+ 240 00c2 FFF7FEFF 		bl	sensor_map_rate_of_change_get
+ 241 00c6 2848     		ldr	r0, .L35+36
+ 242 00c8 FFF7FEFF 		bl	table_1d_get_value
+ 243 00cc 38EE008A 		vadd.f32	s16, s16, s0
+ 244              	.L19:
+ 245 00d0 DFED267A 		vldr.32	s15, .L35+40
+ 246 00d4 B4EEE78A 		vcmpe.f32	s16, s15
+ 247 00d8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 248 00dc 0EDB     		blt	.L20
+ 249 00de DFED247A 		vldr.32	s15, .L35+44
+ 250 00e2 B4EEE78A 		vcmpe.f32	s16, s15
+ 251 00e6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 252 00ea 07D8     		bhi	.L20
+ 253 00ec 28EE888A 		vmul.f32	s16, s17, s16
+ 254 00f0 9FED207A 		vldr.32	s14, .L35+48
+ 255 00f4 C8EE077A 		vdiv.f32	s15, s16, s14
+ 256 00f8 78EEA78A 		vadd.f32	s17, s17, s15
+ 257              	.L20:
+ 258 00fc FFF7FEFF 		bl	sensor_clt_get
+ 259 0100 1D48     		ldr	r0, .L35+52
+ 260 0102 FFF7FEFF 		bl	table_1d_get_value
+ 261 0106 DFED1D7A 		vldr.32	s15, .L35+56
+ 262 010a B4EEE70A 		vcmpe.f32	s0, s15
+ 263 010e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 264 0112 0EDB     		blt	.L13
+ 265 0114 DFED1A7A 		vldr.32	s15, .L35+60
+ 266 0118 B4EEE70A 		vcmpe.f32	s0, s15
+ 267 011c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 268 0120 07D8     		bhi	.L13
+ 269 0122 9FED147A 		vldr.32	s14, .L35+48
+ 270 0126 C0EE077A 		vdiv.f32	s15, s0, s14
+ 271 012a 67EEA87A 		vmul.f32	s15, s15, s17
+ 272 012e 78EEA78A 		vadd.f32	s17, s17, s15
+ 273              	.L13:
+ 274 0132 B0EE680A 		vmov.f32	s0, s17
+ 275 0136 BDEC028B 		vldm	sp!, {d8}
+ 276 013a 10BD     		pop	{r4, pc}
+ 277              	.L28:
+ 278 013c 9FED048A 		vldr.32	s16, .L35+12
+ 279 0140 B7E7     		b	.L18
+ 280              	.L36:
+ 281 0142 00BF     		.align	2
+ 282              	.L35:
+ 283 0144 00100000 		.word	config+4096
+ 284 0148 00000000 		.word	.LC0
+ 285 014c 00000000 		.word	runtime
+ 286 0150 00000000 		.word	0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 6
+
+
+ 287 0154 00000000 		.word	tps_based_enrich_sensor
+ 288 0158 40180000 		.word	config+6208
+ 289 015c 00120000 		.word	config+4608
+ 290 0160 0AD7233C 		.word	1008981770
+ 291 0164 00000000 		.word	map_based_enrich_sensor
+ 292 0168 C0180000 		.word	config+6336
+ 293 016c 000048C4 		.word	-1001914368
+ 294 0170 00004844 		.word	1145569280
+ 295 0174 0000C842 		.word	1120403456
+ 296 0178 401A0000 		.word	config+6720
+ 297 017c 0000FAC3 		.word	-1007026176
+ 298 0180 0000FA43 		.word	1140457472
+ 300              		.section	.text.fuel_get_required_mass_petrol_per_cycle,"ax",%progbits
+ 301              		.align	1
+ 302              		.global	fuel_get_required_mass_petrol_per_cycle
+ 303              		.syntax unified
+ 304              		.thumb
+ 305              		.thumb_func
+ 307              	fuel_get_required_mass_petrol_per_cycle:
+ 308              		@ args = 0, pretend = 0, frame = 0
+ 309              		@ frame_needed = 0, uses_anonymous_args = 0
+ 310 0000 08B5     		push	{r3, lr}
+ 311 0002 2DED028B 		vpush.64	{d8}
+ 312 0006 FFF7FEFF 		bl	fuel_get_required_mass_petrol
+ 313 000a B0EE408A 		vmov.f32	s16, s0
+ 314 000e FFF7FEFF 		bl	crankshaft_get_rpm
+ 315 0012 9FED047A 		vldr.32	s14, .L39
+ 316 0016 C0EE077A 		vdiv.f32	s15, s0, s14
+ 317 001a 88EE270A 		vdiv.f32	s0, s16, s15
+ 318 001e BDEC028B 		vldm	sp!, {d8}
+ 319 0022 08BD     		pop	{r3, pc}
+ 320              	.L40:
+ 321              		.align	2
+ 322              	.L39:
+ 323 0024 0000F042 		.word	1123024896
+ 325              		.section	.text.fuel_get_required_mass_gas,"ax",%progbits
+ 326              		.align	1
+ 327              		.global	fuel_get_required_mass_gas
+ 328              		.syntax unified
+ 329              		.thumb
+ 330              		.thumb_func
+ 332              	fuel_get_required_mass_gas:
+ 333              		@ args = 0, pretend = 0, frame = 0
+ 334              		@ frame_needed = 0, uses_anonymous_args = 0
+ 335 0000 10B5     		push	{r4, lr}
+ 336 0002 2DED028B 		vpush.64	{d8}
+ 337 0006 FFF7FEFF 		bl	air_mass_get
+ 338 000a 534B     		ldr	r3, .L65
+ 339 000c 93F8CF3A 		ldrb	r3, [r3, #2767]	@ zero_extendqisi2
+ 340 0010 012B     		cmp	r3, #1
+ 341 0012 44D0     		beq	.L53
+ 342 0014 B0EE408A 		vmov.f32	s16, s0
+ 343 0018 022B     		cmp	r3, #2
+ 344 001a 1AD0     		beq	.L43
+ 345 001c A3BB     		cbnz	r3, .L44
+ 346 001e 4E4B     		ldr	r3, .L65
+ 347 0020 D3F8A436 		ldr	r3, [r3, #1700]	@ unaligned
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 7
+
+
+ 348 0024 07EE903A 		vmov	s15, r3
+ 349 0028 C0EE278A 		vdiv.f32	s17, s0, s15
+ 350              	.L42:
+ 351 002c 4B4B     		ldr	r3, .L65+4
+ 352 002e 1B68     		ldr	r3, [r3]
+ 353 0030 13F4005F 		tst	r3, #8192
+ 354 0034 36D1     		bne	.L54
+ 355 0036 4A4B     		ldr	r3, .L65+8
+ 356 0038 1868     		ldr	r0, [r3]
+ 357 003a 0028     		cmp	r0, #0
+ 358 003c 5ED0     		beq	.L55
+ 359 003e FFF7FEFF 		bl	sensor_tps_rate_of_change_get
+ 360 0042 4848     		ldr	r0, .L65+12
+ 361 0044 FFF7FEFF 		bl	table_1d_get_value
+ 362 0048 DFED477A 		vldr.32	s15, .L65+16
+ 363 004c 30EE278A 		vadd.f32	s16, s0, s15
+ 364 0050 2AE0     		b	.L45
+ 365              	.L43:
+ 366 0052 FFF7FEFF 		bl	crankshaft_get_rpm
+ 367 0056 F0EE408A 		vmov.f32	s17, s0
+ 368 005a FFF7FEFF 		bl	sensor_map_get
+ 369 005e F0EE400A 		vmov.f32	s1, s0
+ 370 0062 424C     		ldr	r4, .L65+20
+ 371 0064 B0EE680A 		vmov.f32	s0, s17
+ 372 0068 2046     		mov	r0, r4
+ 373 006a FFF7FEFF 		bl	table_2d_get_value
+ 374 006e D4F8A434 		ldr	r3, [r4, #1188]	@ unaligned
+ 375 0072 07EE903A 		vmov	s15, r3
+ 376 0076 C8EE278A 		vdiv.f32	s17, s16, s15
+ 377 007a DFED3D7A 		vldr.32	s15, .L65+24
+ 378 007e 20EE270A 		vmul.f32	s0, s0, s15
+ 379 0082 68EE808A 		vmul.f32	s17, s17, s0
+ 380 0086 D1E7     		b	.L42
+ 381              	.L44:
+ 382 0088 3A48     		ldr	r0, .L65+28
+ 383 008a FFF7FEFF 		bl	log_warning
+ 384 008e 334A     		ldr	r2, .L65+4
+ 385 0090 1368     		ldr	r3, [r2]
+ 386 0092 43F00103 		orr	r3, r3, #1
+ 387 0096 1360     		str	r3, [r2]
+ 388 0098 DFED338A 		vldr.32	s17, .L65+16
+ 389 009c C6E7     		b	.L42
+ 390              	.L53:
+ 391 009e DFED328A 		vldr.32	s17, .L65+16
+ 392 00a2 C3E7     		b	.L42
+ 393              	.L54:
+ 394 00a4 9FED308A 		vldr.32	s16, .L65+16
+ 395              	.L45:
+ 396 00a8 2C4B     		ldr	r3, .L65+4
+ 397 00aa 1B68     		ldr	r3, [r3]
+ 398 00ac 13F4004F 		tst	r3, #32768
+ 399 00b0 09D1     		bne	.L46
+ 400 00b2 314B     		ldr	r3, .L65+32
+ 401 00b4 1868     		ldr	r0, [r3]
+ 402 00b6 30B1     		cbz	r0, .L46
+ 403 00b8 FFF7FEFF 		bl	sensor_map_rate_of_change_get
+ 404 00bc 2F48     		ldr	r0, .L65+36
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 8
+
+
+ 405 00be FFF7FEFF 		bl	table_1d_get_value
+ 406 00c2 38EE008A 		vadd.f32	s16, s16, s0
+ 407              	.L46:
+ 408 00c6 DFED2E7A 		vldr.32	s15, .L65+40
+ 409 00ca B4EEE78A 		vcmpe.f32	s16, s15
+ 410 00ce F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 411 00d2 16DB     		blt	.L62
+ 412 00d4 DFED2B7A 		vldr.32	s15, .L65+44
+ 413 00d8 B4EEE78A 		vcmpe.f32	s16, s15
+ 414 00dc F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 415 00e0 36D8     		bhi	.L63
+ 416 00e2 68EE886A 		vmul.f32	s13, s17, s16
+ 417 00e6 9FED287A 		vldr.32	s14, .L65+48
+ 418 00ea C6EE877A 		vdiv.f32	s15, s13, s14
+ 419 00ee 78EEA78A 		vadd.f32	s17, s17, s15
+ 420 00f2 DFED1D7A 		vldr.32	s15, .L65+16
+ 421 00f6 38EE278A 		vadd.f32	s16, s16, s15
+ 422 00fa 04E0     		b	.L47
+ 423              	.L55:
+ 424 00fc 9FED1A8A 		vldr.32	s16, .L65+16
+ 425 0100 D2E7     		b	.L45
+ 426              	.L62:
+ 427 0102 9FED198A 		vldr.32	s16, .L65+16
+ 428              	.L47:
+ 429 0106 FFF7FEFF 		bl	sensor_clt_get
+ 430 010a 2048     		ldr	r0, .L65+52
+ 431 010c FFF7FEFF 		bl	table_1d_get_value
+ 432 0110 DFED1F7A 		vldr.32	s15, .L65+56
+ 433 0114 B4EEE70A 		vcmpe.f32	s0, s15
+ 434 0118 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 435 011c 10DB     		blt	.L50
+ 436 011e DFED1D7A 		vldr.32	s15, .L65+60
+ 437 0122 B4EEE70A 		vcmpe.f32	s0, s15
+ 438 0126 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 439 012a 09D8     		bhi	.L50
+ 440 012c 9FED167A 		vldr.32	s14, .L65+48
+ 441 0130 C0EE077A 		vdiv.f32	s15, s0, s14
+ 442 0134 67EEA87A 		vmul.f32	s15, s15, s17
+ 443 0138 78EEA78A 		vadd.f32	s17, s17, s15
+ 444 013c 38EE008A 		vadd.f32	s16, s16, s0
+ 445              	.L50:
+ 446 0140 064B     		ldr	r3, .L65+4
+ 447 0142 83ED1B8A 		vstr.32	s16, [r3, #108]
+ 448 0146 B0EE680A 		vmov.f32	s0, s17
+ 449 014a BDEC028B 		vldm	sp!, {d8}
+ 450 014e 10BD     		pop	{r4, pc}
+ 451              	.L63:
+ 452 0150 9FED058A 		vldr.32	s16, .L65+16
+ 453 0154 D7E7     		b	.L47
+ 454              	.L66:
+ 455 0156 00BF     		.align	2
+ 456              	.L65:
+ 457 0158 00100000 		.word	config+4096
+ 458 015c 00000000 		.word	runtime
+ 459 0160 00000000 		.word	tps_based_enrich_sensor
+ 460 0164 40180000 		.word	config+6208
+ 461 0168 00000000 		.word	0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 9
+
+
+ 462 016c 00120000 		.word	config+4608
+ 463 0170 0AD7233C 		.word	1008981770
+ 464 0174 00000000 		.word	.LC0
+ 465 0178 00000000 		.word	map_based_enrich_sensor
+ 466 017c C0180000 		.word	config+6336
+ 467 0180 000048C4 		.word	-1001914368
+ 468 0184 00004844 		.word	1145569280
+ 469 0188 0000C842 		.word	1120403456
+ 470 018c C0190000 		.word	config+6592
+ 471 0190 0000FAC3 		.word	-1007026176
+ 472 0194 0000FA43 		.word	1140457472
+ 474              		.section	.text.fuel_get_required_mass_gas_per_cycle,"ax",%progbits
+ 475              		.align	1
+ 476              		.global	fuel_get_required_mass_gas_per_cycle
+ 477              		.syntax unified
+ 478              		.thumb
+ 479              		.thumb_func
+ 481              	fuel_get_required_mass_gas_per_cycle:
+ 482              		@ args = 0, pretend = 0, frame = 0
+ 483              		@ frame_needed = 0, uses_anonymous_args = 0
+ 484 0000 08B5     		push	{r3, lr}
+ 485 0002 2DED028B 		vpush.64	{d8}
+ 486 0006 FFF7FEFF 		bl	fuel_get_required_mass_gas
+ 487 000a B0EE408A 		vmov.f32	s16, s0
+ 488 000e FFF7FEFF 		bl	crankshaft_get_rpm
+ 489 0012 9FED047A 		vldr.32	s14, .L69
+ 490 0016 C0EE077A 		vdiv.f32	s15, s0, s14
+ 491 001a 88EE270A 		vdiv.f32	s0, s16, s15
+ 492 001e BDEC028B 		vldm	sp!, {d8}
+ 493 0022 08BD     		pop	{r3, pc}
+ 494              	.L70:
+ 495              		.align	2
+ 496              	.L69:
+ 497 0024 0000F042 		.word	1123024896
+ 499              		.section	.bss.map_based_enrich_sensor,"aw",%nobits
+ 500              		.align	2
+ 503              	map_based_enrich_sensor:
+ 504 0000 00000000 		.space	4
+ 505              		.section	.bss.tps_based_enrich_sensor,"aw",%nobits
+ 506              		.align	2
+ 509              	tps_based_enrich_sensor:
+ 510 0000 00000000 		.space	4
+ 511              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fuel_math.c
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:18     .text.fuel_math_use_tps_map_sensors:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:24     .text.fuel_math_use_tps_map_sensors:00000000 fuel_math_use_tps_map_sensors
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:39     .text.fuel_math_use_tps_map_sensors:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:509    .bss.tps_based_enrich_sensor:00000000 tps_based_enrich_sensor
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:503    .bss.map_based_enrich_sensor:00000000 map_based_enrich_sensor
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:43     .rodata.air_mass_get.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:47     .text.air_mass_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:53     .text.air_mass_get:00000000 air_mass_get
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:146    .text.air_mass_get:00000120 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:160    .text.fuel_get_required_mass_petrol:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:166    .text.fuel_get_required_mass_petrol:00000000 fuel_get_required_mass_petrol
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:283    .text.fuel_get_required_mass_petrol:00000144 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:301    .text.fuel_get_required_mass_petrol_per_cycle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:307    .text.fuel_get_required_mass_petrol_per_cycle:00000000 fuel_get_required_mass_petrol_per_cycle
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:323    .text.fuel_get_required_mass_petrol_per_cycle:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:326    .text.fuel_get_required_mass_gas:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:332    .text.fuel_get_required_mass_gas:00000000 fuel_get_required_mass_gas
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:457    .text.fuel_get_required_mass_gas:00000158 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:475    .text.fuel_get_required_mass_gas_per_cycle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:481    .text.fuel_get_required_mass_gas_per_cycle:00000000 fuel_get_required_mass_gas_per_cycle
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:497    .text.fuel_get_required_mass_gas_per_cycle:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:500    .bss.map_based_enrich_sensor:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccIbSABu.s:506    .bss.tps_based_enrich_sensor:00000000 $d
+
+UNDEFINED SYMBOLS
+crankshaft_get_rpm
+sensor_map_get
+sensor_iat_get
+table_2d_get_value
+log_warning
+config
+runtime
+sensor_tps_rate_of_change_get
+table_1d_get_value
+sensor_map_rate_of_change_get
+sensor_clt_get

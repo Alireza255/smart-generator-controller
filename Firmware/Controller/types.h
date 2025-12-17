@@ -223,8 +223,8 @@ typedef enum __attribute__((__packed__))
 
 typedef enum __attribute__((__packed__))
 {
-    SENSOR_TPS_TYPE_SAMAND_ETB,
-    SENSOR_TPS_CUSTOM,
+    SENSOR_TPS_CUSTOM = 0,
+    SENSOR_TPS_TYPE_SAMAND_ETB = 1,
 } sensor_tps_type_t;
 
 typedef enum __attribute__((__packed__))
@@ -245,7 +245,28 @@ typedef enum __attribute__((__packed__))
     SENSOR_CLT_TYPE_NISSAN,
 } sensor_clt_type_t;
 
+typedef enum __attribute__((__packed__))
+{
+    CONFIG_DEFAULT_NISSAN,
+
+} config_default_t;
+
+typedef enum __attribute__((__packed__))
+{
+    CONTROLLER_FLAG_NONE = 0,
+    CONTROLLER_FLAG_INIT_DONE = 1 << 0,
+    CONTROLLER_FLAG_ANALOG_DATA_AVAILABLE = 1 << 1,
+} controller_flags_t;
 
 
+typedef struct 
+{
+    float Kp;
+    float Ki;
+    float Kd;
+    float limit_integrator_min;
+    float limit_integrator_max;
+    float derivative_filter_tau;
+} pid_parameters_config_t;
 
 #endif // TYPES_H

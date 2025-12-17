@@ -1,0 +1,1345 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"sensors.c"
+  16              		.text
+  17              		.section	.rodata.sensor_tps_init.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC4:
+  20 0000 74707320 		.ascii	"tps sensor is null\000"
+  20      73656E73 
+  20      6F722069 
+  20      73206E75 
+  20      6C6C00
+  21              		.section	.text.sensor_tps_init,"ax",%progbits
+  22              		.align	1
+  23              		.global	sensor_tps_init
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  28              	sensor_tps_init:
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 08B5     		push	{r3, lr}
+  32 0002 28B1     		cbz	r0, .L10
+  33 0004 0346     		mov	r3, r0
+  34 0006 0D29     		cmp	r1, #13
+  35 0008 06D0     		beq	.L11
+  36 000a 0E29     		cmp	r1, #14
+  37 000c 27D0     		beq	.L12
+  38              	.L1:
+  39 000e 08BD     		pop	{r3, pc}
+  40              	.L10:
+  41 0010 4048     		ldr	r0, .L15
+  42 0012 FFF7FEFF 		bl	log_error
+  43 0016 FAE7     		b	.L1
+  44              	.L11:
+  45 0018 3F4A     		ldr	r2, .L15+4
+  46 001a 92F8DC2A 		ldrb	r2, [r2, #2780]	@ zero_extendqisi2
+  47              	.L5:
+  48 001e 002A     		cmp	r2, #0
+  49 0020 38D0     		beq	.L6
+  50 0022 012A     		cmp	r2, #1
+  51 0024 F3D1     		bne	.L1
+  52 0026 0D29     		cmp	r1, #13
+  53 0028 1DD0     		beq	.L13
+  54 002a 0E29     		cmp	r1, #14
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 2
+
+
+  55 002c EFD1     		bne	.L1
+  56 002e 0322     		movs	r2, #3
+  57 0030 1A75     		strb	r2, [r3, #20]
+  58 0032 0422     		movs	r2, #4
+  59 0034 5A75     		strb	r2, [r3, #21]
+  60 0036 0022     		movs	r2, #0
+  61 0038 DA75     		strb	r2, [r3, #23]
+  62 003a 1A76     		strb	r2, [r3, #24]
+  63 003c 9975     		strb	r1, [r3, #22]
+  64 003e 40F2A112 		movw	r2, #417
+  65 0042 5A82     		strh	r2, [r3, #18]	@ movhi
+  66 0044 40F65952 		movw	r2, #3417
+  67 0048 1A82     		strh	r2, [r3, #16]	@ movhi
+  68 004a 1F29     		cmp	r1, #31
+  69 004c DFD8     		bhi	.L1
+  70 004e 3348     		ldr	r0, .L15+8
+  71 0050 0368     		ldr	r3, [r0]
+  72 0052 0122     		movs	r2, #1
+  73 0054 8A40     		lsls	r2, r2, r1
+  74 0056 23EA0203 		bic	r3, r3, r2
+  75 005a 0360     		str	r3, [r0]
+  76 005c D7E7     		b	.L1
+  77              	.L12:
+  78 005e 2E4A     		ldr	r2, .L15+4
+  79 0060 92F8DD2A 		ldrb	r2, [r2, #2781]	@ zero_extendqisi2
+  80 0064 DBE7     		b	.L5
+  81              	.L13:
+  82 0066 1A75     		strb	r2, [r3, #20]
+  83 0068 0222     		movs	r2, #2
+  84 006a 5A75     		strb	r2, [r3, #21]
+  85 006c 0022     		movs	r2, #0
+  86 006e DA75     		strb	r2, [r3, #23]
+  87 0070 1A76     		strb	r2, [r3, #24]
+  88 0072 9975     		strb	r1, [r3, #22]
+  89 0074 40F2A112 		movw	r2, #417
+  90 0078 5A82     		strh	r2, [r3, #18]	@ movhi
+  91 007a 40F65952 		movw	r2, #3417
+  92 007e 1A82     		strh	r2, [r3, #16]	@ movhi
+  93 0080 1F29     		cmp	r1, #31
+  94 0082 C4D8     		bhi	.L1
+  95 0084 2548     		ldr	r0, .L15+8
+  96 0086 0368     		ldr	r3, [r0]
+  97 0088 0122     		movs	r2, #1
+  98 008a 8A40     		lsls	r2, r2, r1
+  99 008c 23EA0203 		bic	r3, r3, r2
+ 100 0090 0360     		str	r3, [r0]
+ 101 0092 BCE7     		b	.L1
+ 102              	.L6:
+ 103 0094 0D29     		cmp	r1, #13
+ 104 0096 1FD0     		beq	.L14
+ 105 0098 0E29     		cmp	r1, #14
+ 106 009a B8D1     		bne	.L1
+ 107 009c 0322     		movs	r2, #3
+ 108 009e 1A75     		strb	r2, [r3, #20]
+ 109 00a0 0422     		movs	r2, #4
+ 110 00a2 5A75     		strb	r2, [r3, #21]
+ 111 00a4 0022     		movs	r2, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 3
+
+
+ 112 00a6 DA75     		strb	r2, [r3, #23]
+ 113 00a8 1B4A     		ldr	r2, .L15+4
+ 114 00aa 92F8DB0A 		ldrb	r0, [r2, #2779]	@ zero_extendqisi2
+ 115 00ae 0038     		subs	r0, r0, #0
+ 116 00b0 18BF     		it	ne
+ 117 00b2 0120     		movne	r0, #1
+ 118 00b4 1876     		strb	r0, [r3, #24]
+ 119 00b6 9975     		strb	r1, [r3, #22]
+ 120 00b8 B2F8CC0A 		ldrh	r0, [r2, #2764]	@ unaligned
+ 121 00bc 5882     		strh	r0, [r3, #18]	@ movhi
+ 122 00be B2F8CA2A 		ldrh	r2, [r2, #2762]	@ unaligned
+ 123 00c2 1A82     		strh	r2, [r3, #16]	@ movhi
+ 124 00c4 1F29     		cmp	r1, #31
+ 125 00c6 A2D8     		bhi	.L1
+ 126 00c8 1448     		ldr	r0, .L15+8
+ 127 00ca 0368     		ldr	r3, [r0]
+ 128 00cc 0122     		movs	r2, #1
+ 129 00ce 8A40     		lsls	r2, r2, r1
+ 130 00d0 23EA0203 		bic	r3, r3, r2
+ 131 00d4 0360     		str	r3, [r0]
+ 132 00d6 9AE7     		b	.L1
+ 133              	.L14:
+ 134 00d8 0122     		movs	r2, #1
+ 135 00da 1A75     		strb	r2, [r3, #20]
+ 136 00dc 0222     		movs	r2, #2
+ 137 00de 5A75     		strb	r2, [r3, #21]
+ 138 00e0 0022     		movs	r2, #0
+ 139 00e2 DA75     		strb	r2, [r3, #23]
+ 140 00e4 0C4A     		ldr	r2, .L15+4
+ 141 00e6 92F8DA0A 		ldrb	r0, [r2, #2778]	@ zero_extendqisi2
+ 142 00ea 0038     		subs	r0, r0, #0
+ 143 00ec 18BF     		it	ne
+ 144 00ee 0120     		movne	r0, #1
+ 145 00f0 1876     		strb	r0, [r3, #24]
+ 146 00f2 9975     		strb	r1, [r3, #22]
+ 147 00f4 B2F8C80A 		ldrh	r0, [r2, #2760]	@ unaligned
+ 148 00f8 5882     		strh	r0, [r3, #18]	@ movhi
+ 149 00fa B2F8C62A 		ldrh	r2, [r2, #2758]	@ unaligned
+ 150 00fe 1A82     		strh	r2, [r3, #16]	@ movhi
+ 151 0100 1F29     		cmp	r1, #31
+ 152 0102 84D8     		bhi	.L1
+ 153 0104 0548     		ldr	r0, .L15+8
+ 154 0106 0368     		ldr	r3, [r0]
+ 155 0108 0122     		movs	r2, #1
+ 156 010a 8A40     		lsls	r2, r2, r1
+ 157 010c 23EA0203 		bic	r3, r3, r2
+ 158 0110 0360     		str	r3, [r0]
+ 159 0112 7CE7     		b	.L1
+ 160              	.L16:
+ 161              		.align	2
+ 162              	.L15:
+ 163 0114 00000000 		.word	.LC4
+ 164 0118 00100000 		.word	config+4096
+ 165 011c 00000000 		.word	runtime
+ 167              		.section	.text.sensor_tps_get,"ax",%progbits
+ 168              		.align	1
+ 169              		.global	sensor_tps_get
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 4
+
+
+ 170              		.syntax unified
+ 171              		.thumb
+ 172              		.thumb_func
+ 174              	sensor_tps_get:
+ 175              		@ args = 0, pretend = 0, frame = 0
+ 176              		@ frame_needed = 0, uses_anonymous_args = 0
+ 177              		@ link register save eliminated.
+ 178 0000 10B1     		cbz	r0, .L19
+ 179 0002 90ED000A 		vldr.32	s0, [r0]
+ 180 0006 7047     		bx	lr
+ 181              	.L19:
+ 182 0008 9FED010A 		vldr.32	s0, .L20
+ 183 000c 7047     		bx	lr
+ 184              	.L21:
+ 185 000e 00BF     		.align	2
+ 186              	.L20:
+ 187 0010 0000C07F 		.word	2143289344
+ 189              		.section	.text.sensor_tps_rate_of_change_get,"ax",%progbits
+ 190              		.align	1
+ 191              		.global	sensor_tps_rate_of_change_get
+ 192              		.syntax unified
+ 193              		.thumb
+ 194              		.thumb_func
+ 196              	sensor_tps_rate_of_change_get:
+ 197              		@ args = 0, pretend = 0, frame = 0
+ 198              		@ frame_needed = 0, uses_anonymous_args = 0
+ 199              		@ link register save eliminated.
+ 200 0000 10B1     		cbz	r0, .L24
+ 201 0002 90ED010A 		vldr.32	s0, [r0, #4]
+ 202 0006 7047     		bx	lr
+ 203              	.L24:
+ 204 0008 9FED010A 		vldr.32	s0, .L25
+ 205 000c 7047     		bx	lr
+ 206              	.L26:
+ 207 000e 00BF     		.align	2
+ 208              	.L25:
+ 209 0010 0000C07F 		.word	2143289344
+ 211              		.section	.rodata.sensor_tps_update.str1.4,"aMS",%progbits,1
+ 212              		.align	2
+ 213              	.LC5:
+ 214 0000 74707320 		.ascii	"tps is null\000"
+ 214      6973206E 
+ 214      756C6C00 
+ 215              		.section	.text.sensor_tps_update,"ax",%progbits
+ 216              		.align	1
+ 217              		.global	sensor_tps_update
+ 218              		.syntax unified
+ 219              		.thumb
+ 220              		.thumb_func
+ 222              	sensor_tps_update:
+ 223              		@ args = 0, pretend = 0, frame = 0
+ 224              		@ frame_needed = 0, uses_anonymous_args = 0
+ 225 0000 38B5     		push	{r3, r4, r5, lr}
+ 226 0002 88B1     		cbz	r0, .L43
+ 227 0004 0D46     		mov	r5, r1
+ 228 0006 0446     		mov	r4, r0
+ 229 0008 0369     		ldr	r3, [r0, #16]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 5
+
+
+ 230 000a 8BB9     		cbnz	r3, .L30
+ 231 000c 837D     		ldrb	r3, [r0, #22]	@ zero_extendqisi2
+ 232 000e 1F2B     		cmp	r3, #31
+ 233 0010 06D8     		bhi	.L31
+ 234 0012 4B48     		ldr	r0, .L44
+ 235 0014 0268     		ldr	r2, [r0]
+ 236 0016 0121     		movs	r1, #1
+ 237 0018 01FA03F3 		lsl	r3, r1, r3
+ 238 001c 1A43     		orrs	r2, r2, r3
+ 239 001e 0260     		str	r2, [r0]
+ 240              	.L31:
+ 241 0020 484B     		ldr	r3, .L44+4
+ 242 0022 2360     		str	r3, [r4]	@ float
+ 243 0024 6360     		str	r3, [r4, #4]	@ float
+ 244              	.L27:
+ 245 0026 38BD     		pop	{r3, r4, r5, pc}
+ 246              	.L43:
+ 247 0028 4748     		ldr	r0, .L44+8
+ 248 002a FFF7FEFF 		bl	log_error
+ 249 002e FAE7     		b	.L27
+ 250              	.L30:
+ 251 0030 007D     		ldrb	r0, [r0, #20]	@ zero_extendqisi2
+ 252 0032 FFF7FEFF 		bl	analog_inputs_get_data
+ 253 0036 07EE900A 		vmov	s15, r0	@ int
+ 254 003a 237E     		ldrb	r3, [r4, #24]	@ zero_extendqisi2
+ 255 003c 002B     		cmp	r3, #0
+ 256 003e 42D0     		beq	.L32
+ 257 0040 F8EE677A 		vcvt.f32.u32	s15, s15
+ 258 0044 228A     		ldrh	r2, [r4, #16]
+ 259 0046 07EE102A 		vmov	s14, r2	@ int
+ 260 004a F8EE476A 		vcvt.f32.u32	s13, s14
+ 261 004e 638A     		ldrh	r3, [r4, #18]
+ 262 0050 07EE103A 		vmov	s14, r3	@ int
+ 263 0054 B8EE477A 		vcvt.f32.u32	s14, s14
+ 264 0058 9A42     		cmp	r2, r3
+ 265 005a 51D0     		beq	.L39
+ 266 005c 77EEE67A 		vsub.f32	s15, s15, s13
+ 267 0060 9FED3A6A 		vldr.32	s12, .L44+12
+ 268 0064 67EE867A 		vmul.f32	s15, s15, s12
+ 269 0068 77EE666A 		vsub.f32	s13, s14, s13
+ 270 006c 87EEA67A 		vdiv.f32	s14, s15, s13
+ 271 0070 DFED377A 		vldr.32	s15, .L44+16
+ 272 0074 37EE277A 		vadd.f32	s14, s14, s15
+ 273              	.L33:
+ 274 0078 84ED007A 		vstr.32	s14, [r4]
+ 275 007c E368     		ldr	r3, [r4, #12]
+ 276 007e D4ED027A 		vldr.32	s15, [r4, #8]
+ 277 0082 77EE676A 		vsub.f32	s13, s14, s15
+ 278 0086 E560     		str	r5, [r4, #12]
+ 279 0088 84ED027A 		vstr.32	s14, [r4, #8]
+ 280 008c ED1A     		subs	r5, r5, r3
+ 281 008e 3DD1     		bne	.L34
+ 282 0090 0023     		movs	r3, #0
+ 283 0092 6360     		str	r3, [r4, #4]	@ float
+ 284              	.L35:
+ 285 0094 F8EE047A 		vmov.f32	s15, #-2.5e+0
+ 286 0098 B4EEE77A 		vcmpe.f32	s14, s15
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 6
+
+
+ 287 009c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 288 00a0 06D4     		bmi	.L36
+ 289 00a2 DFED2C7A 		vldr.32	s15, .L44+20
+ 290 00a6 B4EEE77A 		vcmpe.f32	s14, s15
+ 291 00aa F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 292 00ae 3ADD     		ble	.L41
+ 293              	.L36:
+ 294 00b0 A37D     		ldrb	r3, [r4, #22]	@ zero_extendqisi2
+ 295 00b2 1F2B     		cmp	r3, #31
+ 296 00b4 B7D8     		bhi	.L27
+ 297 00b6 2248     		ldr	r0, .L44
+ 298 00b8 0268     		ldr	r2, [r0]
+ 299 00ba 0121     		movs	r1, #1
+ 300 00bc 01FA03F3 		lsl	r3, r1, r3
+ 301 00c0 1A43     		orrs	r2, r2, r3
+ 302 00c2 0260     		str	r2, [r0]
+ 303 00c4 AFE7     		b	.L27
+ 304              	.L32:
+ 305 00c6 F8EE677A 		vcvt.f32.u32	s15, s15
+ 306 00ca 628A     		ldrh	r2, [r4, #18]
+ 307 00cc 07EE102A 		vmov	s14, r2	@ int
+ 308 00d0 F8EE476A 		vcvt.f32.u32	s13, s14
+ 309 00d4 238A     		ldrh	r3, [r4, #16]
+ 310 00d6 07EE103A 		vmov	s14, r3	@ int
+ 311 00da B8EE477A 		vcvt.f32.u32	s14, s14
+ 312 00de 9A42     		cmp	r2, r3
+ 313 00e0 11D0     		beq	.L40
+ 314 00e2 77EEE67A 		vsub.f32	s15, s15, s13
+ 315 00e6 9FED196A 		vldr.32	s12, .L44+12
+ 316 00ea 67EE867A 		vmul.f32	s15, s15, s12
+ 317 00ee 77EE666A 		vsub.f32	s13, s14, s13
+ 318 00f2 87EEA67A 		vdiv.f32	s14, s15, s13
+ 319 00f6 DFED167A 		vldr.32	s15, .L44+16
+ 320 00fa 37EE277A 		vadd.f32	s14, s14, s15
+ 321 00fe BBE7     		b	.L33
+ 322              	.L39:
+ 323 0100 9FED137A 		vldr.32	s14, .L44+16
+ 324 0104 B8E7     		b	.L33
+ 325              	.L40:
+ 326 0106 9FED127A 		vldr.32	s14, .L44+16
+ 327 010a B5E7     		b	.L33
+ 328              	.L34:
+ 329 010c 07EE905A 		vmov	s15, r5	@ int
+ 330 0110 F8EE677A 		vcvt.f32.u32	s15, s15
+ 331 0114 86EEA76A 		vdiv.f32	s12, s13, s15
+ 332 0118 DFED0F7A 		vldr.32	s15, .L44+24
+ 333 011c 66EE277A 		vmul.f32	s15, s12, s15
+ 334 0120 C4ED017A 		vstr.32	s15, [r4, #4]
+ 335 0124 B6E7     		b	.L35
+ 336              	.L41:
+ 337 0126 A37D     		ldrb	r3, [r4, #22]	@ zero_extendqisi2
+ 338 0128 1F2B     		cmp	r3, #31
+ 339 012a 3FF67CAF 		bhi	.L27
+ 340 012e 0448     		ldr	r0, .L44
+ 341 0130 0268     		ldr	r2, [r0]
+ 342 0132 0121     		movs	r1, #1
+ 343 0134 01FA03F3 		lsl	r3, r1, r3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 7
+
+
+ 344 0138 22EA0302 		bic	r2, r2, r3
+ 345 013c 0260     		str	r2, [r0]
+ 346 013e 72E7     		b	.L27
+ 347              	.L45:
+ 348              		.align	2
+ 349              	.L44:
+ 350 0140 00000000 		.word	runtime
+ 351 0144 0000C07F 		.word	2143289344
+ 352 0148 00000000 		.word	.LC5
+ 353 014c 0000C842 		.word	1120403456
+ 354 0150 00000000 		.word	0
+ 355 0154 0000CD42 		.word	1120731136
+ 356 0158 00247449 		.word	1232348160
+ 358              		.section	.rodata.sensor_map_init.str1.4,"aMS",%progbits,1
+ 359              		.align	2
+ 360              	.LC6:
+ 361 0000 6D617020 		.ascii	"map sensor is null\000"
+ 361      73656E73 
+ 361      6F722069 
+ 361      73206E75 
+ 361      6C6C00
+ 362              		.section	.text.sensor_map_init,"ax",%progbits
+ 363              		.align	1
+ 364              		.global	sensor_map_init
+ 365              		.syntax unified
+ 366              		.thumb
+ 367              		.thumb_func
+ 369              	sensor_map_init:
+ 370              		@ args = 0, pretend = 0, frame = 0
+ 371              		@ frame_needed = 0, uses_anonymous_args = 0
+ 372 0000 08B5     		push	{r3, lr}
+ 373 0002 98B1     		cbz	r0, .L53
+ 374 0004 0346     		mov	r3, r0
+ 375 0006 A9B1     		cbz	r1, .L49
+ 376 0008 0129     		cmp	r1, #1
+ 377 000a 20D1     		bne	.L50
+ 378 000c 40F24712 		movw	r2, #327
+ 379 0010 0282     		strh	r2, [r0, #16]	@ movhi
+ 380 0012 4FF46E62 		mov	r2, #3808
+ 381 0016 4282     		strh	r2, [r0, #18]	@ movhi
+ 382 0018 0522     		movs	r2, #5
+ 383 001a 0275     		strb	r2, [r0, #20]
+ 384 001c 0F49     		ldr	r1, .L54
+ 385 001e 0A68     		ldr	r2, [r1]
+ 386 0020 22F40042 		bic	r2, r2, #32768
+ 387 0024 0A60     		str	r2, [r1]
+ 388              	.L51:
+ 389 0026 0E4A     		ldr	r2, .L54+4
+ 390 0028 1360     		str	r3, [r2]
+ 391              	.L46:
+ 392 002a 08BD     		pop	{r3, pc}
+ 393              	.L53:
+ 394 002c 0D48     		ldr	r0, .L54+8
+ 395 002e FFF7FEFF 		bl	log_error
+ 396 0032 FAE7     		b	.L46
+ 397              	.L49:
+ 398 0034 0022     		movs	r2, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 8
+
+
+ 399 0036 0282     		strh	r2, [r0, #16]	@ movhi
+ 400 0038 40F6FF72 		movw	r2, #4095
+ 401 003c 4282     		strh	r2, [r0, #18]	@ movhi
+ 402 003e 0522     		movs	r2, #5
+ 403 0040 0275     		strb	r2, [r0, #20]
+ 404 0042 0649     		ldr	r1, .L54
+ 405 0044 0A68     		ldr	r2, [r1]
+ 406 0046 22F40042 		bic	r2, r2, #32768
+ 407 004a 0A60     		str	r2, [r1]
+ 408 004c EBE7     		b	.L51
+ 409              	.L50:
+ 410 004e 0349     		ldr	r1, .L54
+ 411 0050 0A68     		ldr	r2, [r1]
+ 412 0052 42F40042 		orr	r2, r2, #32768
+ 413 0056 0A60     		str	r2, [r1]
+ 414 0058 E5E7     		b	.L51
+ 415              	.L55:
+ 416 005a 00BF     		.align	2
+ 417              	.L54:
+ 418 005c 00000000 		.word	runtime
+ 419 0060 00000000 		.word	map_sensor
+ 420 0064 00000000 		.word	.LC6
+ 422              		.section	.rodata.sensor_map_update.str1.4,"aMS",%progbits,1
+ 423              		.align	2
+ 424              	.LC7:
+ 425 0000 6D617020 		.ascii	"map sensor no init!\000"
+ 425      73656E73 
+ 425      6F72206E 
+ 425      6F20696E 
+ 425      69742100 
+ 426              		.section	.text.sensor_map_update,"ax",%progbits
+ 427              		.align	1
+ 428              		.global	sensor_map_update
+ 429              		.syntax unified
+ 430              		.thumb
+ 431              		.thumb_func
+ 433              	sensor_map_update:
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436 0000 10B5     		push	{r4, lr}
+ 437 0002 2DED028B 		vpush.64	{d8}
+ 438 0006 354B     		ldr	r3, .L69
+ 439 0008 1B68     		ldr	r3, [r3]
+ 440 000a 002B     		cmp	r3, #0
+ 441 000c 4BD0     		beq	.L67
+ 442 000e 0446     		mov	r4, r0
+ 443 0010 1A69     		ldr	r2, [r3, #16]
+ 444 0012 002A     		cmp	r2, #0
+ 445 0014 4BD0     		beq	.L68
+ 446 0016 187D     		ldrb	r0, [r3, #20]	@ zero_extendqisi2
+ 447 0018 FFF7FEFF 		bl	analog_inputs_get_data
+ 448 001c 07EE900A 		vmov	s15, r0	@ int
+ 449 0020 F8EE677A 		vcvt.f32.u32	s15, s15
+ 450 0024 2D4B     		ldr	r3, .L69
+ 451 0026 1B68     		ldr	r3, [r3]
+ 452 0028 198A     		ldrh	r1, [r3, #16]
+ 453 002a 07EE101A 		vmov	s14, r1	@ int
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 9
+
+
+ 454 002e F8EE476A 		vcvt.f32.u32	s13, s14
+ 455 0032 5A8A     		ldrh	r2, [r3, #18]
+ 456 0034 07EE102A 		vmov	s14, r2	@ int
+ 457 0038 B8EE477A 		vcvt.f32.u32	s14, s14
+ 458 003c 9142     		cmp	r1, r2
+ 459 003e 44D0     		beq	.L64
+ 460 0040 77EEE67A 		vsub.f32	s15, s15, s13
+ 461 0044 9FED266A 		vldr.32	s12, .L69+4
+ 462 0048 67EE867A 		vmul.f32	s15, s15, s12
+ 463 004c 37EE667A 		vsub.f32	s14, s14, s13
+ 464 0050 87EE878A 		vdiv.f32	s16, s15, s14
+ 465 0054 DFED237A 		vldr.32	s15, .L69+8
+ 466 0058 38EE278A 		vadd.f32	s16, s16, s15
+ 467              	.L60:
+ 468 005c D968     		ldr	r1, [r3, #12]
+ 469 005e 2046     		mov	r0, r4
+ 470 0060 D3ED020A 		vldr.32	s1, [r3, #8]
+ 471 0064 B0EE480A 		vmov.f32	s0, s16
+ 472 0068 FFF7FEFF 		bl	rate_of_change_per_sec
+ 473 006c 1B4B     		ldr	r3, .L69
+ 474 006e 1B68     		ldr	r3, [r3]
+ 475 0070 83ED008A 		vstr.32	s16, [r3]
+ 476 0074 83ED010A 		vstr.32	s0, [r3, #4]
+ 477 0078 83ED028A 		vstr.32	s16, [r3, #8]
+ 478 007c DC60     		str	r4, [r3, #12]
+ 479 007e B5EEC08A 		vcmpe.f32	s16, #0
+ 480 0082 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 481 0086 06DB     		blt	.L61
+ 482 0088 DFED177A 		vldr.32	s15, .L69+12
+ 483 008c B4EEE78A 		vcmpe.f32	s16, s15
+ 484 0090 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 485 0094 1CD9     		bls	.L63
+ 486              	.L61:
+ 487 0096 154A     		ldr	r2, .L69+16
+ 488 0098 1368     		ldr	r3, [r2]
+ 489 009a 43F40043 		orr	r3, r3, #32768
+ 490 009e 1360     		str	r3, [r2]
+ 491              	.L56:
+ 492 00a0 BDEC028B 		vldm	sp!, {d8}
+ 493 00a4 10BD     		pop	{r4, pc}
+ 494              	.L67:
+ 495 00a6 1248     		ldr	r0, .L69+20
+ 496 00a8 FFF7FEFF 		bl	log_error
+ 497 00ac F8E7     		b	.L56
+ 498              	.L68:
+ 499 00ae 0F4A     		ldr	r2, .L69+16
+ 500 00b0 1368     		ldr	r3, [r2]
+ 501 00b2 43F40043 		orr	r3, r3, #32768
+ 502 00b6 1360     		str	r3, [r2]
+ 503 00b8 0D48     		ldr	r0, .L69+20
+ 504 00ba FFF7FEFF 		bl	log_error
+ 505 00be 074B     		ldr	r3, .L69
+ 506 00c0 1B68     		ldr	r3, [r3]
+ 507 00c2 0022     		movs	r2, #0
+ 508 00c4 1A60     		str	r2, [r3]	@ float
+ 509 00c6 5A60     		str	r2, [r3, #4]	@ float
+ 510 00c8 EAE7     		b	.L56
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 10
+
+
+ 511              	.L64:
+ 512 00ca 9FED068A 		vldr.32	s16, .L69+8
+ 513 00ce C5E7     		b	.L60
+ 514              	.L63:
+ 515 00d0 064A     		ldr	r2, .L69+16
+ 516 00d2 1368     		ldr	r3, [r2]
+ 517 00d4 23F40043 		bic	r3, r3, #32768
+ 518 00d8 1360     		str	r3, [r2]
+ 519 00da E1E7     		b	.L56
+ 520              	.L70:
+ 521              		.align	2
+ 522              	.L69:
+ 523 00dc 00000000 		.word	map_sensor
+ 524 00e0 0000C842 		.word	1120403456
+ 525 00e4 00000000 		.word	0
+ 526 00e8 0000F042 		.word	1123024896
+ 527 00ec 00000000 		.word	runtime
+ 528 00f0 00000000 		.word	.LC7
+ 530              		.section	.text.sensor_map_get,"ax",%progbits
+ 531              		.align	1
+ 532              		.global	sensor_map_get
+ 533              		.syntax unified
+ 534              		.thumb
+ 535              		.thumb_func
+ 537              	sensor_map_get:
+ 538              		@ args = 0, pretend = 0, frame = 0
+ 539              		@ frame_needed = 0, uses_anonymous_args = 0
+ 540 0000 08B5     		push	{r3, lr}
+ 541 0002 084B     		ldr	r3, .L76
+ 542 0004 1B68     		ldr	r3, [r3]
+ 543 0006 13B1     		cbz	r3, .L75
+ 544 0008 93ED000A 		vldr.32	s0, [r3]
+ 545              	.L71:
+ 546 000c 08BD     		pop	{r3, pc}
+ 547              	.L75:
+ 548 000e 064A     		ldr	r2, .L76+4
+ 549 0010 1368     		ldr	r3, [r2]
+ 550 0012 43F40043 		orr	r3, r3, #32768
+ 551 0016 1360     		str	r3, [r2]
+ 552 0018 0448     		ldr	r0, .L76+8
+ 553 001a FFF7FEFF 		bl	log_error
+ 554 001e 9FED040A 		vldr.32	s0, .L76+12
+ 555 0022 F3E7     		b	.L71
+ 556              	.L77:
+ 557              		.align	2
+ 558              	.L76:
+ 559 0024 00000000 		.word	map_sensor
+ 560 0028 00000000 		.word	runtime
+ 561 002c 00000000 		.word	.LC7
+ 562 0030 00000000 		.word	0
+ 564              		.section	.text.sensor_map_rate_of_change_get,"ax",%progbits
+ 565              		.align	1
+ 566              		.global	sensor_map_rate_of_change_get
+ 567              		.syntax unified
+ 568              		.thumb
+ 569              		.thumb_func
+ 571              	sensor_map_rate_of_change_get:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 11
+
+
+ 572              		@ args = 0, pretend = 0, frame = 0
+ 573              		@ frame_needed = 0, uses_anonymous_args = 0
+ 574 0000 08B5     		push	{r3, lr}
+ 575 0002 084B     		ldr	r3, .L83
+ 576 0004 1B68     		ldr	r3, [r3]
+ 577 0006 13B1     		cbz	r3, .L82
+ 578 0008 93ED010A 		vldr.32	s0, [r3, #4]
+ 579              	.L78:
+ 580 000c 08BD     		pop	{r3, pc}
+ 581              	.L82:
+ 582 000e 064A     		ldr	r2, .L83+4
+ 583 0010 1368     		ldr	r3, [r2]
+ 584 0012 43F40043 		orr	r3, r3, #32768
+ 585 0016 1360     		str	r3, [r2]
+ 586 0018 0448     		ldr	r0, .L83+8
+ 587 001a FFF7FEFF 		bl	log_error
+ 588 001e 9FED040A 		vldr.32	s0, .L83+12
+ 589 0022 F3E7     		b	.L78
+ 590              	.L84:
+ 591              		.align	2
+ 592              	.L83:
+ 593 0024 00000000 		.word	map_sensor
+ 594 0028 00000000 		.word	runtime
+ 595 002c 00000000 		.word	.LC7
+ 596 0030 00000000 		.word	0
+ 598              		.section	.text.sensor_iat_init,"ax",%progbits
+ 599              		.align	1
+ 600              		.global	sensor_iat_init
+ 601              		.syntax unified
+ 602              		.thumb
+ 603              		.thumb_func
+ 605              	sensor_iat_init:
+ 606              		@ args = 0, pretend = 0, frame = 24
+ 607              		@ frame_needed = 0, uses_anonymous_args = 0
+ 608 0000 70B5     		push	{r4, r5, r6, lr}
+ 609 0002 8AB0     		sub	sp, sp, #40
+ 610 0004 0446     		mov	r4, r0
+ 611 0006 11B3     		cbz	r1, .L86
+ 612 0008 0129     		cmp	r1, #1
+ 613 000a 42D1     		bne	.L87
+ 614 000c 0622     		movs	r2, #6
+ 615 000e 0021     		movs	r1, #0
+ 616 0010 9FED230A 		vldr.32	s0, .L90
+ 617 0014 FFF7FEFF 		bl	resistor_init
+ 618 0018 04AD     		add	r5, sp, #16
+ 619 001a 224E     		ldr	r6, .L90+4
+ 620 001c 0FCE     		ldmia	r6!, {r0, r1, r2, r3}
+ 621 001e 0FC5     		stmia	r5!, {r0, r1, r2, r3}
+ 622 0020 96E80300 		ldm	r6, {r0, r1}
+ 623 0024 85E80300 		stm	r5, {r0, r1}
+ 624 0028 0AAB     		add	r3, sp, #40
+ 625 002a 13E90700 		ldmdb	r3, {r0, r1, r2}
+ 626 002e 8DE80700 		stm	sp, {r0, r1, r2}
+ 627 0032 04AB     		add	r3, sp, #16
+ 628 0034 0ECB     		ldm	r3, {r1, r2, r3}
+ 629 0036 2046     		mov	r0, r4
+ 630 0038 FFF7FEFF 		bl	thermistor_init
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 12
+
+
+ 631 003c 1A4B     		ldr	r3, .L90+8
+ 632 003e 1C60     		str	r4, [r3]
+ 633 0040 1A4A     		ldr	r2, .L90+12
+ 634 0042 1368     		ldr	r3, [r2]
+ 635 0044 23F40033 		bic	r3, r3, #131072
+ 636 0048 1360     		str	r3, [r2]
+ 637              	.L85:
+ 638 004a 0AB0     		add	sp, sp, #40
+ 639              		@ sp needed
+ 640 004c 70BD     		pop	{r4, r5, r6, pc}
+ 641              	.L86:
+ 642 004e 0622     		movs	r2, #6
+ 643 0050 0021     		movs	r1, #0
+ 644 0052 9FED170A 		vldr.32	s0, .L90+16
+ 645 0056 FFF7FEFF 		bl	resistor_init
+ 646 005a 0DF1100C 		add	ip, sp, #16
+ 647 005e 154D     		ldr	r5, .L90+20
+ 648 0060 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 649 0062 ACE80F00 		stmia	ip!, {r0, r1, r2, r3}
+ 650 0066 95E80300 		ldm	r5, {r0, r1}
+ 651 006a 8CE80300 		stm	ip, {r0, r1}
+ 652 006e 0AAB     		add	r3, sp, #40
+ 653 0070 13E90700 		ldmdb	r3, {r0, r1, r2}
+ 654 0074 8DE80700 		stm	sp, {r0, r1, r2}
+ 655 0078 04AB     		add	r3, sp, #16
+ 656 007a 0ECB     		ldm	r3, {r1, r2, r3}
+ 657 007c 2046     		mov	r0, r4
+ 658 007e FFF7FEFF 		bl	thermistor_init
+ 659 0082 094B     		ldr	r3, .L90+8
+ 660 0084 1C60     		str	r4, [r3]
+ 661 0086 094A     		ldr	r2, .L90+12
+ 662 0088 1368     		ldr	r3, [r2]
+ 663 008a 23F40033 		bic	r3, r3, #131072
+ 664 008e 1360     		str	r3, [r2]
+ 665 0090 DBE7     		b	.L85
+ 666              	.L87:
+ 667 0092 064A     		ldr	r2, .L90+12
+ 668 0094 1368     		ldr	r3, [r2]
+ 669 0096 43F40033 		orr	r3, r3, #131072
+ 670 009a 1360     		str	r3, [r2]
+ 671 009c D5E7     		b	.L85
+ 672              	.L91:
+ 673 009e 00BF     		.align	2
+ 674              	.L90:
+ 675 00a0 00401C46 		.word	1176256512
+ 676 00a4 00000000 		.word	.LANCHOR0
+ 677 00a8 00000000 		.word	sensor_iat
+ 678 00ac 00000000 		.word	runtime
+ 679 00b0 00E09245 		.word	1167253504
+ 680 00b4 18000000 		.word	.LANCHOR0+24
+ 682              		.section	.rodata.sensor_iat_update.str1.4,"aMS",%progbits,1
+ 683              		.align	2
+ 684              	.LC8:
+ 685 0000 69617420 		.ascii	"iat sensor is null\000"
+ 685      73656E73 
+ 685      6F722069 
+ 685      73206E75 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 13
+
+
+ 685      6C6C00
+ 686              		.section	.text.sensor_iat_update,"ax",%progbits
+ 687              		.align	1
+ 688              		.global	sensor_iat_update
+ 689              		.syntax unified
+ 690              		.thumb
+ 691              		.thumb_func
+ 693              	sensor_iat_update:
+ 694              		@ args = 0, pretend = 0, frame = 0
+ 695              		@ frame_needed = 0, uses_anonymous_args = 0
+ 696 0000 08B5     		push	{r3, lr}
+ 697 0002 174B     		ldr	r3, .L101
+ 698 0004 1868     		ldr	r0, [r3]
+ 699 0006 B8B1     		cbz	r0, .L100
+ 700 0008 FFF7FEFF 		bl	thermistor_get_temp
+ 701 000c DFED157A 		vldr.32	s15, .L101+4
+ 702 0010 B4EEE70A 		vcmpe.f32	s0, s15
+ 703 0014 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 704 0018 19DB     		blt	.L95
+ 705 001a DFED137A 		vldr.32	s15, .L101+8
+ 706 001e B4EEE70A 		vcmpe.f32	s0, s15
+ 707 0022 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 708 0026 12D8     		bhi	.L95
+ 709 0028 104B     		ldr	r3, .L101+12
+ 710 002a 1A68     		ldr	r2, [r3]
+ 711 002c 22F40032 		bic	r2, r2, #131072
+ 712 0030 1A60     		str	r2, [r3]
+ 713 0032 83ED110A 		vstr.32	s0, [r3, #68]
+ 714 0036 11E0     		b	.L92
+ 715              	.L100:
+ 716 0038 0D48     		ldr	r0, .L101+16
+ 717 003a FFF7FEFF 		bl	log_error
+ 718 003e 0B4B     		ldr	r3, .L101+12
+ 719 0040 1A68     		ldr	r2, [r3]
+ 720 0042 42F40032 		orr	r2, r2, #131072
+ 721 0046 1A60     		str	r2, [r3]
+ 722 0048 0A4A     		ldr	r2, .L101+20
+ 723 004a 5A64     		str	r2, [r3, #68]	@ float
+ 724 004c 06E0     		b	.L92
+ 725              	.L95:
+ 726 004e 074B     		ldr	r3, .L101+12
+ 727 0050 1A68     		ldr	r2, [r3]
+ 728 0052 42F40032 		orr	r2, r2, #131072
+ 729 0056 1A60     		str	r2, [r3]
+ 730 0058 064A     		ldr	r2, .L101+20
+ 731 005a 5A64     		str	r2, [r3, #68]	@ float
+ 732              	.L92:
+ 733 005c 08BD     		pop	{r3, pc}
+ 734              	.L102:
+ 735 005e 00BF     		.align	2
+ 736              	.L101:
+ 737 0060 00000000 		.word	sensor_iat
+ 738 0064 000048C2 		.word	-1035468800
+ 739 0068 00001643 		.word	1125515264
+ 740 006c 00000000 		.word	runtime
+ 741 0070 00000000 		.word	.LC8
+ 742 0074 00002042 		.word	1109393408
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 14
+
+
+ 744              		.section	.text.sensor_iat_get,"ax",%progbits
+ 745              		.align	1
+ 746              		.global	sensor_iat_get
+ 747              		.syntax unified
+ 748              		.thumb
+ 749              		.thumb_func
+ 751              	sensor_iat_get:
+ 752              		@ args = 0, pretend = 0, frame = 0
+ 753              		@ frame_needed = 0, uses_anonymous_args = 0
+ 754 0000 08B5     		push	{r3, lr}
+ 755 0002 094B     		ldr	r3, .L108
+ 756 0004 1B68     		ldr	r3, [r3]
+ 757 0006 1BB1     		cbz	r3, .L107
+ 758 0008 084B     		ldr	r3, .L108+4
+ 759 000a 93ED110A 		vldr.32	s0, [r3, #68]
+ 760              	.L103:
+ 761 000e 08BD     		pop	{r3, pc}
+ 762              	.L107:
+ 763 0010 0748     		ldr	r0, .L108+8
+ 764 0012 FFF7FEFF 		bl	log_error
+ 765 0016 054A     		ldr	r2, .L108+4
+ 766 0018 1368     		ldr	r3, [r2]
+ 767 001a 43F40033 		orr	r3, r3, #131072
+ 768 001e 1360     		str	r3, [r2]
+ 769 0020 9FED040A 		vldr.32	s0, .L108+12
+ 770 0024 F3E7     		b	.L103
+ 771              	.L109:
+ 772 0026 00BF     		.align	2
+ 773              	.L108:
+ 774 0028 00000000 		.word	sensor_iat
+ 775 002c 00000000 		.word	runtime
+ 776 0030 00000000 		.word	.LC8
+ 777 0034 00002042 		.word	1109393408
+ 779              		.section	.rodata.sensor_clt_init.str1.4,"aMS",%progbits,1
+ 780              		.align	2
+ 781              	.LC9:
+ 782 0000 636C7420 		.ascii	"clt sensor is null\000"
+ 782      73656E73 
+ 782      6F722069 
+ 782      73206E75 
+ 782      6C6C00
+ 783              		.section	.text.sensor_clt_init,"ax",%progbits
+ 784              		.align	1
+ 785              		.global	sensor_clt_init
+ 786              		.syntax unified
+ 787              		.thumb
+ 788              		.thumb_func
+ 790              	sensor_clt_init:
+ 791              		@ args = 0, pretend = 0, frame = 24
+ 792              		@ frame_needed = 0, uses_anonymous_args = 0
+ 793 0000 70B5     		push	{r4, r5, r6, lr}
+ 794 0002 8AB0     		sub	sp, sp, #40
+ 795 0004 20B3     		cbz	r0, .L117
+ 796 0006 0446     		mov	r4, r0
+ 797 0008 59B3     		cbz	r1, .L113
+ 798 000a 0129     		cmp	r1, #1
+ 799 000c 4BD1     		bne	.L114
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 15
+
+
+ 800 000e 0722     		movs	r2, #7
+ 801 0010 0021     		movs	r1, #0
+ 802 0012 9FED280A 		vldr.32	s0, .L118
+ 803 0016 FFF7FEFF 		bl	resistor_init
+ 804 001a 04AD     		add	r5, sp, #16
+ 805 001c 264E     		ldr	r6, .L118+4
+ 806 001e 0FCE     		ldmia	r6!, {r0, r1, r2, r3}
+ 807 0020 0FC5     		stmia	r5!, {r0, r1, r2, r3}
+ 808 0022 96E80300 		ldm	r6, {r0, r1}
+ 809 0026 85E80300 		stm	r5, {r0, r1}
+ 810 002a 0AAB     		add	r3, sp, #40
+ 811 002c 13E90700 		ldmdb	r3, {r0, r1, r2}
+ 812 0030 8DE80700 		stm	sp, {r0, r1, r2}
+ 813 0034 04AB     		add	r3, sp, #16
+ 814 0036 0ECB     		ldm	r3, {r1, r2, r3}
+ 815 0038 2046     		mov	r0, r4
+ 816 003a FFF7FEFF 		bl	thermistor_init
+ 817 003e 1F4B     		ldr	r3, .L118+8
+ 818 0040 1C60     		str	r4, [r3]
+ 819 0042 1F4A     		ldr	r2, .L118+12
+ 820 0044 1368     		ldr	r3, [r2]
+ 821 0046 23F48033 		bic	r3, r3, #65536
+ 822 004a 1360     		str	r3, [r2]
+ 823              	.L110:
+ 824 004c 0AB0     		add	sp, sp, #40
+ 825              		@ sp needed
+ 826 004e 70BD     		pop	{r4, r5, r6, pc}
+ 827              	.L117:
+ 828 0050 1C48     		ldr	r0, .L118+16
+ 829 0052 FFF7FEFF 		bl	log_error
+ 830 0056 1A4A     		ldr	r2, .L118+12
+ 831 0058 1368     		ldr	r3, [r2]
+ 832 005a 43F48033 		orr	r3, r3, #65536
+ 833 005e 1360     		str	r3, [r2]
+ 834 0060 F4E7     		b	.L110
+ 835              	.L113:
+ 836 0062 0722     		movs	r2, #7
+ 837 0064 0021     		movs	r1, #0
+ 838 0066 9FED130A 		vldr.32	s0, .L118
+ 839 006a FFF7FEFF 		bl	resistor_init
+ 840 006e 0DF1100C 		add	ip, sp, #16
+ 841 0072 154D     		ldr	r5, .L118+20
+ 842 0074 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 843 0076 ACE80F00 		stmia	ip!, {r0, r1, r2, r3}
+ 844 007a 95E80300 		ldm	r5, {r0, r1}
+ 845 007e 8CE80300 		stm	ip, {r0, r1}
+ 846 0082 0AAB     		add	r3, sp, #40
+ 847 0084 13E90700 		ldmdb	r3, {r0, r1, r2}
+ 848 0088 8DE80700 		stm	sp, {r0, r1, r2}
+ 849 008c 04AB     		add	r3, sp, #16
+ 850 008e 0ECB     		ldm	r3, {r1, r2, r3}
+ 851 0090 2046     		mov	r0, r4
+ 852 0092 FFF7FEFF 		bl	thermistor_init
+ 853 0096 094B     		ldr	r3, .L118+8
+ 854 0098 1C60     		str	r4, [r3]
+ 855 009a 094A     		ldr	r2, .L118+12
+ 856 009c 1368     		ldr	r3, [r2]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 16
+
+
+ 857 009e 23F48033 		bic	r3, r3, #65536
+ 858 00a2 1360     		str	r3, [r2]
+ 859 00a4 D2E7     		b	.L110
+ 860              	.L114:
+ 861 00a6 064A     		ldr	r2, .L118+12
+ 862 00a8 1368     		ldr	r3, [r2]
+ 863 00aa 43F48033 		orr	r3, r3, #65536
+ 864 00ae 1360     		str	r3, [r2]
+ 865 00b0 CCE7     		b	.L110
+ 866              	.L119:
+ 867 00b2 00BF     		.align	2
+ 868              	.L118:
+ 869 00b4 00E09245 		.word	1167253504
+ 870 00b8 30000000 		.word	.LANCHOR0+48
+ 871 00bc 00000000 		.word	sensor_clt
+ 872 00c0 00000000 		.word	runtime
+ 873 00c4 00000000 		.word	.LC9
+ 874 00c8 48000000 		.word	.LANCHOR0+72
+ 876              		.section	.text.sensor_clt_update,"ax",%progbits
+ 877              		.align	1
+ 878              		.global	sensor_clt_update
+ 879              		.syntax unified
+ 880              		.thumb
+ 881              		.thumb_func
+ 883              	sensor_clt_update:
+ 884              		@ args = 0, pretend = 0, frame = 0
+ 885              		@ frame_needed = 0, uses_anonymous_args = 0
+ 886 0000 10B5     		push	{r4, lr}
+ 887 0002 174B     		ldr	r3, .L129
+ 888 0004 1868     		ldr	r0, [r3]
+ 889 0006 B8B1     		cbz	r0, .L128
+ 890 0008 FFF7FEFF 		bl	thermistor_get_temp
+ 891 000c DFED157A 		vldr.32	s15, .L129+4
+ 892 0010 B4EEE70A 		vcmpe.f32	s0, s15
+ 893 0014 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 894 0018 19DB     		blt	.L123
+ 895 001a DFED137A 		vldr.32	s15, .L129+8
+ 896 001e B4EEE70A 		vcmpe.f32	s0, s15
+ 897 0022 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 898 0026 12D8     		bhi	.L123
+ 899 0028 104B     		ldr	r3, .L129+12
+ 900 002a 1A68     		ldr	r2, [r3]
+ 901 002c 22F48032 		bic	r2, r2, #65536
+ 902 0030 1A60     		str	r2, [r3]
+ 903 0032 83ED100A 		vstr.32	s0, [r3, #64]
+ 904 0036 11E0     		b	.L120
+ 905              	.L128:
+ 906 0038 0C4C     		ldr	r4, .L129+12
+ 907 003a 2368     		ldr	r3, [r4]
+ 908 003c 43F48033 		orr	r3, r3, #65536
+ 909 0040 2360     		str	r3, [r4]
+ 910 0042 0B48     		ldr	r0, .L129+16
+ 911 0044 FFF7FEFF 		bl	log_error
+ 912 0048 0A4B     		ldr	r3, .L129+20
+ 913 004a 2364     		str	r3, [r4, #64]	@ float
+ 914 004c 06E0     		b	.L120
+ 915              	.L123:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 17
+
+
+ 916 004e 074B     		ldr	r3, .L129+12
+ 917 0050 1A68     		ldr	r2, [r3]
+ 918 0052 42F48032 		orr	r2, r2, #65536
+ 919 0056 1A60     		str	r2, [r3]
+ 920 0058 064A     		ldr	r2, .L129+20
+ 921 005a 1A64     		str	r2, [r3, #64]	@ float
+ 922              	.L120:
+ 923 005c 10BD     		pop	{r4, pc}
+ 924              	.L130:
+ 925 005e 00BF     		.align	2
+ 926              	.L129:
+ 927 0060 00000000 		.word	sensor_clt
+ 928 0064 000048C2 		.word	-1035468800
+ 929 0068 00001643 		.word	1125515264
+ 930 006c 00000000 		.word	runtime
+ 931 0070 00000000 		.word	.LC9
+ 932 0074 00007042 		.word	1114636288
+ 934              		.section	.text.sensor_clt_get,"ax",%progbits
+ 935              		.align	1
+ 936              		.global	sensor_clt_get
+ 937              		.syntax unified
+ 938              		.thumb
+ 939              		.thumb_func
+ 941              	sensor_clt_get:
+ 942              		@ args = 0, pretend = 0, frame = 0
+ 943              		@ frame_needed = 0, uses_anonymous_args = 0
+ 944 0000 08B5     		push	{r3, lr}
+ 945 0002 094B     		ldr	r3, .L136
+ 946 0004 1B68     		ldr	r3, [r3]
+ 947 0006 1BB1     		cbz	r3, .L135
+ 948 0008 084B     		ldr	r3, .L136+4
+ 949 000a 93ED100A 		vldr.32	s0, [r3, #64]
+ 950              	.L131:
+ 951 000e 08BD     		pop	{r3, pc}
+ 952              	.L135:
+ 953 0010 064A     		ldr	r2, .L136+4
+ 954 0012 1368     		ldr	r3, [r2]
+ 955 0014 43F48033 		orr	r3, r3, #65536
+ 956 0018 1360     		str	r3, [r2]
+ 957 001a 0548     		ldr	r0, .L136+8
+ 958 001c FFF7FEFF 		bl	log_error
+ 959 0020 9FED040A 		vldr.32	s0, .L136+12
+ 960 0024 F3E7     		b	.L131
+ 961              	.L137:
+ 962 0026 00BF     		.align	2
+ 963              	.L136:
+ 964 0028 00000000 		.word	sensor_clt
+ 965 002c 00000000 		.word	runtime
+ 966 0030 00000000 		.word	.LC9
+ 967 0034 00007042 		.word	1114636288
+ 969              		.section	.text.sensor_ops_update,"ax",%progbits
+ 970              		.align	1
+ 971              		.global	sensor_ops_update
+ 972              		.syntax unified
+ 973              		.thumb
+ 974              		.thumb_func
+ 976              	sensor_ops_update:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 18
+
+
+ 977              		@ args = 0, pretend = 0, frame = 0
+ 978              		@ frame_needed = 0, uses_anonymous_args = 0
+ 979 0000 10B5     		push	{r4, lr}
+ 980 0002 0446     		mov	r4, r0
+ 981 0004 0820     		movs	r0, #8
+ 982 0006 FFF7FEFF 		bl	analog_inputs_get_data
+ 983 000a B0F5006F 		cmp	r0, #2048
+ 984 000e 34BF     		ite	cc
+ 985 0010 0020     		movcc	r0, #0
+ 986 0012 0120     		movcs	r0, #1
+ 987 0014 0E4B     		ldr	r3, .L144
+ 988 0016 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 989 0018 8342     		cmp	r3, r0
+ 990 001a 03D0     		beq	.L139
+ 991 001c 0D4B     		ldr	r3, .L144+4
+ 992 001e 1C60     		str	r4, [r3]
+ 993 0020 0B4B     		ldr	r3, .L144
+ 994 0022 1870     		strb	r0, [r3]
+ 995              	.L139:
+ 996 0024 0B4B     		ldr	r3, .L144+4
+ 997 0026 1B68     		ldr	r3, [r3]
+ 998 0028 E41A     		subs	r4, r4, r3
+ 999 002a C72C     		cmp	r4, #199
+ 1000 002c 01D9     		bls	.L140
+ 1001 002e 0A4B     		ldr	r3, .L144+8
+ 1002 0030 1870     		strb	r0, [r3]
+ 1003              	.L140:
+ 1004 0032 094B     		ldr	r3, .L144+8
+ 1005 0034 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1006 0036 2BB9     		cbnz	r3, .L141
+ 1007 0038 084A     		ldr	r2, .L144+12
+ 1008 003a 1368     		ldr	r3, [r2]
+ 1009 003c 43F08053 		orr	r3, r3, #268435456
+ 1010 0040 1360     		str	r3, [r2]
+ 1011              	.L138:
+ 1012 0042 10BD     		pop	{r4, pc}
+ 1013              	.L141:
+ 1014 0044 054A     		ldr	r2, .L144+12
+ 1015 0046 1368     		ldr	r3, [r2]
+ 1016 0048 23F08053 		bic	r3, r3, #268435456
+ 1017 004c 1360     		str	r3, [r2]
+ 1018 004e F8E7     		b	.L138
+ 1019              	.L145:
+ 1020              		.align	2
+ 1021              	.L144:
+ 1022 0050 00000000 		.word	last_state.2
+ 1023 0054 00000000 		.word	last_change_time.1
+ 1024 0058 00000000 		.word	debounced_state.0
+ 1025 005c 00000000 		.word	runtime
+ 1027              		.section	.text.sensor_ops_get,"ax",%progbits
+ 1028              		.align	1
+ 1029              		.global	sensor_ops_get
+ 1030              		.syntax unified
+ 1031              		.thumb
+ 1032              		.thumb_func
+ 1034              	sensor_ops_get:
+ 1035              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 19
+
+
+ 1036              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1037              		@ link register save eliminated.
+ 1038 0000 034B     		ldr	r3, .L147
+ 1039 0002 1868     		ldr	r0, [r3]
+ 1040 0004 C0F30070 		ubfx	r0, r0, #28, #1
+ 1041 0008 80F00100 		eor	r0, r0, #1
+ 1042 000c 7047     		bx	lr
+ 1043              	.L148:
+ 1044 000e 00BF     		.align	2
+ 1045              	.L147:
+ 1046 0010 00000000 		.word	runtime
+ 1048              		.section	.text.sensor_egt_update,"ax",%progbits
+ 1049              		.align	1
+ 1050              		.global	sensor_egt_update
+ 1051              		.syntax unified
+ 1052              		.thumb
+ 1053              		.thumb_func
+ 1055              	sensor_egt_update:
+ 1056              		@ args = 0, pretend = 0, frame = 0
+ 1057              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1058 0000 08B5     		push	{r3, lr}
+ 1059 0002 0020     		movs	r0, #0
+ 1060 0004 FFF7FEFF 		bl	analog_inputs_get_data
+ 1061 0008 07EE900A 		vmov	s15, r0	@ int
+ 1062 000c F8EE677A 		vcvt.f32.u32	s15, s15
+ 1063 0010 9FED077A 		vldr.32	s14, .L151
+ 1064 0014 67EE877A 		vmul.f32	s15, s15, s14
+ 1065 0018 9FED067A 		vldr.32	s14, .L151+4
+ 1066 001c C7EE876A 		vdiv.f32	s13, s15, s14
+ 1067 0020 9FED057A 		vldr.32	s14, .L151+8
+ 1068 0024 C6EE877A 		vdiv.f32	s15, s13, s14
+ 1069 0028 044B     		ldr	r3, .L151+12
+ 1070 002a C3ED127A 		vstr.32	s15, [r3, #72]
+ 1071 002e 08BD     		pop	{r3, pc}
+ 1072              	.L152:
+ 1073              		.align	2
+ 1074              	.L151:
+ 1075 0030 33335340 		.word	1079194419
+ 1076 0034 00F07F45 		.word	1166012416
+ 1077 0038 6AF72B38 		.word	942405482
+ 1078 003c 00000000 		.word	runtime
+ 1080              		.section	.text.sensor_egt_get,"ax",%progbits
+ 1081              		.align	1
+ 1082              		.global	sensor_egt_get
+ 1083              		.syntax unified
+ 1084              		.thumb
+ 1085              		.thumb_func
+ 1087              	sensor_egt_get:
+ 1088              		@ args = 0, pretend = 0, frame = 0
+ 1089              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1090              		@ link register save eliminated.
+ 1091 0000 014B     		ldr	r3, .L154
+ 1092 0002 93ED120A 		vldr.32	s0, [r3, #72]
+ 1093 0006 7047     		bx	lr
+ 1094              	.L155:
+ 1095              		.align	2
+ 1096              	.L154:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 20
+
+
+ 1097 0008 00000000 		.word	runtime
+ 1099              		.section	.text.vbat_update,"ax",%progbits
+ 1100              		.align	1
+ 1101              		.global	vbat_update
+ 1102              		.syntax unified
+ 1103              		.thumb
+ 1104              		.thumb_func
+ 1106              	vbat_update:
+ 1107              		@ args = 0, pretend = 0, frame = 0
+ 1108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1109 0000 08B5     		push	{r3, lr}
+ 1110 0002 0920     		movs	r0, #9
+ 1111 0004 FFF7FEFF 		bl	analog_inputs_get_data
+ 1112 0008 07EE900A 		vmov	s15, r0	@ int
+ 1113 000c F8EE677A 		vcvt.f32.u32	s15, s15
+ 1114 0010 9FED077A 		vldr.32	s14, .L158
+ 1115 0014 67EE877A 		vmul.f32	s15, s15, s14
+ 1116 0018 DFED066A 		vldr.32	s13, .L158+4
+ 1117 001c 87EEA67A 		vdiv.f32	s14, s15, s13
+ 1118 0020 DFED057A 		vldr.32	s15, .L158+8
+ 1119 0024 67EE277A 		vmul.f32	s15, s14, s15
+ 1120 0028 044B     		ldr	r3, .L158+12
+ 1121 002a C3ED157A 		vstr.32	s15, [r3, #84]
+ 1122 002e 08BD     		pop	{r3, pc}
+ 1123              	.L159:
+ 1124              		.align	2
+ 1125              	.L158:
+ 1126 0030 33335340 		.word	1079194419
+ 1127 0034 00F07F45 		.word	1166012416
+ 1128 0038 66662641 		.word	1093035622
+ 1129 003c 00000000 		.word	runtime
+ 1131              		.section	.text.vbat_get,"ax",%progbits
+ 1132              		.align	1
+ 1133              		.global	vbat_get
+ 1134              		.syntax unified
+ 1135              		.thumb
+ 1136              		.thumb_func
+ 1138              	vbat_get:
+ 1139              		@ args = 0, pretend = 0, frame = 0
+ 1140              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1141              		@ link register save eliminated.
+ 1142 0000 014B     		ldr	r3, .L161
+ 1143 0002 93ED150A 		vldr.32	s0, [r3, #84]
+ 1144 0006 7047     		bx	lr
+ 1145              	.L162:
+ 1146              		.align	2
+ 1147              	.L161:
+ 1148 0008 00000000 		.word	runtime
+ 1150              		.section	.bss.debounced_state.0,"aw",%nobits
+ 1153              	debounced_state.0:
+ 1154 0000 00       		.space	1
+ 1155              		.section	.bss.last_change_time.1,"aw",%nobits
+ 1156              		.align	2
+ 1159              	last_change_time.1:
+ 1160 0000 00000000 		.space	4
+ 1161              		.section	.bss.last_state.2,"aw",%nobits
+ 1164              	last_state.2:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 21
+
+
+ 1165 0000 00       		.space	1
+ 1166              		.section	.bss.sensor_clt,"aw",%nobits
+ 1167              		.align	2
+ 1170              	sensor_clt:
+ 1171 0000 00000000 		.space	4
+ 1172              		.section	.bss.sensor_iat,"aw",%nobits
+ 1173              		.align	2
+ 1176              	sensor_iat:
+ 1177 0000 00000000 		.space	4
+ 1178              		.section	.bss.map_sensor,"aw",%nobits
+ 1179              		.align	2
+ 1182              	map_sensor:
+ 1183 0000 00000000 		.space	4
+ 1184              		.section	.rodata
+ 1185              		.align	2
+ 1186              		.set	.LANCHOR0,. + 0
+ 1187              	.LC0:
+ 1188 0000 000020C1 		.word	-1054867456
+ 1189 0004 0000C841 		.word	1103626240
+ 1190 0008 0000A042 		.word	1117782016
+ 1191 000c 00CC1246 		.word	1175636992
+ 1192 0010 00800045 		.word	1157660672
+ 1193 0014 0040A143 		.word	1134641152
+ 1194              	.LC1:
+ 1195 0018 000020C1 		.word	-1054867456
+ 1196 001c 0000C841 		.word	1103626240
+ 1197 0020 0000B442 		.word	1119092736
+ 1198 0024 00CC1246 		.word	1175636992
+ 1199 0028 00800045 		.word	1157660672
+ 1200 002c 9A197343 		.word	1131616666
+ 1201              	.LC2:
+ 1202 0030 0000A0C1 		.word	-1046478848
+ 1203 0034 0000C841 		.word	1103626240
+ 1204 0038 0000B442 		.word	1119092736
+ 1205 003c 00507546 		.word	1182093312
+ 1206 0040 00200045 		.word	1157636096
+ 1207 0044 00006643 		.word	1130758144
+ 1208              	.LC3:
+ 1209 0048 000020C1 		.word	-1054867456
+ 1210 004c 0000C841 		.word	1103626240
+ 1211 0050 0000B442 		.word	1119092736
+ 1212 0054 00EEAD46 		.word	1185803776
+ 1213 0058 00409C45 		.word	1167867904
+ 1214 005c 00001344 		.word	1142095872
+ 1215              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 22
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 sensors.c
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:18     .rodata.sensor_tps_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:22     .text.sensor_tps_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:28     .text.sensor_tps_init:00000000 sensor_tps_init
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:163    .text.sensor_tps_init:00000114 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:168    .text.sensor_tps_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:174    .text.sensor_tps_get:00000000 sensor_tps_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:187    .text.sensor_tps_get:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:190    .text.sensor_tps_rate_of_change_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:196    .text.sensor_tps_rate_of_change_get:00000000 sensor_tps_rate_of_change_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:209    .text.sensor_tps_rate_of_change_get:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:212    .rodata.sensor_tps_update.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:216    .text.sensor_tps_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:222    .text.sensor_tps_update:00000000 sensor_tps_update
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:350    .text.sensor_tps_update:00000140 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:359    .rodata.sensor_map_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:363    .text.sensor_map_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:369    .text.sensor_map_init:00000000 sensor_map_init
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:418    .text.sensor_map_init:0000005c $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1182   .bss.map_sensor:00000000 map_sensor
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:423    .rodata.sensor_map_update.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:427    .text.sensor_map_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:433    .text.sensor_map_update:00000000 sensor_map_update
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:523    .text.sensor_map_update:000000dc $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:531    .text.sensor_map_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:537    .text.sensor_map_get:00000000 sensor_map_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:559    .text.sensor_map_get:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:565    .text.sensor_map_rate_of_change_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:571    .text.sensor_map_rate_of_change_get:00000000 sensor_map_rate_of_change_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:593    .text.sensor_map_rate_of_change_get:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:599    .text.sensor_iat_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:605    .text.sensor_iat_init:00000000 sensor_iat_init
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:675    .text.sensor_iat_init:000000a0 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1176   .bss.sensor_iat:00000000 sensor_iat
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:683    .rodata.sensor_iat_update.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:687    .text.sensor_iat_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:693    .text.sensor_iat_update:00000000 sensor_iat_update
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:737    .text.sensor_iat_update:00000060 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:745    .text.sensor_iat_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:751    .text.sensor_iat_get:00000000 sensor_iat_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:774    .text.sensor_iat_get:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:780    .rodata.sensor_clt_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:784    .text.sensor_clt_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:790    .text.sensor_clt_init:00000000 sensor_clt_init
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:869    .text.sensor_clt_init:000000b4 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1170   .bss.sensor_clt:00000000 sensor_clt
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:877    .text.sensor_clt_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:883    .text.sensor_clt_update:00000000 sensor_clt_update
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:927    .text.sensor_clt_update:00000060 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:935    .text.sensor_clt_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:941    .text.sensor_clt_get:00000000 sensor_clt_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:964    .text.sensor_clt_get:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:970    .text.sensor_ops_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:976    .text.sensor_ops_update:00000000 sensor_ops_update
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1022   .text.sensor_ops_update:00000050 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1164   .bss.last_state.2:00000000 last_state.2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s 			page 23
+
+
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1159   .bss.last_change_time.1:00000000 last_change_time.1
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1153   .bss.debounced_state.0:00000000 debounced_state.0
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1028   .text.sensor_ops_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1034   .text.sensor_ops_get:00000000 sensor_ops_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1046   .text.sensor_ops_get:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1049   .text.sensor_egt_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1055   .text.sensor_egt_update:00000000 sensor_egt_update
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1075   .text.sensor_egt_update:00000030 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1081   .text.sensor_egt_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1087   .text.sensor_egt_get:00000000 sensor_egt_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1097   .text.sensor_egt_get:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1100   .text.vbat_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1106   .text.vbat_update:00000000 vbat_update
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1126   .text.vbat_update:00000030 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1132   .text.vbat_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1138   .text.vbat_get:00000000 vbat_get
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1148   .text.vbat_get:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1154   .bss.debounced_state.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1156   .bss.last_change_time.1:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1165   .bss.last_state.2:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1167   .bss.sensor_clt:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1173   .bss.sensor_iat:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1179   .bss.map_sensor:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc9W7UEr.s:1185   .rodata:00000000 $d
+
+UNDEFINED SYMBOLS
+log_error
+config
+runtime
+analog_inputs_get_data
+rate_of_change_per_sec
+resistor_init
+thermistor_init
+thermistor_get_temp

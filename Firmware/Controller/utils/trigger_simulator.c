@@ -1,78 +1,77 @@
 #include "trigger_simulator.h"
-#include <stdint.h> // Ensure uint8_t, int32_t are defined
 
-uint8_t wheel_full_teeth = 0;
-uint8_t wheel_missing_teeth = 0;
 
-static bool cam_state = false;
-static bool trigger_simulator_running = false;
-static void (*trigger_callback_cam)(bool edge) = NULL;  // pointer to function taking no args, returns void
-static void (*trigger_callback_crank)(void) = NULL;  // pointer to function taking no args, returns void
+static osMessageQueueId_t trigger_event_queue_id = NULL;
 
-void trigger_simulator_init(uint8_t full_teeth, uint8_t missing_teeth, void (*cb_cam)(bool edge), void (*cb_crank)(void))
+rpm_t simulated_rpm = (rpm_t)0;
+
+static bool *selected_wheel_pattern = NULL;
+static uint8_t selected_wheel_pattern_length = 0;
+const bool wheel_pattern_60_2[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0};
+
+void trigger_simulator_crank_init(trigger_simulator_wheel_type_t wheel_type, osMessageQueueId_t trigger_mq_id)
 {
-    wheel_full_teeth = full_teeth;
-    wheel_missing_teeth = missing_teeth;
-    trigger_callback_cam = cb_cam;
-    trigger_callback_crank = cb_crank;
+    if (trigger_mq_id == NULL)
+    {
+        return;
+    }
+    
+    trigger_event_queue_id = trigger_mq_id;
+    switch (wheel_type)
+    {
+    case TRIGGER_SIMULATOR_WHEEL_TYPE_60_2:
+        selected_wheel_pattern_length = SIZE_OF_ARRAY(wheel_pattern_60_2);
+        selected_wheel_pattern = &wheel_pattern_60_2[0];
+        break;
+    
+    default:
+        break;
+    }
+
 }
 
-void trigger_simulator_start()
+void trigger_simulator_update()
 {
-    trigger_simulator_running = true;
+    if (trigger_event_queue_id == NULL || simulated_rpm == (rpm_t)0 || selected_wheel_pattern == NULL || selected_wheel_pattern_length == 0)
+    {
+        osDelay(100);
+        return;
+    }
+    time_ms_t tooth_gap = (time_ms_t)(60000.0f / (simulated_rpm * selected_wheel_pattern_length));
+    if (tooth_gap <= 0)
+    {
+        tooth_gap = 1;
+    }
+    
+    static uint_fast8_t tooth_pointer = 0;
+    
+    if (selected_wheel_pattern[tooth_pointer] == 1)
+    {
+        // Send a trigger event to the queue
+        trigger_event_t event = {0}; // Initialize event as needed
+        event.type = TRIGGER_EVENT_TYPE_CRANKSHAFT;
+        event.edge = TRIGGER_EVENT_EDGE_FALLING;
+        event.timestamp = get_time_us();
+        osMessageQueuePut(trigger_event_queue_id, &event, 0, 0);
+    }
+    
+    if (tooth_pointer < (selected_wheel_pattern_length - 1))
+    {
+        tooth_pointer++;
+    }
+    else
+    {
+        tooth_pointer = 0;
+    }
+    
+    osDelay(tooth_gap);
+}
+
+void trigger_simulator_set_rpm_and_start(rpm_t rpm)
+{
+    simulated_rpm = rpm;
 }
 void trigger_simulator_stop()
 {
-    trigger_simulator_running = false;
+    simulated_rpm = (rpm_t)0;
 }
-
-
-void trigger_simulator_update(rpm_t rpm)
-{
-    if (trigger_callback_cam == NULL || trigger_callback_crank == NULL)
-    {
-        return;
-    }
-    if (wheel_full_teeth == 0) {
-        return; // Prevent division by zero
-    }
-    if (rpm == 0 || !trigger_simulator_running)
-    {
-        osDelay(1);
-        return;
-    }
-    
-    time_us_t tooth_interval = (time_us_t)roundf((float)microseconds_per_degree(rpm) * (float)360 / (float)wheel_full_teeth / (float)1000);
-
-    osDelay(tooth_interval);
-    
-    static uint8_t current_tooth_index = 0;
-
-    if (current_tooth_index < wheel_missing_teeth)
-    {
-        // welll do nothing!
-    }
-    else
-    {
-        trigger_callback_crank();
-    }
-    
-
-    if (current_tooth_index < (wheel_full_teeth - 1))
-    {
-        current_tooth_index++;
-    }
-    else
-    {
-        current_tooth_index = 0;
-    }
-
-    if (current_tooth_index == 0)
-    {
-        cam_state = !cam_state;
-        trigger_callback_cam(cam_state);
-    }
-
-    
-}
-

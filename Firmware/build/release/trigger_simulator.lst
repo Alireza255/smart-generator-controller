@@ -1,0 +1,304 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"trigger_simulator.c"
+  16              		.text
+  17              		.section	.text.trigger_simulator_crank_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	trigger_simulator_crank_init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	trigger_simulator_crank_init:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 41B1     		cbz	r1, .L1
+  29 0002 054A     		ldr	r2, .L3
+  30 0004 1160     		str	r1, [r2]
+  31 0006 28B9     		cbnz	r0, .L1
+  32 0008 044B     		ldr	r3, .L3+4
+  33 000a 3C22     		movs	r2, #60
+  34 000c 1A70     		strb	r2, [r3]
+  35 000e 044B     		ldr	r3, .L3+8
+  36 0010 044A     		ldr	r2, .L3+12
+  37 0012 1A60     		str	r2, [r3]
+  38              	.L1:
+  39 0014 7047     		bx	lr
+  40              	.L4:
+  41 0016 00BF     		.align	2
+  42              	.L3:
+  43 0018 00000000 		.word	trigger_event_queue_id
+  44 001c 00000000 		.word	selected_wheel_pattern_length
+  45 0020 00000000 		.word	selected_wheel_pattern
+  46 0024 00000000 		.word	wheel_pattern_60_2
+  48              		.section	.text.trigger_simulator_update,"ax",%progbits
+  49              		.align	1
+  50              		.global	trigger_simulator_update
+  51              		.syntax unified
+  52              		.thumb
+  53              		.thumb_func
+  55              	trigger_simulator_update:
+  56              		@ args = 0, pretend = 0, frame = 8
+  57              		@ frame_needed = 0, uses_anonymous_args = 0
+  58 0000 70B5     		push	{r4, r5, r6, lr}
+  59 0002 82B0     		sub	sp, sp, #8
+  60 0004 264B     		ldr	r3, .L16
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s 			page 2
+
+
+  61 0006 1B68     		ldr	r3, [r3]
+  62 0008 7BB3     		cbz	r3, .L6
+  63 000a 264B     		ldr	r3, .L16+4
+  64 000c 93ED007A 		vldr.32	s14, [r3]
+  65 0010 B5EE407A 		vcmp.f32	s14, #0
+  66 0014 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  67 0018 27D0     		beq	.L6
+  68 001a 234B     		ldr	r3, .L16+8
+  69 001c 1A68     		ldr	r2, [r3]
+  70 001e 22B3     		cbz	r2, .L6
+  71 0020 224B     		ldr	r3, .L16+12
+  72 0022 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  73 0024 0BB3     		cbz	r3, .L6
+  74 0026 07EE903A 		vmov	s15, r3	@ int
+  75 002a F8EEE77A 		vcvt.f32.s32	s15, s15
+  76 002e 67EE877A 		vmul.f32	s15, s15, s14
+  77 0032 DFED1F6A 		vldr.32	s13, .L16+16
+  78 0036 86EEA77A 		vdiv.f32	s14, s13, s15
+  79 003a FCEEC77A 		vcvt.u32.f32	s15, s14
+  80 003e 17EE904A 		vmov	r4, s15	@ int
+  81 0042 04B9     		cbnz	r4, .L9
+  82 0044 0124     		movs	r4, #1
+  83              	.L9:
+  84 0046 1B4B     		ldr	r3, .L16+20
+  85 0048 1B68     		ldr	r3, [r3]
+  86 004a D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+  87 004c 93B9     		cbnz	r3, .L15
+  88              	.L10:
+  89 004e 174B     		ldr	r3, .L16+12
+  90 0050 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  91 0052 013B     		subs	r3, r3, #1
+  92 0054 174A     		ldr	r2, .L16+20
+  93 0056 1268     		ldr	r2, [r2]
+  94 0058 9342     		cmp	r3, r2
+  95 005a 1CD9     		bls	.L11
+  96 005c 0132     		adds	r2, r2, #1
+  97 005e 154B     		ldr	r3, .L16+20
+  98 0060 1A60     		str	r2, [r3]
+  99              	.L12:
+ 100 0062 2046     		mov	r0, r4
+ 101 0064 FFF7FEFF 		bl	osDelay
+ 102 0068 02E0     		b	.L5
+ 103              	.L6:
+ 104 006a 6420     		movs	r0, #100
+ 105 006c FFF7FEFF 		bl	osDelay
+ 106              	.L5:
+ 107 0070 02B0     		add	sp, sp, #8
+ 108              		@ sp needed
+ 109 0072 70BD     		pop	{r4, r5, r6, pc}
+ 110              	.L15:
+ 111 0074 0025     		movs	r5, #0
+ 112 0076 0095     		str	r5, [sp]
+ 113 0078 0195     		str	r5, [sp, #4]
+ 114 007a 0123     		movs	r3, #1
+ 115 007c 8DF80430 		strb	r3, [sp, #4]
+ 116 0080 FFF7FEFF 		bl	get_time_us
+ 117 0084 0090     		str	r0, [sp]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s 			page 3
+
+
+ 118 0086 2B46     		mov	r3, r5
+ 119 0088 2A46     		mov	r2, r5
+ 120 008a 6946     		mov	r1, sp
+ 121 008c 0448     		ldr	r0, .L16
+ 122 008e 0068     		ldr	r0, [r0]
+ 123 0090 FFF7FEFF 		bl	osMessageQueuePut
+ 124 0094 DBE7     		b	.L10
+ 125              	.L11:
+ 126 0096 074B     		ldr	r3, .L16+20
+ 127 0098 0022     		movs	r2, #0
+ 128 009a 1A60     		str	r2, [r3]
+ 129 009c E1E7     		b	.L12
+ 130              	.L17:
+ 131 009e 00BF     		.align	2
+ 132              	.L16:
+ 133 00a0 00000000 		.word	trigger_event_queue_id
+ 134 00a4 00000000 		.word	simulated_rpm
+ 135 00a8 00000000 		.word	selected_wheel_pattern
+ 136 00ac 00000000 		.word	selected_wheel_pattern_length
+ 137 00b0 00606A47 		.word	1198153728
+ 138 00b4 00000000 		.word	tooth_pointer.0
+ 140              		.section	.text.trigger_simulator_set_rpm_and_start,"ax",%progbits
+ 141              		.align	1
+ 142              		.global	trigger_simulator_set_rpm_and_start
+ 143              		.syntax unified
+ 144              		.thumb
+ 145              		.thumb_func
+ 147              	trigger_simulator_set_rpm_and_start:
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              		@ link register save eliminated.
+ 151 0000 014B     		ldr	r3, .L19
+ 152 0002 83ED000A 		vstr.32	s0, [r3]
+ 153 0006 7047     		bx	lr
+ 154              	.L20:
+ 155              		.align	2
+ 156              	.L19:
+ 157 0008 00000000 		.word	simulated_rpm
+ 159              		.section	.text.trigger_simulator_stop,"ax",%progbits
+ 160              		.align	1
+ 161              		.global	trigger_simulator_stop
+ 162              		.syntax unified
+ 163              		.thumb
+ 164              		.thumb_func
+ 166              	trigger_simulator_stop:
+ 167              		@ args = 0, pretend = 0, frame = 0
+ 168              		@ frame_needed = 0, uses_anonymous_args = 0
+ 169              		@ link register save eliminated.
+ 170 0000 014B     		ldr	r3, .L22
+ 171 0002 0022     		movs	r2, #0
+ 172 0004 1A60     		str	r2, [r3]	@ float
+ 173 0006 7047     		bx	lr
+ 174              	.L23:
+ 175              		.align	2
+ 176              	.L22:
+ 177 0008 00000000 		.word	simulated_rpm
+ 179              		.section	.bss.tooth_pointer.0,"aw",%nobits
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s 			page 4
+
+
+ 180              		.align	2
+ 183              	tooth_pointer.0:
+ 184 0000 00000000 		.space	4
+ 185              		.global	wheel_pattern_60_2
+ 186              		.section	.rodata.wheel_pattern_60_2,"a"
+ 187              		.align	2
+ 190              	wheel_pattern_60_2:
+ 191 0000 01       		.byte	1
+ 192 0001 01       		.byte	1
+ 193 0002 01       		.byte	1
+ 194 0003 01       		.byte	1
+ 195 0004 01       		.byte	1
+ 196 0005 01       		.byte	1
+ 197 0006 01       		.byte	1
+ 198 0007 01       		.byte	1
+ 199 0008 01       		.byte	1
+ 200 0009 01       		.byte	1
+ 201 000a 01       		.byte	1
+ 202 000b 01       		.byte	1
+ 203 000c 01       		.byte	1
+ 204 000d 01       		.byte	1
+ 205 000e 01       		.byte	1
+ 206 000f 01       		.byte	1
+ 207 0010 01       		.byte	1
+ 208 0011 01       		.byte	1
+ 209 0012 01       		.byte	1
+ 210 0013 01       		.byte	1
+ 211 0014 01       		.byte	1
+ 212 0015 01       		.byte	1
+ 213 0016 01       		.byte	1
+ 214 0017 01       		.byte	1
+ 215 0018 01       		.byte	1
+ 216 0019 01       		.byte	1
+ 217 001a 01       		.byte	1
+ 218 001b 01       		.byte	1
+ 219 001c 01       		.byte	1
+ 220 001d 01       		.byte	1
+ 221 001e 01       		.byte	1
+ 222 001f 01       		.byte	1
+ 223 0020 01       		.byte	1
+ 224 0021 01       		.byte	1
+ 225 0022 01       		.byte	1
+ 226 0023 01       		.byte	1
+ 227 0024 01       		.byte	1
+ 228 0025 01       		.byte	1
+ 229 0026 01       		.byte	1
+ 230 0027 01       		.byte	1
+ 231 0028 01       		.byte	1
+ 232 0029 01       		.byte	1
+ 233 002a 01       		.byte	1
+ 234 002b 01       		.byte	1
+ 235 002c 01       		.byte	1
+ 236 002d 01       		.byte	1
+ 237 002e 01       		.byte	1
+ 238 002f 01       		.byte	1
+ 239 0030 01       		.byte	1
+ 240 0031 01       		.byte	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s 			page 5
+
+
+ 241 0032 01       		.byte	1
+ 242 0033 01       		.byte	1
+ 243 0034 01       		.byte	1
+ 244 0035 01       		.byte	1
+ 245 0036 01       		.byte	1
+ 246 0037 01       		.byte	1
+ 247 0038 01       		.byte	1
+ 248 0039 01       		.byte	1
+ 249 003a 00       		.byte	0
+ 250 003b 00       		.byte	0
+ 251              		.section	.bss.selected_wheel_pattern_length,"aw",%nobits
+ 254              	selected_wheel_pattern_length:
+ 255 0000 00       		.space	1
+ 256              		.section	.bss.selected_wheel_pattern,"aw",%nobits
+ 257              		.align	2
+ 260              	selected_wheel_pattern:
+ 261 0000 00000000 		.space	4
+ 262              		.global	simulated_rpm
+ 263              		.section	.bss.simulated_rpm,"aw",%nobits
+ 264              		.align	2
+ 267              	simulated_rpm:
+ 268 0000 00000000 		.space	4
+ 269              		.section	.bss.trigger_event_queue_id,"aw",%nobits
+ 270              		.align	2
+ 273              	trigger_event_queue_id:
+ 274 0000 00000000 		.space	4
+ 275              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 trigger_simulator.c
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:18     .text.trigger_simulator_crank_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:24     .text.trigger_simulator_crank_init:00000000 trigger_simulator_crank_init
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:43     .text.trigger_simulator_crank_init:00000018 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:273    .bss.trigger_event_queue_id:00000000 trigger_event_queue_id
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:254    .bss.selected_wheel_pattern_length:00000000 selected_wheel_pattern_length
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:260    .bss.selected_wheel_pattern:00000000 selected_wheel_pattern
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:190    .rodata.wheel_pattern_60_2:00000000 wheel_pattern_60_2
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:49     .text.trigger_simulator_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:55     .text.trigger_simulator_update:00000000 trigger_simulator_update
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:133    .text.trigger_simulator_update:000000a0 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:267    .bss.simulated_rpm:00000000 simulated_rpm
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:183    .bss.tooth_pointer.0:00000000 tooth_pointer.0
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:141    .text.trigger_simulator_set_rpm_and_start:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:147    .text.trigger_simulator_set_rpm_and_start:00000000 trigger_simulator_set_rpm_and_start
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:157    .text.trigger_simulator_set_rpm_and_start:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:160    .text.trigger_simulator_stop:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:166    .text.trigger_simulator_stop:00000000 trigger_simulator_stop
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:177    .text.trigger_simulator_stop:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:180    .bss.tooth_pointer.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:187    .rodata.wheel_pattern_60_2:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:255    .bss.selected_wheel_pattern_length:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:257    .bss.selected_wheel_pattern:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:264    .bss.simulated_rpm:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccLZmD92.s:270    .bss.trigger_event_queue_id:00000000 $d
+
+UNDEFINED SYMBOLS
+osDelay
+get_time_us
+osMessageQueuePut

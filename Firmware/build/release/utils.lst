@@ -1,0 +1,686 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"utils.c"
+  16              		.text
+  17              		.section	.text.is_phase_in_range,"ax",%progbits
+  18              		.align	1
+  19              		.global	is_phase_in_range
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	is_phase_in_range:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 F4EEC10A 		vcmpe.f32	s1, s2
+  29 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  30 0008 0FD5     		bpl	.L16
+  31 000a B4EEE00A 		vcmpe.f32	s0, s1
+  32 000e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  33 0012 06DB     		blt	.L17
+  34 0014 B4EEC10A 		vcmpe.f32	s0, s2
+  35 0018 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  36 001c 03D4     		bmi	.L10
+  37 001e 0020     		movs	r0, #0
+  38 0020 7047     		bx	lr
+  39              	.L17:
+  40 0022 0020     		movs	r0, #0
+  41 0024 7047     		bx	lr
+  42              	.L10:
+  43 0026 0120     		movs	r0, #1
+  44 0028 7047     		bx	lr
+  45              	.L16:
+  46 002a B4EEE00A 		vcmpe.f32	s0, s1
+  47 002e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  48 0032 06DA     		bge	.L11
+  49 0034 B4EEC10A 		vcmpe.f32	s0, s2
+  50 0038 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  51 003c 03D5     		bpl	.L18
+  52 003e 0120     		movs	r0, #1
+  53 0040 7047     		bx	lr
+  54              	.L11:
+  55 0042 0120     		movs	r0, #1
+  56 0044 7047     		bx	lr
+  57              	.L18:
+  58 0046 0020     		movs	r0, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 2
+
+
+  59 0048 7047     		bx	lr
+  61              		.section	.text.crc32_inc,"ax",%progbits
+  62              		.align	1
+  63              		.global	crc32_inc
+  64              		.syntax unified
+  65              		.thumb
+  66              		.thumb_func
+  68              	crc32_inc:
+  69              		@ args = 0, pretend = 0, frame = 0
+  70              		@ frame_needed = 0, uses_anonymous_args = 0
+  71              		@ link register save eliminated.
+  72 0000 C043     		mvns	r0, r0
+  73 0002 4FF0000C 		mov	ip, #0
+  74 0006 9445     		cmp	ip, r2
+  75 0008 11D2     		bcs	.L26
+  76 000a 10B4     		push	{r4}
+  77              	.L21:
+  78 000c 11F80C30 		ldrb	r3, [r1, ip]	@ zero_extendqisi2
+  79 0010 4340     		eors	r3, r3, r0
+  80 0012 DBB2     		uxtb	r3, r3
+  81 0014 074C     		ldr	r4, .L27
+  82 0016 54F82330 		ldr	r3, [r4, r3, lsl #2]
+  83 001a 83EA1020 		eor	r0, r3, r0, lsr #8
+  84 001e 0CF1010C 		add	ip, ip, #1
+  85 0022 9445     		cmp	ip, r2
+  86 0024 F2D3     		bcc	.L21
+  87 0026 C043     		mvns	r0, r0
+  88 0028 5DF8044B 		ldr	r4, [sp], #4
+  89 002c 7047     		bx	lr
+  90              	.L26:
+  91 002e C043     		mvns	r0, r0
+  92 0030 7047     		bx	lr
+  93              	.L28:
+  94 0032 00BF     		.align	2
+  95              	.L27:
+  96 0034 00000000 		.word	crcTable.0
+  98              		.section	.text.swap_endian_copy_uint8,"ax",%progbits
+  99              		.align	1
+ 100              		.global	swap_endian_copy_uint8
+ 101              		.syntax unified
+ 102              		.thumb
+ 103              		.thumb_func
+ 105              	swap_endian_copy_uint8:
+ 106              		@ args = 0, pretend = 0, frame = 0
+ 107              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108              		@ link register save eliminated.
+ 109 0000 0023     		movs	r3, #0
+ 110 0002 08E0     		b	.L30
+ 111              	.L31:
+ 112 0004 A2EB030C 		sub	ip, r2, r3
+ 113 0008 0CF1FF3C 		add	ip, ip, #-1
+ 114 000c 11F80CC0 		ldrb	ip, [r1, ip]	@ zero_extendqisi2
+ 115 0010 00F803C0 		strb	ip, [r0, r3]
+ 116 0014 0133     		adds	r3, r3, #1
+ 117              	.L30:
+ 118 0016 9342     		cmp	r3, r2
+ 119 0018 F4D3     		bcc	.L31
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 3
+
+
+ 120 001a 7047     		bx	lr
+ 122              		.section	.text.nearest_index_float,"ax",%progbits
+ 123              		.align	1
+ 124              		.global	nearest_index_float
+ 125              		.syntax unified
+ 126              		.thumb
+ 127              		.thumb_func
+ 129              	nearest_index_float:
+ 130              		@ args = 0, pretend = 0, frame = 0
+ 131              		@ frame_needed = 0, uses_anonymous_args = 0
+ 132 0000 F9B1     		cbz	r1, .L37
+ 133 0002 00B5     		push	{lr}
+ 134 0004 8446     		mov	ip, r0
+ 135 0006 8E46     		mov	lr, r1
+ 136 0008 90ED007A 		vldr.32	s14, [r0]
+ 137 000c 37EE407A 		vsub.f32	s14, s14, s0
+ 138 0010 B0EEC77A 		vabs.f32	s14, s14
+ 139 0014 0123     		movs	r3, #1
+ 140 0016 0020     		movs	r0, #0
+ 141 0018 00E0     		b	.L34
+ 142              	.L35:
+ 143 001a 0133     		adds	r3, r3, #1
+ 144              	.L34:
+ 145 001c 7345     		cmp	r3, lr
+ 146 001e 13D2     		bcs	.L43
+ 147 0020 0CEB8302 		add	r2, ip, r3, lsl #2
+ 148 0024 D2ED007A 		vldr.32	s15, [r2]
+ 149 0028 77EEC07A 		vsub.f32	s15, s15, s0
+ 150 002c F0EEE77A 		vabs.f32	s15, s15
+ 151 0030 B4EEE77A 		vcmpe.f32	s14, s15
+ 152 0034 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 153 0038 EFDD     		ble	.L35
+ 154 003a B0EE677A 		vmov.f32	s14, s15
+ 155 003e 1846     		mov	r0, r3
+ 156 0040 EBE7     		b	.L35
+ 157              	.L37:
+ 158 0042 4FF0FF30 		mov	r0, #-1
+ 159 0046 7047     		bx	lr
+ 160              	.L43:
+ 161 0048 5DF804FB 		ldr	pc, [sp], #4
+ 163              		.section	.text.interpolate_2d,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	interpolate_2d
+ 166              		.syntax unified
+ 167              		.thumb
+ 168              		.thumb_func
+ 170              	interpolate_2d:
+ 171              		@ args = 0, pretend = 0, frame = 0
+ 172              		@ frame_needed = 0, uses_anonymous_args = 0
+ 173              		@ link register save eliminated.
+ 174 0000 31EE401A 		vsub.f32	s2, s2, s0
+ 175 0004 B0EEC17A 		vabs.f32	s14, s2
+ 176 0008 DFED0A7A 		vldr.32	s15, .L47
+ 177 000c B4EEE77A 		vcmpe.f32	s14, s15
+ 178 0010 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 179 0014 0AD4     		bmi	.L46
+ 180 0016 71EEE01A 		vsub.f32	s3, s3, s1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 4
+
+
+ 181 001a 32EE402A 		vsub.f32	s4, s4, s0
+ 182 001e C2EE017A 		vdiv.f32	s15, s4, s2
+ 183 0022 61EEA71A 		vmul.f32	s3, s3, s15
+ 184 0026 31EEA00A 		vadd.f32	s0, s3, s1
+ 185 002a 7047     		bx	lr
+ 186              	.L46:
+ 187 002c B0EE600A 		vmov.f32	s0, s1
+ 188 0030 7047     		bx	lr
+ 189              	.L48:
+ 190 0032 00BF     		.align	2
+ 191              	.L47:
+ 192 0034 00000034 		.word	872415232
+ 194              		.section	.text.nearest_index_u8,"ax",%progbits
+ 195              		.align	1
+ 196              		.global	nearest_index_u8
+ 197              		.syntax unified
+ 198              		.thumb
+ 199              		.thumb_func
+ 201              	nearest_index_u8:
+ 202              		@ args = 0, pretend = 0, frame = 0
+ 203              		@ frame_needed = 0, uses_anonymous_args = 0
+ 204 0000 E9B1     		cbz	r1, .L58
+ 205 0002 10B5     		push	{r4, lr}
+ 206 0004 8646     		mov	lr, r0
+ 207 0006 0C46     		mov	r4, r1
+ 208 0008 90F800C0 		ldrb	ip, [r0]	@ zero_extendqisi2
+ 209 000c 9445     		cmp	ip, r2
+ 210 000e 04D9     		bls	.L51
+ 211 0010 ACEB020C 		sub	ip, ip, r2
+ 212              	.L52:
+ 213 0014 0121     		movs	r1, #1
+ 214 0016 0020     		movs	r0, #0
+ 215 0018 05E0     		b	.L56
+ 216              	.L51:
+ 217 001a A2EB0C0C 		sub	ip, r2, ip
+ 218 001e F9E7     		b	.L52
+ 219              	.L53:
+ 220 0020 D31A     		subs	r3, r2, r3
+ 221 0022 07E0     		b	.L54
+ 222              	.L55:
+ 223 0024 0131     		adds	r1, r1, #1
+ 224              	.L56:
+ 225 0026 A142     		cmp	r1, r4
+ 226 0028 0CD2     		bcs	.L64
+ 227 002a 1EF80130 		ldrb	r3, [lr, r1]	@ zero_extendqisi2
+ 228 002e 9342     		cmp	r3, r2
+ 229 0030 F6D9     		bls	.L53
+ 230 0032 9B1A     		subs	r3, r3, r2
+ 231              	.L54:
+ 232 0034 9C45     		cmp	ip, r3
+ 233 0036 F5D9     		bls	.L55
+ 234 0038 9C46     		mov	ip, r3
+ 235 003a 0846     		mov	r0, r1
+ 236 003c F2E7     		b	.L55
+ 237              	.L58:
+ 238 003e 4FF0FF30 		mov	r0, #-1
+ 239 0042 7047     		bx	lr
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 5
+
+
+ 240              	.L64:
+ 241 0044 10BD     		pop	{r4, pc}
+ 243              		.section	.text.nearest_index_u16,"ax",%progbits
+ 244              		.align	1
+ 245              		.global	nearest_index_u16
+ 246              		.syntax unified
+ 247              		.thumb
+ 248              		.thumb_func
+ 250              	nearest_index_u16:
+ 251              		@ args = 0, pretend = 0, frame = 0
+ 252              		@ frame_needed = 0, uses_anonymous_args = 0
+ 253 0000 E9B1     		cbz	r1, .L74
+ 254 0002 10B5     		push	{r4, lr}
+ 255 0004 8646     		mov	lr, r0
+ 256 0006 0C46     		mov	r4, r1
+ 257 0008 B0F800C0 		ldrh	ip, [r0]
+ 258 000c 9445     		cmp	ip, r2
+ 259 000e 04D9     		bls	.L67
+ 260 0010 ACEB020C 		sub	ip, ip, r2
+ 261              	.L68:
+ 262 0014 0121     		movs	r1, #1
+ 263 0016 0020     		movs	r0, #0
+ 264 0018 05E0     		b	.L72
+ 265              	.L67:
+ 266 001a A2EB0C0C 		sub	ip, r2, ip
+ 267 001e F9E7     		b	.L68
+ 268              	.L69:
+ 269 0020 D31A     		subs	r3, r2, r3
+ 270 0022 07E0     		b	.L70
+ 271              	.L71:
+ 272 0024 0131     		adds	r1, r1, #1
+ 273              	.L72:
+ 274 0026 A142     		cmp	r1, r4
+ 275 0028 0CD2     		bcs	.L80
+ 276 002a 3EF81130 		ldrh	r3, [lr, r1, lsl #1]
+ 277 002e 9342     		cmp	r3, r2
+ 278 0030 F6D9     		bls	.L69
+ 279 0032 9B1A     		subs	r3, r3, r2
+ 280              	.L70:
+ 281 0034 9C45     		cmp	ip, r3
+ 282 0036 F5D9     		bls	.L71
+ 283 0038 9C46     		mov	ip, r3
+ 284 003a 0846     		mov	r0, r1
+ 285 003c F2E7     		b	.L71
+ 286              	.L74:
+ 287 003e 4FF0FF30 		mov	r0, #-1
+ 288 0042 7047     		bx	lr
+ 289              	.L80:
+ 290 0044 10BD     		pop	{r4, pc}
+ 292              		.section	.text.nearest_index_u32,"ax",%progbits
+ 293              		.align	1
+ 294              		.global	nearest_index_u32
+ 295              		.syntax unified
+ 296              		.thumb
+ 297              		.thumb_func
+ 299              	nearest_index_u32:
+ 300              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 6
+
+
+ 301              		@ frame_needed = 0, uses_anonymous_args = 0
+ 302 0000 E1B1     		cbz	r1, .L90
+ 303 0002 10B5     		push	{r4, lr}
+ 304 0004 8646     		mov	lr, r0
+ 305 0006 0C46     		mov	r4, r1
+ 306 0008 0368     		ldr	r3, [r0]
+ 307 000a 9342     		cmp	r3, r2
+ 308 000c 04D9     		bls	.L83
+ 309 000e A3EB020C 		sub	ip, r3, r2
+ 310              	.L84:
+ 311 0012 0121     		movs	r1, #1
+ 312 0014 0020     		movs	r0, #0
+ 313 0016 05E0     		b	.L88
+ 314              	.L83:
+ 315 0018 A2EB030C 		sub	ip, r2, r3
+ 316 001c F9E7     		b	.L84
+ 317              	.L85:
+ 318 001e D31A     		subs	r3, r2, r3
+ 319 0020 07E0     		b	.L86
+ 320              	.L87:
+ 321 0022 0131     		adds	r1, r1, #1
+ 322              	.L88:
+ 323 0024 A142     		cmp	r1, r4
+ 324 0026 0CD2     		bcs	.L96
+ 325 0028 5EF82130 		ldr	r3, [lr, r1, lsl #2]
+ 326 002c 9342     		cmp	r3, r2
+ 327 002e F6D9     		bls	.L85
+ 328 0030 9B1A     		subs	r3, r3, r2
+ 329              	.L86:
+ 330 0032 9C45     		cmp	ip, r3
+ 331 0034 F5D9     		bls	.L87
+ 332 0036 9C46     		mov	ip, r3
+ 333 0038 0846     		mov	r0, r1
+ 334 003a F2E7     		b	.L87
+ 335              	.L90:
+ 336 003c 4FF0FF30 		mov	r0, #-1
+ 337 0040 7047     		bx	lr
+ 338              	.L96:
+ 339 0042 10BD     		pop	{r4, pc}
+ 341              		.section	.text.rate_of_change_per_sec,"ax",%progbits
+ 342              		.align	1
+ 343              		.global	rate_of_change_per_sec
+ 344              		.syntax unified
+ 345              		.thumb
+ 346              		.thumb_func
+ 348              	rate_of_change_per_sec:
+ 349              		@ args = 0, pretend = 0, frame = 0
+ 350              		@ frame_needed = 0, uses_anonymous_args = 0
+ 351              		@ link register save eliminated.
+ 352 0000 B4EE400A 		vcmp.f32	s0, s0
+ 353 0004 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 354 0008 13D6     		bvs	.L99
+ 355 000a F4EE600A 		vcmp.f32	s1, s1
+ 356 000e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 357 0012 11D6     		bvs	.L100
+ 358 0014 401A     		subs	r0, r0, r1
+ 359 0016 12D0     		beq	.L101
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 7
+
+
+ 360 0018 70EE600A 		vsub.f32	s1, s0, s1
+ 361 001c 07EE900A 		vmov	s15, r0	@ int
+ 362 0020 F8EE677A 		vcvt.f32.u32	s15, s15
+ 363 0024 80EEA70A 		vdiv.f32	s0, s1, s15
+ 364 0028 DFED067A 		vldr.32	s15, .L102
+ 365 002c 20EE270A 		vmul.f32	s0, s0, s15
+ 366 0030 7047     		bx	lr
+ 367              	.L99:
+ 368 0032 9FED050A 		vldr.32	s0, .L102+4
+ 369 0036 7047     		bx	lr
+ 370              	.L100:
+ 371 0038 9FED030A 		vldr.32	s0, .L102+4
+ 372 003c 7047     		bx	lr
+ 373              	.L101:
+ 374 003e 9FED020A 		vldr.32	s0, .L102+4
+ 375 0042 7047     		bx	lr
+ 376              	.L103:
+ 377              		.align	2
+ 378              	.L102:
+ 379 0044 00247449 		.word	1232348160
+ 380 0048 00000000 		.word	0
+ 382              		.section	.rodata.crcTable.0,"a"
+ 383              		.align	2
+ 386              	crcTable.0:
+ 387 0000 00000000 		.word	0
+ 388 0004 96300777 		.word	1996959894
+ 389 0008 2C610EEE 		.word	-301047508
+ 390 000c BA510999 		.word	-1727442502
+ 391 0010 19C46D07 		.word	124634137
+ 392 0014 8FF46A70 		.word	1886057615
+ 393 0018 35A563E9 		.word	-379345611
+ 394 001c A395649E 		.word	-1637575261
+ 395 0020 3288DB0E 		.word	249268274
+ 396 0024 A4B8DC79 		.word	2044508324
+ 397 0028 1EE9D5E0 		.word	-522852066
+ 398 002c 88D9D297 		.word	-1747789432
+ 399 0030 2B4CB609 		.word	162941995
+ 400 0034 BD7CB17E 		.word	2125561021
+ 401 0038 072DB8E7 		.word	-407360249
+ 402 003c 911DBF90 		.word	-1866523247
+ 403 0040 6410B71D 		.word	498536548
+ 404 0044 F220B06A 		.word	1789927666
+ 405 0048 4871B9F3 		.word	-205950648
+ 406 004c DE41BE84 		.word	-2067906082
+ 407 0050 7DD4DA1A 		.word	450548861
+ 408 0054 EBE4DD6D 		.word	1843258603
+ 409 0058 51B5D4F4 		.word	-187386543
+ 410 005c C785D383 		.word	-2083289657
+ 411 0060 56986C13 		.word	325883990
+ 412 0064 C0A86B64 		.word	1684777152
+ 413 0068 7AF962FD 		.word	-43845254
+ 414 006c ECC9658A 		.word	-1973040660
+ 415 0070 4F5C0114 		.word	335633487
+ 416 0074 D96C0663 		.word	1661365465
+ 417 0078 633D0FFA 		.word	-99664541
+ 418 007c F50D088D 		.word	-1928851979
+ 419 0080 C8206E3B 		.word	997073096
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 8
+
+
+ 420 0084 5E10694C 		.word	1281953886
+ 421 0088 E44160D5 		.word	-715111964
+ 422 008c 727167A2 		.word	-1570279054
+ 423 0090 D1E4033C 		.word	1006888145
+ 424 0094 47D4044B 		.word	1258607687
+ 425 0098 FD850DD2 		.word	-770865667
+ 426 009c 6BB50AA5 		.word	-1526024853
+ 427 00a0 FAA8B535 		.word	901097722
+ 428 00a4 6C98B242 		.word	1119000684
+ 429 00a8 D6C9BBDB 		.word	-608450090
+ 430 00ac 40F9BCAC 		.word	-1396901568
+ 431 00b0 E36CD832 		.word	853044451
+ 432 00b4 755CDF45 		.word	1172266101
+ 433 00b8 CF0DD6DC 		.word	-589951537
+ 434 00bc 593DD1AB 		.word	-1412350631
+ 435 00c0 AC30D926 		.word	651767980
+ 436 00c4 3A00DE51 		.word	1373503546
+ 437 00c8 8051D7C8 		.word	-925412992
+ 438 00cc 1661D0BF 		.word	-1076862698
+ 439 00d0 B5F4B421 		.word	565507253
+ 440 00d4 23C4B356 		.word	1454621731
+ 441 00d8 9995BACF 		.word	-809855591
+ 442 00dc 0FA5BDB8 		.word	-1195530993
+ 443 00e0 9EB80228 		.word	671266974
+ 444 00e4 0888055F 		.word	1594198024
+ 445 00e8 B2D90CC6 		.word	-972236366
+ 446 00ec 24E90BB1 		.word	-1324619484
+ 447 00f0 877C6F2F 		.word	795835527
+ 448 00f4 114C6858 		.word	1483230225
+ 449 00f8 AB1D61C1 		.word	-1050600021
+ 450 00fc 3D2D66B6 		.word	-1234817731
+ 451 0100 9041DC76 		.word	1994146192
+ 452 0104 0671DB01 		.word	31158534
+ 453 0108 BC20D298 		.word	-1731059524
+ 454 010c 2A10D5EF 		.word	-271249366
+ 455 0110 8985B171 		.word	1907459465
+ 456 0114 1FB5B606 		.word	112637215
+ 457 0118 A5E4BF9F 		.word	-1614814043
+ 458 011c 33D4B8E8 		.word	-390540237
+ 459 0120 A2C90778 		.word	2013776290
+ 460 0124 34F9000F 		.word	251722036
+ 461 0128 8EA80996 		.word	-1777751922
+ 462 012c 18980EE1 		.word	-519137256
+ 463 0130 BB0D6A7F 		.word	2137656763
+ 464 0134 2D3D6D08 		.word	141376813
+ 465 0138 976C6491 		.word	-1855689577
+ 466 013c 015C63E6 		.word	-429695999
+ 467 0140 F4516B6B 		.word	1802195444
+ 468 0144 62616C1C 		.word	476864866
+ 469 0148 D8306585 		.word	-2056965928
+ 470 014c 4E0062F2 		.word	-228458418
+ 471 0150 ED95066C 		.word	1812370925
+ 472 0154 7BA5011B 		.word	453092731
+ 473 0158 C1F40882 		.word	-2113342271
+ 474 015c 57C40FF5 		.word	-183516073
+ 475 0160 C6D9B065 		.word	1706088902
+ 476 0164 50E9B712 		.word	314042704
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 9
+
+
+ 477 0168 EAB8BE8B 		.word	-1950435094
+ 478 016c 7C88B9FC 		.word	-54949764
+ 479 0170 DF1DDD62 		.word	1658658271
+ 480 0174 492DDA15 		.word	366619977
+ 481 0178 F37CD38C 		.word	-1932296973
+ 482 017c 654CD4FB 		.word	-69972891
+ 483 0180 5861B24D 		.word	1303535960
+ 484 0184 CE51B53A 		.word	984961486
+ 485 0188 7400BCA3 		.word	-1547960204
+ 486 018c E230BBD4 		.word	-725929758
+ 487 0190 41A5DF4A 		.word	1256170817
+ 488 0194 D795D83D 		.word	1037604311
+ 489 0198 6DC4D1A4 		.word	-1529756563
+ 490 019c FBF4D6D3 		.word	-740887301
+ 491 01a0 6AE96943 		.word	1131014506
+ 492 01a4 FCD96E34 		.word	879679996
+ 493 01a8 468867AD 		.word	-1385723834
+ 494 01ac D0B860DA 		.word	-631195440
+ 495 01b0 732D0444 		.word	1141124467
+ 496 01b4 E51D0333 		.word	855842277
+ 497 01b8 5F4C0AAA 		.word	-1442165665
+ 498 01bc C97C0DDD 		.word	-586318647
+ 499 01c0 3C710550 		.word	1342533948
+ 500 01c4 AA410227 		.word	654459306
+ 501 01c8 10100BBE 		.word	-1106571248
+ 502 01cc 86200CC9 		.word	-921952122
+ 503 01d0 25B56857 		.word	1466479909
+ 504 01d4 B3856F20 		.word	544179635
+ 505 01d8 09D466B9 		.word	-1184443383
+ 506 01dc 9FE461CE 		.word	-832445281
+ 507 01e0 0EF9DE5E 		.word	1591671054
+ 508 01e4 98C9D929 		.word	702138776
+ 509 01e8 2298D0B0 		.word	-1328506846
+ 510 01ec B4A8D7C7 		.word	-942167884
+ 511 01f0 173DB359 		.word	1504918807
+ 512 01f4 810DB42E 		.word	783551873
+ 513 01f8 3B5CBDB7 		.word	-1212326853
+ 514 01fc AD6CBAC0 		.word	-1061524307
+ 515 0200 2083B8ED 		.word	-306674912
+ 516 0204 B6B3BF9A 		.word	-1698712650
+ 517 0208 0CE2B603 		.word	62317068
+ 518 020c 9AD2B174 		.word	1957810842
+ 519 0210 3947D5EA 		.word	-355121351
+ 520 0214 AF77D29D 		.word	-1647151185
+ 521 0218 1526DB04 		.word	81470997
+ 522 021c 8316DC73 		.word	1943803523
+ 523 0220 120B63E3 		.word	-480048366
+ 524 0224 843B6494 		.word	-1805370492
+ 525 0228 3E6A6D0D 		.word	225274430
+ 526 022c A85A6A7A 		.word	2053790376
+ 527 0230 0BCF0EE4 		.word	-468791541
+ 528 0234 9DFF0993 		.word	-1828061283
+ 529 0238 27AE000A 		.word	167816743
+ 530 023c B19E077D 		.word	2097651377
+ 531 0240 44930FF0 		.word	-267414716
+ 532 0244 D2A30887 		.word	-2029476910
+ 533 0248 68F2011E 		.word	503444072
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 10
+
+
+ 534 024c FEC20669 		.word	1762050814
+ 535 0250 5D5762F7 		.word	-144550051
+ 536 0254 CB676580 		.word	-2140837941
+ 537 0258 71366C19 		.word	426522225
+ 538 025c E7066B6E 		.word	1852507879
+ 539 0260 761BD4FE 		.word	-19653770
+ 540 0264 E02BD389 		.word	-1982649376
+ 541 0268 5A7ADA10 		.word	282753626
+ 542 026c CC4ADD67 		.word	1742555852
+ 543 0270 6FDFB9F9 		.word	-105259153
+ 544 0274 F9EFBE8E 		.word	-1900089351
+ 545 0278 43BEB717 		.word	397917763
+ 546 027c D58EB060 		.word	1622183637
+ 547 0280 E8A3D6D6 		.word	-690576408
+ 548 0284 7E93D1A1 		.word	-1580100738
+ 549 0288 C4C2D838 		.word	953729732
+ 550 028c 52F2DF4F 		.word	1340076626
+ 551 0290 F167BBD1 		.word	-776247311
+ 552 0294 6757BCA6 		.word	-1497606297
+ 553 0298 DD06B53F 		.word	1068828381
+ 554 029c 4B36B248 		.word	1219638859
+ 555 02a0 DA2B0DD8 		.word	-670225446
+ 556 02a4 4C1B0AAF 		.word	-1358292148
+ 557 02a8 F64A0336 		.word	906185462
+ 558 02ac 607A0441 		.word	1090812512
+ 559 02b0 C3EF60DF 		.word	-547295293
+ 560 02b4 55DF67A8 		.word	-1469587627
+ 561 02b8 EF8E6E31 		.word	829329135
+ 562 02bc 79BE6946 		.word	1181335161
+ 563 02c0 8CB361CB 		.word	-882789492
+ 564 02c4 1A8366BC 		.word	-1134132454
+ 565 02c8 A0D26F25 		.word	628085408
+ 566 02cc 36E26852 		.word	1382605366
+ 567 02d0 95770CCC 		.word	-871598187
+ 568 02d4 03470BBB 		.word	-1156888829
+ 569 02d8 B9160222 		.word	570562233
+ 570 02dc 2F260555 		.word	1426400815
+ 571 02e0 BE3BBAC5 		.word	-977650754
+ 572 02e4 280BBDB2 		.word	-1296233688
+ 573 02e8 925AB42B 		.word	733239954
+ 574 02ec 046AB35C 		.word	1555261956
+ 575 02f0 A7FFD7C2 		.word	-1026031705
+ 576 02f4 31CFD0B5 		.word	-1244606671
+ 577 02f8 8B9ED92C 		.word	752459403
+ 578 02fc 1DAEDE5B 		.word	1541320221
+ 579 0300 B0C2649B 		.word	-1687895376
+ 580 0304 26F263EC 		.word	-328994266
+ 581 0308 9CA36A75 		.word	1969922972
+ 582 030c 0A936D02 		.word	40735498
+ 583 0310 A906099C 		.word	-1677130071
+ 584 0314 3F360EEB 		.word	-351390145
+ 585 0318 85670772 		.word	1913087877
+ 586 031c 13570005 		.word	83908371
+ 587 0320 824ABF95 		.word	-1782625662
+ 588 0324 147AB8E2 		.word	-491226604
+ 589 0328 AE2BB17B 		.word	2075208622
+ 590 032c 381BB60C 		.word	213261112
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 11
+
+
+ 591 0330 9B8ED292 		.word	-1831694693
+ 592 0334 0DBED5E5 		.word	-438977011
+ 593 0338 B7EFDC7C 		.word	2094854071
+ 594 033c 21DFDB0B 		.word	198958881
+ 595 0340 D4D2D386 		.word	-2032938284
+ 596 0344 42E2D4F1 		.word	-237706686
+ 597 0348 F8B3DD68 		.word	1759359992
+ 598 034c 6E83DA1F 		.word	534414190
+ 599 0350 CD16BE81 		.word	-2118248755
+ 600 0354 5B26B9F6 		.word	-155638181
+ 601 0358 E177B06F 		.word	1873836001
+ 602 035c 7747B718 		.word	414664567
+ 603 0360 E65A0888 		.word	-2012718362
+ 604 0364 706A0FFF 		.word	-15766928
+ 605 0368 CA3B0666 		.word	1711684554
+ 606 036c 5C0B0111 		.word	285281116
+ 607 0370 FF9E658F 		.word	-1889165569
+ 608 0374 69AE62F8 		.word	-127750551
+ 609 0378 D3FF6B61 		.word	1634467795
+ 610 037c 45CF6C16 		.word	376229701
+ 611 0380 78E20AA0 		.word	-1609899400
+ 612 0384 EED20DD7 		.word	-686959890
+ 613 0388 5483044E 		.word	1308918612
+ 614 038c C2B30339 		.word	956543938
+ 615 0390 612667A7 		.word	-1486412191
+ 616 0394 F71660D0 		.word	-799009033
+ 617 0398 4D476949 		.word	1231636301
+ 618 039c DB776E3E 		.word	1047427035
+ 619 03a0 4A6AD1AE 		.word	-1362007478
+ 620 03a4 DC5AD6D9 		.word	-640263460
+ 621 03a8 660BDF40 		.word	1088359270
+ 622 03ac F03BD837 		.word	936918000
+ 623 03b0 53AEBCA9 		.word	-1447252397
+ 624 03b4 C59EBBDE 		.word	-558129467
+ 625 03b8 7FCFB247 		.word	1202900863
+ 626 03bc E9FFB530 		.word	817233897
+ 627 03c0 1CF2BDBD 		.word	-1111625188
+ 628 03c4 8AC2BACA 		.word	-893730166
+ 629 03c8 3093B353 		.word	1404277552
+ 630 03cc A6A3B424 		.word	615818150
+ 631 03d0 0536D0BA 		.word	-1160759803
+ 632 03d4 9306D7CD 		.word	-841546093
+ 633 03d8 2957DE54 		.word	1423857449
+ 634 03dc BF67D923 		.word	601450431
+ 635 03e0 2E7A66B3 		.word	-1285129682
+ 636 03e4 B84A61C4 		.word	-1000256840
+ 637 03e8 021B685D 		.word	1567103746
+ 638 03ec 942B6F2A 		.word	711928724
+ 639 03f0 37BE0BB4 		.word	-1274298825
+ 640 03f4 A18E0CC3 		.word	-1022587231
+ 641 03f8 1BDF055A 		.word	1510334235
+ 642 03fc 8DEF022D 		.word	755167117
+ 643              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 utils.c
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:18     .text.is_phase_in_range:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:24     .text.is_phase_in_range:00000000 is_phase_in_range
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:62     .text.crc32_inc:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:68     .text.crc32_inc:00000000 crc32_inc
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:96     .text.crc32_inc:00000034 $d
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:386    .rodata.crcTable.0:00000000 crcTable.0
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:99     .text.swap_endian_copy_uint8:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:105    .text.swap_endian_copy_uint8:00000000 swap_endian_copy_uint8
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:123    .text.nearest_index_float:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:129    .text.nearest_index_float:00000000 nearest_index_float
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:164    .text.interpolate_2d:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:170    .text.interpolate_2d:00000000 interpolate_2d
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:192    .text.interpolate_2d:00000034 $d
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:195    .text.nearest_index_u8:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:201    .text.nearest_index_u8:00000000 nearest_index_u8
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:244    .text.nearest_index_u16:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:250    .text.nearest_index_u16:00000000 nearest_index_u16
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:293    .text.nearest_index_u32:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:299    .text.nearest_index_u32:00000000 nearest_index_u32
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:342    .text.rate_of_change_per_sec:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:348    .text.rate_of_change_per_sec:00000000 rate_of_change_per_sec
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:379    .text.rate_of_change_per_sec:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\ccSOvZSw.s:383    .rodata.crcTable.0:00000000 $d
+
+NO UNDEFINED SYMBOLS

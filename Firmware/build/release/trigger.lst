@@ -1,0 +1,818 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"trigger.c"
+  16              		.text
+  17              		.section	.rodata.trigger_crankshaft_init.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 54726967 		.ascii	"Trigger initialization failed. Wheel type not recog"
+  20      67657220 
+  20      696E6974 
+  20      69616C69 
+  20      7A617469 
+  21 0033 6E697A65 		.ascii	"nized. Defaulting to 58-2.\000"
+  21      642E2044 
+  21      65666175 
+  21      6C74696E 
+  21      6720746F 
+  22              		.section	.text.trigger_crankshaft_init,"ax",%progbits
+  23              		.align	1
+  24              		.global	trigger_crankshaft_init
+  25              		.syntax unified
+  26              		.thumb
+  27              		.thumb_func
+  29              	trigger_crankshaft_init:
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33 0002 164B     		ldr	r3, .L9
+  34 0004 0022     		movs	r2, #0
+  35 0006 1A70     		strb	r2, [r3]
+  36 0008 58B1     		cbz	r0, .L2
+  37 000a 0128     		cmp	r0, #1
+  38 000c 20D0     		beq	.L3
+  39 000e 1448     		ldr	r0, .L9+4
+  40 0010 FFF7FEFF 		bl	log_error
+  41 0014 0020     		movs	r0, #0
+  42 0016 134B     		ldr	r3, .L9+8
+  43 0018 83F8D00A 		strb	r0, [r3, #2768]
+  44 001c FFF7FEFF 		bl	trigger_crankshaft_init
+  45 0020 15E0     		b	.L1
+  46              	.L2:
+  47 0022 0E4B     		ldr	r3, .L9
+  48 0024 0222     		movs	r2, #2
+  49 0026 1A76     		strb	r2, [r3, #24]
+  50 0028 3C22     		movs	r2, #60
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 2
+
+
+  51 002a DA75     		strb	r2, [r3, #23]
+  52              	.L5:
+  53 002c 0B4B     		ldr	r3, .L9
+  54 002e DA7D     		ldrb	r2, [r3, #23]	@ zero_extendqisi2
+  55 0030 197E     		ldrb	r1, [r3, #24]	@ zero_extendqisi2
+  56 0032 521A     		subs	r2, r2, r1
+  57 0034 9A75     		strb	r2, [r3, #22]
+  58 0036 6422     		movs	r2, #100
+  59 0038 1A61     		str	r2, [r3, #16]
+  60 003a 0B49     		ldr	r1, .L9+12
+  61 003c 0A68     		ldr	r2, [r1]
+  62 003e 22F00800 		bic	r0, r2, #8
+  63 0042 0860     		str	r0, [r1]
+  64 0044 22F02802 		bic	r2, r2, #40
+  65 0048 0A60     		str	r2, [r1]
+  66 004a 0122     		movs	r2, #1
+  67 004c 1A70     		strb	r2, [r3]
+  68              	.L1:
+  69 004e 08BD     		pop	{r3, pc}
+  70              	.L3:
+  71 0050 024B     		ldr	r3, .L9
+  72 0052 0122     		movs	r2, #1
+  73 0054 1A76     		strb	r2, [r3, #24]
+  74 0056 1D22     		movs	r2, #29
+  75 0058 DA75     		strb	r2, [r3, #23]
+  76 005a E7E7     		b	.L5
+  77              	.L10:
+  78              		.align	2
+  79              	.L9:
+  80 005c 00000000 		.word	crank_trigger
+  81 0060 00000000 		.word	.LC0
+  82 0064 00100000 		.word	config+4096
+  83 0068 00000000 		.word	runtime
+  85              		.section	.text.trigger_camshaft_init,"ax",%progbits
+  86              		.align	1
+  87              		.global	trigger_camshaft_init
+  88              		.syntax unified
+  89              		.thumb
+  90              		.thumb_func
+  92              	trigger_camshaft_init:
+  93              		@ args = 0, pretend = 0, frame = 0
+  94              		@ frame_needed = 0, uses_anonymous_args = 0
+  95              		@ link register save eliminated.
+  96 0000 0A4B     		ldr	r3, .L15
+  97 0002 0022     		movs	r2, #0
+  98 0004 1A70     		strb	r2, [r3]
+  99 0006 0A46     		mov	r2, r1
+ 100 0008 21B1     		cbz	r1, .L14
+ 101 000a 084B     		ldr	r3, .L15
+ 102 000c 0121     		movs	r1, #1
+ 103 000e 1970     		strb	r1, [r3]
+ 104 0010 5A60     		str	r2, [r3, #4]
+ 105 0012 7047     		bx	lr
+ 106              	.L14:
+ 107 0014 064A     		ldr	r2, .L15+4
+ 108 0016 1368     		ldr	r3, [r2]
+ 109 0018 43F02001 		orr	r1, r3, #32
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 3
+
+
+ 110 001c 1160     		str	r1, [r2]
+ 111 001e 23F01003 		bic	r3, r3, #16
+ 112 0022 43F02003 		orr	r3, r3, #32
+ 113 0026 1360     		str	r3, [r2]
+ 114 0028 7047     		bx	lr
+ 115              	.L16:
+ 116 002a 00BF     		.align	2
+ 117              	.L15:
+ 118 002c 00000000 		.word	cam_trigger
+ 119 0030 00000000 		.word	runtime
+ 121              		.section	.rodata.trigger_crank_handle.str1.4,"aMS",%progbits,1
+ 122              		.align	2
+ 123              	.LC1:
+ 124 0000 4372616E 		.ascii	"Crank trigger is not initialized.\000"
+ 124      6B207472 
+ 124      69676765 
+ 124      72206973 
+ 124      206E6F74 
+ 125              		.section	.text.trigger_crank_handle,"ax",%progbits
+ 126              		.align	1
+ 127              		.global	trigger_crank_handle
+ 128              		.syntax unified
+ 129              		.thumb
+ 130              		.thumb_func
+ 132              	trigger_crank_handle:
+ 133              		@ args = 0, pretend = 0, frame = 0
+ 134              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135 0000 10B5     		push	{r4, lr}
+ 136 0002 9D4B     		ldr	r3, .L69
+ 137 0004 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 138 0006 0029     		cmp	r1, #0
+ 139 0008 42D0     		beq	.L66
+ 140 000a 0379     		ldrb	r3, [r0, #4]	@ zero_extendqisi2
+ 141 000c 002B     		cmp	r3, #0
+ 142 000e 4BD0     		beq	.L67
+ 143 0010 0468     		ldr	r4, [r0]
+ 144 0012 994B     		ldr	r3, .L69
+ 145 0014 9868     		ldr	r0, [r3, #8]
+ 146 0016 A4EB000C 		sub	ip, r4, r0
+ 147 001a DA68     		ldr	r2, [r3, #12]
+ 148 001c 821A     		subs	r2, r0, r2
+ 149 001e D860     		str	r0, [r3, #12]
+ 150 0020 9C60     		str	r4, [r3, #8]
+ 151 0022 1B69     		ldr	r3, [r3, #16]
+ 152 0024 6345     		cmp	r3, ip
+ 153 0026 53D8     		bhi	.L17
+ 154 0028 002A     		cmp	r2, #0
+ 155 002a 51D0     		beq	.L17
+ 156 002c 07EE90CA 		vmov	s15, ip	@ int
+ 157 0030 F8EE675A 		vcvt.f32.u32	s11, s15
+ 158 0034 07EE902A 		vmov	s15, r2	@ int
+ 159 0038 F8EE677A 		vcvt.f32.u32	s15, s15
+ 160 003c 85EEA77A 		vdiv.f32	s14, s11, s15
+ 161 0040 F7EE087A 		vmov.f32	s15, #1.5e+0
+ 162 0044 B4EEE77A 		vcmpe.f32	s14, s15
+ 163 0048 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 164 004c 49DB     		blt	.L21
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 4
+
+
+ 165 004e 8A4B     		ldr	r3, .L69
+ 166 0050 1B7E     		ldrb	r3, [r3, #24]	@ zero_extendqisi2
+ 167 0052 07EE903A 		vmov	s15, r3	@ int
+ 168 0056 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 169 005a F0EE086A 		vmov.f32	s13, #3.0e+0
+ 170 005e 67EEA67A 		vmul.f32	s15, s15, s13
+ 171 0062 F4EEC77A 		vcmpe.f32	s15, s14
+ 172 0066 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 173 006a 3ADB     		blt	.L21
+ 174 006c 824B     		ldr	r3, .L69
+ 175 006e 9A8A     		ldrh	r2, [r3, #20]
+ 176 0070 9B7D     		ldrb	r3, [r3, #22]	@ zero_extendqisi2
+ 177 0072 013B     		subs	r3, r3, #1
+ 178 0074 9A42     		cmp	r2, r3
+ 179 0076 2CD0     		beq	.L68
+ 180 0078 804B     		ldr	r3, .L69+4
+ 181 007a 5A68     		ldr	r2, [r3, #4]
+ 182 007c 0132     		adds	r2, r2, #1
+ 183 007e 5A60     		str	r2, [r3, #4]
+ 184 0080 0022     		movs	r2, #0
+ 185 0082 7F48     		ldr	r0, .L69+8
+ 186 0084 0270     		strb	r2, [r0]
+ 187 0086 9A60     		str	r2, [r3, #8]
+ 188              	.L25:
+ 189 0088 7B4B     		ldr	r3, .L69
+ 190 008a 0022     		movs	r2, #0
+ 191 008c 9A82     		strh	r2, [r3, #20]	@ movhi
+ 192 008e 2DE0     		b	.L26
+ 193              	.L66:
+ 194 0090 7C48     		ldr	r0, .L69+12
+ 195 0092 FFF7FEFF 		bl	log_error
+ 196 0096 794A     		ldr	r2, .L69+4
+ 197 0098 1368     		ldr	r3, [r2]
+ 198 009a 43F00101 		orr	r1, r3, #1
+ 199 009e 1160     		str	r1, [r2]
+ 200 00a0 43F02103 		orr	r3, r3, #33
+ 201 00a4 1360     		str	r3, [r2]
+ 202 00a6 13E0     		b	.L17
+ 203              	.L67:
+ 204 00a8 744A     		ldr	r2, .L69+4
+ 205 00aa 0023     		movs	r3, #0
+ 206 00ac 9361     		str	r3, [r2, #24]	@ float
+ 207 00ae 1368     		ldr	r3, [r2]
+ 208 00b0 23F00801 		bic	r1, r3, #8
+ 209 00b4 1160     		str	r1, [r2]
+ 210 00b6 0021     		movs	r1, #0
+ 211 00b8 82F87810 		strb	r1, [r2, #120]
+ 212 00bc 23F08061 		bic	r1, r3, #67108864
+ 213 00c0 21F00801 		bic	r1, r1, #8
+ 214 00c4 1160     		str	r1, [r2]
+ 215 00c6 23F04063 		bic	r3, r3, #201326592
+ 216 00ca 23F00803 		bic	r3, r3, #8
+ 217 00ce 1360     		str	r3, [r2]
+ 218              	.L17:
+ 219 00d0 10BD     		pop	{r4, pc}
+ 220              	.L68:
+ 221 00d2 6B4B     		ldr	r3, .L69+8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 5
+
+
+ 222 00d4 0122     		movs	r2, #1
+ 223 00d6 1A70     		strb	r2, [r3]
+ 224 00d8 684A     		ldr	r2, .L69+4
+ 225 00da 9368     		ldr	r3, [r2, #8]
+ 226 00dc 0133     		adds	r3, r3, #1
+ 227 00de 9360     		str	r3, [r2, #8]
+ 228 00e0 D2E7     		b	.L25
+ 229              	.L21:
+ 230 00e2 654A     		ldr	r2, .L69
+ 231 00e4 938A     		ldrh	r3, [r2, #20]
+ 232 00e6 0133     		adds	r3, r3, #1
+ 233 00e8 9382     		strh	r3, [r2, #20]	@ movhi
+ 234 00ea 0021     		movs	r1, #0
+ 235              	.L26:
+ 236 00ec 644B     		ldr	r3, .L69+8
+ 237 00ee 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 238 00f0 EAB1     		cbz	r2, .L27
+ 239 00f2 6248     		ldr	r0, .L69+4
+ 240 00f4 0368     		ldr	r3, [r0]
+ 241 00f6 43F00803 		orr	r3, r3, #8
+ 242 00fa 0360     		str	r3, [r0]
+ 243              	.L28:
+ 244 00fc 5E4B     		ldr	r3, .L69
+ 245 00fe D87D     		ldrb	r0, [r3, #23]	@ zero_extendqisi2
+ 246 0100 05EE100A 		vmov	s10, r0	@ int
+ 247 0104 B8EE455A 		vcvt.f32.u32	s10, s10
+ 248 0108 DFED5F7A 		vldr.32	s15, .L69+16
+ 249 010c 87EE857A 		vdiv.f32	s14, s15, s10
+ 250 0110 988A     		ldrh	r0, [r3, #20]
+ 251 0112 07EE900A 		vmov	s15, r0	@ int
+ 252 0116 F8EE677A 		vcvt.f32.u32	s15, s15
+ 253 011a 67EE277A 		vmul.f32	s15, s14, s15
+ 254 011e 5B4B     		ldr	r3, .L69+20
+ 255 0120 D3F88C36 		ldr	r3, [r3, #1676]	@ unaligned
+ 256 0124 06EE903A 		vmov	s13, r3	@ int
+ 257 0128 77EEA67A 		vadd.f32	s15, s15, s13
+ 258 012c 09E0     		b	.L29
+ 259              	.L27:
+ 260 012e 5348     		ldr	r0, .L69+4
+ 261 0130 0368     		ldr	r3, [r0]
+ 262 0132 23F00803 		bic	r3, r3, #8
+ 263 0136 0360     		str	r3, [r0]
+ 264 0138 E0E7     		b	.L28
+ 265              	.L30:
+ 266 013a 9FED536A 		vldr.32	s12, .L69+16
+ 267 013e 77EE867A 		vadd.f32	s15, s15, s12
+ 268              	.L29:
+ 269 0142 F5EEC07A 		vcmpe.f32	s15, #0
+ 270 0146 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 271 014a F6D4     		bmi	.L30
+ 272 014c 03E0     		b	.L31
+ 273              	.L32:
+ 274 014e 9FED4E6A 		vldr.32	s12, .L69+16
+ 275 0152 77EEC67A 		vsub.f32	s15, s15, s12
+ 276              	.L31:
+ 277 0156 9FED4C6A 		vldr.32	s12, .L69+16
+ 278 015a F4EEC67A 		vcmpe.f32	s15, s12
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 6
+
+
+ 279 015e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 280 0162 F4DA     		bge	.L32
+ 281 0164 454B     		ldr	r3, .L69+4
+ 282 0166 C3ED047A 		vstr.32	s15, [r3, #16]
+ 283 016a 39B9     		cbnz	r1, .L33
+ 284 016c 9FED486A 		vldr.32	s12, .L69+24
+ 285 0170 C6EE254A 		vdiv.f32	s9, s12, s11
+ 286 0174 84EE856A 		vdiv.f32	s12, s9, s10
+ 287 0178 83ED066A 		vstr.32	s12, [r3, #24]
+ 288              	.L33:
+ 289 017c 3E4B     		ldr	r3, .L69
+ 290 017e 9B7D     		ldrb	r3, [r3, #22]	@ zero_extendqisi2
+ 291 0180 013B     		subs	r3, r3, #1
+ 292 0182 9842     		cmp	r0, r3
+ 293 0184 06DA     		bge	.L34
+ 294 0186 77EE277A 		vadd.f32	s15, s14, s15
+ 295 018a 25E0     		b	.L40
+ 296              	.L36:
+ 297 018c DFED3E7A 		vldr.32	s15, .L69+16
+ 298 0190 76EEA76A 		vadd.f32	s13, s13, s15
+ 299              	.L34:
+ 300 0194 F5EEC06A 		vcmpe.f32	s13, #0
+ 301 0198 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 302 019c F6D4     		bmi	.L36
+ 303 019e 03E0     		b	.L37
+ 304              	.L38:
+ 305 01a0 DFED397A 		vldr.32	s15, .L69+16
+ 306 01a4 76EEE76A 		vsub.f32	s13, s13, s15
+ 307              	.L37:
+ 308 01a8 DFED377A 		vldr.32	s15, .L69+16
+ 309 01ac F4EEE76A 		vcmpe.f32	s13, s15
+ 310 01b0 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 311 01b4 F4DA     		bge	.L38
+ 312 01b6 374B     		ldr	r3, .L69+28
+ 313 01b8 C3ED006A 		vstr.32	s13, [r3]
+ 314              	.L39:
+ 315 01bc 2F4B     		ldr	r3, .L69+4
+ 316 01be 93F87830 		ldrb	r3, [r3, #120]	@ zero_extendqisi2
+ 317 01c2 032B     		cmp	r3, #3
+ 318 01c4 00F2AF80 		bhi	.L44
+ 319 01c8 DFE803F0 		tbb	[pc, r3]
+ 320              	.L46:
+ 321 01cc 1B       		.byte	(.L49-.L46)/2
+ 322 01cd 3B       		.byte	(.L48-.L46)/2
+ 323 01ce 66       		.byte	(.L47-.L46)/2
+ 324 01cf 94       		.byte	(.L45-.L46)/2
+ 325              		.p2align 1
+ 326              	.L41:
+ 327 01d0 9FED2D7A 		vldr.32	s14, .L69+16
+ 328 01d4 77EE877A 		vadd.f32	s15, s15, s14
+ 329              	.L40:
+ 330 01d8 F5EEC07A 		vcmpe.f32	s15, #0
+ 331 01dc F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 332 01e0 F6D4     		bmi	.L41
+ 333 01e2 03E0     		b	.L42
+ 334              	.L43:
+ 335 01e4 9FED287A 		vldr.32	s14, .L69+16
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 7
+
+
+ 336 01e8 77EEC77A 		vsub.f32	s15, s15, s14
+ 337              	.L42:
+ 338 01ec 9FED267A 		vldr.32	s14, .L69+16
+ 339 01f0 F4EEC77A 		vcmpe.f32	s15, s14
+ 340 01f4 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 341 01f8 F4DA     		bge	.L43
+ 342 01fa 264B     		ldr	r3, .L69+28
+ 343 01fc C3ED007A 		vstr.32	s15, [r3]
+ 344 0200 DCE7     		b	.L39
+ 345              	.L49:
+ 346 0202 52B9     		cbnz	r2, .L50
+ 347 0204 1D4B     		ldr	r3, .L69+4
+ 348 0206 D3ED067A 		vldr.32	s15, [r3, #24]
+ 349 020a F5EE407A 		vcmp.f32	s15, #0
+ 350 020e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 351 0212 02D0     		beq	.L50
+ 352 0214 0122     		movs	r2, #1
+ 353 0216 83F87820 		strb	r2, [r3, #120]
+ 354              	.L50:
+ 355 021a 184B     		ldr	r3, .L69+4
+ 356 021c 93F87830 		ldrb	r3, [r3, #120]	@ zero_extendqisi2
+ 357 0220 022B     		cmp	r3, #2
+ 358 0222 40F08580 		bne	.L56
+ 359 0226 1549     		ldr	r1, .L69+4
+ 360 0228 0A68     		ldr	r2, [r1]
+ 361 022a 42F08062 		orr	r2, r2, #67108864
+ 362 022e 0A60     		str	r2, [r1]
+ 363              	.L57:
+ 364 0230 032B     		cmp	r3, #3
+ 365 0232 40F08380 		bne	.L58
+ 366 0236 114A     		ldr	r2, .L69+4
+ 367 0238 1368     		ldr	r3, [r2]
+ 368 023a 43F00063 		orr	r3, r3, #134217728
+ 369 023e 1360     		str	r3, [r2]
+ 370 0240 46E7     		b	.L17
+ 371              	.L48:
+ 372 0242 52B9     		cbnz	r2, .L51
+ 373 0244 0D4B     		ldr	r3, .L69+4
+ 374 0246 D3ED067A 		vldr.32	s15, [r3, #24]
+ 375 024a F5EE407A 		vcmp.f32	s15, #0
+ 376 024e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 377 0252 02D1     		bne	.L51
+ 378 0254 83F87820 		strb	r2, [r3, #120]
+ 379 0258 DFE7     		b	.L50
+ 380              	.L51:
+ 381 025a 002A     		cmp	r2, #0
+ 382 025c DDD0     		beq	.L50
+ 383 025e 074B     		ldr	r3, .L69+4
+ 384 0260 D3ED067A 		vldr.32	s15, [r3, #24]
+ 385 0264 F5EE407A 		vcmp.f32	s15, #0
+ 386 0268 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 387 026c D5D0     		beq	.L50
+ 388 026e 0222     		movs	r2, #2
+ 389 0270 83F87820 		strb	r2, [r3, #120]
+ 390 0274 D1E7     		b	.L50
+ 391              	.L70:
+ 392 0276 00BF     		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 8
+
+
+ 393              	.L69:
+ 394 0278 00000000 		.word	crank_trigger
+ 395 027c 00000000 		.word	runtime
+ 396 0280 00000000 		.word	is_trigger_sync_achieved.0
+ 397 0284 00000000 		.word	.LC1
+ 398 0288 0000B443 		.word	1135869952
+ 399 028c 00100000 		.word	config+4096
+ 400 0290 C0E1644C 		.word	1281679808
+ 401 0294 00000000 		.word	next_tooth_angle
+ 402              	.L47:
+ 403 0298 A2B9     		cbnz	r2, .L52
+ 404 029a 2B4B     		ldr	r3, .L71
+ 405 029c 93ED067A 		vldr.32	s14, [r3, #24]
+ 406 02a0 2A4B     		ldr	r3, .L71+4
+ 407 02a2 D3F88036 		ldr	r3, [r3, #1664]	@ unaligned
+ 408 02a6 07EE903A 		vmov	s15, r3	@ int
+ 409 02aa DFED296A 		vldr.32	s13, .L71+8
+ 410 02ae 77EEE67A 		vsub.f32	s15, s15, s13
+ 411 02b2 B4EEE77A 		vcmpe.f32	s14, s15
+ 412 02b6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 413 02ba 03D5     		bpl	.L52
+ 414 02bc 224B     		ldr	r3, .L71
+ 415 02be 0121     		movs	r1, #1
+ 416 02c0 83F87810 		strb	r1, [r3, #120]
+ 417              	.L52:
+ 418 02c4 002A     		cmp	r2, #0
+ 419 02c6 A8D0     		beq	.L50
+ 420 02c8 1F4B     		ldr	r3, .L71
+ 421 02ca 93ED067A 		vldr.32	s14, [r3, #24]
+ 422 02ce 1F4B     		ldr	r3, .L71+4
+ 423 02d0 D3F88036 		ldr	r3, [r3, #1664]	@ unaligned
+ 424 02d4 07EE903A 		vmov	s15, r3	@ int
+ 425 02d8 DFED1D6A 		vldr.32	s13, .L71+8
+ 426 02dc 77EEA67A 		vadd.f32	s15, s15, s13
+ 427 02e0 B4EEE77A 		vcmpe.f32	s14, s15
+ 428 02e4 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 429 02e8 97DD     		ble	.L50
+ 430 02ea 174B     		ldr	r3, .L71
+ 431 02ec 0322     		movs	r2, #3
+ 432 02ee 83F87820 		strb	r2, [r3, #120]
+ 433 02f2 92E7     		b	.L50
+ 434              	.L45:
+ 435 02f4 144B     		ldr	r3, .L71
+ 436 02f6 93ED067A 		vldr.32	s14, [r3, #24]
+ 437 02fa 144B     		ldr	r3, .L71+4
+ 438 02fc D3F88036 		ldr	r3, [r3, #1664]	@ unaligned
+ 439 0300 07EE903A 		vmov	s15, r3	@ int
+ 440 0304 DFED126A 		vldr.32	s13, .L71+8
+ 441 0308 77EEE67A 		vsub.f32	s15, s15, s13
+ 442 030c B4EEE77A 		vcmpe.f32	s14, s15
+ 443 0310 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 444 0314 81D5     		bpl	.L50
+ 445 0316 002A     		cmp	r2, #0
+ 446 0318 3FF47FAF 		beq	.L50
+ 447 031c 0A4B     		ldr	r3, .L71
+ 448 031e 0222     		movs	r2, #2
+ 449 0320 83F87820 		strb	r2, [r3, #120]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 9
+
+
+ 450 0324 79E7     		b	.L50
+ 451              	.L44:
+ 452 0326 084B     		ldr	r3, .L71
+ 453 0328 0022     		movs	r2, #0
+ 454 032a 83F87820 		strb	r2, [r3, #120]
+ 455 032e 74E7     		b	.L50
+ 456              	.L56:
+ 457 0330 0549     		ldr	r1, .L71
+ 458 0332 0A68     		ldr	r2, [r1]
+ 459 0334 22F08062 		bic	r2, r2, #67108864
+ 460 0338 0A60     		str	r2, [r1]
+ 461 033a 79E7     		b	.L57
+ 462              	.L58:
+ 463 033c 024A     		ldr	r2, .L71
+ 464 033e 1368     		ldr	r3, [r2]
+ 465 0340 23F00063 		bic	r3, r3, #134217728
+ 466 0344 1360     		str	r3, [r2]
+ 467 0346 C3E6     		b	.L17
+ 468              	.L72:
+ 469              		.align	2
+ 470              	.L71:
+ 471 0348 00000000 		.word	runtime
+ 472 034c 00100000 		.word	config+4096
+ 473 0350 00004842 		.word	1112014848
+ 475              		.section	.text.trigger_camshaft_signal_handle,"ax",%progbits
+ 476              		.align	1
+ 477              		.global	trigger_camshaft_signal_handle
+ 478              		.syntax unified
+ 479              		.thumb
+ 480              		.thumb_func
+ 482              	trigger_camshaft_signal_handle:
+ 483              		@ args = 0, pretend = 0, frame = 0
+ 484              		@ frame_needed = 0, uses_anonymous_args = 0
+ 485 0000 38B5     		push	{r3, r4, r5, lr}
+ 486 0002 2DED028B 		vpush.64	{d8}
+ 487 0006 394B     		ldr	r3, .L91
+ 488 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 489 000a 002B     		cmp	r3, #0
+ 490 000c 5BD0     		beq	.L73
+ 491 000e 0446     		mov	r4, r0
+ 492 0010 374B     		ldr	r3, .L91+4
+ 493 0012 93F8D43A 		ldrb	r3, [r3, #2772]	@ zero_extendqisi2
+ 494 0016 002B     		cmp	r3, #0
+ 495 0018 55D0     		beq	.L73
+ 496 001a 344B     		ldr	r3, .L91
+ 497 001c 5A68     		ldr	r2, [r3, #4]
+ 498 001e 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 499 0020 032B     		cmp	r3, #3
+ 500 0022 10D8     		bhi	.L75
+ 501 0024 DFE803F0 		tbb	[pc, r3]
+ 502              	.L77:
+ 503 0028 02       		.byte	(.L80-.L77)/2
+ 504 0029 14       		.byte	(.L87-.L77)/2
+ 505 002a 06       		.byte	(.L78-.L77)/2
+ 506 002b 0A       		.byte	(.L76-.L77)/2
+ 507              		.p2align 1
+ 508              	.L80:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 10
+
+
+ 509 002c 9FED318A 		vldr.32	s16, .L91+8
+ 510 0030 0025     		movs	r5, #0
+ 511 0032 10E0     		b	.L79
+ 512              	.L78:
+ 513 0034 B4EE008A 		vmov.f32	s16, #1.25e-1
+ 514 0038 FA25     		movs	r5, #250
+ 515 003a 0CE0     		b	.L79
+ 516              	.L76:
+ 517 003c 9FED2E8A 		vldr.32	s16, .L91+12
+ 518 0040 4FF4FA75 		mov	r5, #500
+ 519 0044 07E0     		b	.L79
+ 520              	.L75:
+ 521 0046 0025     		movs	r5, #0
+ 522 0048 1570     		strb	r5, [r2]
+ 523 004a 9FED2A8A 		vldr.32	s16, .L91+8
+ 524 004e 02E0     		b	.L79
+ 525              	.L87:
+ 526 0050 B5EE008A 		vmov.f32	s16, #2.5e-1
+ 527 0054 6425     		movs	r5, #100
+ 528              	.L79:
+ 529 0056 FFF7FEFF 		bl	get_time_us
+ 530 005a 0246     		mov	r2, r0
+ 531 005c 234B     		ldr	r3, .L91
+ 532 005e DB68     		ldr	r3, [r3, #12]
+ 533 0060 13B1     		cbz	r3, .L81
+ 534 0062 C11A     		subs	r1, r0, r3
+ 535 0064 A942     		cmp	r1, r5
+ 536 0066 31D3     		bcc	.L90
+ 537              	.L81:
+ 538 0068 D31A     		subs	r3, r2, r3
+ 539 006a 07EE903A 		vmov	s15, r3	@ int
+ 540 006e B8EE677A 		vcvt.f32.u32	s14, s15
+ 541 0072 1E49     		ldr	r1, .L91
+ 542 0074 D1ED047A 		vldr.32	s15, [r1, #16]	@ int
+ 543 0078 F8EE677A 		vcvt.f32.u32	s15, s15
+ 544 007c C7EE276A 		vdiv.f32	s13, s14, s15
+ 545 0080 B5EE408A 		vcmp.f32	s16, #0
+ 546 0084 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 547 0088 11D0     		beq	.L82
+ 548 008a F7EE007A 		vmov.f32	s15, #1.0e+0
+ 549 008e 77EEC87A 		vsub.f32	s15, s15, s16
+ 550 0092 F4EEE67A 		vcmpe.f32	s15, s13
+ 551 0096 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 552 009a 1DD8     		bhi	.L83
+ 553 009c F7EE007A 		vmov.f32	s15, #1.0e+0
+ 554 00a0 38EE278A 		vadd.f32	s16, s16, s15
+ 555 00a4 B4EEE68A 		vcmpe.f32	s16, s13
+ 556 00a8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 557 00ac 14DB     		blt	.L83
+ 558              	.L82:
+ 559 00ae 1348     		ldr	r0, .L91+16
+ 560 00b0 0168     		ldr	r1, [r0]
+ 561 00b2 41F01001 		orr	r1, r1, #16
+ 562 00b6 0160     		str	r1, [r0]
+ 563 00b8 A4B1     		cbz	r4, .L85
+ 564 00ba 0C49     		ldr	r1, .L91
+ 565 00bc 0120     		movs	r0, #1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 11
+
+
+ 566 00be 0872     		strb	r0, [r1, #8]
+ 567              	.L86:
+ 568 00c0 0A49     		ldr	r1, .L91
+ 569 00c2 0B61     		str	r3, [r1, #16]
+ 570 00c4 CA60     		str	r2, [r1, #12]
+ 571              	.L73:
+ 572 00c6 BDEC028B 		vldm	sp!, {d8}
+ 573 00ca 38BD     		pop	{r3, r4, r5, pc}
+ 574              	.L90:
+ 575 00cc 0B4A     		ldr	r2, .L91+16
+ 576 00ce 1368     		ldr	r3, [r2]
+ 577 00d0 23F01003 		bic	r3, r3, #16
+ 578 00d4 1360     		str	r3, [r2]
+ 579 00d6 F6E7     		b	.L73
+ 580              	.L83:
+ 581 00d8 084A     		ldr	r2, .L91+16
+ 582 00da 1368     		ldr	r3, [r2]
+ 583 00dc 23F01003 		bic	r3, r3, #16
+ 584 00e0 1360     		str	r3, [r2]
+ 585 00e2 F0E7     		b	.L73
+ 586              	.L85:
+ 587 00e4 0149     		ldr	r1, .L91
+ 588 00e6 0020     		movs	r0, #0
+ 589 00e8 0872     		strb	r0, [r1, #8]
+ 590 00ea E9E7     		b	.L86
+ 591              	.L92:
+ 592              		.align	2
+ 593              	.L91:
+ 594 00ec 00000000 		.word	cam_trigger
+ 595 00f0 00100000 		.word	config+4096
+ 596 00f4 00000000 		.word	0
+ 597 00f8 0000803D 		.word	1031798784
+ 598 00fc 00000000 		.word	runtime
+ 600              		.section	.text.camshaft_get_phase,"ax",%progbits
+ 601              		.align	1
+ 602              		.global	camshaft_get_phase
+ 603              		.syntax unified
+ 604              		.thumb
+ 605              		.thumb_func
+ 607              	camshaft_get_phase:
+ 608              		@ args = 0, pretend = 0, frame = 0
+ 609              		@ frame_needed = 0, uses_anonymous_args = 0
+ 610              		@ link register save eliminated.
+ 611 0000 014B     		ldr	r3, .L94
+ 612 0002 187A     		ldrb	r0, [r3, #8]	@ zero_extendqisi2
+ 613 0004 7047     		bx	lr
+ 614              	.L95:
+ 615 0006 00BF     		.align	2
+ 616              	.L94:
+ 617 0008 00000000 		.word	cam_trigger
+ 619              		.section	.text.crankshaft_get_rpm,"ax",%progbits
+ 620              		.align	1
+ 621              		.global	crankshaft_get_rpm
+ 622              		.syntax unified
+ 623              		.thumb
+ 624              		.thumb_func
+ 626              	crankshaft_get_rpm:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 12
+
+
+ 627              		@ args = 0, pretend = 0, frame = 0
+ 628              		@ frame_needed = 0, uses_anonymous_args = 0
+ 629              		@ link register save eliminated.
+ 630 0000 014B     		ldr	r3, .L97
+ 631 0002 93ED060A 		vldr.32	s0, [r3, #24]
+ 632 0006 7047     		bx	lr
+ 633              	.L98:
+ 634              		.align	2
+ 635              	.L97:
+ 636 0008 00000000 		.word	runtime
+ 638              		.section	.text.crankshaft_get_angle,"ax",%progbits
+ 639              		.align	1
+ 640              		.global	crankshaft_get_angle
+ 641              		.syntax unified
+ 642              		.thumb
+ 643              		.thumb_func
+ 645              	crankshaft_get_angle:
+ 646              		@ args = 0, pretend = 0, frame = 0
+ 647              		@ frame_needed = 0, uses_anonymous_args = 0
+ 648              		@ link register save eliminated.
+ 649 0000 014B     		ldr	r3, .L100
+ 650 0002 93ED040A 		vldr.32	s0, [r3, #16]
+ 651 0006 7047     		bx	lr
+ 652              	.L101:
+ 653              		.align	2
+ 654              	.L100:
+ 655 0008 00000000 		.word	runtime
+ 657              		.section	.text.crankshaft_get_next_trigger_angle,"ax",%progbits
+ 658              		.align	1
+ 659              		.global	crankshaft_get_next_trigger_angle
+ 660              		.syntax unified
+ 661              		.thumb
+ 662              		.thumb_func
+ 664              	crankshaft_get_next_trigger_angle:
+ 665              		@ args = 0, pretend = 0, frame = 0
+ 666              		@ frame_needed = 0, uses_anonymous_args = 0
+ 667              		@ link register save eliminated.
+ 668 0000 014B     		ldr	r3, .L103
+ 669 0002 93ED000A 		vldr.32	s0, [r3]
+ 670 0006 7047     		bx	lr
+ 671              	.L104:
+ 672              		.align	2
+ 673              	.L103:
+ 674 0008 00000000 		.word	next_tooth_angle
+ 676              		.section	.text.trigger_driven_events_callback,"ax",%progbits
+ 677              		.align	1
+ 678              		.weak	trigger_driven_events_callback
+ 679              		.syntax unified
+ 680              		.thumb
+ 681              		.thumb_func
+ 683              	trigger_driven_events_callback:
+ 684              		@ args = 0, pretend = 0, frame = 0
+ 685              		@ frame_needed = 0, uses_anonymous_args = 0
+ 686              		@ link register save eliminated.
+ 687 0000 7047     		bx	lr
+ 689              		.section	.text.trigger_spinning_state_get,"ax",%progbits
+ 690              		.align	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 13
+
+
+ 691              		.global	trigger_spinning_state_get
+ 692              		.syntax unified
+ 693              		.thumb
+ 694              		.thumb_func
+ 696              	trigger_spinning_state_get:
+ 697              		@ args = 0, pretend = 0, frame = 0
+ 698              		@ frame_needed = 0, uses_anonymous_args = 0
+ 699              		@ link register save eliminated.
+ 700 0000 014B     		ldr	r3, .L107
+ 701 0002 93F87800 		ldrb	r0, [r3, #120]	@ zero_extendqisi2
+ 702 0006 7047     		bx	lr
+ 703              	.L108:
+ 704              		.align	2
+ 705              	.L107:
+ 706 0008 00000000 		.word	runtime
+ 708              		.section	.bss.is_trigger_sync_achieved.0,"aw",%nobits
+ 711              	is_trigger_sync_achieved.0:
+ 712 0000 00       		.space	1
+ 713              		.section	.bss.cam_trigger,"aw",%nobits
+ 714              		.align	2
+ 717              	cam_trigger:
+ 718 0000 00000000 		.space	20
+ 718      00000000 
+ 718      00000000 
+ 718      00000000 
+ 718      00000000 
+ 719              		.section	.bss.crank_trigger,"aw",%nobits
+ 720              		.align	2
+ 723              	crank_trigger:
+ 724 0000 00000000 		.space	28
+ 724      00000000 
+ 724      00000000 
+ 724      00000000 
+ 724      00000000 
+ 725              		.section	.bss.next_tooth_angle,"aw",%nobits
+ 726              		.align	2
+ 729              	next_tooth_angle:
+ 730 0000 00000000 		.space	4
+ 731              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s 			page 14
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 trigger.c
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:18     .rodata.trigger_crankshaft_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:23     .text.trigger_crankshaft_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:29     .text.trigger_crankshaft_init:00000000 trigger_crankshaft_init
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:80     .text.trigger_crankshaft_init:0000005c $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:723    .bss.crank_trigger:00000000 crank_trigger
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:86     .text.trigger_camshaft_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:92     .text.trigger_camshaft_init:00000000 trigger_camshaft_init
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:118    .text.trigger_camshaft_init:0000002c $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:717    .bss.cam_trigger:00000000 cam_trigger
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:122    .rodata.trigger_crank_handle.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:126    .text.trigger_crank_handle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:132    .text.trigger_crank_handle:00000000 trigger_crank_handle
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:321    .text.trigger_crank_handle:000001cc $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:325    .text.trigger_crank_handle:000001d0 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:394    .text.trigger_crank_handle:00000278 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:711    .bss.is_trigger_sync_achieved.0:00000000 is_trigger_sync_achieved.0
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:729    .bss.next_tooth_angle:00000000 next_tooth_angle
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:403    .text.trigger_crank_handle:00000298 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:471    .text.trigger_crank_handle:00000348 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:476    .text.trigger_camshaft_signal_handle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:482    .text.trigger_camshaft_signal_handle:00000000 trigger_camshaft_signal_handle
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:503    .text.trigger_camshaft_signal_handle:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:507    .text.trigger_camshaft_signal_handle:0000002c $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:594    .text.trigger_camshaft_signal_handle:000000ec $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:601    .text.camshaft_get_phase:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:607    .text.camshaft_get_phase:00000000 camshaft_get_phase
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:617    .text.camshaft_get_phase:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:620    .text.crankshaft_get_rpm:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:626    .text.crankshaft_get_rpm:00000000 crankshaft_get_rpm
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:636    .text.crankshaft_get_rpm:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:639    .text.crankshaft_get_angle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:645    .text.crankshaft_get_angle:00000000 crankshaft_get_angle
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:655    .text.crankshaft_get_angle:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:658    .text.crankshaft_get_next_trigger_angle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:664    .text.crankshaft_get_next_trigger_angle:00000000 crankshaft_get_next_trigger_angle
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:674    .text.crankshaft_get_next_trigger_angle:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:677    .text.trigger_driven_events_callback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:683    .text.trigger_driven_events_callback:00000000 trigger_driven_events_callback
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:690    .text.trigger_spinning_state_get:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:696    .text.trigger_spinning_state_get:00000000 trigger_spinning_state_get
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:706    .text.trigger_spinning_state_get:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:712    .bss.is_trigger_sync_achieved.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:714    .bss.cam_trigger:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:720    .bss.crank_trigger:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccAJMeGD.s:726    .bss.next_tooth_angle:00000000 $d
+
+UNDEFINED SYMBOLS
+log_error
+config
+runtime
+get_time_us

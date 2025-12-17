@@ -18,8 +18,8 @@ typedef enum
     REV_LIMIT_SPARK_CUT = 8,
 } protection_rev_limit_modes_t;
 
-void protections_update(time_us_t time);
-
+void protections_update(time_us_t timestamp);
+void protections_init(electronic_throttle_t *air_ctrl_etb);
 void protection_shutdown_gracefully();
 
 #endif // PROTECTION_H

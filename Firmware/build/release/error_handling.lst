@@ -1,0 +1,201 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"error_handling.c"
+  16              		.text
+  17              		.section	.rodata.log_error.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 4572726F 		.ascii	"Error: %s\012\000"
+  20      723A2025 
+  20      730A00
+  21              		.section	.text.log_error,"ax",%progbits
+  22              		.align	1
+  23              		.global	log_error
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  28              	log_error:
+  29              		@ args = 0, pretend = 0, frame = 104
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 C0B1     		cbz	r0, .L5
+  32 0002 70B5     		push	{r4, r5, r6, lr}
+  33 0004 9AB0     		sub	sp, sp, #104
+  34 0006 0646     		mov	r6, r0
+  35 0008 01AC     		add	r4, sp, #4
+  36 000a 6425     		movs	r5, #100
+  37 000c 2A46     		mov	r2, r5
+  38 000e 0021     		movs	r1, #0
+  39 0010 2046     		mov	r0, r4
+  40 0012 FFF7FEFF 		bl	memset
+  41 0016 3346     		mov	r3, r6
+  42 0018 074A     		ldr	r2, .L8
+  43 001a 2946     		mov	r1, r5
+  44 001c 2046     		mov	r0, r4
+  45 001e FFF7FEFF 		bl	snprintf
+  46 0022 2046     		mov	r0, r4
+  47 0024 FFF7FEFF 		bl	strlen
+  48 0028 81B2     		uxth	r1, r0
+  49 002a 2046     		mov	r0, r4
+  50 002c FFF7FEFF 		bl	CDC_Transmit_FS
+  51 0030 1AB0     		add	sp, sp, #104
+  52              		@ sp needed
+  53 0032 70BD     		pop	{r4, r5, r6, pc}
+  54              	.L5:
+  55 0034 7047     		bx	lr
+  56              	.L9:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s 			page 2
+
+
+  57 0036 00BF     		.align	2
+  58              	.L8:
+  59 0038 00000000 		.word	.LC0
+  61              		.section	.rodata.log_warning.str1.4,"aMS",%progbits,1
+  62              		.align	2
+  63              	.LC1:
+  64 0000 5761726E 		.ascii	"Warning: %s\012\000"
+  64      696E673A 
+  64      2025730A 
+  64      00
+  65              		.section	.text.log_warning,"ax",%progbits
+  66              		.align	1
+  67              		.global	log_warning
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  72              	log_warning:
+  73              		@ args = 0, pretend = 0, frame = 104
+  74              		@ frame_needed = 0, uses_anonymous_args = 0
+  75 0000 C0B1     		cbz	r0, .L14
+  76 0002 70B5     		push	{r4, r5, r6, lr}
+  77 0004 9AB0     		sub	sp, sp, #104
+  78 0006 0646     		mov	r6, r0
+  79 0008 01AC     		add	r4, sp, #4
+  80 000a 6425     		movs	r5, #100
+  81 000c 2A46     		mov	r2, r5
+  82 000e 0021     		movs	r1, #0
+  83 0010 2046     		mov	r0, r4
+  84 0012 FFF7FEFF 		bl	memset
+  85 0016 3346     		mov	r3, r6
+  86 0018 074A     		ldr	r2, .L17
+  87 001a 2946     		mov	r1, r5
+  88 001c 2046     		mov	r0, r4
+  89 001e FFF7FEFF 		bl	snprintf
+  90 0022 2046     		mov	r0, r4
+  91 0024 FFF7FEFF 		bl	strlen
+  92 0028 81B2     		uxth	r1, r0
+  93 002a 2046     		mov	r0, r4
+  94 002c FFF7FEFF 		bl	CDC_Transmit_FS
+  95 0030 1AB0     		add	sp, sp, #104
+  96              		@ sp needed
+  97 0032 70BD     		pop	{r4, r5, r6, pc}
+  98              	.L14:
+  99 0034 7047     		bx	lr
+ 100              	.L18:
+ 101 0036 00BF     		.align	2
+ 102              	.L17:
+ 103 0038 00000000 		.word	.LC1
+ 105              		.section	.rodata.log_debug.str1.4,"aMS",%progbits,1
+ 106              		.align	2
+ 107              	.LC2:
+ 108 0000 44656275 		.ascii	"Debug: \000"
+ 108      673A2000 
+ 109              		.section	.text.log_debug,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	log_debug
+ 112              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s 			page 3
+
+
+ 113              		.thumb
+ 114              		.thumb_func
+ 116              	log_debug:
+ 117              		@ args = 4, pretend = 16, frame = 104
+ 118              		@ frame_needed = 0, uses_anonymous_args = 1
+ 119 0000 0FB4     		push	{r0, r1, r2, r3}
+ 120 0002 30B5     		push	{r4, r5, lr}
+ 121 0004 9BB0     		sub	sp, sp, #108
+ 122 0006 1E9D     		ldr	r5, [sp, #120]
+ 123 0008 65B3     		cbz	r5, .L19
+ 124 000a 01AC     		add	r4, sp, #4
+ 125 000c 6422     		movs	r2, #100
+ 126 000e 0021     		movs	r1, #0
+ 127 0010 2046     		mov	r0, r4
+ 128 0012 FFF7FEFF 		bl	memset
+ 129 0016 1FAB     		add	r3, sp, #124
+ 130 0018 0093     		str	r3, [sp]
+ 131 001a 154A     		ldr	r2, .L24
+ 132 001c 92E80300 		ldm	r2, {r0, r1}
+ 133 0020 84E80300 		stm	r4, {r0, r1}
+ 134 0024 2A46     		mov	r2, r5
+ 135 0026 5D21     		movs	r1, #93
+ 136 0028 0DF10B00 		add	r0, sp, #11
+ 137 002c FFF7FEFF 		bl	vsnprintf
+ 138 0030 2046     		mov	r0, r4
+ 139 0032 FFF7FEFF 		bl	strlen
+ 140 0036 6228     		cmp	r0, #98
+ 141 0038 0CD8     		bhi	.L22
+ 142 003a 00F16803 		add	r3, r0, #104
+ 143 003e 6B44     		add	r3, sp, r3
+ 144 0040 0A22     		movs	r2, #10
+ 145 0042 03F8642C 		strb	r2, [r3, #-100]
+ 146 0046 00F16903 		add	r3, r0, #105
+ 147 004a 0DEB0300 		add	r0, sp, r3
+ 148 004e 0023     		movs	r3, #0
+ 149 0050 00F8643C 		strb	r3, [r0, #-100]
+ 150              	.L22:
+ 151 0054 01AC     		add	r4, sp, #4
+ 152 0056 2046     		mov	r0, r4
+ 153 0058 FFF7FEFF 		bl	strlen
+ 154 005c 81B2     		uxth	r1, r0
+ 155 005e 2046     		mov	r0, r4
+ 156 0060 FFF7FEFF 		bl	CDC_Transmit_FS
+ 157              	.L19:
+ 158 0064 1BB0     		add	sp, sp, #108
+ 159              		@ sp needed
+ 160 0066 BDE83040 		pop	{r4, r5, lr}
+ 161 006a 04B0     		add	sp, sp, #16
+ 162 006c 7047     		bx	lr
+ 163              	.L25:
+ 164 006e 00BF     		.align	2
+ 165              	.L24:
+ 166 0070 00000000 		.word	.LC2
+ 168              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 error_handling.c
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:18     .rodata.log_error.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:22     .text.log_error:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:28     .text.log_error:00000000 log_error
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:59     .text.log_error:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:62     .rodata.log_warning.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:66     .text.log_warning:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:72     .text.log_warning:00000000 log_warning
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:103    .text.log_warning:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:106    .rodata.log_debug.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:110    .text.log_debug:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:116    .text.log_debug:00000000 log_debug
+C:\Users\alireza\AppData\Local\Temp\ccUxGNfa.s:166    .text.log_debug:00000070 $d
+
+UNDEFINED SYMBOLS
+memset
+snprintf
+strlen
+CDC_Transmit_FS
+vsnprintf

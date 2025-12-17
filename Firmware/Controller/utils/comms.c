@@ -8,24 +8,24 @@
 #include "controller.h"
 /*******************************************************************************
  *                          TUNERSTUDIO PROTOCOL PACKET FORMAT
- * 
+ *
  * ┌──────────────────────────────────────────────────────────────────────────┐
  * │                            HOST → ECU REQUEST                            │
  * ├──────────┬────────────────────────────────────────────────┬──────────────┤
  * │   SIZE   │              PAYLOAD (CMD + DATA)              │    CRC32     │
  * └──────────┴────────────────────────────────────────────────┴──────────────┘
- * 
+ *
  *    2 bytes                      N bytes                         4 bytes
- * 
- * 
+ *
+ *
  * ┌───────────────────────────────────────────────────────────────────────────┐
  * │                            ECU → HOST RESPONSE                            │
  * ├──────────┬──────────┬──────────────────────────────────────┬──────────────┤
  * │   SIZE   │   FLAG   │           PAYLOAD (DATA)             │    CRC32     │
  * └──────────┴──────────┴──────────────────────────────────────┴──────────────┘
- * 
+ *
  *    2 bytes    1 byte                 N bytes                    4 bytes
- * 
+ *
  * NOTES:
  * - SIZE: Big-endian uint16 (payload length EXCLUDING CRC)
  * - FLAG: 0x00=OK, 0x7F=ERROR, 0x5A=DATA_PENDING
@@ -58,9 +58,31 @@ void process_command(uint8_t *request, uint16_t size);
 void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count);
 void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count);
 
-void run_controller_command(void *arg);
-void comms_activities_task(void *arg);
 /* Function definations */
+
+static uint8_t task_comms_cb[sizeof(StaticTask_t)];
+static uint8_t task_comms_mem[2 * 1024]; // Stack size in bytes
+const osThreadAttr_t task_comms_attrs = {
+    .name = "task_comms",
+    .cb_mem = task_comms_cb,
+    .cb_size = sizeof(task_comms_cb),
+    .stack_mem = task_comms_mem,
+    .stack_size = sizeof(task_comms_mem),
+    .priority = osPriorityNormal,
+};
+void task_comms(void *arg);
+
+static uint8_t task_controller_cmds_cb[sizeof(StaticTask_t)];
+static uint8_t task_controller_cmds_mem[512];
+const osThreadAttr_t task_controller_cmds_attr = {
+    .name = "controller_cmds",
+    .stack_mem = task_controller_cmds_mem,
+    .stack_size = sizeof(task_controller_cmds_mem),
+    .cb_mem = task_controller_cmds_cb,
+    .cb_size = sizeof(task_controller_cmds_cb),
+    .priority = osPriorityNormal,
+};
+void task_controller_cmds(void *arg);
 
 void send_response(uint8_t flag, uint8_t *data, size_t size, comms_response_format_t mode)
 {
@@ -73,80 +95,65 @@ void send_response(uint8_t flag, uint8_t *data, size_t size, comms_response_form
     {
         if (size > 0)
         {
-			memcpy(tx_buffer, data, size);
+            memcpy(tx_buffer, data, size);
             CDC_Transmit_FS(tx_buffer, size);
         }
     }
-	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 }
 
 void transmit_crc_packet(uint8_t flag, const uint8_t *buf, size_t size)
 {
 
-	/* We first calculate the prefix */
+    /* We first calculate the prefix */
     uint16_t packet_size = 0;
-	packet_size += 2; // prefix
-	packet_size += 1; // flag
-	packet_size += 4; // CRC
-	packet_size += size; // payload
+    packet_size += 2;    // prefix
+    packet_size += 1;    // flag
+    packet_size += 4;    // CRC
+    packet_size += size; // payload
 
-	/* Converte the size to big endian */
-	uint16_t prefix = 0;
-	prefix = swap_endian_uint16(sizeof(flag) + size);
+    /* Converte the size to big endian */
+    uint16_t prefix = 0;
+    prefix = swap_endian_uint16(sizeof(flag) + size);
 
-	/* Now we calculate the CRC, over the flag and payload */
-	uint32_t crc = 0;
-	crc = crc32_inc(0, (void*)&flag, 1); // flag
-	crc = crc32_inc(crc, buf, size); // payload
+    /* Now we calculate the CRC, over the flag and payload */
+    uint32_t crc = 0;
+    crc = crc32_inc(0, (void *)&flag, 1); // flag
+    crc = crc32_inc(crc, buf, size);      // payload
 
-	/* Converte the crc to big endian */
-	uint32_t suffix = 0;
-	suffix = swap_endian_uint32(crc);
+    /* Converte the crc to big endian */
+    uint32_t suffix = 0;
+    suffix = swap_endian_uint32(crc);
 
-	/* Form the packet in the transmit buffer */
-	size_t tx_buffer_index = 0;
-	memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
-	tx_buffer_index += sizeof(prefix);
-	memcpy(tx_buffer + tx_buffer_index, &flag, sizeof(flag)); // flag to buffer
-	tx_buffer_index += sizeof(flag);
-	memcpy(tx_buffer + tx_buffer_index, buf, size); // payload to buffer
-	tx_buffer_index += size;
-	memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
-	tx_buffer_index += sizeof(suffix);
+    /* Form the packet in the transmit buffer */
+    size_t tx_buffer_index = 0;
+    memcpy(tx_buffer, &prefix, sizeof(prefix)); // prefix to buffer
+    tx_buffer_index += sizeof(prefix);
+    memcpy(tx_buffer + tx_buffer_index, &flag, sizeof(flag)); // flag to buffer
+    tx_buffer_index += sizeof(flag);
+    memcpy(tx_buffer + tx_buffer_index, buf, size); // payload to buffer
+    tx_buffer_index += size;
+    memcpy(tx_buffer + tx_buffer_index, &suffix, sizeof(suffix)); // suffix to buffer
+    tx_buffer_index += sizeof(suffix);
 
-	/* Finally transmit over USB */
+    /* Finally transmit over USB */
 
-	CDC_Transmit_FS(tx_buffer, packet_size);
+    CDC_Transmit_FS(tx_buffer, packet_size);
 }
-
-
 
 // ==================== Initialization ====================
 void comms_init(void)
 {
-	usb_rx_queue = osMessageQueueNew(10, sizeof(usb_packet_ptr_t), NULL);
+    usb_rx_queue = osMessageQueueNew(10, sizeof(usb_packet_ptr_t), NULL);
 
-    const osThreadAttr_t comms_task_attrs = {
-        .name = "comms_task",
-        .stack_size = 1024 * 2,
-        .priority = osPriorityHigh,
-    };
-    osThreadNew(comms_task, NULL, &comms_task_attrs);
+    osThreadNew(task_comms, NULL, &task_comms_attrs);
 
-    const osThreadAttr_t controller_run_controller_cmdmands_attr = {
-      .name = "controller_cmds",
-      .stack_size = 512,
-      .priority = osPriorityNormal,
-  };
-
-  volatile osThreadId_t test_id = 0;
-  osThreadNew(run_controller_command, NULL, &controller_run_controller_cmdmands_attr);
-  controller_command_flag = osEventFlagsNew(NULL);
-  comms_os_flags = osEventFlagsNew(NULL);
+    controller_command_flag = osEventFlagsNew(NULL);
+    osThreadNew(task_controller_cmds, NULL, &task_controller_cmds_attr);
 }
 
 // ==================== Communication Task ====================
-void comms_task(void *argument)
+void task_comms(void *argument)
 {
     usb_packet_ptr_t packet;
     for (;;)
@@ -165,17 +172,17 @@ bool process_plain_command(uint8_t *request, uint16_t size)
     switch (first_byte)
     {
     case TS_COMMAND_F:
-    #ifndef TS_USE_OLD_PROTOCOL
-        send_response(0, (uint8_t*)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
+#ifndef TS_USE_OLD_PROTOCOL
+        send_response(0, (uint8_t *)TS_PROTOCOL, sizeof(TS_PROTOCOL) - 1, TS_PLAIN);
         return true;
-    #endif
+#endif
         break;
     case TS_HELLO_COMMAND:
-        send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+        send_response(0, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
         return true;
         break;
     case TS_QUERY_COMMAND:
-        send_response(0, (uint8_t*)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
+        send_response(0, (uint8_t *)TS_SIGNATURE, sizeof(TS_SIGNATURE) - 1, TS_PLAIN);
         return true;
         break;
     case TS_TEST_COMMS_COMMAND:
@@ -183,16 +190,15 @@ bool process_plain_command(uint8_t *request, uint16_t size)
         return true;
         break;
     case TS_CAN_ID_COMMAND:
-        send_response(0, (uint8_t*)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
+        send_response(0, (uint8_t *)TS_CAN_ID, sizeof(TS_CAN_ID) - 1, TS_PLAIN);
         return true;
         break;
 
     default:
         break;
     }
-        // This wasn't a valid command
-        return false;
-    
+    // This wasn't a valid command
+    return false;
 }
 
 void process_command(uint8_t *request, uint16_t size)
@@ -296,28 +302,27 @@ void process_command(uint8_t *request, uint16_t size)
 
     case TS_BURN_COMMAND:
         // handle burn command and if it was ok, then send ok status
-        osEventFlagsSet(comms_os_flags, COMMS_SAVE_CONFIG_FLAG);
+        controller_save_configuration();
         send_response(TS_RESPONSE_BURN_OK, NULL, 0, TS_CRC);
         return;
         break;
 
-	case TS_SET_LOGGER_SWITCH:
-		switch(request[3]) {
-		case TS_COMPOSITE_ENABLE:
-			trigger_tooth_logger_start();
-			break;
-		case TS_COMPOSITE_DISABLE:
-			trigger_tooth_logger_stop();
-			break;
-		case TS_COMPOSITE_READ:
-			{
-                bool is_buffer_ready = get_bit(runtime.status, STATUS_TOOTH_LOG_READY);
-                time_us_t *logger_buffer = trigger_tooth_logger_get_buffer();
-                send_response(TS_RESPONSE_OK, (uint8_t*)logger_buffer, FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES * sizeof(uint32_t), TS_CRC);
-                trigger_tooth_logger_start();
-            }
-			break;
-            }
+    case TS_SET_LOGGER_SWITCH:
+        switch (request[3])
+        {
+        case TS_COMPOSITE_ENABLE:
+            trigger_logger_composite_start();
+            break;
+        case TS_COMPOSITE_DISABLE:
+            trigger_logger_composite_stop();
+            break;
+        case TS_COMPOSITE_READ:
+        {
+            bool is_buffer_ready = trigger_logger_get_buffer_status();
+            send_response(TS_RESPONSE_OK, trigger_logger_get_composite_data(), trigger_logger_get_composite_data_size(), TS_CRC);
+        }
+        break;
+        }
     case TS_CONTROLLER_COMMANDS:
         uint16_t controller_command = swap_endian_uint16(*(uint16_t *)&request[3]);
         osEventFlagsSet(controller_command_flag, controller_command);
@@ -325,46 +330,34 @@ void process_command(uint8_t *request, uint16_t size)
     default:
         break;
     }
-    
+
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
 
 void handle_page_read_command(uint16_t page, uint16_t offset, uint16_t count)
 {
-	if (page > 1)
-	{
-		return;
-	}
-	if ((offset + count) > TS_PAGE_SIZE)
-	{
-		return;
-	}
-    
-	send_response(TS_RESPONSE_OK, (uint8_t*)&config + offset, count, TS_CRC);
+    if (page > 1)
+    {
+        return;
+    }
+    if ((offset + count) > TS_PAGE_SIZE)
+    {
+        return;
+    }
+
+    send_response(TS_RESPONSE_OK, (uint8_t *)&config + offset, count, TS_CRC);
 }
 
 void handle_page_write_command(uint16_t page, uint16_t offset, uint16_t count)
 {
-	if (page > 1)
-	{
-		return;
-	}
-	if ((offset + count) > TS_PAGE_SIZE)
-	{
-		return;
-	}
-	
-}
-
-void comms_activities_task(void *arg)
-{
-
-    for (;;)
+    if (page > 1)
     {
-        osEventFlagsWait(comms_os_flags, COMMS_SAVE_CONFIG_FLAG, osFlagsWaitAny, osWaitForever);
-        controller_save_configuration();
-        osEventFlagsClear(comms_os_flags, COMMS_SAVE_CONFIG_FLAG);
+        return;
     }
-    
+    if ((offset + count) > TS_PAGE_SIZE)
+    {
+        return;
+    }
 }
+
 #endif

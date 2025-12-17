@@ -1,0 +1,426 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"trigger_logger.c"
+  16              		.text
+  17              		.section	.text.trigger_logger_entry_add_composite,"ax",%progbits
+  18              		.align	1
+  19              		.global	trigger_logger_entry_add_composite
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	trigger_logger_entry_add_composite:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 264B     		ldr	r3, .L16
+  29 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  30 0004 002B     		cmp	r3, #0
+  31 0006 34D0     		beq	.L1
+  32 0008 254B     		ldr	r3, .L16+4
+  33 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  34 000c 8BB3     		cbz	r3, .L1
+  35 000e 254B     		ldr	r3, .L16+8
+  36 0010 1B68     		ldr	r3, [r3]
+  37 0012 7D2B     		cmp	r3, #125
+  38 0014 2ED8     		bhi	.L15
+  39 0016 244A     		ldr	r2, .L16+12
+  40 0018 1368     		ldr	r3, [r2]
+  41 001a 23F00053 		bic	r3, r3, #536870912
+  42 001e 1360     		str	r3, [r2]
+  43 0020 204B     		ldr	r3, .L16+8
+  44 0022 1B68     		ldr	r3, [r3]
+  45 0024 214A     		ldr	r2, .L16+16
+  46 0026 03EB020C 		add	ip, r3, r2
+  47 002a D050     		str	r0, [r2, r3]
+  48 002c 11F0010F 		tst	r1, #1
+  49 0030 26D0     		beq	.L14
+  50 0032 0123     		movs	r3, #1
+  51              	.L4:
+  52 0034 11F0020F 		tst	r1, #2
+  53 0038 01D0     		beq	.L5
+  54 003a 43F00203 		orr	r3, r3, #2
+  55              	.L5:
+  56 003e 11F0040F 		tst	r1, #4
+  57 0042 1FD0     		beq	.L6
+  58 0044 43F00403 		orr	r3, r3, #4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 2
+
+
+  59              	.L7:
+  60 0048 11F0080F 		tst	r1, #8
+  61 004c 1DD0     		beq	.L8
+  62 004e 43F00803 		orr	r3, r3, #8
+  63              	.L9:
+  64 0052 11F0100F 		tst	r1, #16
+  65 0056 1BD0     		beq	.L10
+  66 0058 43F01003 		orr	r3, r3, #16
+  67              	.L11:
+  68 005c 11F0200F 		tst	r1, #32
+  69 0060 19D0     		beq	.L12
+  70 0062 43F02003 		orr	r3, r3, #32
+  71              	.L13:
+  72 0066 8CF80430 		strb	r3, [ip, #4]
+  73 006a 0E4A     		ldr	r2, .L16+8
+  74 006c 1368     		ldr	r3, [r2]
+  75 006e 0133     		adds	r3, r3, #1
+  76 0070 1360     		str	r3, [r2]
+  77              	.L1:
+  78 0072 7047     		bx	lr
+  79              	.L15:
+  80 0074 0C4A     		ldr	r2, .L16+12
+  81 0076 1368     		ldr	r3, [r2]
+  82 0078 43F00053 		orr	r3, r3, #536870912
+  83 007c 1360     		str	r3, [r2]
+  84 007e 7047     		bx	lr
+  85              	.L14:
+  86 0080 0023     		movs	r3, #0
+  87 0082 D7E7     		b	.L4
+  88              	.L6:
+  89 0084 03F0FB03 		and	r3, r3, #251
+  90 0088 DEE7     		b	.L7
+  91              	.L8:
+  92 008a 03F0F703 		and	r3, r3, #247
+  93 008e E0E7     		b	.L9
+  94              	.L10:
+  95 0090 03F0EF03 		and	r3, r3, #239
+  96 0094 E2E7     		b	.L11
+  97              	.L12:
+  98 0096 03F0DF03 		and	r3, r3, #223
+  99 009a E4E7     		b	.L13
+ 100              	.L17:
+ 101              		.align	2
+ 102              	.L16:
+ 103 009c 00000000 		.word	trigger_logging_enabled
+ 104 00a0 00000000 		.word	is_logging_composite
+ 105 00a4 00000000 		.word	buffer_index
+ 106 00a8 00000000 		.word	runtime
+ 107 00ac 00000000 		.word	composite_data
+ 109              		.section	.text.trigger_logger_entry_add_tooth,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	trigger_logger_entry_add_tooth
+ 112              		.syntax unified
+ 113              		.thumb
+ 114              		.thumb_func
+ 116              	trigger_logger_entry_add_tooth:
+ 117              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 3
+
+
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119              		@ link register save eliminated.
+ 120 0000 124B     		ldr	r3, .L25
+ 121 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 122 0004 03B3     		cbz	r3, .L22
+ 123 0006 124B     		ldr	r3, .L25+4
+ 124 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 125 000a EBB9     		cbnz	r3, .L22
+ 126 000c 114B     		ldr	r3, .L25+8
+ 127 000e 1B68     		ldr	r3, [r3]
+ 128 0010 7D2B     		cmp	r3, #125
+ 129 0012 13D8     		bhi	.L24
+ 130 0014 30B4     		push	{r4, r5}
+ 131 0016 104A     		ldr	r2, .L25+12
+ 132 0018 1368     		ldr	r3, [r2]
+ 133 001a 23F00053 		bic	r3, r3, #536870912
+ 134 001e 1360     		str	r3, [r2]
+ 135 0020 0C4B     		ldr	r3, .L25+8
+ 136 0022 1D68     		ldr	r5, [r3]
+ 137 0024 0D49     		ldr	r1, .L25+16
+ 138 0026 0A68     		ldr	r2, [r1]
+ 139 0028 821A     		subs	r2, r0, r2
+ 140 002a 0D4C     		ldr	r4, .L25+20
+ 141 002c 44F82520 		str	r2, [r4, r5, lsl #2]
+ 142 0030 0860     		str	r0, [r1]
+ 143 0032 1A68     		ldr	r2, [r3]
+ 144 0034 0132     		adds	r2, r2, #1
+ 145 0036 1A60     		str	r2, [r3]
+ 146 0038 30BC     		pop	{r4, r5}
+ 147 003a 7047     		bx	lr
+ 148              	.L24:
+ 149 003c 064A     		ldr	r2, .L25+12
+ 150 003e 1368     		ldr	r3, [r2]
+ 151 0040 43F00053 		orr	r3, r3, #536870912
+ 152 0044 1360     		str	r3, [r2]
+ 153 0046 7047     		bx	lr
+ 154              	.L22:
+ 155 0048 7047     		bx	lr
+ 156              	.L26:
+ 157 004a 00BF     		.align	2
+ 158              	.L25:
+ 159 004c 00000000 		.word	trigger_logging_enabled
+ 160 0050 00000000 		.word	is_logging_composite
+ 161 0054 00000000 		.word	buffer_index
+ 162 0058 00000000 		.word	runtime
+ 163 005c 00000000 		.word	prev_time.0
+ 164 0060 00000000 		.word	tooth_data
+ 166              		.section	.text.trigger_logger_get_composite_data,"ax",%progbits
+ 167              		.align	1
+ 168              		.global	trigger_logger_get_composite_data
+ 169              		.syntax unified
+ 170              		.thumb
+ 171              		.thumb_func
+ 173              	trigger_logger_get_composite_data:
+ 174              		@ args = 0, pretend = 0, frame = 0
+ 175              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176              		@ link register save eliminated.
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 4
+
+
+ 177 0000 0048     		ldr	r0, .L28
+ 178 0002 7047     		bx	lr
+ 179              	.L29:
+ 180              		.align	2
+ 181              	.L28:
+ 182 0004 00000000 		.word	composite_data
+ 184              		.section	.text.trigger_logger_get_composite_data_size,"ax",%progbits
+ 185              		.align	1
+ 186              		.global	trigger_logger_get_composite_data_size
+ 187              		.syntax unified
+ 188              		.thumb
+ 189              		.thumb_func
+ 191              	trigger_logger_get_composite_data_size:
+ 192              		@ args = 0, pretend = 0, frame = 0
+ 193              		@ frame_needed = 0, uses_anonymous_args = 0
+ 194              		@ link register save eliminated.
+ 195 0000 40F27B20 		movw	r0, #635
+ 196 0004 7047     		bx	lr
+ 198              		.section	.text.trigger_logger_get_tooth_data,"ax",%progbits
+ 199              		.align	1
+ 200              		.global	trigger_logger_get_tooth_data
+ 201              		.syntax unified
+ 202              		.thumb
+ 203              		.thumb_func
+ 205              	trigger_logger_get_tooth_data:
+ 206              		@ args = 0, pretend = 0, frame = 0
+ 207              		@ frame_needed = 0, uses_anonymous_args = 0
+ 208              		@ link register save eliminated.
+ 209 0000 0048     		ldr	r0, .L32
+ 210 0002 7047     		bx	lr
+ 211              	.L33:
+ 212              		.align	2
+ 213              	.L32:
+ 214 0004 00000000 		.word	tooth_data
+ 216              		.section	.text.trigger_logger_get_tooth_data_size,"ax",%progbits
+ 217              		.align	1
+ 218              		.global	trigger_logger_get_tooth_data_size
+ 219              		.syntax unified
+ 220              		.thumb
+ 221              		.thumb_func
+ 223              	trigger_logger_get_tooth_data_size:
+ 224              		@ args = 0, pretend = 0, frame = 0
+ 225              		@ frame_needed = 0, uses_anonymous_args = 0
+ 226              		@ link register save eliminated.
+ 227 0000 4FF4FE70 		mov	r0, #508
+ 228 0004 7047     		bx	lr
+ 230              		.section	.text.trigger_logger_get_buffer_status,"ax",%progbits
+ 231              		.align	1
+ 232              		.global	trigger_logger_get_buffer_status
+ 233              		.syntax unified
+ 234              		.thumb
+ 235              		.thumb_func
+ 237              	trigger_logger_get_buffer_status:
+ 238              		@ args = 0, pretend = 0, frame = 0
+ 239              		@ frame_needed = 0, uses_anonymous_args = 0
+ 240              		@ link register save eliminated.
+ 241 0000 034B     		ldr	r3, .L36
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 5
+
+
+ 242 0002 1868     		ldr	r0, [r3]
+ 243 0004 7D28     		cmp	r0, #125
+ 244 0006 94BF     		ite	ls
+ 245 0008 0020     		movls	r0, #0
+ 246 000a 0120     		movhi	r0, #1
+ 247 000c 7047     		bx	lr
+ 248              	.L37:
+ 249 000e 00BF     		.align	2
+ 250              	.L36:
+ 251 0010 00000000 		.word	buffer_index
+ 253              		.section	.text.trigger_logger_tooth_start,"ax",%progbits
+ 254              		.align	1
+ 255              		.global	trigger_logger_tooth_start
+ 256              		.syntax unified
+ 257              		.thumb
+ 258              		.thumb_func
+ 260              	trigger_logger_tooth_start:
+ 261              		@ args = 0, pretend = 0, frame = 0
+ 262              		@ frame_needed = 0, uses_anonymous_args = 0
+ 263              		@ link register save eliminated.
+ 264 0000 0023     		movs	r3, #0
+ 265 0002 044A     		ldr	r2, .L39
+ 266 0004 1370     		strb	r3, [r2]
+ 267 0006 044A     		ldr	r2, .L39+4
+ 268 0008 0121     		movs	r1, #1
+ 269 000a 1170     		strb	r1, [r2]
+ 270 000c 034A     		ldr	r2, .L39+8
+ 271 000e 1360     		str	r3, [r2]
+ 272 0010 7047     		bx	lr
+ 273              	.L40:
+ 274 0012 00BF     		.align	2
+ 275              	.L39:
+ 276 0014 00000000 		.word	is_logging_composite
+ 277 0018 00000000 		.word	trigger_logging_enabled
+ 278 001c 00000000 		.word	buffer_index
+ 280              		.section	.text.trigger_logger_tooth_stop,"ax",%progbits
+ 281              		.align	1
+ 282              		.global	trigger_logger_tooth_stop
+ 283              		.syntax unified
+ 284              		.thumb
+ 285              		.thumb_func
+ 287              	trigger_logger_tooth_stop:
+ 288              		@ args = 0, pretend = 0, frame = 0
+ 289              		@ frame_needed = 0, uses_anonymous_args = 0
+ 290              		@ link register save eliminated.
+ 291 0000 014B     		ldr	r3, .L42
+ 292 0002 0022     		movs	r2, #0
+ 293 0004 1A70     		strb	r2, [r3]
+ 294 0006 7047     		bx	lr
+ 295              	.L43:
+ 296              		.align	2
+ 297              	.L42:
+ 298 0008 00000000 		.word	trigger_logging_enabled
+ 300              		.section	.text.trigger_logger_composite_start,"ax",%progbits
+ 301              		.align	1
+ 302              		.global	trigger_logger_composite_start
+ 303              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 6
+
+
+ 304              		.thumb
+ 305              		.thumb_func
+ 307              	trigger_logger_composite_start:
+ 308              		@ args = 0, pretend = 0, frame = 0
+ 309              		@ frame_needed = 0, uses_anonymous_args = 0
+ 310              		@ link register save eliminated.
+ 311 0000 0123     		movs	r3, #1
+ 312 0002 044A     		ldr	r2, .L45
+ 313 0004 1370     		strb	r3, [r2]
+ 314 0006 044A     		ldr	r2, .L45+4
+ 315 0008 1370     		strb	r3, [r2]
+ 316 000a 044B     		ldr	r3, .L45+8
+ 317 000c 0022     		movs	r2, #0
+ 318 000e 1A60     		str	r2, [r3]
+ 319 0010 7047     		bx	lr
+ 320              	.L46:
+ 321 0012 00BF     		.align	2
+ 322              	.L45:
+ 323 0014 00000000 		.word	is_logging_composite
+ 324 0018 00000000 		.word	trigger_logging_enabled
+ 325 001c 00000000 		.word	buffer_index
+ 327              		.section	.text.trigger_logger_composite_stop,"ax",%progbits
+ 328              		.align	1
+ 329              		.global	trigger_logger_composite_stop
+ 330              		.syntax unified
+ 331              		.thumb
+ 332              		.thumb_func
+ 334              	trigger_logger_composite_stop:
+ 335              		@ args = 0, pretend = 0, frame = 0
+ 336              		@ frame_needed = 0, uses_anonymous_args = 0
+ 337              		@ link register save eliminated.
+ 338 0000 014B     		ldr	r3, .L48
+ 339 0002 0022     		movs	r2, #0
+ 340 0004 1A70     		strb	r2, [r3]
+ 341 0006 7047     		bx	lr
+ 342              	.L49:
+ 343              		.align	2
+ 344              	.L48:
+ 345 0008 00000000 		.word	trigger_logging_enabled
+ 347              		.section	.bss.prev_time.0,"aw",%nobits
+ 348              		.align	2
+ 351              	prev_time.0:
+ 352 0000 00000000 		.space	4
+ 353              		.section	.bss.is_logging_composite,"aw",%nobits
+ 356              	is_logging_composite:
+ 357 0000 00       		.space	1
+ 358              		.section	.bss.buffer_index,"aw",%nobits
+ 359              		.align	2
+ 362              	buffer_index:
+ 363 0000 00000000 		.space	4
+ 364              		.section	.data.trigger_logging_enabled,"aw"
+ 367              	trigger_logging_enabled:
+ 368 0000 01       		.byte	1
+ 369              		.section	.bss.composite_data,"aw",%nobits
+ 370              		.align	2
+ 373              	composite_data:
+ 374 0000 00000000 		.space	635
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 7
+
+
+ 374      00000000 
+ 374      00000000 
+ 374      00000000 
+ 374      00000000 
+ 375              		.section	.bss.tooth_data,"aw",%nobits
+ 376              		.align	2
+ 379              	tooth_data:
+ 380 0000 00000000 		.space	508
+ 380      00000000 
+ 380      00000000 
+ 380      00000000 
+ 380      00000000 
+ 381              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 trigger_logger.c
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:18     .text.trigger_logger_entry_add_composite:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:24     .text.trigger_logger_entry_add_composite:00000000 trigger_logger_entry_add_composite
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:103    .text.trigger_logger_entry_add_composite:0000009c $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:367    .data.trigger_logging_enabled:00000000 trigger_logging_enabled
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:356    .bss.is_logging_composite:00000000 is_logging_composite
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:362    .bss.buffer_index:00000000 buffer_index
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:373    .bss.composite_data:00000000 composite_data
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:110    .text.trigger_logger_entry_add_tooth:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:116    .text.trigger_logger_entry_add_tooth:00000000 trigger_logger_entry_add_tooth
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:159    .text.trigger_logger_entry_add_tooth:0000004c $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:351    .bss.prev_time.0:00000000 prev_time.0
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:379    .bss.tooth_data:00000000 tooth_data
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:167    .text.trigger_logger_get_composite_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:173    .text.trigger_logger_get_composite_data:00000000 trigger_logger_get_composite_data
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:182    .text.trigger_logger_get_composite_data:00000004 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:185    .text.trigger_logger_get_composite_data_size:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:191    .text.trigger_logger_get_composite_data_size:00000000 trigger_logger_get_composite_data_size
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:199    .text.trigger_logger_get_tooth_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:205    .text.trigger_logger_get_tooth_data:00000000 trigger_logger_get_tooth_data
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:214    .text.trigger_logger_get_tooth_data:00000004 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:217    .text.trigger_logger_get_tooth_data_size:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:223    .text.trigger_logger_get_tooth_data_size:00000000 trigger_logger_get_tooth_data_size
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:231    .text.trigger_logger_get_buffer_status:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:237    .text.trigger_logger_get_buffer_status:00000000 trigger_logger_get_buffer_status
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:251    .text.trigger_logger_get_buffer_status:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:254    .text.trigger_logger_tooth_start:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:260    .text.trigger_logger_tooth_start:00000000 trigger_logger_tooth_start
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:276    .text.trigger_logger_tooth_start:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:281    .text.trigger_logger_tooth_stop:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:287    .text.trigger_logger_tooth_stop:00000000 trigger_logger_tooth_stop
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:298    .text.trigger_logger_tooth_stop:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:301    .text.trigger_logger_composite_start:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:307    .text.trigger_logger_composite_start:00000000 trigger_logger_composite_start
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:323    .text.trigger_logger_composite_start:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:328    .text.trigger_logger_composite_stop:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:334    .text.trigger_logger_composite_stop:00000000 trigger_logger_composite_stop
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:345    .text.trigger_logger_composite_stop:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:348    .bss.prev_time.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:357    .bss.is_logging_composite:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:359    .bss.buffer_index:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:370    .bss.composite_data:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccVCqSJX.s:376    .bss.tooth_data:00000000 $d
+
+UNDEFINED SYMBOLS
+runtime

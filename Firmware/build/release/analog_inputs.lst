@@ -1,0 +1,261 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccH11elE.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"analog_inputs.c"
+  16              		.text
+  17              		.section	.text.HAL_ADC_ConvCpltCallback,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_ADC_ConvCpltCallback
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_ADC_ConvCpltCallback:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 08B5     		push	{r3, lr}
+  28 0002 FFF7FEFF 		bl	controller_analog_inputs_read_callback
+  29 0006 08BD     		pop	{r3, pc}
+  31              		.section	.rodata.analog_inputs_init.str1.4,"aMS",%progbits,1
+  32              		.align	2
+  33              	.LC0:
+  34 0000 416E616C 		.ascii	"Analog input init failed! adc or timer handle is nu"
+  34      6F672069 
+  34      6E707574 
+  34      20696E69 
+  34      74206661 
+  35 0033 6C6C2E00 		.ascii	"ll.\000"
+  36              		.section	.text.analog_inputs_init,"ax",%progbits
+  37              		.align	1
+  38              		.global	analog_inputs_init
+  39              		.syntax unified
+  40              		.thumb
+  41              		.thumb_func
+  43              	analog_inputs_init:
+  44              		@ args = 0, pretend = 0, frame = 0
+  45              		@ frame_needed = 0, uses_anonymous_args = 0
+  46 0000 38B5     		push	{r3, r4, r5, lr}
+  47 0002 98B1     		cbz	r0, .L4
+  48 0004 0C46     		mov	r4, r1
+  49 0006 89B1     		cbz	r1, .L4
+  50 0008 154A     		ldr	r2, .L10
+  51 000a 1060     		str	r0, [r2]
+  52 000c FFF7FEFF 		bl	HAL_RCC_GetPCLK1Freq
+  53 0010 0022     		movs	r2, #0
+  54              	.L8:
+  55 0012 4FF47A73 		mov	r3, #1000
+  56 0016 02FB0333 		mla	r3, r2, r3, r3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccH11elE.s 			page 2
+
+
+  57 001a B0FBF3F3 		udiv	r3, r0, r3
+  58 001e 013B     		subs	r3, r3, #1
+  59 0020 B3F5803F 		cmp	r3, #65536
+  60 0024 06D3     		bcc	.L7
+  61 0026 0132     		adds	r2, r2, #1
+  62 0028 92B2     		uxth	r2, r2
+  63 002a F2E7     		b	.L8
+  64              	.L4:
+  65 002c 0D48     		ldr	r0, .L10+4
+  66 002e FFF7FEFF 		bl	log_error
+  67 0032 14E0     		b	.L3
+  68              	.L7:
+  69 0034 2168     		ldr	r1, [r4]
+  70 0036 8A62     		str	r2, [r1, #40]
+  71 0038 2268     		ldr	r2, [r4]
+  72 003a D362     		str	r3, [r2, #44]
+  73 003c E360     		str	r3, [r4, #12]
+  74 003e 2368     		ldr	r3, [r4]
+  75 0040 0025     		movs	r5, #0
+  76 0042 5D63     		str	r5, [r3, #52]
+  77 0044 6822     		movs	r2, #104
+  78 0046 0849     		ldr	r1, .L10+8
+  79 0048 054B     		ldr	r3, .L10
+  80 004a 1868     		ldr	r0, [r3]
+  81 004c FFF7FEFF 		bl	HAL_ADC_Start_DMA
+  82 0050 2046     		mov	r0, r4
+  83 0052 FFF7FEFF 		bl	HAL_TIM_Base_Start
+  84 0056 2946     		mov	r1, r5
+  85 0058 2046     		mov	r0, r4
+  86 005a FFF7FEFF 		bl	HAL_TIM_OC_Start
+  87              	.L3:
+  88 005e 38BD     		pop	{r3, r4, r5, pc}
+  89              	.L11:
+  90              		.align	2
+  91              	.L10:
+  92 0060 00000000 		.word	hadc
+  93 0064 00000000 		.word	.LC0
+  94 0068 00000000 		.word	analog_data
+  96              		.section	.text.analog_inputs_start_conversion,"ax",%progbits
+  97              		.align	1
+  98              		.global	analog_inputs_start_conversion
+  99              		.syntax unified
+ 100              		.thumb
+ 101              		.thumb_func
+ 103              	analog_inputs_start_conversion:
+ 104              		@ args = 0, pretend = 0, frame = 0
+ 105              		@ frame_needed = 0, uses_anonymous_args = 0
+ 106              		@ link register save eliminated.
+ 107 0000 7047     		bx	lr
+ 109              		.section	.text.analog_inputs_start_conversion_injected,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	analog_inputs_start_conversion_injected
+ 112              		.syntax unified
+ 113              		.thumb
+ 114              		.thumb_func
+ 116              	analog_inputs_start_conversion_injected:
+ 117              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccH11elE.s 			page 3
+
+
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119              		@ link register save eliminated.
+ 120 0000 7047     		bx	lr
+ 122              		.section	.rodata.analog_inputs_get_data.str1.4,"aMS",%progbits,1
+ 123              		.align	2
+ 124              	.LC1:
+ 125 0000 496E7661 		.ascii	"Invalid index in analog input.\000"
+ 125      6C696420 
+ 125      696E6465 
+ 125      7820696E 
+ 125      20616E61 
+ 126              		.section	.text.analog_inputs_get_data,"ax",%progbits
+ 127              		.align	1
+ 128              		.global	analog_inputs_get_data
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 133              	analog_inputs_get_data:
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136 0000 38B5     		push	{r3, r4, r5, lr}
+ 137 0002 0C28     		cmp	r0, #12
+ 138 0004 05D8     		bhi	.L22
+ 139 0006 0546     		mov	r5, r0
+ 140 0008 0928     		cmp	r0, #9
+ 141 000a 07D1     		bne	.L23
+ 142              	.L17:
+ 143 000c 0023     		movs	r3, #0
+ 144 000e 1946     		mov	r1, r3
+ 145 0010 18E0     		b	.L18
+ 146              	.L22:
+ 147 0012 0F48     		ldr	r0, .L24
+ 148 0014 FFF7FEFF 		bl	log_error
+ 149 0018 0020     		movs	r0, #0
+ 150 001a 17E0     		b	.L16
+ 151              	.L23:
+ 152 001c 0920     		movs	r0, #9
+ 153 001e FFF7FEFF 		bl	analog_inputs_get_data
+ 154 0022 40F20633 		movw	r3, #774
+ 155 0026 9842     		cmp	r0, r3
+ 156 0028 F0D8     		bhi	.L17
+ 157 002a 0020     		movs	r0, #0
+ 158 002c 0EE0     		b	.L16
+ 159              	.L19:
+ 160 002e 03EB4302 		add	r2, r3, r3, lsl #1
+ 161 0032 03EB8202 		add	r2, r3, r2, lsl #2
+ 162 0036 2A44     		add	r2, r2, r5
+ 163 0038 064C     		ldr	r4, .L24+4
+ 164 003a 34F81220 		ldrh	r2, [r4, r2, lsl #1]
+ 165 003e 11FA82F1 		uxtah	r1, r1, r2
+ 166 0042 0133     		adds	r3, r3, #1
+ 167              	.L18:
+ 168 0044 072B     		cmp	r3, #7
+ 169 0046 F2D9     		bls	.L19
+ 170 0048 C1F3CF00 		ubfx	r0, r1, #3, #16
+ 171              	.L16:
+ 172 004c 38BD     		pop	{r3, r4, r5, pc}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccH11elE.s 			page 4
+
+
+ 173              	.L25:
+ 174 004e 00BF     		.align	2
+ 175              	.L24:
+ 176 0050 00000000 		.word	.LC1
+ 177 0054 00000000 		.word	analog_data
+ 179              		.section	.text.analog_inputs_get_voltage,"ax",%progbits
+ 180              		.align	1
+ 181              		.global	analog_inputs_get_voltage
+ 182              		.syntax unified
+ 183              		.thumb
+ 184              		.thumb_func
+ 186              	analog_inputs_get_voltage:
+ 187              		@ args = 0, pretend = 0, frame = 0
+ 188              		@ frame_needed = 0, uses_anonymous_args = 0
+ 189 0000 08B5     		push	{r3, lr}
+ 190 0002 FFF7FEFF 		bl	analog_inputs_get_data
+ 191 0006 07EE900A 		vmov	s15, r0	@ int
+ 192 000a F8EE677A 		vcvt.f32.u32	s15, s15
+ 193 000e B1EE047A 		vmov.f32	s14, #5.0e+0
+ 194 0012 67EE877A 		vmul.f32	s15, s15, s14
+ 195 0016 9FED047A 		vldr.32	s14, .L28
+ 196 001a 87EE870A 		vdiv.f32	s0, s15, s14
+ 197 001e DFED037A 		vldr.32	s15, .L28+4
+ 198 0022 30EE270A 		vadd.f32	s0, s0, s15
+ 199 0026 08BD     		pop	{r3, pc}
+ 200              	.L29:
+ 201              		.align	2
+ 202              	.L28:
+ 203 0028 00F07F45 		.word	1166012416
+ 204 002c 00000000 		.word	0
+ 206              		.section	.bss.analog_data,"aw",%nobits
+ 207              		.align	2
+ 210              	analog_data:
+ 211 0000 00000000 		.space	208
+ 211      00000000 
+ 211      00000000 
+ 211      00000000 
+ 211      00000000 
+ 212              		.global	hadc
+ 213              		.section	.bss.hadc,"aw",%nobits
+ 214              		.align	2
+ 217              	hadc:
+ 218 0000 00000000 		.space	4
+ 219              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccH11elE.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 analog_inputs.c
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:18     .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:24     .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:32     .rodata.analog_inputs_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:37     .text.analog_inputs_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:43     .text.analog_inputs_init:00000000 analog_inputs_init
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:92     .text.analog_inputs_init:00000060 $d
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:217    .bss.hadc:00000000 hadc
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:210    .bss.analog_data:00000000 analog_data
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:97     .text.analog_inputs_start_conversion:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:103    .text.analog_inputs_start_conversion:00000000 analog_inputs_start_conversion
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:110    .text.analog_inputs_start_conversion_injected:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:116    .text.analog_inputs_start_conversion_injected:00000000 analog_inputs_start_conversion_injected
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:123    .rodata.analog_inputs_get_data.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:127    .text.analog_inputs_get_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:133    .text.analog_inputs_get_data:00000000 analog_inputs_get_data
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:176    .text.analog_inputs_get_data:00000050 $d
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:180    .text.analog_inputs_get_voltage:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:186    .text.analog_inputs_get_voltage:00000000 analog_inputs_get_voltage
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:203    .text.analog_inputs_get_voltage:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:207    .bss.analog_data:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccH11elE.s:214    .bss.hadc:00000000 $d
+
+UNDEFINED SYMBOLS
+controller_analog_inputs_read_callback
+HAL_RCC_GetPCLK1Freq
+log_error
+HAL_ADC_Start_DMA
+HAL_TIM_Base_Start
+HAL_TIM_OC_Start

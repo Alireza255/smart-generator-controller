@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -20,601 +20,498 @@ ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 1
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
   19              		.file 1 "controller/utils/trigger_simulator.c"
-  20              		.section	.text.trigger_simulator_init,"ax",%progbits
+  20              		.section	.text.trigger_simulator_crank_init,"ax",%progbits
   21              		.align	1
-  22              		.global	trigger_simulator_init
+  22              		.global	trigger_simulator_crank_init
   23              		.syntax unified
   24              		.thumb
   25              		.thumb_func
-  27              	trigger_simulator_init:
+  27              	trigger_simulator_crank_init:
   28              	.LVL0:
-  29              	.LFB238:
+  29              	.LFB239:
    1:controller/utils/trigger_simulator.c **** #include "trigger_simulator.h"
-   2:controller/utils/trigger_simulator.c **** #include <stdint.h> // Ensure uint8_t, int32_t are defined
+   2:controller/utils/trigger_simulator.c **** 
    3:controller/utils/trigger_simulator.c **** 
-   4:controller/utils/trigger_simulator.c **** uint8_t wheel_full_teeth = 0;
-   5:controller/utils/trigger_simulator.c **** uint8_t wheel_missing_teeth = 0;
-   6:controller/utils/trigger_simulator.c **** 
-   7:controller/utils/trigger_simulator.c **** static bool cam_state = false;
-   8:controller/utils/trigger_simulator.c **** static bool trigger_simulator_running = false;
-   9:controller/utils/trigger_simulator.c **** static void (*trigger_callback_cam)(bool edge) = NULL;  // pointer to function taking no args, retu
-  10:controller/utils/trigger_simulator.c **** static void (*trigger_callback_crank)(void) = NULL;  // pointer to function taking no args, returns
+   4:controller/utils/trigger_simulator.c **** static osMessageQueueId_t trigger_event_queue_id = NULL;
+   5:controller/utils/trigger_simulator.c **** 
+   6:controller/utils/trigger_simulator.c **** rpm_t simulated_rpm = (rpm_t)0;
+   7:controller/utils/trigger_simulator.c **** 
+   8:controller/utils/trigger_simulator.c **** static bool *selected_wheel_pattern = NULL;
+   9:controller/utils/trigger_simulator.c **** static uint8_t selected_wheel_pattern_length = 0;
+  10:controller/utils/trigger_simulator.c **** const bool wheel_pattern_60_2[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   11:controller/utils/trigger_simulator.c **** 
-  12:controller/utils/trigger_simulator.c **** void trigger_simulator_init(uint8_t full_teeth, uint8_t missing_teeth, void (*cb_cam)(bool edge), v
+  12:controller/utils/trigger_simulator.c **** void trigger_simulator_crank_init(trigger_simulator_wheel_type_t wheel_type, osMessageQueueId_t tri
   13:controller/utils/trigger_simulator.c **** {
   30              		.loc 1 13 1 view -0
   31              		.cfi_startproc
   32              		@ args = 0, pretend = 0, frame = 0
   33              		@ frame_needed = 0, uses_anonymous_args = 0
   34              		@ link register save eliminated.
-  35              		.loc 1 13 1 is_stmt 0 view .LVU1
-  36 0000 10B4     		push	{r4}
-  37              		.cfi_def_cfa_offset 4
-  38              		.cfi_offset 4, -4
-  14:controller/utils/trigger_simulator.c ****     wheel_full_teeth = full_teeth;
-  39              		.loc 1 14 5 is_stmt 1 view .LVU2
-  40              		.loc 1 14 22 is_stmt 0 view .LVU3
-  41 0002 054C     		ldr	r4, .L3
-  42 0004 2070     		strb	r0, [r4]
-  15:controller/utils/trigger_simulator.c ****     wheel_missing_teeth = missing_teeth;
-  43              		.loc 1 15 5 is_stmt 1 view .LVU4
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 2
+  14:controller/utils/trigger_simulator.c ****     if (trigger_mq_id == NULL)
+  35              		.loc 1 14 5 view .LVU1
+  36              		.loc 1 14 8 is_stmt 0 view .LVU2
+  37 0000 41B1     		cbz	r1, .L1
+  15:controller/utils/trigger_simulator.c ****     {
+  16:controller/utils/trigger_simulator.c ****         return;
+  17:controller/utils/trigger_simulator.c ****     }
+  18:controller/utils/trigger_simulator.c ****     
+  19:controller/utils/trigger_simulator.c ****     trigger_event_queue_id = trigger_mq_id;
+  38              		.loc 1 19 5 is_stmt 1 view .LVU3
+  39              		.loc 1 19 28 is_stmt 0 view .LVU4
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 2
 
 
-  44              		.loc 1 15 25 is_stmt 0 view .LVU5
-  45 0006 0548     		ldr	r0, .L3+4
-  46              	.LVL1:
-  47              		.loc 1 15 25 view .LVU6
-  48 0008 0170     		strb	r1, [r0]
-  16:controller/utils/trigger_simulator.c ****     trigger_callback_cam = cb_cam;
-  49              		.loc 1 16 5 is_stmt 1 view .LVU7
-  50              		.loc 1 16 26 is_stmt 0 view .LVU8
-  51 000a 0549     		ldr	r1, .L3+8
-  52              	.LVL2:
-  53              		.loc 1 16 26 view .LVU9
-  54 000c 0A60     		str	r2, [r1]
-  17:controller/utils/trigger_simulator.c ****     trigger_callback_crank = cb_crank;
-  55              		.loc 1 17 5 is_stmt 1 view .LVU10
-  56              		.loc 1 17 28 is_stmt 0 view .LVU11
-  57 000e 054A     		ldr	r2, .L3+12
-  58              	.LVL3:
-  59              		.loc 1 17 28 view .LVU12
-  60 0010 1360     		str	r3, [r2]
-  18:controller/utils/trigger_simulator.c **** }
-  61              		.loc 1 18 1 view .LVU13
-  62 0012 5DF8044B 		ldr	r4, [sp], #4
-  63              		.cfi_restore 4
-  64              		.cfi_def_cfa_offset 0
-  65              		.loc 1 18 1 view .LVU14
-  66 0016 7047     		bx	lr
-  67              	.L4:
-  68              		.align	2
-  69              	.L3:
-  70 0018 00000000 		.word	wheel_full_teeth
-  71 001c 00000000 		.word	wheel_missing_teeth
-  72 0020 00000000 		.word	trigger_callback_cam
-  73 0024 00000000 		.word	trigger_callback_crank
-  74              		.cfi_endproc
-  75              	.LFE238:
-  77              		.section	.text.trigger_simulator_start,"ax",%progbits
-  78              		.align	1
-  79              		.global	trigger_simulator_start
-  80              		.syntax unified
-  81              		.thumb
-  82              		.thumb_func
-  84              	trigger_simulator_start:
-  85              	.LFB239:
-  19:controller/utils/trigger_simulator.c **** 
-  20:controller/utils/trigger_simulator.c **** void trigger_simulator_start()
-  21:controller/utils/trigger_simulator.c **** {
-  86              		.loc 1 21 1 is_stmt 1 view -0
-  87              		.cfi_startproc
-  88              		@ args = 0, pretend = 0, frame = 0
-  89              		@ frame_needed = 0, uses_anonymous_args = 0
-  90              		@ link register save eliminated.
-  22:controller/utils/trigger_simulator.c ****     trigger_simulator_running = true;
-  91              		.loc 1 22 5 view .LVU16
-  92              		.loc 1 22 31 is_stmt 0 view .LVU17
-  93 0000 014B     		ldr	r3, .L6
-  94 0002 0122     		movs	r2, #1
-  95 0004 1A70     		strb	r2, [r3]
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 3
+  40 0002 054A     		ldr	r2, .L3
+  41 0004 1160     		str	r1, [r2]
+  20:controller/utils/trigger_simulator.c ****     switch (wheel_type)
+  42              		.loc 1 20 5 is_stmt 1 view .LVU5
+  43 0006 28B9     		cbnz	r0, .L1
+  21:controller/utils/trigger_simulator.c ****     {
+  22:controller/utils/trigger_simulator.c ****     case TRIGGER_SIMULATOR_WHEEL_TYPE_60_2:
+  23:controller/utils/trigger_simulator.c ****         selected_wheel_pattern_length = SIZE_OF_ARRAY(wheel_pattern_60_2);
+  44              		.loc 1 23 9 view .LVU6
+  45              		.loc 1 23 39 is_stmt 0 view .LVU7
+  46 0008 044B     		ldr	r3, .L3+4
+  47 000a 3C22     		movs	r2, #60
+  48 000c 1A70     		strb	r2, [r3]
+  24:controller/utils/trigger_simulator.c ****         selected_wheel_pattern = &wheel_pattern_60_2[0];
+  49              		.loc 1 24 9 is_stmt 1 view .LVU8
+  50              		.loc 1 24 32 is_stmt 0 view .LVU9
+  51 000e 044B     		ldr	r3, .L3+8
+  52 0010 044A     		ldr	r2, .L3+12
+  53 0012 1A60     		str	r2, [r3]
+  25:controller/utils/trigger_simulator.c ****         break;
+  54              		.loc 1 25 9 is_stmt 1 view .LVU10
+  55              	.L1:
+  26:controller/utils/trigger_simulator.c ****     
+  27:controller/utils/trigger_simulator.c ****     default:
+  28:controller/utils/trigger_simulator.c ****         break;
+  29:controller/utils/trigger_simulator.c ****     }
+  30:controller/utils/trigger_simulator.c **** 
+  31:controller/utils/trigger_simulator.c **** }
+  56              		.loc 1 31 1 is_stmt 0 view .LVU11
+  57 0014 7047     		bx	lr
+  58              	.L4:
+  59 0016 00BF     		.align	2
+  60              	.L3:
+  61 0018 00000000 		.word	trigger_event_queue_id
+  62 001c 00000000 		.word	selected_wheel_pattern_length
+  63 0020 00000000 		.word	selected_wheel_pattern
+  64 0024 00000000 		.word	wheel_pattern_60_2
+  65              		.cfi_endproc
+  66              	.LFE239:
+  68              		.section	.text.trigger_simulator_update,"ax",%progbits
+  69              		.align	1
+  70              		.global	trigger_simulator_update
+  71              		.syntax unified
+  72              		.thumb
+  73              		.thumb_func
+  75              	trigger_simulator_update:
+  76              	.LFB240:
+  32:controller/utils/trigger_simulator.c **** 
+  33:controller/utils/trigger_simulator.c **** void trigger_simulator_update()
+  34:controller/utils/trigger_simulator.c **** {
+  77              		.loc 1 34 1 is_stmt 1 view -0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 8
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81 0000 70B5     		push	{r4, r5, r6, lr}
+  82              		.cfi_def_cfa_offset 16
+  83              		.cfi_offset 4, -16
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 3
 
 
-  23:controller/utils/trigger_simulator.c **** }
-  96              		.loc 1 23 1 view .LVU18
-  97 0006 7047     		bx	lr
-  98              	.L7:
-  99              		.align	2
- 100              	.L6:
- 101 0008 00000000 		.word	trigger_simulator_running
- 102              		.cfi_endproc
- 103              	.LFE239:
- 105              		.section	.text.trigger_simulator_stop,"ax",%progbits
- 106              		.align	1
- 107              		.global	trigger_simulator_stop
- 108              		.syntax unified
- 109              		.thumb
- 110              		.thumb_func
- 112              	trigger_simulator_stop:
- 113              	.LFB240:
-  24:controller/utils/trigger_simulator.c **** void trigger_simulator_stop()
-  25:controller/utils/trigger_simulator.c **** {
- 114              		.loc 1 25 1 is_stmt 1 view -0
- 115              		.cfi_startproc
- 116              		@ args = 0, pretend = 0, frame = 0
- 117              		@ frame_needed = 0, uses_anonymous_args = 0
- 118              		@ link register save eliminated.
-  26:controller/utils/trigger_simulator.c ****     trigger_simulator_running = false;
- 119              		.loc 1 26 5 view .LVU20
- 120              		.loc 1 26 31 is_stmt 0 view .LVU21
- 121 0000 014B     		ldr	r3, .L9
- 122 0002 0022     		movs	r2, #0
- 123 0004 1A70     		strb	r2, [r3]
-  27:controller/utils/trigger_simulator.c **** }
- 124              		.loc 1 27 1 view .LVU22
- 125 0006 7047     		bx	lr
- 126              	.L10:
- 127              		.align	2
- 128              	.L9:
- 129 0008 00000000 		.word	trigger_simulator_running
- 130              		.cfi_endproc
- 131              	.LFE240:
- 133              		.section	.text.trigger_simulator_update,"ax",%progbits
- 134              		.align	1
- 135              		.global	trigger_simulator_update
- 136              		.syntax unified
- 137              		.thumb
- 138              		.thumb_func
- 140              	trigger_simulator_update:
- 141              	.LVL4:
- 142              	.LFB241:
-  28:controller/utils/trigger_simulator.c **** 
-  29:controller/utils/trigger_simulator.c **** 
-  30:controller/utils/trigger_simulator.c **** void trigger_simulator_update(rpm_t rpm)
-  31:controller/utils/trigger_simulator.c **** {
- 143              		.loc 1 31 1 is_stmt 1 view -0
- 144              		.cfi_startproc
- 145              		@ args = 0, pretend = 0, frame = 0
- 146              		@ frame_needed = 0, uses_anonymous_args = 0
- 147              		.loc 1 31 1 is_stmt 0 view .LVU24
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 4
+  84              		.cfi_offset 5, -12
+  85              		.cfi_offset 6, -8
+  86              		.cfi_offset 14, -4
+  87 0002 82B0     		sub	sp, sp, #8
+  88              		.cfi_def_cfa_offset 24
+  35:controller/utils/trigger_simulator.c ****     if (trigger_event_queue_id == NULL || simulated_rpm == (rpm_t)0 || selected_wheel_pattern == NU
+  89              		.loc 1 35 5 view .LVU13
+  90              		.loc 1 35 32 is_stmt 0 view .LVU14
+  91 0004 264B     		ldr	r3, .L16
+  92 0006 1B68     		ldr	r3, [r3]
+  93              		.loc 1 35 8 view .LVU15
+  94 0008 7BB3     		cbz	r3, .L6
+  95              		.loc 1 35 57 discriminator 1 view .LVU16
+  96 000a 264B     		ldr	r3, .L16+4
+  97 000c 93ED007A 		vldr.32	s14, [r3]
+  98              		.loc 1 35 40 discriminator 1 view .LVU17
+  99 0010 B5EE407A 		vcmp.f32	s14, #0
+ 100 0014 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 101 0018 27D0     		beq	.L6
+ 102              		.loc 1 35 95 discriminator 2 view .LVU18
+ 103 001a 234B     		ldr	r3, .L16+8
+ 104 001c 1A68     		ldr	r2, [r3]
+ 105              		.loc 1 35 69 discriminator 2 view .LVU19
+ 106 001e 22B3     		cbz	r2, .L6
+ 107              		.loc 1 35 136 discriminator 3 view .LVU20
+ 108 0020 224B     		ldr	r3, .L16+12
+ 109 0022 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 110              		.loc 1 35 103 discriminator 3 view .LVU21
+ 111 0024 0BB3     		cbz	r3, .L6
+  36:controller/utils/trigger_simulator.c ****     {
+  37:controller/utils/trigger_simulator.c ****         osDelay(100);
+  38:controller/utils/trigger_simulator.c ****         return;
+  39:controller/utils/trigger_simulator.c ****     }
+  40:controller/utils/trigger_simulator.c ****     time_ms_t tooth_gap = (time_ms_t)(60000.0f / (simulated_rpm * selected_wheel_pattern_length));
+ 112              		.loc 1 40 5 is_stmt 1 view .LVU22
+ 113              		.loc 1 40 65 is_stmt 0 view .LVU23
+ 114 0026 07EE903A 		vmov	s15, r3	@ int
+ 115 002a F8EEE77A 		vcvt.f32.s32	s15, s15
+ 116 002e 67EE877A 		vmul.f32	s15, s15, s14
+ 117              		.loc 1 40 48 view .LVU24
+ 118 0032 DFED1F6A 		vldr.32	s13, .L16+16
+ 119 0036 86EEA77A 		vdiv.f32	s14, s13, s15
+ 120              		.loc 1 40 15 view .LVU25
+ 121 003a FCEEC77A 		vcvt.u32.f32	s15, s14
+ 122 003e 17EE904A 		vmov	r4, s15	@ int
+ 123              	.LVL1:
+  41:controller/utils/trigger_simulator.c ****     if (tooth_gap <= 0)
+ 124              		.loc 1 41 5 is_stmt 1 view .LVU26
+ 125              		.loc 1 41 8 is_stmt 0 view .LVU27
+ 126 0042 04B9     		cbnz	r4, .L9
+  42:controller/utils/trigger_simulator.c ****     {
+  43:controller/utils/trigger_simulator.c ****         tooth_gap = 1;
+ 127              		.loc 1 43 19 view .LVU28
+ 128 0044 0124     		movs	r4, #1
+ 129              	.LVL2:
+ 130              	.L9:
+  44:controller/utils/trigger_simulator.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 4
 
 
- 148 0000 08B5     		push	{r3, lr}
- 149              		.cfi_def_cfa_offset 8
- 150              		.cfi_offset 3, -8
- 151              		.cfi_offset 14, -4
-  32:controller/utils/trigger_simulator.c ****     if (trigger_callback_cam == NULL || trigger_callback_crank == NULL)
- 152              		.loc 1 32 5 is_stmt 1 view .LVU25
- 153              		.loc 1 32 30 is_stmt 0 view .LVU26
- 154 0002 2C4B     		ldr	r3, .L19
- 155 0004 1B68     		ldr	r3, [r3]
- 156              		.loc 1 32 8 view .LVU27
- 157 0006 83B1     		cbz	r3, .L11
- 158              		.loc 1 32 64 discriminator 1 view .LVU28
- 159 0008 2B4B     		ldr	r3, .L19+4
- 160 000a 1B68     		ldr	r3, [r3]
- 161              		.loc 1 32 38 discriminator 1 view .LVU29
- 162 000c 6BB1     		cbz	r3, .L11
-  33:controller/utils/trigger_simulator.c ****     {
-  34:controller/utils/trigger_simulator.c ****         return;
-  35:controller/utils/trigger_simulator.c ****     }
-  36:controller/utils/trigger_simulator.c ****     if (wheel_full_teeth == 0) {
- 163              		.loc 1 36 5 is_stmt 1 view .LVU30
- 164              		.loc 1 36 26 is_stmt 0 view .LVU31
- 165 000e 2B4B     		ldr	r3, .L19+8
- 166 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 167              		.loc 1 36 8 view .LVU32
- 168 0012 53B1     		cbz	r3, .L11
-  37:controller/utils/trigger_simulator.c ****         return; // Prevent division by zero
+  45:controller/utils/trigger_simulator.c ****     
+  46:controller/utils/trigger_simulator.c ****     static uint_fast8_t tooth_pointer = 0;
+ 131              		.loc 1 46 5 is_stmt 1 view .LVU29
+  47:controller/utils/trigger_simulator.c ****     
+  48:controller/utils/trigger_simulator.c ****     if (selected_wheel_pattern[tooth_pointer] == 1)
+ 132              		.loc 1 48 5 view .LVU30
+ 133              		.loc 1 48 31 is_stmt 0 view .LVU31
+ 134 0046 1B4B     		ldr	r3, .L16+20
+ 135 0048 1B68     		ldr	r3, [r3]
+ 136 004a D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+ 137              		.loc 1 48 8 view .LVU32
+ 138 004c 93B9     		cbnz	r3, .L15
+ 139              	.L10:
+  49:controller/utils/trigger_simulator.c ****     {
+  50:controller/utils/trigger_simulator.c ****         // Send a trigger event to the queue
+  51:controller/utils/trigger_simulator.c ****         trigger_event_t event = {0}; // Initialize event as needed
+  52:controller/utils/trigger_simulator.c ****         event.type = TRIGGER_EVENT_TYPE_CRANKSHAFT;
+  53:controller/utils/trigger_simulator.c ****         event.edge = TRIGGER_EVENT_EDGE_FALLING;
+  54:controller/utils/trigger_simulator.c ****         event.timestamp = get_time_us();
+  55:controller/utils/trigger_simulator.c ****         osMessageQueuePut(trigger_event_queue_id, &event, 0, 0);
+  56:controller/utils/trigger_simulator.c ****     }
+  57:controller/utils/trigger_simulator.c ****     
+  58:controller/utils/trigger_simulator.c ****     if (tooth_pointer < (selected_wheel_pattern_length - 1))
+ 140              		.loc 1 58 5 is_stmt 1 view .LVU33
+ 141              		.loc 1 58 56 is_stmt 0 view .LVU34
+ 142 004e 174B     		ldr	r3, .L16+12
+ 143 0050 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 144 0052 013B     		subs	r3, r3, #1
+ 145              		.loc 1 58 23 view .LVU35
+ 146 0054 174A     		ldr	r2, .L16+20
+ 147 0056 1268     		ldr	r2, [r2]
+ 148              		.loc 1 58 8 view .LVU36
+ 149 0058 9342     		cmp	r3, r2
+ 150 005a 1CD9     		bls	.L11
+  59:controller/utils/trigger_simulator.c ****     {
+  60:controller/utils/trigger_simulator.c ****         tooth_pointer++;
+ 151              		.loc 1 60 9 is_stmt 1 view .LVU37
+ 152              		.loc 1 60 22 is_stmt 0 view .LVU38
+ 153 005c 0132     		adds	r2, r2, #1
+ 154 005e 154B     		ldr	r3, .L16+20
+ 155 0060 1A60     		str	r2, [r3]
+ 156              	.L12:
+  61:controller/utils/trigger_simulator.c ****     }
+  62:controller/utils/trigger_simulator.c ****     else
+  63:controller/utils/trigger_simulator.c ****     {
+  64:controller/utils/trigger_simulator.c ****         tooth_pointer = 0;
+  65:controller/utils/trigger_simulator.c ****     }
+  66:controller/utils/trigger_simulator.c ****     
+  67:controller/utils/trigger_simulator.c ****     osDelay(tooth_gap);
+ 157              		.loc 1 67 5 is_stmt 1 view .LVU39
+ 158 0062 2046     		mov	r0, r4
+ 159 0064 FFF7FEFF 		bl	osDelay
+ 160              	.LVL3:
+ 161 0068 02E0     		b	.L5
+ 162              	.LVL4:
+ 163              	.L6:
+  37:controller/utils/trigger_simulator.c ****         return;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 5
+
+
+ 164              		.loc 1 37 9 view .LVU40
+ 165 006a 6420     		movs	r0, #100
+ 166 006c FFF7FEFF 		bl	osDelay
+ 167              	.LVL5:
   38:controller/utils/trigger_simulator.c ****     }
-  39:controller/utils/trigger_simulator.c ****     if (rpm == 0 || !trigger_simulator_running)
- 169              		.loc 1 39 5 is_stmt 1 view .LVU33
- 170              		.loc 1 39 8 is_stmt 0 view .LVU34
- 171 0014 B5EE400A 		vcmp.f32	s0, #0
- 172 0018 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
- 173 001c 02D0     		beq	.L13
- 174              		.loc 1 39 21 discriminator 1 view .LVU35
- 175 001e 284A     		ldr	r2, .L19+12
- 176 0020 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
- 177              		.loc 1 39 18 discriminator 1 view .LVU36
- 178 0022 1AB9     		cbnz	r2, .L14
- 179              	.L13:
-  40:controller/utils/trigger_simulator.c ****     {
-  41:controller/utils/trigger_simulator.c ****         osDelay(1);
- 180              		.loc 1 41 9 is_stmt 1 view .LVU37
- 181 0024 0120     		movs	r0, #1
- 182 0026 FFF7FEFF 		bl	osDelay
- 183              	.LVL5:
-  42:controller/utils/trigger_simulator.c ****         return;
- 184              		.loc 1 42 9 view .LVU38
- 185              	.L11:
-  43:controller/utils/trigger_simulator.c ****     }
-  44:controller/utils/trigger_simulator.c ****     
-  45:controller/utils/trigger_simulator.c ****     time_us_t tooth_interval = (time_us_t)roundf((float)microseconds_per_degree(rpm) * (float)360 /
-  46:controller/utils/trigger_simulator.c **** 
-  47:controller/utils/trigger_simulator.c ****     osDelay(tooth_interval);
-  48:controller/utils/trigger_simulator.c ****     
-  49:controller/utils/trigger_simulator.c ****     static uint8_t current_tooth_index = 0;
-  50:controller/utils/trigger_simulator.c **** 
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 5
-
-
-  51:controller/utils/trigger_simulator.c ****     if (current_tooth_index < wheel_missing_teeth)
-  52:controller/utils/trigger_simulator.c ****     {
-  53:controller/utils/trigger_simulator.c ****         // welll do nothing!
-  54:controller/utils/trigger_simulator.c ****     }
-  55:controller/utils/trigger_simulator.c ****     else
-  56:controller/utils/trigger_simulator.c ****     {
-  57:controller/utils/trigger_simulator.c ****         trigger_callback_crank();
-  58:controller/utils/trigger_simulator.c ****     }
-  59:controller/utils/trigger_simulator.c ****     
-  60:controller/utils/trigger_simulator.c **** 
-  61:controller/utils/trigger_simulator.c ****     if (current_tooth_index < (wheel_full_teeth - 1))
-  62:controller/utils/trigger_simulator.c ****     {
-  63:controller/utils/trigger_simulator.c ****         current_tooth_index++;
+ 168              		.loc 1 38 9 view .LVU41
+ 169              	.L5:
+  68:controller/utils/trigger_simulator.c **** }
+ 170              		.loc 1 68 1 is_stmt 0 view .LVU42
+ 171 0070 02B0     		add	sp, sp, #8
+ 172              		.cfi_remember_state
+ 173              		.cfi_def_cfa_offset 16
+ 174              		@ sp needed
+ 175 0072 70BD     		pop	{r4, r5, r6, pc}
+ 176              	.LVL6:
+ 177              	.L15:
+ 178              		.cfi_restore_state
+ 179              	.LBB2:
+  51:controller/utils/trigger_simulator.c ****         event.type = TRIGGER_EVENT_TYPE_CRANKSHAFT;
+ 180              		.loc 1 51 9 is_stmt 1 view .LVU43
+  51:controller/utils/trigger_simulator.c ****         event.type = TRIGGER_EVENT_TYPE_CRANKSHAFT;
+ 181              		.loc 1 51 25 is_stmt 0 view .LVU44
+ 182 0074 0025     		movs	r5, #0
+ 183 0076 0095     		str	r5, [sp]
+ 184 0078 0195     		str	r5, [sp, #4]
+  52:controller/utils/trigger_simulator.c ****         event.edge = TRIGGER_EVENT_EDGE_FALLING;
+ 185              		.loc 1 52 9 is_stmt 1 view .LVU45
+  52:controller/utils/trigger_simulator.c ****         event.edge = TRIGGER_EVENT_EDGE_FALLING;
+ 186              		.loc 1 52 20 is_stmt 0 view .LVU46
+ 187 007a 0123     		movs	r3, #1
+ 188 007c 8DF80430 		strb	r3, [sp, #4]
+  53:controller/utils/trigger_simulator.c ****         event.timestamp = get_time_us();
+ 189              		.loc 1 53 9 is_stmt 1 view .LVU47
+  54:controller/utils/trigger_simulator.c ****         osMessageQueuePut(trigger_event_queue_id, &event, 0, 0);
+ 190              		.loc 1 54 9 view .LVU48
+  54:controller/utils/trigger_simulator.c ****         osMessageQueuePut(trigger_event_queue_id, &event, 0, 0);
+ 191              		.loc 1 54 27 is_stmt 0 view .LVU49
+ 192 0080 FFF7FEFF 		bl	get_time_us
+ 193              	.LVL7:
+  54:controller/utils/trigger_simulator.c ****         osMessageQueuePut(trigger_event_queue_id, &event, 0, 0);
+ 194              		.loc 1 54 25 discriminator 1 view .LVU50
+ 195 0084 0090     		str	r0, [sp]
+  55:controller/utils/trigger_simulator.c ****     }
+ 196              		.loc 1 55 9 is_stmt 1 view .LVU51
+ 197 0086 2B46     		mov	r3, r5
+ 198 0088 2A46     		mov	r2, r5
+ 199 008a 6946     		mov	r1, sp
+ 200 008c 0448     		ldr	r0, .L16
+ 201 008e 0068     		ldr	r0, [r0]
+ 202 0090 FFF7FEFF 		bl	osMessageQueuePut
+ 203              	.LVL8:
+ 204 0094 DBE7     		b	.L10
+ 205              	.L11:
+ 206              	.LBE2:
   64:controller/utils/trigger_simulator.c ****     }
-  65:controller/utils/trigger_simulator.c ****     else
-  66:controller/utils/trigger_simulator.c ****     {
-  67:controller/utils/trigger_simulator.c ****         current_tooth_index = 0;
-  68:controller/utils/trigger_simulator.c ****     }
+ 207              		.loc 1 64 9 view .LVU52
+  64:controller/utils/trigger_simulator.c ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 6
+
+
+ 208              		.loc 1 64 23 is_stmt 0 view .LVU53
+ 209 0096 074B     		ldr	r3, .L16+20
+ 210 0098 0022     		movs	r2, #0
+ 211 009a 1A60     		str	r2, [r3]
+ 212 009c E1E7     		b	.L12
+ 213              	.L17:
+ 214 009e 00BF     		.align	2
+ 215              	.L16:
+ 216 00a0 00000000 		.word	trigger_event_queue_id
+ 217 00a4 00000000 		.word	simulated_rpm
+ 218 00a8 00000000 		.word	selected_wheel_pattern
+ 219 00ac 00000000 		.word	selected_wheel_pattern_length
+ 220 00b0 00606A47 		.word	1198153728
+ 221 00b4 00000000 		.word	tooth_pointer.0
+ 222              		.cfi_endproc
+ 223              	.LFE240:
+ 225              		.section	.text.trigger_simulator_set_rpm_and_start,"ax",%progbits
+ 226              		.align	1
+ 227              		.global	trigger_simulator_set_rpm_and_start
+ 228              		.syntax unified
+ 229              		.thumb
+ 230              		.thumb_func
+ 232              	trigger_simulator_set_rpm_and_start:
+ 233              	.LVL9:
+ 234              	.LFB241:
   69:controller/utils/trigger_simulator.c **** 
-  70:controller/utils/trigger_simulator.c ****     if (current_tooth_index == 0)
-  71:controller/utils/trigger_simulator.c ****     {
-  72:controller/utils/trigger_simulator.c ****         cam_state = !cam_state;
-  73:controller/utils/trigger_simulator.c ****         trigger_callback_cam(cam_state);
-  74:controller/utils/trigger_simulator.c ****     }
-  75:controller/utils/trigger_simulator.c **** 
-  76:controller/utils/trigger_simulator.c ****     
+  70:controller/utils/trigger_simulator.c **** void trigger_simulator_set_rpm_and_start(rpm_t rpm)
+  71:controller/utils/trigger_simulator.c **** {
+ 235              		.loc 1 71 1 is_stmt 1 view -0
+ 236              		.cfi_startproc
+ 237              		@ args = 0, pretend = 0, frame = 0
+ 238              		@ frame_needed = 0, uses_anonymous_args = 0
+ 239              		@ link register save eliminated.
+  72:controller/utils/trigger_simulator.c ****     simulated_rpm = rpm;
+ 240              		.loc 1 72 5 view .LVU55
+ 241              		.loc 1 72 19 is_stmt 0 view .LVU56
+ 242 0000 014B     		ldr	r3, .L19
+ 243 0002 83ED000A 		vstr.32	s0, [r3]
+  73:controller/utils/trigger_simulator.c **** }
+ 244              		.loc 1 73 1 view .LVU57
+ 245 0006 7047     		bx	lr
+ 246              	.L20:
+ 247              		.align	2
+ 248              	.L19:
+ 249 0008 00000000 		.word	simulated_rpm
+ 250              		.cfi_endproc
+ 251              	.LFE241:
+ 253              		.section	.text.trigger_simulator_stop,"ax",%progbits
+ 254              		.align	1
+ 255              		.global	trigger_simulator_stop
+ 256              		.syntax unified
+ 257              		.thumb
+ 258              		.thumb_func
+ 260              	trigger_simulator_stop:
+ 261              	.LFB242:
+  74:controller/utils/trigger_simulator.c **** void trigger_simulator_stop()
+  75:controller/utils/trigger_simulator.c **** {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 7
+
+
+ 262              		.loc 1 75 1 is_stmt 1 view -0
+ 263              		.cfi_startproc
+ 264              		@ args = 0, pretend = 0, frame = 0
+ 265              		@ frame_needed = 0, uses_anonymous_args = 0
+ 266              		@ link register save eliminated.
+  76:controller/utils/trigger_simulator.c ****     simulated_rpm = (rpm_t)0;
+ 267              		.loc 1 76 5 view .LVU59
+ 268              		.loc 1 76 19 is_stmt 0 view .LVU60
+ 269 0000 014B     		ldr	r3, .L22
+ 270 0002 0022     		movs	r2, #0
+ 271 0004 1A60     		str	r2, [r3]	@ float
   77:controller/utils/trigger_simulator.c **** }
- 186              		.loc 1 77 1 is_stmt 0 view .LVU39
- 187 002a 08BD     		pop	{r3, pc}
- 188              	.LVL6:
- 189              	.L14:
-  45:controller/utils/trigger_simulator.c **** 
- 190              		.loc 1 45 5 is_stmt 1 view .LVU40
- 191              	.LBB4:
- 192              	.LBI4:
- 193              		.file 2 "controller/utils/utils.h"
-   1:controller/utils/utils.h **** /**
-   2:controller/utils/utils.h ****  * @file utils.h
-   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
-   4:controller/utils/utils.h ****  *
-   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
-   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
-   7:controller/utils/utils.h ****  *
-   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
-   9:controller/utils/utils.h ****  */
-  10:controller/utils/utils.h **** #ifndef UTILS_H
-  11:controller/utils/utils.h **** #define UTILS_H
-  12:controller/utils/utils.h **** 
-  13:controller/utils/utils.h **** #include "types.h"
-  14:controller/utils/utils.h **** #include "math.h"
-  15:controller/utils/utils.h **** 
-  16:controller/utils/utils.h **** #define PI 3.14159265358979323846f
-  17:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
-  18:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
-  19:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
-  20:controller/utils/utils.h **** 
-  21:controller/utils/utils.h **** #define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 6
+ 272              		.loc 1 77 1 view .LVU61
+ 273 0006 7047     		bx	lr
+ 274              	.L23:
+ 275              		.align	2
+ 276              	.L22:
+ 277 0008 00000000 		.word	simulated_rpm
+ 278              		.cfi_endproc
+ 279              	.LFE242:
+ 281              		.section	.bss.tooth_pointer.0,"aw",%nobits
+ 282              		.align	2
+ 285              	tooth_pointer.0:
+ 286 0000 00000000 		.space	4
+ 287              		.global	wheel_pattern_60_2
+ 288              		.section	.rodata.wheel_pattern_60_2,"a"
+ 289              		.align	2
+ 292              	wheel_pattern_60_2:
+ 293 0000 01       		.byte	1
+ 294 0001 01       		.byte	1
+ 295 0002 01       		.byte	1
+ 296 0003 01       		.byte	1
+ 297 0004 01       		.byte	1
+ 298 0005 01       		.byte	1
+ 299 0006 01       		.byte	1
+ 300 0007 01       		.byte	1
+ 301 0008 01       		.byte	1
+ 302 0009 01       		.byte	1
+ 303 000a 01       		.byte	1
+ 304 000b 01       		.byte	1
+ 305 000c 01       		.byte	1
+ 306 000d 01       		.byte	1
+ 307 000e 01       		.byte	1
+ 308 000f 01       		.byte	1
+ 309 0010 01       		.byte	1
+ 310 0011 01       		.byte	1
+ 311 0012 01       		.byte	1
+ 312 0013 01       		.byte	1
+ 313 0014 01       		.byte	1
+ 314 0015 01       		.byte	1
+ 315 0016 01       		.byte	1
+ 316 0017 01       		.byte	1
+ 317 0018 01       		.byte	1
+ 318 0019 01       		.byte	1
+ 319 001a 01       		.byte	1
+ 320 001b 01       		.byte	1
+ 321 001c 01       		.byte	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 8
 
 
-  22:controller/utils/utils.h **** 
-  23:controller/utils/utils.h **** bool is_phase_in_range(float test, float current, float next);
-  24:controller/utils/utils.h **** 
-  25:controller/utils/utils.h **** size_t nearest_index_float(const float *arr, size_t size, float target);
-  26:controller/utils/utils.h **** size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target);
-  27:controller/utils/utils.h **** size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target);
-  28:controller/utils/utils.h **** size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
-  29:controller/utils/utils.h **** 
-  30:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
-  31:controller/utils/utils.h **** {
-  32:controller/utils/utils.h ****     if (bit > 31)
-  33:controller/utils/utils.h ****     {
-  34:controller/utils/utils.h ****         return;
-  35:controller/utils/utils.h ****     }
-  36:controller/utils/utils.h ****     if (state)
-  37:controller/utils/utils.h ****     {
-  38:controller/utils/utils.h ****         *var |= (1u << bit);
-  39:controller/utils/utils.h ****     }
-  40:controller/utils/utils.h ****     else
-  41:controller/utils/utils.h ****     {
-  42:controller/utils/utils.h ****         *var &= ~(1u << bit);
-  43:controller/utils/utils.h ****     }
-  44:controller/utils/utils.h **** }
-  45:controller/utils/utils.h **** 
-  46:controller/utils/utils.h **** static inline bool get_bit(uint32_t flags, uint8_t bit)
-  47:controller/utils/utils.h **** {
-  48:controller/utils/utils.h ****     if (bit < 32)
-  49:controller/utils/utils.h ****     {
-  50:controller/utils/utils.h ****         return (flags >> bit) & 1u;
-  51:controller/utils/utils.h ****     }
-  52:controller/utils/utils.h ****     return false;
-  53:controller/utils/utils.h **** }
-  54:controller/utils/utils.h **** 
-  55:controller/utils/utils.h **** /**
-  56:controller/utils/utils.h ****  * @brief Maps a value from one range to another.
-  57:controller/utils/utils.h ****  *
-  58:controller/utils/utils.h ****  * @param x The value to map.
-  59:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  60:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  61:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  62:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  63:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  64:controller/utils/utils.h ****  */
-  65:controller/utils/utils.h **** #define MAP(x, in_min, in_max, out_min, out_max) \
-  66:controller/utils/utils.h ****     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
-  67:controller/utils/utils.h **** 
-  68:controller/utils/utils.h **** /**
-  69:controller/utils/utils.h ****  * @brief Maps a uint16_t value from one range to another.
-  70:controller/utils/utils.h ****  *
-  71:controller/utils/utils.h ****  * @param x The value to map.
-  72:controller/utils/utils.h ****  * @param in_min The lower bound of the input range.
-  73:controller/utils/utils.h ****  * @param in_max The upper bound of the input range.
-  74:controller/utils/utils.h ****  * @param out_min The lower bound of the output range.
-  75:controller/utils/utils.h ****  * @param out_max The upper bound of the output range.
-  76:controller/utils/utils.h ****  * @return The mapped value in the output range.
-  77:controller/utils/utils.h ****  */
-  78:controller/utils/utils.h **** static inline uint16_t map_uint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, u
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 7
+ 322 001d 01       		.byte	1
+ 323 001e 01       		.byte	1
+ 324 001f 01       		.byte	1
+ 325 0020 01       		.byte	1
+ 326 0021 01       		.byte	1
+ 327 0022 01       		.byte	1
+ 328 0023 01       		.byte	1
+ 329 0024 01       		.byte	1
+ 330 0025 01       		.byte	1
+ 331 0026 01       		.byte	1
+ 332 0027 01       		.byte	1
+ 333 0028 01       		.byte	1
+ 334 0029 01       		.byte	1
+ 335 002a 01       		.byte	1
+ 336 002b 01       		.byte	1
+ 337 002c 01       		.byte	1
+ 338 002d 01       		.byte	1
+ 339 002e 01       		.byte	1
+ 340 002f 01       		.byte	1
+ 341 0030 01       		.byte	1
+ 342 0031 01       		.byte	1
+ 343 0032 01       		.byte	1
+ 344 0033 01       		.byte	1
+ 345 0034 01       		.byte	1
+ 346 0035 01       		.byte	1
+ 347 0036 01       		.byte	1
+ 348 0037 01       		.byte	1
+ 349 0038 01       		.byte	1
+ 350 0039 01       		.byte	1
+ 351 003a 00       		.byte	0
+ 352 003b 00       		.byte	0
+ 353              		.section	.bss.selected_wheel_pattern_length,"aw",%nobits
+ 356              	selected_wheel_pattern_length:
+ 357 0000 00       		.space	1
+ 358              		.section	.bss.selected_wheel_pattern,"aw",%nobits
+ 359              		.align	2
+ 362              	selected_wheel_pattern:
+ 363 0000 00000000 		.space	4
+ 364              		.global	simulated_rpm
+ 365              		.section	.bss.simulated_rpm,"aw",%nobits
+ 366              		.align	2
+ 369              	simulated_rpm:
+ 370 0000 00000000 		.space	4
+ 371              		.section	.bss.trigger_event_queue_id,"aw",%nobits
+ 372              		.align	2
+ 375              	trigger_event_queue_id:
+ 376 0000 00000000 		.space	4
+ 377              		.text
+ 378              	.Letext0:
+ 379              		.file 2 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 380              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 381              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 382              		.file 5 "controller/types.h"
+ 383              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 384              		.file 7 "controller/engine_cycle/trigger.h"
+ 385              		.file 8 "controller/utils/trigger_simulator.h"
+ 386              		.file 9 "controller/utils/timing.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 9
 
 
-  79:controller/utils/utils.h **** {
-  80:controller/utils/utils.h ****     if (in_max == in_min)
-  81:controller/utils/utils.h ****     {
-  82:controller/utils/utils.h ****         return 0; // Avoid division by zero
-  83:controller/utils/utils.h ****     }
-  84:controller/utils/utils.h ****     return (uint16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-  85:controller/utils/utils.h **** }
-  86:controller/utils/utils.h **** 
-  87:controller/utils/utils.h **** static inline float mapf(float x, float in_min, float in_max, float out_min, float out_max)
-  88:controller/utils/utils.h **** {
-  89:controller/utils/utils.h ****     if (in_max == in_min)
-  90:controller/utils/utils.h ****     {
-  91:controller/utils/utils.h ****         return 0.0f; // Avoid division by zero
-  92:controller/utils/utils.h ****     }
-  93:controller/utils/utils.h ****     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-  94:controller/utils/utils.h **** }
-  95:controller/utils/utils.h **** 
-  96:controller/utils/utils.h **** // http://en.wikipedia.org/wiki/Endianness
-  97:controller/utils/utils.h **** inline uint16_t swap_endian_uint16(uint16_t x)
-  98:controller/utils/utils.h **** {
-  99:controller/utils/utils.h ****     return ((x << 8) | (x >> 8));
- 100:controller/utils/utils.h **** }
- 101:controller/utils/utils.h **** inline uint32_t swap_endian_uint32(uint32_t x)
- 102:controller/utils/utils.h **** {
- 103:controller/utils/utils.h ****     return (((x >> 24) & 0x000000ff) | ((x << 8) & 0x00ff0000) |
- 104:controller/utils/utils.h ****             ((x >> 8) & 0x0000ff00) | ((x << 24) & 0xff000000));
- 105:controller/utils/utils.h **** }
- 106:controller/utils/utils.h **** 
- 107:controller/utils/utils.h **** void swap_endian_copy_uint8(uint8_t *dst, const uint8_t *src, size_t size);
- 108:controller/utils/utils.h **** 
- 109:controller/utils/utils.h **** #define CELSIUS_TO_KELVIN(celsius) ((celsius) + 273.15f)
- 110:controller/utils/utils.h **** #define KELVIN_TO_CELSIUS(kelvin) ((kelvin) - 273.15f)
- 111:controller/utils/utils.h **** 
- 112:controller/utils/utils.h **** /**
- 113:controller/utils/utils.h ****  * @brief Function to calculate the microseconds it takes for the engine to turn one degree.
- 114:controller/utils/utils.h ****  * @note Returns 0 if rpm is 0.
- 115:controller/utils/utils.h ****  */
- 116:controller/utils/utils.h **** static inline time_us_t microseconds_per_degree(rpm_t rpm)
- 194              		.loc 2 116 25 view .LVU41
- 195              	.LBB5:
- 117:controller/utils/utils.h **** {
- 118:controller/utils/utils.h ****     if (rpm == 0)
- 196              		.loc 2 118 5 view .LVU42
- 119:controller/utils/utils.h ****     {
- 120:controller/utils/utils.h ****         return 0;
- 121:controller/utils/utils.h ****     }
- 122:controller/utils/utils.h ****     return (time_us_t)60.0f * 1e6f / (rpm * 360.0f);
- 197              		.loc 2 122 5 view .LVU43
- 198              		.loc 2 122 43 is_stmt 0 view .LVU44
- 199 002c DFED257A 		vldr.32	s15, .L19+16
- 200 0030 20EE270A 		vmul.f32	s0, s0, s15
- 201              	.LVL7:
- 202              		.loc 2 122 36 view .LVU45
- 203 0034 DFED246A 		vldr.32	s13, .L19+20
- 204 0038 86EE807A 		vdiv.f32	s14, s13, s0
- 205 003c BCEEC77A 		vcvt.u32.f32	s14, s14
- 206              	.LVL8:
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 8
-
-
- 207              		.loc 2 122 36 view .LVU46
- 208              	.LBE5:
- 209              	.LBE4:
-  45:controller/utils/trigger_simulator.c **** 
- 210              		.loc 1 45 50 discriminator 1 view .LVU47
- 211 0040 B8EE477A 		vcvt.f32.u32	s14, s14
-  45:controller/utils/trigger_simulator.c **** 
- 212              		.loc 1 45 86 discriminator 1 view .LVU48
- 213 0044 27EE277A 		vmul.f32	s14, s14, s15
-  45:controller/utils/trigger_simulator.c **** 
- 214              		.loc 1 45 101 discriminator 1 view .LVU49
- 215 0048 07EE903A 		vmov	s15, r3	@ int
- 216 004c F8EE677A 		vcvt.f32.u32	s15, s15
-  45:controller/utils/trigger_simulator.c **** 
- 217              		.loc 1 45 99 discriminator 1 view .LVU50
- 218 0050 87EE270A 		vdiv.f32	s0, s14, s15
-  45:controller/utils/trigger_simulator.c **** 
- 219              		.loc 1 45 43 discriminator 1 view .LVU51
- 220 0054 DFED1D7A 		vldr.32	s15, .L19+24
- 221 0058 80EE270A 		vdiv.f32	s0, s0, s15
- 222 005c FFF7FEFF 		bl	roundf
- 223              	.LVL9:
-  47:controller/utils/trigger_simulator.c ****     
- 224              		.loc 1 47 5 is_stmt 1 view .LVU52
- 225 0060 FCEEC07A 		vcvt.u32.f32	s15, s0
- 226              	.LVL10:
-  47:controller/utils/trigger_simulator.c ****     
- 227              		.loc 1 47 5 is_stmt 0 view .LVU53
- 228 0064 17EE900A 		vmov	r0, s15	@ int
- 229 0068 FFF7FEFF 		bl	osDelay
- 230              	.LVL11:
-  49:controller/utils/trigger_simulator.c **** 
- 231              		.loc 1 49 5 is_stmt 1 view .LVU54
-  51:controller/utils/trigger_simulator.c ****     {
- 232              		.loc 1 51 5 view .LVU55
-  51:controller/utils/trigger_simulator.c ****     {
- 233              		.loc 1 51 29 is_stmt 0 view .LVU56
- 234 006c 184B     		ldr	r3, .L19+28
- 235 006e 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
- 236 0070 184B     		ldr	r3, .L19+32
- 237 0072 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
-  51:controller/utils/trigger_simulator.c ****     {
- 238              		.loc 1 51 8 view .LVU57
- 239 0074 9A42     		cmp	r2, r3
- 240 0076 02D3     		bcc	.L15
-  57:controller/utils/trigger_simulator.c ****     }
- 241              		.loc 1 57 9 is_stmt 1 view .LVU58
- 242 0078 0F4B     		ldr	r3, .L19+4
- 243 007a 1B68     		ldr	r3, [r3]
- 244 007c 9847     		blx	r3
- 245              	.LVL12:
- 246              	.L15:
-  61:controller/utils/trigger_simulator.c ****     {
- 247              		.loc 1 61 5 view .LVU59
-  61:controller/utils/trigger_simulator.c ****     {
- 248              		.loc 1 61 29 is_stmt 0 view .LVU60
- 249 007e 144B     		ldr	r3, .L19+28
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 9
-
-
- 250 0080 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
-  61:controller/utils/trigger_simulator.c ****     {
- 251              		.loc 1 61 49 view .LVU61
- 252 0082 0E4B     		ldr	r3, .L19+8
- 253 0084 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 254 0086 013B     		subs	r3, r3, #1
-  61:controller/utils/trigger_simulator.c ****     {
- 255              		.loc 1 61 8 view .LVU62
- 256 0088 9A42     		cmp	r2, r3
- 257 008a 0FDA     		bge	.L16
-  63:controller/utils/trigger_simulator.c ****     }
- 258              		.loc 1 63 9 is_stmt 1 view .LVU63
-  63:controller/utils/trigger_simulator.c ****     }
- 259              		.loc 1 63 28 is_stmt 0 view .LVU64
- 260 008c 0132     		adds	r2, r2, #1
- 261 008e 104B     		ldr	r3, .L19+28
- 262 0090 1A70     		strb	r2, [r3]
- 263              	.L17:
-  70:controller/utils/trigger_simulator.c ****     {
- 264              		.loc 1 70 5 is_stmt 1 view .LVU65
-  70:controller/utils/trigger_simulator.c ****     {
- 265              		.loc 1 70 29 is_stmt 0 view .LVU66
- 266 0092 0F4B     		ldr	r3, .L19+28
- 267 0094 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
-  70:controller/utils/trigger_simulator.c ****     {
- 268              		.loc 1 70 8 view .LVU67
- 269 0096 002B     		cmp	r3, #0
- 270 0098 C7D1     		bne	.L11
-  72:controller/utils/trigger_simulator.c ****         trigger_callback_cam(cam_state);
- 271              		.loc 1 72 9 is_stmt 1 view .LVU68
- 272 009a 0F4B     		ldr	r3, .L19+36
- 273 009c 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
- 274 009e 80F00100 		eor	r0, r0, #1
-  72:controller/utils/trigger_simulator.c ****         trigger_callback_cam(cam_state);
- 275              		.loc 1 72 19 is_stmt 0 view .LVU69
- 276 00a2 1870     		strb	r0, [r3]
-  73:controller/utils/trigger_simulator.c ****     }
- 277              		.loc 1 73 9 is_stmt 1 view .LVU70
- 278 00a4 034B     		ldr	r3, .L19
- 279 00a6 1B68     		ldr	r3, [r3]
- 280 00a8 9847     		blx	r3
- 281              	.LVL13:
- 282 00aa BEE7     		b	.L11
- 283              	.L16:
-  67:controller/utils/trigger_simulator.c ****     }
- 284              		.loc 1 67 9 view .LVU71
-  67:controller/utils/trigger_simulator.c ****     }
- 285              		.loc 1 67 29 is_stmt 0 view .LVU72
- 286 00ac 084B     		ldr	r3, .L19+28
- 287 00ae 0022     		movs	r2, #0
- 288 00b0 1A70     		strb	r2, [r3]
- 289 00b2 EEE7     		b	.L17
- 290              	.L20:
- 291              		.align	2
- 292              	.L19:
- 293 00b4 00000000 		.word	trigger_callback_cam
- 294 00b8 00000000 		.word	trigger_callback_crank
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 10
-
-
- 295 00bc 00000000 		.word	wheel_full_teeth
- 296 00c0 00000000 		.word	trigger_simulator_running
- 297 00c4 0000B443 		.word	1135869952
- 298 00c8 C0E1644C 		.word	1281679808
- 299 00cc 00007A44 		.word	1148846080
- 300 00d0 00000000 		.word	current_tooth_index.0
- 301 00d4 00000000 		.word	wheel_missing_teeth
- 302 00d8 00000000 		.word	cam_state
- 303              		.cfi_endproc
- 304              	.LFE241:
- 306              		.section	.bss.current_tooth_index.0,"aw",%nobits
- 309              	current_tooth_index.0:
- 310 0000 00       		.space	1
- 311              		.section	.bss.trigger_callback_crank,"aw",%nobits
- 312              		.align	2
- 315              	trigger_callback_crank:
- 316 0000 00000000 		.space	4
- 317              		.section	.bss.trigger_callback_cam,"aw",%nobits
- 318              		.align	2
- 321              	trigger_callback_cam:
- 322 0000 00000000 		.space	4
- 323              		.section	.bss.trigger_simulator_running,"aw",%nobits
- 326              	trigger_simulator_running:
- 327 0000 00       		.space	1
- 328              		.section	.bss.cam_state,"aw",%nobits
- 331              	cam_state:
- 332 0000 00       		.space	1
- 333              		.global	wheel_missing_teeth
- 334              		.section	.bss.wheel_missing_teeth,"aw",%nobits
- 337              	wheel_missing_teeth:
- 338 0000 00       		.space	1
- 339              		.global	wheel_full_teeth
- 340              		.section	.bss.wheel_full_teeth,"aw",%nobits
- 343              	wheel_full_teeth:
- 344 0000 00       		.space	1
- 345              		.text
- 346              	.Letext0:
- 347              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 348              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
- 349              		.file 5 "controller/types.h"
- 350              		.file 6 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 351              		.file 7 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
-ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s 			page 11
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s 			page 10
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 trigger_simulator.c
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:21     .text.trigger_simulator_init:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:27     .text.trigger_simulator_init:00000000 trigger_simulator_init
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:70     .text.trigger_simulator_init:00000018 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:343    .bss.wheel_full_teeth:00000000 wheel_full_teeth
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:337    .bss.wheel_missing_teeth:00000000 wheel_missing_teeth
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:321    .bss.trigger_callback_cam:00000000 trigger_callback_cam
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:315    .bss.trigger_callback_crank:00000000 trigger_callback_crank
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:78     .text.trigger_simulator_start:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:84     .text.trigger_simulator_start:00000000 trigger_simulator_start
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:101    .text.trigger_simulator_start:00000008 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:326    .bss.trigger_simulator_running:00000000 trigger_simulator_running
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:106    .text.trigger_simulator_stop:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:112    .text.trigger_simulator_stop:00000000 trigger_simulator_stop
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:129    .text.trigger_simulator_stop:00000008 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:134    .text.trigger_simulator_update:00000000 $t
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:140    .text.trigger_simulator_update:00000000 trigger_simulator_update
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:293    .text.trigger_simulator_update:000000b4 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:309    .bss.current_tooth_index.0:00000000 current_tooth_index.0
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:331    .bss.cam_state:00000000 cam_state
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:310    .bss.current_tooth_index.0:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:312    .bss.trigger_callback_crank:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:318    .bss.trigger_callback_cam:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:327    .bss.trigger_simulator_running:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:332    .bss.cam_state:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:338    .bss.wheel_missing_teeth:00000000 $d
-C:\Users\alireza\AppData\Local\Temp\cc974Vvc.s:344    .bss.wheel_full_teeth:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:21     .text.trigger_simulator_crank_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:27     .text.trigger_simulator_crank_init:00000000 trigger_simulator_crank_init
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:61     .text.trigger_simulator_crank_init:00000018 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:375    .bss.trigger_event_queue_id:00000000 trigger_event_queue_id
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:356    .bss.selected_wheel_pattern_length:00000000 selected_wheel_pattern_length
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:362    .bss.selected_wheel_pattern:00000000 selected_wheel_pattern
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:292    .rodata.wheel_pattern_60_2:00000000 wheel_pattern_60_2
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:69     .text.trigger_simulator_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:75     .text.trigger_simulator_update:00000000 trigger_simulator_update
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:216    .text.trigger_simulator_update:000000a0 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:369    .bss.simulated_rpm:00000000 simulated_rpm
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:285    .bss.tooth_pointer.0:00000000 tooth_pointer.0
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:226    .text.trigger_simulator_set_rpm_and_start:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:232    .text.trigger_simulator_set_rpm_and_start:00000000 trigger_simulator_set_rpm_and_start
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:249    .text.trigger_simulator_set_rpm_and_start:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:254    .text.trigger_simulator_stop:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:260    .text.trigger_simulator_stop:00000000 trigger_simulator_stop
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:277    .text.trigger_simulator_stop:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:282    .bss.tooth_pointer.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:289    .rodata.wheel_pattern_60_2:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:357    .bss.selected_wheel_pattern_length:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:359    .bss.selected_wheel_pattern:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:366    .bss.simulated_rpm:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccrwRsra.s:372    .bss.trigger_event_queue_id:00000000 $d
 
 UNDEFINED SYMBOLS
 osDelay
-roundf
+get_time_us
+osMessageQueuePut

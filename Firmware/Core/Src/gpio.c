@@ -106,7 +106,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : SENSOR_VR1_Pin SENSOR_VR2_Pin */
   GPIO_InitStruct.Pin = SENSOR_VR1_Pin|SENSOR_VR2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 

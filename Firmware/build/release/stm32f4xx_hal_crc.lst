@@ -1,0 +1,221 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_hal_crc.c"
+  16              		.text
+  17              		.section	.text.HAL_CRC_MspInit,"ax",%progbits
+  18              		.align	1
+  19              		.weak	HAL_CRC_MspInit
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_CRC_MspInit:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 7047     		bx	lr
+  30              		.section	.text.HAL_CRC_Init,"ax",%progbits
+  31              		.align	1
+  32              		.global	HAL_CRC_Init
+  33              		.syntax unified
+  34              		.thumb
+  35              		.thumb_func
+  37              	HAL_CRC_Init:
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 0, uses_anonymous_args = 0
+  40 0000 58B1     		cbz	r0, .L5
+  41 0002 10B5     		push	{r4, lr}
+  42 0004 0446     		mov	r4, r0
+  43 0006 4379     		ldrb	r3, [r0, #5]	@ zero_extendqisi2
+  44 0008 1BB1     		cbz	r3, .L10
+  45              	.L4:
+  46 000a 0123     		movs	r3, #1
+  47 000c 6371     		strb	r3, [r4, #5]
+  48 000e 0020     		movs	r0, #0
+  49 0010 10BD     		pop	{r4, pc}
+  50              	.L10:
+  51 0012 0371     		strb	r3, [r0, #4]
+  52 0014 FFF7FEFF 		bl	HAL_CRC_MspInit
+  53 0018 F7E7     		b	.L4
+  54              	.L5:
+  55 001a 0120     		movs	r0, #1
+  56 001c 7047     		bx	lr
+  58              		.section	.text.HAL_CRC_MspDeInit,"ax",%progbits
+  59              		.align	1
+  60              		.weak	HAL_CRC_MspDeInit
+  61              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s 			page 2
+
+
+  62              		.thumb
+  63              		.thumb_func
+  65              	HAL_CRC_MspDeInit:
+  66              		@ args = 0, pretend = 0, frame = 0
+  67              		@ frame_needed = 0, uses_anonymous_args = 0
+  68              		@ link register save eliminated.
+  69 0000 7047     		bx	lr
+  71              		.section	.text.HAL_CRC_DeInit,"ax",%progbits
+  72              		.align	1
+  73              		.global	HAL_CRC_DeInit
+  74              		.syntax unified
+  75              		.thumb
+  76              		.thumb_func
+  78              	HAL_CRC_DeInit:
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81 0000 B0B1     		cbz	r0, .L14
+  82 0002 38B5     		push	{r3, r4, r5, lr}
+  83 0004 0546     		mov	r5, r0
+  84 0006 4379     		ldrb	r3, [r0, #5]	@ zero_extendqisi2
+  85 0008 D8B2     		uxtb	r0, r3
+  86 000a 022B     		cmp	r3, #2
+  87 000c 0FD0     		beq	.L13
+  88 000e 0223     		movs	r3, #2
+  89 0010 6B71     		strb	r3, [r5, #5]
+  90 0012 2A68     		ldr	r2, [r5]
+  91 0014 9368     		ldr	r3, [r2, #8]
+  92 0016 43F00103 		orr	r3, r3, #1
+  93 001a 9360     		str	r3, [r2, #8]
+  94 001c 2B68     		ldr	r3, [r5]
+  95 001e 0024     		movs	r4, #0
+  96 0020 1C71     		strb	r4, [r3, #4]
+  97 0022 2846     		mov	r0, r5
+  98 0024 FFF7FEFF 		bl	HAL_CRC_MspDeInit
+  99 0028 6C71     		strb	r4, [r5, #5]
+ 100 002a 2C71     		strb	r4, [r5, #4]
+ 101 002c 2046     		mov	r0, r4
+ 102              	.L13:
+ 103 002e 38BD     		pop	{r3, r4, r5, pc}
+ 104              	.L14:
+ 105 0030 0120     		movs	r0, #1
+ 106 0032 7047     		bx	lr
+ 108              		.section	.text.HAL_CRC_Accumulate,"ax",%progbits
+ 109              		.align	1
+ 110              		.global	HAL_CRC_Accumulate
+ 111              		.syntax unified
+ 112              		.thumb
+ 113              		.thumb_func
+ 115              	HAL_CRC_Accumulate:
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ 118              		@ link register save eliminated.
+ 119 0000 8446     		mov	ip, r0
+ 120 0002 0223     		movs	r3, #2
+ 121 0004 4371     		strb	r3, [r0, #5]
+ 122 0006 0023     		movs	r3, #0
+ 123 0008 9342     		cmp	r3, r2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s 			page 3
+
+
+ 124 000a 11D2     		bcs	.L26
+ 125 000c 10B4     		push	{r4}
+ 126              	.L21:
+ 127 000e DCF80000 		ldr	r0, [ip]
+ 128 0012 51F82340 		ldr	r4, [r1, r3, lsl #2]
+ 129 0016 0460     		str	r4, [r0]
+ 130 0018 0133     		adds	r3, r3, #1
+ 131 001a 9342     		cmp	r3, r2
+ 132 001c F7D3     		bcc	.L21
+ 133 001e DCF80030 		ldr	r3, [ip]
+ 134 0022 1868     		ldr	r0, [r3]
+ 135 0024 0123     		movs	r3, #1
+ 136 0026 8CF80530 		strb	r3, [ip, #5]
+ 137 002a 5DF8044B 		ldr	r4, [sp], #4
+ 138 002e 7047     		bx	lr
+ 139              	.L26:
+ 140 0030 0368     		ldr	r3, [r0]
+ 141 0032 1868     		ldr	r0, [r3]
+ 142 0034 0123     		movs	r3, #1
+ 143 0036 8CF80530 		strb	r3, [ip, #5]
+ 144 003a 7047     		bx	lr
+ 146              		.section	.text.HAL_CRC_Calculate,"ax",%progbits
+ 147              		.align	1
+ 148              		.global	HAL_CRC_Calculate
+ 149              		.syntax unified
+ 150              		.thumb
+ 151              		.thumb_func
+ 153              	HAL_CRC_Calculate:
+ 154              		@ args = 0, pretend = 0, frame = 0
+ 155              		@ frame_needed = 0, uses_anonymous_args = 0
+ 156              		@ link register save eliminated.
+ 157 0000 8446     		mov	ip, r0
+ 158 0002 0223     		movs	r3, #2
+ 159 0004 4371     		strb	r3, [r0, #5]
+ 160 0006 0068     		ldr	r0, [r0]
+ 161 0008 8368     		ldr	r3, [r0, #8]
+ 162 000a 43F00103 		orr	r3, r3, #1
+ 163 000e 8360     		str	r3, [r0, #8]
+ 164 0010 0023     		movs	r3, #0
+ 165 0012 9342     		cmp	r3, r2
+ 166 0014 11D2     		bcs	.L34
+ 167 0016 10B4     		push	{r4}
+ 168              	.L29:
+ 169 0018 DCF80000 		ldr	r0, [ip]
+ 170 001c 51F82340 		ldr	r4, [r1, r3, lsl #2]
+ 171 0020 0460     		str	r4, [r0]
+ 172 0022 0133     		adds	r3, r3, #1
+ 173 0024 9342     		cmp	r3, r2
+ 174 0026 F7D3     		bcc	.L29
+ 175 0028 DCF80030 		ldr	r3, [ip]
+ 176 002c 1868     		ldr	r0, [r3]
+ 177 002e 0123     		movs	r3, #1
+ 178 0030 8CF80530 		strb	r3, [ip, #5]
+ 179 0034 5DF8044B 		ldr	r4, [sp], #4
+ 180 0038 7047     		bx	lr
+ 181              	.L34:
+ 182 003a DCF80030 		ldr	r3, [ip]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s 			page 4
+
+
+ 183 003e 1868     		ldr	r0, [r3]
+ 184 0040 0123     		movs	r3, #1
+ 185 0042 8CF80530 		strb	r3, [ip, #5]
+ 186 0046 7047     		bx	lr
+ 188              		.section	.text.HAL_CRC_GetState,"ax",%progbits
+ 189              		.align	1
+ 190              		.global	HAL_CRC_GetState
+ 191              		.syntax unified
+ 192              		.thumb
+ 193              		.thumb_func
+ 195              	HAL_CRC_GetState:
+ 196              		@ args = 0, pretend = 0, frame = 0
+ 197              		@ frame_needed = 0, uses_anonymous_args = 0
+ 198              		@ link register save eliminated.
+ 199 0000 4079     		ldrb	r0, [r0, #5]	@ zero_extendqisi2
+ 200 0002 7047     		bx	lr
+ 202              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_hal_crc.c
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:18     .text.HAL_CRC_MspInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:24     .text.HAL_CRC_MspInit:00000000 HAL_CRC_MspInit
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:31     .text.HAL_CRC_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:37     .text.HAL_CRC_Init:00000000 HAL_CRC_Init
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:59     .text.HAL_CRC_MspDeInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:65     .text.HAL_CRC_MspDeInit:00000000 HAL_CRC_MspDeInit
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:72     .text.HAL_CRC_DeInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:78     .text.HAL_CRC_DeInit:00000000 HAL_CRC_DeInit
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:109    .text.HAL_CRC_Accumulate:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:115    .text.HAL_CRC_Accumulate:00000000 HAL_CRC_Accumulate
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:147    .text.HAL_CRC_Calculate:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:153    .text.HAL_CRC_Calculate:00000000 HAL_CRC_Calculate
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:189    .text.HAL_CRC_GetState:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc1IFddP.s:195    .text.HAL_CRC_GetState:00000000 HAL_CRC_GetState
+
+NO UNDEFINED SYMBOLS

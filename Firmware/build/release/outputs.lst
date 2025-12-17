@@ -1,0 +1,426 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"outputs.c"
+  16              		.text
+  17              		.section	.text.output_set,"ax",%progbits
+  18              		.align	1
+  19              		.global	output_set
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	output_set:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 58B1     		cbz	r0, .L5
+  28 0002 08B5     		push	{r3, lr}
+  29              		.syntax unified
+  30              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  31 0004 72B6     		cpsid i
+  32              	@ 0 "" 2
+  33              		.thumb
+  34              		.syntax unified
+  35 0006 027A     		ldrb	r2, [r0, #8]	@ zero_extendqisi2
+  36 0008 0AB1     		cbz	r2, .L8
+  37              	.L3:
+  38              		.syntax unified
+  39              	@ 951 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  40 000a 62B6     		cpsie i
+  41              	@ 0 "" 2
+  42              		.thumb
+  43              		.syntax unified
+  44 000c 08BD     		pop	{r3, pc}
+  45              	.L8:
+  46 000e 0A46     		mov	r2, r1
+  47 0010 8188     		ldrh	r1, [r0, #4]
+  48 0012 0068     		ldr	r0, [r0]
+  49 0014 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  50 0018 F7E7     		b	.L3
+  51              	.L5:
+  52 001a 7047     		bx	lr
+  54              		.section	.text.output_override,"ax",%progbits
+  55              		.align	1
+  56              		.global	output_override
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 2
+
+
+  61              	output_override:
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64 0000 A0B1     		cbz	r0, .L12
+  65 0002 38B5     		push	{r3, r4, r5, lr}
+  66 0004 0D46     		mov	r5, r1
+  67 0006 0446     		mov	r4, r0
+  68              		.syntax unified
+  69              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  70 0008 72B6     		cpsid i
+  71              	@ 0 "" 2
+  72              		.thumb
+  73              		.syntax unified
+  74 000a 8188     		ldrh	r1, [r0, #4]
+  75 000c 0068     		ldr	r0, [r0]
+  76 000e FFF7FEFF 		bl	HAL_GPIO_ReadPin
+  77 0012 0038     		subs	r0, r0, #0
+  78 0014 18BF     		it	ne
+  79 0016 0120     		movne	r0, #1
+  80 0018 6072     		strb	r0, [r4, #9]
+  81 001a 0123     		movs	r3, #1
+  82 001c 2372     		strb	r3, [r4, #8]
+  83 001e 2A46     		mov	r2, r5
+  84 0020 A188     		ldrh	r1, [r4, #4]
+  85 0022 2068     		ldr	r0, [r4]
+  86 0024 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  87              		.syntax unified
+  88              	@ 951 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  89 0028 62B6     		cpsie i
+  90              	@ 0 "" 2
+  91              		.thumb
+  92              		.syntax unified
+  93 002a 38BD     		pop	{r3, r4, r5, pc}
+  94              	.L12:
+  95 002c 7047     		bx	lr
+  97              		.section	.text.output_override_clear,"ax",%progbits
+  98              		.align	1
+  99              		.global	output_override_clear
+ 100              		.syntax unified
+ 101              		.thumb
+ 102              		.thumb_func
+ 104              	output_override_clear:
+ 105              		@ args = 0, pretend = 0, frame = 0
+ 106              		@ frame_needed = 0, uses_anonymous_args = 0
+ 107 0000 50B1     		cbz	r0, .L18
+ 108 0002 08B5     		push	{r3, lr}
+ 109              		.syntax unified
+ 110              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 111 0004 72B6     		cpsid i
+ 112              	@ 0 "" 2
+ 113              		.thumb
+ 114              		.syntax unified
+ 115 0006 0022     		movs	r2, #0
+ 116 0008 0272     		strb	r2, [r0, #8]
+ 117 000a 427A     		ldrb	r2, [r0, #9]	@ zero_extendqisi2
+ 118 000c 8188     		ldrh	r1, [r0, #4]
+ 119 000e 0068     		ldr	r0, [r0]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 3
+
+
+ 120 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 121              		.syntax unified
+ 122              	@ 951 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 123 0014 62B6     		cpsie i
+ 124              	@ 0 "" 2
+ 125              		.thumb
+ 126              		.syntax unified
+ 127 0016 08BD     		pop	{r3, pc}
+ 128              	.L18:
+ 129 0018 7047     		bx	lr
+ 131              		.section	.text.output_main_relay_set,"ax",%progbits
+ 132              		.align	1
+ 133              		.global	output_main_relay_set
+ 134              		.syntax unified
+ 135              		.thumb
+ 136              		.thumb_func
+ 138              	output_main_relay_set:
+ 139              		@ args = 0, pretend = 0, frame = 0
+ 140              		@ frame_needed = 0, uses_anonymous_args = 0
+ 141 0000 08B5     		push	{r3, lr}
+ 142 0002 0146     		mov	r1, r0
+ 143 0004 0148     		ldr	r0, .L23
+ 144 0006 FFF7FEFF 		bl	output_set
+ 145 000a 08BD     		pop	{r3, pc}
+ 146              	.L24:
+ 147              		.align	2
+ 148              	.L23:
+ 149 000c 00000000 		.word	main_relay_output
+ 151              		.section	.text.output_gas_solenoid_set,"ax",%progbits
+ 152              		.align	1
+ 153              		.global	output_gas_solenoid_set
+ 154              		.syntax unified
+ 155              		.thumb
+ 156              		.thumb_func
+ 158              	output_gas_solenoid_set:
+ 159              		@ args = 0, pretend = 0, frame = 0
+ 160              		@ frame_needed = 0, uses_anonymous_args = 0
+ 161 0000 08B5     		push	{r3, lr}
+ 162 0002 0146     		mov	r1, r0
+ 163 0004 0148     		ldr	r0, .L27
+ 164 0006 FFF7FEFF 		bl	output_set
+ 165 000a 08BD     		pop	{r3, pc}
+ 166              	.L28:
+ 167              		.align	2
+ 168              	.L27:
+ 169 000c 00000000 		.word	gas_solenoid_output
+ 171              		.section	.text.output_fuel_pump_set,"ax",%progbits
+ 172              		.align	1
+ 173              		.global	output_fuel_pump_set
+ 174              		.syntax unified
+ 175              		.thumb
+ 176              		.thumb_func
+ 178              	output_fuel_pump_set:
+ 179              		@ args = 0, pretend = 0, frame = 0
+ 180              		@ frame_needed = 0, uses_anonymous_args = 0
+ 181 0000 08B5     		push	{r3, lr}
+ 182 0002 0146     		mov	r1, r0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 4
+
+
+ 183 0004 0148     		ldr	r0, .L31
+ 184 0006 FFF7FEFF 		bl	output_set
+ 185 000a 08BD     		pop	{r3, pc}
+ 186              	.L32:
+ 187              		.align	2
+ 188              	.L31:
+ 189 000c 00000000 		.word	fuel_pump_output
+ 191              		.section	.text.output_fan1_set,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	output_fan1_set
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 198              	output_fan1_set:
+ 199              		@ args = 0, pretend = 0, frame = 0
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201 0000 08B5     		push	{r3, lr}
+ 202 0002 0146     		mov	r1, r0
+ 203 0004 0148     		ldr	r0, .L35
+ 204 0006 FFF7FEFF 		bl	output_set
+ 205 000a 08BD     		pop	{r3, pc}
+ 206              	.L36:
+ 207              		.align	2
+ 208              	.L35:
+ 209 000c 00000000 		.word	fan1_output
+ 211              		.section	.text.output_fan2_set,"ax",%progbits
+ 212              		.align	1
+ 213              		.global	output_fan2_set
+ 214              		.syntax unified
+ 215              		.thumb
+ 216              		.thumb_func
+ 218              	output_fan2_set:
+ 219              		@ args = 0, pretend = 0, frame = 0
+ 220              		@ frame_needed = 0, uses_anonymous_args = 0
+ 221 0000 08B5     		push	{r3, lr}
+ 222 0002 0146     		mov	r1, r0
+ 223 0004 0148     		ldr	r0, .L39
+ 224 0006 FFF7FEFF 		bl	output_set
+ 225 000a 08BD     		pop	{r3, pc}
+ 226              	.L40:
+ 227              		.align	2
+ 228              	.L39:
+ 229 000c 00000000 		.word	fan2_output
+ 231              		.section	.text.output_fire_ignition,"ax",%progbits
+ 232              		.align	1
+ 233              		.global	output_fire_ignition
+ 234              		.syntax unified
+ 235              		.thumb
+ 236              		.thumb_func
+ 238              	output_fire_ignition:
+ 239              		@ args = 0, pretend = 0, frame = 0
+ 240              		@ frame_needed = 0, uses_anonymous_args = 0
+ 241 0000 78B1     		cbz	r0, .L44
+ 242 0002 10B5     		push	{r4, lr}
+ 243 0004 0446     		mov	r4, r0
+ 244 0006 0121     		movs	r1, #1
+ 245 0008 FFF7FEFF 		bl	output_override
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 5
+
+
+ 246 000c 0320     		movs	r0, #3
+ 247 000e FFF7FEFF 		bl	osDelay
+ 248 0012 2046     		mov	r0, r4
+ 249 0014 FFF7FEFF 		bl	output_override_clear
+ 250 0018 0021     		movs	r1, #0
+ 251 001a 2046     		mov	r0, r4
+ 252 001c FFF7FEFF 		bl	output_set
+ 253 0020 10BD     		pop	{r4, pc}
+ 254              	.L44:
+ 255 0022 7047     		bx	lr
+ 257              		.section	.text.output_fire_injection,"ax",%progbits
+ 258              		.align	1
+ 259              		.global	output_fire_injection
+ 260              		.syntax unified
+ 261              		.thumb
+ 262              		.thumb_func
+ 264              	output_fire_injection:
+ 265              		@ args = 0, pretend = 0, frame = 0
+ 266              		@ frame_needed = 0, uses_anonymous_args = 0
+ 267 0000 78B1     		cbz	r0, .L50
+ 268 0002 10B5     		push	{r4, lr}
+ 269 0004 0446     		mov	r4, r0
+ 270 0006 0121     		movs	r1, #1
+ 271 0008 FFF7FEFF 		bl	output_override
+ 272 000c 0A20     		movs	r0, #10
+ 273 000e FFF7FEFF 		bl	osDelay
+ 274 0012 2046     		mov	r0, r4
+ 275 0014 FFF7FEFF 		bl	output_override_clear
+ 276 0018 0021     		movs	r1, #0
+ 277 001a 2046     		mov	r0, r4
+ 278 001c FFF7FEFF 		bl	output_set
+ 279 0020 10BD     		pop	{r4, pc}
+ 280              	.L50:
+ 281 0022 7047     		bx	lr
+ 283              		.global	ignition_output
+ 284              		.section	.data.ignition_output,"aw"
+ 285              		.align	2
+ 288              	ignition_output:
+ 289 0000 00040240 		.word	1073873920
+ 290 0004 20000000 		.word	32
+ 291 0008 00       		.byte	0
+ 292 0009 00       		.byte	0
+ 293 000a 0000     		.space	2
+ 294 000c 00040240 		.word	1073873920
+ 295 0010 10000000 		.word	16
+ 296 0014 00       		.byte	0
+ 297 0015 00       		.byte	0
+ 298 0016 0000     		.space	2
+ 299 0018 00040240 		.word	1073873920
+ 300 001c 08000000 		.word	8
+ 301 0020 00       		.byte	0
+ 302 0021 00       		.byte	0
+ 303 0022 0000     		.space	2
+ 304 0024 000C0240 		.word	1073875968
+ 305 0028 04000000 		.word	4
+ 306 002c 00       		.byte	0
+ 307 002d 00       		.byte	0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 6
+
+
+ 308 002e 0000     		.space	2
+ 309              		.global	injector_output
+ 310              		.section	.data.injector_output,"aw"
+ 311              		.align	2
+ 314              	injector_output:
+ 315 0000 00080240 		.word	1073874944
+ 316 0004 00100000 		.word	4096
+ 317 0008 00       		.byte	0
+ 318 0009 00       		.byte	0
+ 319 000a 0000     		.space	2
+ 320 000c 00080240 		.word	1073874944
+ 321 0010 00080000 		.word	2048
+ 322 0014 00       		.byte	0
+ 323 0015 00       		.byte	0
+ 324 0016 0000     		.space	2
+ 325 0018 00080240 		.word	1073874944
+ 326 001c 00040000 		.word	1024
+ 327 0020 00       		.byte	0
+ 328 0021 00       		.byte	0
+ 329 0022 0000     		.space	2
+ 330 0024 00000240 		.word	1073872896
+ 331 0028 00800000 		.word	32768
+ 332 002c 00       		.byte	0
+ 333 002d 00       		.byte	0
+ 334 002e 0000     		.space	2
+ 335              		.global	fan2_output
+ 336              		.section	.data.fan2_output,"aw"
+ 337              		.align	2
+ 340              	fan2_output:
+ 341 0000 00040240 		.word	1073873920
+ 342 0004 00040000 		.word	1024
+ 343 0008 00       		.byte	0
+ 344 0009 00       		.byte	0
+ 345 000a 0000     		.space	2
+ 346              		.global	fan1_output
+ 347              		.section	.data.fan1_output,"aw"
+ 348              		.align	2
+ 351              	fan1_output:
+ 352 0000 00000240 		.word	1073872896
+ 353 0004 00010000 		.word	256
+ 354 0008 00       		.byte	0
+ 355 0009 00       		.byte	0
+ 356 000a 0000     		.space	2
+ 357              		.global	fuel_pump_output
+ 358              		.section	.data.fuel_pump_output,"aw"
+ 359              		.align	2
+ 362              	fuel_pump_output:
+ 363 0000 00040240 		.word	1073873920
+ 364 0004 00400000 		.word	16384
+ 365 0008 00       		.byte	0
+ 366 0009 00       		.byte	0
+ 367 000a 0000     		.space	2
+ 368              		.global	gas_solenoid_output
+ 369              		.section	.data.gas_solenoid_output,"aw"
+ 370              		.align	2
+ 373              	gas_solenoid_output:
+ 374 0000 00000240 		.word	1073872896
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 7
+
+
+ 375 0004 00020000 		.word	512
+ 376 0008 00       		.byte	0
+ 377 0009 00       		.byte	0
+ 378 000a 0000     		.space	2
+ 379              		.global	main_relay_output
+ 380              		.section	.data.main_relay_output,"aw"
+ 381              		.align	2
+ 384              	main_relay_output:
+ 385 0000 00000240 		.word	1073872896
+ 386 0004 00040000 		.word	1024
+ 387 0008 00       		.byte	0
+ 388 0009 00       		.byte	0
+ 389 000a 0000     		.space	2
+ 390              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 outputs.c
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:18     .text.output_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:24     .text.output_set:00000000 output_set
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:55     .text.output_override:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:61     .text.output_override:00000000 output_override
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:98     .text.output_override_clear:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:104    .text.output_override_clear:00000000 output_override_clear
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:132    .text.output_main_relay_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:138    .text.output_main_relay_set:00000000 output_main_relay_set
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:149    .text.output_main_relay_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:384    .data.main_relay_output:00000000 main_relay_output
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:152    .text.output_gas_solenoid_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:158    .text.output_gas_solenoid_set:00000000 output_gas_solenoid_set
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:169    .text.output_gas_solenoid_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:373    .data.gas_solenoid_output:00000000 gas_solenoid_output
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:172    .text.output_fuel_pump_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:178    .text.output_fuel_pump_set:00000000 output_fuel_pump_set
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:189    .text.output_fuel_pump_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:362    .data.fuel_pump_output:00000000 fuel_pump_output
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:192    .text.output_fan1_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:198    .text.output_fan1_set:00000000 output_fan1_set
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:209    .text.output_fan1_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:351    .data.fan1_output:00000000 fan1_output
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:212    .text.output_fan2_set:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:218    .text.output_fan2_set:00000000 output_fan2_set
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:229    .text.output_fan2_set:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:340    .data.fan2_output:00000000 fan2_output
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:232    .text.output_fire_ignition:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:238    .text.output_fire_ignition:00000000 output_fire_ignition
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:258    .text.output_fire_injection:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:264    .text.output_fire_injection:00000000 output_fire_injection
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:288    .data.ignition_output:00000000 ignition_output
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:285    .data.ignition_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:314    .data.injector_output:00000000 injector_output
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:311    .data.injector_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:337    .data.fan2_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:348    .data.fan1_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:359    .data.fuel_pump_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:370    .data.gas_solenoid_output:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc0Ggzed.s:381    .data.main_relay_output:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_GPIO_ReadPin
+osDelay

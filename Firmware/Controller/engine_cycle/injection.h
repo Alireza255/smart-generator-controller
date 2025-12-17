@@ -1,7 +1,6 @@
 #ifndef INJECTION_H
 #define INJECTION_H
 
-#define INJECTOR_OUTPUTS 4
 #include "controller.h"
 #include "fuel_math.h"
 #include "outputs.h"

@@ -1,0 +1,2889 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_ll_usb.c"
+  16              		.text
+  17              		.section	.text.USB_CoreReset,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	USB_CoreReset:
+  24              		@ args = 0, pretend = 0, frame = 8
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26              		@ link register save eliminated.
+  27 0000 82B0     		sub	sp, sp, #8
+  28 0002 0023     		movs	r3, #0
+  29 0004 0193     		str	r3, [sp, #4]
+  30              	.L3:
+  31 0006 019B     		ldr	r3, [sp, #4]
+  32 0008 0133     		adds	r3, r3, #1
+  33 000a 0193     		str	r3, [sp, #4]
+  34 000c 019B     		ldr	r3, [sp, #4]
+  35 000e B3F1706F 		cmp	r3, #251658240
+  36 0012 15D8     		bhi	.L5
+  37 0014 0369     		ldr	r3, [r0, #16]
+  38 0016 002B     		cmp	r3, #0
+  39 0018 F5DA     		bge	.L3
+  40 001a 0023     		movs	r3, #0
+  41 001c 0193     		str	r3, [sp, #4]
+  42 001e 0369     		ldr	r3, [r0, #16]
+  43 0020 43F00103 		orr	r3, r3, #1
+  44 0024 0361     		str	r3, [r0, #16]
+  45              	.L4:
+  46 0026 019B     		ldr	r3, [sp, #4]
+  47 0028 0133     		adds	r3, r3, #1
+  48 002a 0193     		str	r3, [sp, #4]
+  49 002c 019B     		ldr	r3, [sp, #4]
+  50 002e B3F1706F 		cmp	r3, #251658240
+  51 0032 08D8     		bhi	.L6
+  52 0034 0369     		ldr	r3, [r0, #16]
+  53 0036 13F0010F 		tst	r3, #1
+  54 003a F4D1     		bne	.L4
+  55 003c 0020     		movs	r0, #0
+  56 003e 00E0     		b	.L2
+  57              	.L5:
+  58 0040 0320     		movs	r0, #3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 2
+
+
+  59              	.L2:
+  60 0042 02B0     		add	sp, sp, #8
+  61              		@ sp needed
+  62 0044 7047     		bx	lr
+  63              	.L6:
+  64 0046 0320     		movs	r0, #3
+  65 0048 FBE7     		b	.L2
+  67              		.section	.text.USB_CoreInit,"ax",%progbits
+  68              		.align	1
+  69              		.global	USB_CoreInit
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  74              	USB_CoreInit:
+  75              		@ args = 20, pretend = 16, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77 0000 84B0     		sub	sp, sp, #16
+  78 0002 10B5     		push	{r4, lr}
+  79 0004 0446     		mov	r4, r0
+  80 0006 03A8     		add	r0, sp, #12
+  81 0008 80E80E00 		stm	r0, {r1, r2, r3}
+  82 000c 9DF81130 		ldrb	r3, [sp, #17]	@ zero_extendqisi2
+  83 0010 012B     		cmp	r3, #1
+  84 0012 21D1     		bne	.L9
+  85 0014 A36B     		ldr	r3, [r4, #56]
+  86 0016 23F48033 		bic	r3, r3, #65536
+  87 001a A363     		str	r3, [r4, #56]
+  88 001c E368     		ldr	r3, [r4, #12]
+  89 001e 23F48403 		bic	r3, r3, #4325376
+  90 0022 23F04003 		bic	r3, r3, #64
+  91 0026 E360     		str	r3, [r4, #12]
+  92 0028 E368     		ldr	r3, [r4, #12]
+  93 002a 23F44013 		bic	r3, r3, #3145728
+  94 002e E360     		str	r3, [r4, #12]
+  95 0030 9DF81830 		ldrb	r3, [sp, #24]	@ zero_extendqisi2
+  96 0034 012B     		cmp	r3, #1
+  97 0036 0AD0     		beq	.L15
+  98              	.L10:
+  99 0038 2046     		mov	r0, r4
+ 100 003a FFF7FEFF 		bl	USB_CoreReset
+ 101              	.L11:
+ 102 003e 9DF80E30 		ldrb	r3, [sp, #14]	@ zero_extendqisi2
+ 103 0042 012B     		cmp	r3, #1
+ 104 0044 1CD0     		beq	.L16
+ 105              	.L13:
+ 106 0046 BDE81040 		pop	{r4, lr}
+ 107 004a 04B0     		add	sp, sp, #16
+ 108 004c 7047     		bx	lr
+ 109              	.L15:
+ 110 004e E368     		ldr	r3, [r4, #12]
+ 111 0050 43F48013 		orr	r3, r3, #1048576
+ 112 0054 E360     		str	r3, [r4, #12]
+ 113 0056 EFE7     		b	.L10
+ 114              	.L9:
+ 115 0058 E368     		ldr	r3, [r4, #12]
+ 116 005a 43F04003 		orr	r3, r3, #64
+ 117 005e E360     		str	r3, [r4, #12]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 3
+
+
+ 118 0060 2046     		mov	r0, r4
+ 119 0062 FFF7FEFF 		bl	USB_CoreReset
+ 120 0066 9DF81530 		ldrb	r3, [sp, #21]	@ zero_extendqisi2
+ 121 006a 23B9     		cbnz	r3, .L12
+ 122 006c A36B     		ldr	r3, [r4, #56]
+ 123 006e 43F48033 		orr	r3, r3, #65536
+ 124 0072 A363     		str	r3, [r4, #56]
+ 125 0074 E3E7     		b	.L11
+ 126              	.L12:
+ 127 0076 A36B     		ldr	r3, [r4, #56]
+ 128 0078 23F48033 		bic	r3, r3, #65536
+ 129 007c A363     		str	r3, [r4, #56]
+ 130 007e DEE7     		b	.L11
+ 131              	.L16:
+ 132 0080 A368     		ldr	r3, [r4, #8]
+ 133 0082 43F00603 		orr	r3, r3, #6
+ 134 0086 A360     		str	r3, [r4, #8]
+ 135 0088 A368     		ldr	r3, [r4, #8]
+ 136 008a 43F02003 		orr	r3, r3, #32
+ 137 008e A360     		str	r3, [r4, #8]
+ 138 0090 D9E7     		b	.L13
+ 140              		.section	.text.USB_SetTurnaroundTime,"ax",%progbits
+ 141              		.align	1
+ 142              		.global	USB_SetTurnaroundTime
+ 143              		.syntax unified
+ 144              		.thumb
+ 145              		.thumb_func
+ 147              	USB_SetTurnaroundTime:
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              		@ link register save eliminated.
+ 151 0000 022A     		cmp	r2, #2
+ 152 0002 0AD0     		beq	.L29
+ 153 0004 0922     		movs	r2, #9
+ 154              	.L18:
+ 155 0006 C368     		ldr	r3, [r0, #12]
+ 156 0008 23F47053 		bic	r3, r3, #15360
+ 157 000c C360     		str	r3, [r0, #12]
+ 158 000e C368     		ldr	r3, [r0, #12]
+ 159 0010 43EA8223 		orr	r3, r3, r2, lsl #10
+ 160 0014 C360     		str	r3, [r0, #12]
+ 161 0016 0020     		movs	r0, #0
+ 162 0018 7047     		bx	lr
+ 163              	.L29:
+ 164 001a 234B     		ldr	r3, .L30
+ 165 001c 0B44     		add	r3, r3, r1
+ 166 001e 234A     		ldr	r2, .L30+4
+ 167 0020 9342     		cmp	r3, r2
+ 168 0022 2FD9     		bls	.L20
+ 169 0024 224B     		ldr	r3, .L30+8
+ 170 0026 0B44     		add	r3, r3, r1
+ 171 0028 224A     		ldr	r2, .L30+12
+ 172 002a 9342     		cmp	r3, r2
+ 173 002c 2CD9     		bls	.L21
+ 174 002e A1F57403 		sub	r3, r1, #15990784
+ 175 0032 A3F51053 		sub	r3, r3, #9216
+ 176 0036 204A     		ldr	r2, .L30+16
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 4
+
+
+ 177 0038 9342     		cmp	r3, r2
+ 178 003a 27D9     		bls	.L22
+ 179 003c A1F18373 		sub	r3, r1, #17170432
+ 180 0040 A3F5E743 		sub	r3, r3, #29568
+ 181 0044 1D4A     		ldr	r2, .L30+20
+ 182 0046 9342     		cmp	r3, r2
+ 183 0048 22D3     		bcc	.L23
+ 184 004a 1D4B     		ldr	r3, .L30+24
+ 185 004c 0B44     		add	r3, r3, r1
+ 186 004e 1D4A     		ldr	r2, .L30+28
+ 187 0050 9342     		cmp	r3, r2
+ 188 0052 1FD9     		bls	.L24
+ 189 0054 1C4B     		ldr	r3, .L30+32
+ 190 0056 0B44     		add	r3, r3, r1
+ 191 0058 1C4A     		ldr	r2, .L30+36
+ 192 005a 9342     		cmp	r3, r2
+ 193 005c 1CD3     		bcc	.L25
+ 194 005e 1C4B     		ldr	r3, .L30+40
+ 195 0060 0B44     		add	r3, r3, r1
+ 196 0062 1C4A     		ldr	r2, .L30+44
+ 197 0064 9342     		cmp	r3, r2
+ 198 0066 19D3     		bcc	.L26
+ 199 0068 A1F1B773 		sub	r3, r1, #23986176
+ 200 006c A3F55853 		sub	r3, r3, #13824
+ 201 0070 194A     		ldr	r2, .L30+48
+ 202 0072 9342     		cmp	r3, r2
+ 203 0074 14D3     		bcc	.L27
+ 204 0076 194B     		ldr	r3, .L30+52
+ 205 0078 0B44     		add	r3, r3, r1
+ 206 007a 194A     		ldr	r2, .L30+56
+ 207 007c 9342     		cmp	r3, r2
+ 208 007e 11D2     		bcs	.L28
+ 209 0080 0722     		movs	r2, #7
+ 210 0082 C0E7     		b	.L18
+ 211              	.L20:
+ 212 0084 0F22     		movs	r2, #15
+ 213 0086 BEE7     		b	.L18
+ 214              	.L21:
+ 215 0088 0E22     		movs	r2, #14
+ 216 008a BCE7     		b	.L18
+ 217              	.L22:
+ 218 008c 0D22     		movs	r2, #13
+ 219 008e BAE7     		b	.L18
+ 220              	.L23:
+ 221 0090 0C22     		movs	r2, #12
+ 222 0092 B8E7     		b	.L18
+ 223              	.L24:
+ 224 0094 0B22     		movs	r2, #11
+ 225 0096 B6E7     		b	.L18
+ 226              	.L25:
+ 227 0098 0A22     		movs	r2, #10
+ 228 009a B4E7     		b	.L18
+ 229              	.L26:
+ 230 009c 0922     		movs	r2, #9
+ 231 009e B2E7     		b	.L18
+ 232              	.L27:
+ 233 00a0 0822     		movs	r2, #8
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 5
+
+
+ 234 00a2 B0E7     		b	.L18
+ 235              	.L28:
+ 236 00a4 0622     		movs	r2, #6
+ 237 00a6 AEE7     		b	.L18
+ 238              	.L31:
+ 239              		.align	2
+ 240              	.L30:
+ 241 00a8 405327FF 		.word	-14200000
+ 242 00ac FF340C00 		.word	799999
+ 243 00b0 401E1BFF 		.word	-15000000
+ 244 00b4 3F420F00 		.word	999999
+ 245 00b8 7F4F1200 		.word	1199999
+ 246 00bc 20D61300 		.word	1300000
+ 247 00c0 60B6E5FE 		.word	-18500000
+ 248 00c4 5FE31600 		.word	1499999
+ 249 00c8 00D3CEFE 		.word	-20000000
+ 250 00cc 40771B00 		.word	1800000
+ 251 00d0 C05BB3FE 		.word	-21800000
+ 252 00d4 C0912100 		.word	2200000
+ 253 00d8 20753800 		.word	3700000
+ 254 00dc E05459FE 		.word	-27700000
+ 255 00e0 E09C4100 		.word	4300000
+ 257              		.section	.text.USB_EnableGlobalInt,"ax",%progbits
+ 258              		.align	1
+ 259              		.global	USB_EnableGlobalInt
+ 260              		.syntax unified
+ 261              		.thumb
+ 262              		.thumb_func
+ 264              	USB_EnableGlobalInt:
+ 265              		@ args = 0, pretend = 0, frame = 0
+ 266              		@ frame_needed = 0, uses_anonymous_args = 0
+ 267              		@ link register save eliminated.
+ 268 0000 8368     		ldr	r3, [r0, #8]
+ 269 0002 43F00103 		orr	r3, r3, #1
+ 270 0006 8360     		str	r3, [r0, #8]
+ 271 0008 0020     		movs	r0, #0
+ 272 000a 7047     		bx	lr
+ 274              		.section	.text.USB_DisableGlobalInt,"ax",%progbits
+ 275              		.align	1
+ 276              		.global	USB_DisableGlobalInt
+ 277              		.syntax unified
+ 278              		.thumb
+ 279              		.thumb_func
+ 281              	USB_DisableGlobalInt:
+ 282              		@ args = 0, pretend = 0, frame = 0
+ 283              		@ frame_needed = 0, uses_anonymous_args = 0
+ 284              		@ link register save eliminated.
+ 285 0000 8368     		ldr	r3, [r0, #8]
+ 286 0002 23F00103 		bic	r3, r3, #1
+ 287 0006 8360     		str	r3, [r0, #8]
+ 288 0008 0020     		movs	r0, #0
+ 289 000a 7047     		bx	lr
+ 291              		.section	.text.USB_FlushTxFifo,"ax",%progbits
+ 292              		.align	1
+ 293              		.global	USB_FlushTxFifo
+ 294              		.syntax unified
+ 295              		.thumb
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 6
+
+
+ 296              		.thumb_func
+ 298              	USB_FlushTxFifo:
+ 299              		@ args = 0, pretend = 0, frame = 8
+ 300              		@ frame_needed = 0, uses_anonymous_args = 0
+ 301              		@ link register save eliminated.
+ 302 0000 82B0     		sub	sp, sp, #8
+ 303 0002 0023     		movs	r3, #0
+ 304 0004 0193     		str	r3, [sp, #4]
+ 305              	.L36:
+ 306 0006 019B     		ldr	r3, [sp, #4]
+ 307 0008 0133     		adds	r3, r3, #1
+ 308 000a 0193     		str	r3, [sp, #4]
+ 309 000c 019B     		ldr	r3, [sp, #4]
+ 310 000e B3F1706F 		cmp	r3, #251658240
+ 311 0012 15D8     		bhi	.L38
+ 312 0014 0369     		ldr	r3, [r0, #16]
+ 313 0016 002B     		cmp	r3, #0
+ 314 0018 F5DA     		bge	.L36
+ 315 001a 0023     		movs	r3, #0
+ 316 001c 0193     		str	r3, [sp, #4]
+ 317 001e 8901     		lsls	r1, r1, #6
+ 318 0020 41F02001 		orr	r1, r1, #32
+ 319 0024 0161     		str	r1, [r0, #16]
+ 320              	.L37:
+ 321 0026 019B     		ldr	r3, [sp, #4]
+ 322 0028 0133     		adds	r3, r3, #1
+ 323 002a 0193     		str	r3, [sp, #4]
+ 324 002c 019B     		ldr	r3, [sp, #4]
+ 325 002e B3F1706F 		cmp	r3, #251658240
+ 326 0032 08D8     		bhi	.L39
+ 327 0034 0369     		ldr	r3, [r0, #16]
+ 328 0036 13F0200F 		tst	r3, #32
+ 329 003a F4D1     		bne	.L37
+ 330 003c 0020     		movs	r0, #0
+ 331 003e 00E0     		b	.L35
+ 332              	.L38:
+ 333 0040 0320     		movs	r0, #3
+ 334              	.L35:
+ 335 0042 02B0     		add	sp, sp, #8
+ 336              		@ sp needed
+ 337 0044 7047     		bx	lr
+ 338              	.L39:
+ 339 0046 0320     		movs	r0, #3
+ 340 0048 FBE7     		b	.L35
+ 342              		.section	.text.USB_FlushRxFifo,"ax",%progbits
+ 343              		.align	1
+ 344              		.global	USB_FlushRxFifo
+ 345              		.syntax unified
+ 346              		.thumb
+ 347              		.thumb_func
+ 349              	USB_FlushRxFifo:
+ 350              		@ args = 0, pretend = 0, frame = 8
+ 351              		@ frame_needed = 0, uses_anonymous_args = 0
+ 352              		@ link register save eliminated.
+ 353 0000 82B0     		sub	sp, sp, #8
+ 354 0002 0023     		movs	r3, #0
+ 355 0004 0193     		str	r3, [sp, #4]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 7
+
+
+ 356              	.L43:
+ 357 0006 019B     		ldr	r3, [sp, #4]
+ 358 0008 0133     		adds	r3, r3, #1
+ 359 000a 0193     		str	r3, [sp, #4]
+ 360 000c 019B     		ldr	r3, [sp, #4]
+ 361 000e B3F1706F 		cmp	r3, #251658240
+ 362 0012 13D8     		bhi	.L45
+ 363 0014 0369     		ldr	r3, [r0, #16]
+ 364 0016 002B     		cmp	r3, #0
+ 365 0018 F5DA     		bge	.L43
+ 366 001a 0023     		movs	r3, #0
+ 367 001c 0193     		str	r3, [sp, #4]
+ 368 001e 1023     		movs	r3, #16
+ 369 0020 0361     		str	r3, [r0, #16]
+ 370              	.L44:
+ 371 0022 019B     		ldr	r3, [sp, #4]
+ 372 0024 0133     		adds	r3, r3, #1
+ 373 0026 0193     		str	r3, [sp, #4]
+ 374 0028 019B     		ldr	r3, [sp, #4]
+ 375 002a B3F1706F 		cmp	r3, #251658240
+ 376 002e 08D8     		bhi	.L46
+ 377 0030 0369     		ldr	r3, [r0, #16]
+ 378 0032 13F0100F 		tst	r3, #16
+ 379 0036 F4D1     		bne	.L44
+ 380 0038 0020     		movs	r0, #0
+ 381 003a 00E0     		b	.L42
+ 382              	.L45:
+ 383 003c 0320     		movs	r0, #3
+ 384              	.L42:
+ 385 003e 02B0     		add	sp, sp, #8
+ 386              		@ sp needed
+ 387 0040 7047     		bx	lr
+ 388              	.L46:
+ 389 0042 0320     		movs	r0, #3
+ 390 0044 FBE7     		b	.L42
+ 392              		.section	.text.USB_SetDevSpeed,"ax",%progbits
+ 393              		.align	1
+ 394              		.global	USB_SetDevSpeed
+ 395              		.syntax unified
+ 396              		.thumb
+ 397              		.thumb_func
+ 399              	USB_SetDevSpeed:
+ 400              		@ args = 0, pretend = 0, frame = 0
+ 401              		@ frame_needed = 0, uses_anonymous_args = 0
+ 402              		@ link register save eliminated.
+ 403 0000 D0F80038 		ldr	r3, [r0, #2048]
+ 404 0004 1943     		orrs	r1, r1, r3
+ 405 0006 C0F80018 		str	r1, [r0, #2048]
+ 406 000a 0020     		movs	r0, #0
+ 407 000c 7047     		bx	lr
+ 409              		.section	.text.USB_DevInit,"ax",%progbits
+ 410              		.align	1
+ 411              		.global	USB_DevInit
+ 412              		.syntax unified
+ 413              		.thumb
+ 414              		.thumb_func
+ 416              	USB_DevInit:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 8
+
+
+ 417              		@ args = 20, pretend = 16, frame = 0
+ 418              		@ frame_needed = 0, uses_anonymous_args = 0
+ 419 0000 84B0     		sub	sp, sp, #16
+ 420 0002 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 421 0004 0446     		mov	r4, r0
+ 422 0006 07A8     		add	r0, sp, #28
+ 423 0008 80E80E00 		stm	r0, {r1, r2, r3}
+ 424 000c 0023     		movs	r3, #0
+ 425 000e 06E0     		b	.L50
+ 426              	.L51:
+ 427 0010 03F14002 		add	r2, r3, #64
+ 428 0014 04EB8202 		add	r2, r4, r2, lsl #2
+ 429 0018 0021     		movs	r1, #0
+ 430 001a 5160     		str	r1, [r2, #4]
+ 431 001c 0133     		adds	r3, r3, #1
+ 432              	.L50:
+ 433 001e 0E2B     		cmp	r3, #14
+ 434 0020 F6D9     		bls	.L51
+ 435 0022 9DF82660 		ldrb	r6, [sp, #38]	@ zero_extendqisi2
+ 436 0026 06BB     		cbnz	r6, .L52
+ 437 0028 D4F80438 		ldr	r3, [r4, #2052]
+ 438 002c 43F00203 		orr	r3, r3, #2
+ 439 0030 C4F80438 		str	r3, [r4, #2052]
+ 440 0034 A36B     		ldr	r3, [r4, #56]
+ 441 0036 43F40013 		orr	r3, r3, #2097152
+ 442 003a A363     		str	r3, [r4, #56]
+ 443 003c A36B     		ldr	r3, [r4, #56]
+ 444 003e 23F40023 		bic	r3, r3, #524288
+ 445 0042 A363     		str	r3, [r4, #56]
+ 446 0044 A36B     		ldr	r3, [r4, #56]
+ 447 0046 23F48023 		bic	r3, r3, #262144
+ 448 004a A363     		str	r3, [r4, #56]
+ 449              	.L53:
+ 450 004c 0023     		movs	r3, #0
+ 451 004e C4F8003E 		str	r3, [r4, #3584]
+ 452 0052 9DF82130 		ldrb	r3, [sp, #33]	@ zero_extendqisi2
+ 453 0056 012B     		cmp	r3, #1
+ 454 0058 15D1     		bne	.L54
+ 455 005a 9DF81F30 		ldrb	r3, [sp, #31]	@ zero_extendqisi2
+ 456 005e 6BB9     		cbnz	r3, .L55
+ 457 0060 0021     		movs	r1, #0
+ 458 0062 2046     		mov	r0, r4
+ 459 0064 FFF7FEFF 		bl	USB_SetDevSpeed
+ 460 0068 11E0     		b	.L56
+ 461              	.L52:
+ 462 006a A36B     		ldr	r3, [r4, #56]
+ 463 006c 23F40013 		bic	r3, r3, #2097152
+ 464 0070 A363     		str	r3, [r4, #56]
+ 465 0072 A36B     		ldr	r3, [r4, #56]
+ 466 0074 43F40023 		orr	r3, r3, #524288
+ 467 0078 A363     		str	r3, [r4, #56]
+ 468 007a E7E7     		b	.L53
+ 469              	.L55:
+ 470 007c 0121     		movs	r1, #1
+ 471 007e 2046     		mov	r0, r4
+ 472 0080 FFF7FEFF 		bl	USB_SetDevSpeed
+ 473 0084 03E0     		b	.L56
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 9
+
+
+ 474              	.L54:
+ 475 0086 0321     		movs	r1, #3
+ 476 0088 2046     		mov	r0, r4
+ 477 008a FFF7FEFF 		bl	USB_SetDevSpeed
+ 478              	.L56:
+ 479 008e 1021     		movs	r1, #16
+ 480 0090 2046     		mov	r0, r4
+ 481 0092 FFF7FEFF 		bl	USB_FlushTxFifo
+ 482 0096 0546     		mov	r5, r0
+ 483 0098 00B1     		cbz	r0, .L57
+ 484 009a 0125     		movs	r5, #1
+ 485              	.L57:
+ 486 009c 2046     		mov	r0, r4
+ 487 009e FFF7FEFF 		bl	USB_FlushRxFifo
+ 488 00a2 00B1     		cbz	r0, .L58
+ 489 00a4 0125     		movs	r5, #1
+ 490              	.L58:
+ 491 00a6 04F5006C 		add	ip, r4, #2048
+ 492 00aa 0023     		movs	r3, #0
+ 493 00ac CCF81030 		str	r3, [ip, #16]
+ 494 00b0 CCF81430 		str	r3, [ip, #20]
+ 495 00b4 CCF81C30 		str	r3, [ip, #28]
+ 496 00b8 0DE0     		b	.L59
+ 497              	.L61:
+ 498 00ba 4FF09040 		mov	r0, #1207959552
+ 499 00be C2F80009 		str	r0, [r2, #2304]
+ 500 00c2 02E0     		b	.L62
+ 501              	.L60:
+ 502 00c4 0020     		movs	r0, #0
+ 503 00c6 C2F80009 		str	r0, [r2, #2304]
+ 504              	.L62:
+ 505 00ca 0022     		movs	r2, #0
+ 506 00cc 0A61     		str	r2, [r1, #16]
+ 507 00ce 4FF67F32 		movw	r2, #64383
+ 508 00d2 8A60     		str	r2, [r1, #8]
+ 509 00d4 0133     		adds	r3, r3, #1
+ 510              	.L59:
+ 511 00d6 9DF81C10 		ldrb	r1, [sp, #28]	@ zero_extendqisi2
+ 512 00da 9942     		cmp	r1, r3
+ 513 00dc 0ED9     		bls	.L75
+ 514 00de 04EB4312 		add	r2, r4, r3, lsl #5
+ 515 00e2 02F51061 		add	r1, r2, #2304
+ 516 00e6 D2F80009 		ldr	r0, [r2, #2304]
+ 517 00ea 0028     		cmp	r0, #0
+ 518 00ec EADA     		bge	.L60
+ 519 00ee 002B     		cmp	r3, #0
+ 520 00f0 E3D1     		bne	.L61
+ 521 00f2 4FF00060 		mov	r0, #134217728
+ 522 00f6 C2F80009 		str	r0, [r2, #2304]
+ 523 00fa E6E7     		b	.L62
+ 524              	.L75:
+ 525 00fc 0023     		movs	r3, #0
+ 526 00fe 0AE0     		b	.L64
+ 527              	.L78:
+ 528 0100 BBB1     		cbz	r3, .L76
+ 529 0102 4FF09047 		mov	r7, #1207959552
+ 530 0106 C2F8007B 		str	r7, [r2, #2816]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 10
+
+
+ 531              	.L67:
+ 532 010a 0022     		movs	r2, #0
+ 533 010c 0261     		str	r2, [r0, #16]
+ 534 010e 4FF67F32 		movw	r2, #64383
+ 535 0112 8260     		str	r2, [r0, #8]
+ 536 0114 0133     		adds	r3, r3, #1
+ 537              	.L64:
+ 538 0116 9942     		cmp	r1, r3
+ 539 0118 10D9     		bls	.L77
+ 540 011a 04EB4312 		add	r2, r4, r3, lsl #5
+ 541 011e 02F53060 		add	r0, r2, #2816
+ 542 0122 D2F8007B 		ldr	r7, [r2, #2816]
+ 543 0126 002F     		cmp	r7, #0
+ 544 0128 EADB     		blt	.L78
+ 545 012a 0027     		movs	r7, #0
+ 546 012c C2F8007B 		str	r7, [r2, #2816]
+ 547 0130 EBE7     		b	.L67
+ 548              	.L76:
+ 549 0132 4FF00067 		mov	r7, #134217728
+ 550 0136 C2F8007B 		str	r7, [r2, #2816]
+ 551 013a E6E7     		b	.L67
+ 552              	.L77:
+ 553 013c DCF81030 		ldr	r3, [ip, #16]
+ 554 0140 23F48073 		bic	r3, r3, #256
+ 555 0144 CCF81030 		str	r3, [ip, #16]
+ 556 0148 0023     		movs	r3, #0
+ 557 014a A361     		str	r3, [r4, #24]
+ 558 014c 6FF08043 		mvn	r3, #1073741824
+ 559 0150 6361     		str	r3, [r4, #20]
+ 560 0152 9DF81E30 		ldrb	r3, [sp, #30]	@ zero_extendqisi2
+ 561 0156 1BB9     		cbnz	r3, .L69
+ 562 0158 A369     		ldr	r3, [r4, #24]
+ 563 015a 43F01003 		orr	r3, r3, #16
+ 564 015e A361     		str	r3, [r4, #24]
+ 565              	.L69:
+ 566 0160 A269     		ldr	r2, [r4, #24]
+ 567 0162 0C4B     		ldr	r3, .L80
+ 568 0164 1343     		orrs	r3, r3, r2
+ 569 0166 A361     		str	r3, [r4, #24]
+ 570 0168 9DF82230 		ldrb	r3, [sp, #34]	@ zero_extendqisi2
+ 571 016c 1BB1     		cbz	r3, .L70
+ 572 016e A369     		ldr	r3, [r4, #24]
+ 573 0170 43F00803 		orr	r3, r3, #8
+ 574 0174 A361     		str	r3, [r4, #24]
+ 575              	.L70:
+ 576 0176 012E     		cmp	r6, #1
+ 577 0178 04D0     		beq	.L79
+ 578              	.L71:
+ 579 017a 2846     		mov	r0, r5
+ 580 017c BDE8F840 		pop	{r3, r4, r5, r6, r7, lr}
+ 581 0180 04B0     		add	sp, sp, #16
+ 582 0182 7047     		bx	lr
+ 583              	.L79:
+ 584 0184 A369     		ldr	r3, [r4, #24]
+ 585 0186 43F08043 		orr	r3, r3, #1073741824
+ 586 018a 43F00403 		orr	r3, r3, #4
+ 587 018e A361     		str	r3, [r4, #24]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 11
+
+
+ 588 0190 F3E7     		b	.L71
+ 589              	.L81:
+ 590 0192 00BF     		.align	2
+ 591              	.L80:
+ 592 0194 00383C80 		.word	-2143537152
+ 594              		.section	.text.USB_GetDevSpeed,"ax",%progbits
+ 595              		.align	1
+ 596              		.global	USB_GetDevSpeed
+ 597              		.syntax unified
+ 598              		.thumb
+ 599              		.thumb_func
+ 601              	USB_GetDevSpeed:
+ 602              		@ args = 0, pretend = 0, frame = 0
+ 603              		@ frame_needed = 0, uses_anonymous_args = 0
+ 604              		@ link register save eliminated.
+ 605 0000 D0F80838 		ldr	r3, [r0, #2056]
+ 606 0004 03F00603 		and	r3, r3, #6
+ 607 0008 022B     		cmp	r3, #2
+ 608 000a 04D0     		beq	.L84
+ 609 000c 062B     		cmp	r3, #6
+ 610 000e 04D0     		beq	.L85
+ 611 0010 2BB9     		cbnz	r3, .L86
+ 612 0012 0020     		movs	r0, #0
+ 613 0014 7047     		bx	lr
+ 614              	.L84:
+ 615 0016 0220     		movs	r0, #2
+ 616 0018 7047     		bx	lr
+ 617              	.L85:
+ 618 001a 0220     		movs	r0, #2
+ 619 001c 7047     		bx	lr
+ 620              	.L86:
+ 621 001e 0F20     		movs	r0, #15
+ 622 0020 7047     		bx	lr
+ 624              		.section	.text.USB_ActivateEndpoint,"ax",%progbits
+ 625              		.align	1
+ 626              		.global	USB_ActivateEndpoint
+ 627              		.syntax unified
+ 628              		.thumb
+ 629              		.thumb_func
+ 631              	USB_ActivateEndpoint:
+ 632              		@ args = 0, pretend = 0, frame = 0
+ 633              		@ frame_needed = 0, uses_anonymous_args = 0
+ 634 0000 10B5     		push	{r4, lr}
+ 635 0002 91F800C0 		ldrb	ip, [r1]	@ zero_extendqisi2
+ 636 0006 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+ 637 0008 012B     		cmp	r3, #1
+ 638 000a 23D0     		beq	.L91
+ 639 000c 00F5006E 		add	lr, r0, #2048
+ 640 0010 D0F81C38 		ldr	r3, [r0, #2076]
+ 641 0014 0CF00F04 		and	r4, ip, #15
+ 642 0018 0122     		movs	r2, #1
+ 643 001a A240     		lsls	r2, r2, r4
+ 644 001c 43EA0243 		orr	r3, r3, r2, lsl #16
+ 645 0020 C0F81C38 		str	r3, [r0, #2076]
+ 646 0024 00EB4C10 		add	r0, r0, ip, lsl #5
+ 647 0028 D0F8003B 		ldr	r3, [r0, #2816]
+ 648 002c 13F4004F 		tst	r3, #32768
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 12
+
+
+ 649 0030 0ED1     		bne	.L89
+ 650 0032 D0F8003B 		ldr	r3, [r0, #2816]
+ 651 0036 8A68     		ldr	r2, [r1, #8]
+ 652 0038 C2F30A02 		ubfx	r2, r2, #0, #11
+ 653 003c 0979     		ldrb	r1, [r1, #4]	@ zero_extendqisi2
+ 654 003e 42EA8142 		orr	r2, r2, r1, lsl #18
+ 655 0042 1343     		orrs	r3, r3, r2
+ 656 0044 43F08053 		orr	r3, r3, #268435456
+ 657 0048 43F40043 		orr	r3, r3, #32768
+ 658 004c C0F8003B 		str	r3, [r0, #2816]
+ 659              	.L89:
+ 660 0050 0020     		movs	r0, #0
+ 661 0052 10BD     		pop	{r4, pc}
+ 662              	.L91:
+ 663 0054 D0F81C28 		ldr	r2, [r0, #2076]
+ 664 0058 0CF00F0E 		and	lr, ip, #15
+ 665 005c 03FA0EF3 		lsl	r3, r3, lr
+ 666 0060 9BB2     		uxth	r3, r3
+ 667 0062 1343     		orrs	r3, r3, r2
+ 668 0064 C0F81C38 		str	r3, [r0, #2076]
+ 669 0068 00EB4C10 		add	r0, r0, ip, lsl #5
+ 670 006c D0F80039 		ldr	r3, [r0, #2304]
+ 671 0070 13F4004F 		tst	r3, #32768
+ 672 0074 ECD1     		bne	.L89
+ 673 0076 D0F80039 		ldr	r3, [r0, #2304]
+ 674 007a 8A68     		ldr	r2, [r1, #8]
+ 675 007c C2F30A02 		ubfx	r2, r2, #0, #11
+ 676 0080 0979     		ldrb	r1, [r1, #4]	@ zero_extendqisi2
+ 677 0082 42EA8142 		orr	r2, r2, r1, lsl #18
+ 678 0086 42EA8C52 		orr	r2, r2, ip, lsl #22
+ 679 008a 1343     		orrs	r3, r3, r2
+ 680 008c 43F08053 		orr	r3, r3, #268435456
+ 681 0090 43F40043 		orr	r3, r3, #32768
+ 682 0094 C0F80039 		str	r3, [r0, #2304]
+ 683 0098 DAE7     		b	.L89
+ 685              		.section	.text.USB_ActivateDedicatedEndpoint,"ax",%progbits
+ 686              		.align	1
+ 687              		.global	USB_ActivateDedicatedEndpoint
+ 688              		.syntax unified
+ 689              		.thumb
+ 690              		.thumb_func
+ 692              	USB_ActivateDedicatedEndpoint:
+ 693              		@ args = 0, pretend = 0, frame = 0
+ 694              		@ frame_needed = 0, uses_anonymous_args = 0
+ 695 0000 10B5     		push	{r4, lr}
+ 696 0002 0A78     		ldrb	r2, [r1]	@ zero_extendqisi2
+ 697 0004 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+ 698 0006 012B     		cmp	r3, #1
+ 699 0008 23D0     		beq	.L98
+ 700 000a 00EB421C 		add	ip, r0, r2, lsl #5
+ 701 000e DCF8003B 		ldr	r3, [ip, #2816]
+ 702 0012 13F4004F 		tst	r3, #32768
+ 703 0016 0FD1     		bne	.L96
+ 704 0018 DCF8004B 		ldr	r4, [ip, #2816]
+ 705 001c 8B68     		ldr	r3, [r1, #8]
+ 706 001e C3F30A03 		ubfx	r3, r3, #0, #11
+ 707 0022 91F804E0 		ldrb	lr, [r1, #4]	@ zero_extendqisi2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 13
+
+
+ 708 0026 43EA8E43 		orr	r3, r3, lr, lsl #18
+ 709 002a 43EA8253 		orr	r3, r3, r2, lsl #22
+ 710 002e 2343     		orrs	r3, r3, r4
+ 711 0030 43F40043 		orr	r3, r3, #32768
+ 712 0034 CCF8003B 		str	r3, [ip, #2816]
+ 713              	.L96:
+ 714 0038 D0F83C38 		ldr	r3, [r0, #2108]
+ 715 003c 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 716 003e 01F00F01 		and	r1, r1, #15
+ 717 0042 0122     		movs	r2, #1
+ 718 0044 8A40     		lsls	r2, r2, r1
+ 719 0046 43EA0243 		orr	r3, r3, r2, lsl #16
+ 720 004a C0F83C38 		str	r3, [r0, #2108]
+ 721              	.L95:
+ 722 004e 0020     		movs	r0, #0
+ 723 0050 10BD     		pop	{r4, pc}
+ 724              	.L98:
+ 725 0052 00EB421C 		add	ip, r0, r2, lsl #5
+ 726 0056 DCF80039 		ldr	r3, [ip, #2304]
+ 727 005a 13F4004F 		tst	r3, #32768
+ 728 005e 11D1     		bne	.L94
+ 729 0060 DCF80039 		ldr	r3, [ip, #2304]
+ 730 0064 8C68     		ldr	r4, [r1, #8]
+ 731 0066 C4F30A04 		ubfx	r4, r4, #0, #11
+ 732 006a 91F804E0 		ldrb	lr, [r1, #4]	@ zero_extendqisi2
+ 733 006e 44EA8E44 		orr	r4, r4, lr, lsl #18
+ 734 0072 44EA8254 		orr	r4, r4, r2, lsl #22
+ 735 0076 2343     		orrs	r3, r3, r4
+ 736 0078 43F08053 		orr	r3, r3, #268435456
+ 737 007c 43F40043 		orr	r3, r3, #32768
+ 738 0080 CCF80039 		str	r3, [ip, #2304]
+ 739              	.L94:
+ 740 0084 D0F83C28 		ldr	r2, [r0, #2108]
+ 741 0088 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 742 008a 01F00F01 		and	r1, r1, #15
+ 743 008e 0123     		movs	r3, #1
+ 744 0090 8B40     		lsls	r3, r3, r1
+ 745 0092 9BB2     		uxth	r3, r3
+ 746 0094 1343     		orrs	r3, r3, r2
+ 747 0096 C0F83C38 		str	r3, [r0, #2108]
+ 748 009a D8E7     		b	.L95
+ 750              		.section	.text.USB_DeactivateEndpoint,"ax",%progbits
+ 751              		.align	1
+ 752              		.global	USB_DeactivateEndpoint
+ 753              		.syntax unified
+ 754              		.thumb
+ 755              		.thumb_func
+ 757              	USB_DeactivateEndpoint:
+ 758              		@ args = 0, pretend = 0, frame = 0
+ 759              		@ frame_needed = 0, uses_anonymous_args = 0
+ 760              		@ link register save eliminated.
+ 761 0000 30B4     		push	{r4, r5}
+ 762 0002 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 763 0004 4A78     		ldrb	r2, [r1, #1]	@ zero_extendqisi2
+ 764 0006 012A     		cmp	r2, #1
+ 765 0008 26D0     		beq	.L105
+ 766 000a 00EB4313 		add	r3, r0, r3, lsl #5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 14
+
+
+ 767 000e D3F8002B 		ldr	r2, [r3, #2816]
+ 768 0012 002A     		cmp	r2, #0
+ 769 0014 52DB     		blt	.L106
+ 770              	.L103:
+ 771 0016 D0F83C48 		ldr	r4, [r0, #2108]
+ 772 001a 0A78     		ldrb	r2, [r1]	@ zero_extendqisi2
+ 773 001c 02F00F02 		and	r2, r2, #15
+ 774 0020 4FF0010C 		mov	ip, #1
+ 775 0024 0CFA02F2 		lsl	r2, ip, r2
+ 776 0028 24EA0242 		bic	r2, r4, r2, lsl #16
+ 777 002c C0F83C28 		str	r2, [r0, #2108]
+ 778 0030 D0F81C28 		ldr	r2, [r0, #2076]
+ 779 0034 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 780 0036 01F00F01 		and	r1, r1, #15
+ 781 003a 0CFA01FC 		lsl	ip, ip, r1
+ 782 003e 22EA0C42 		bic	r2, r2, ip, lsl #16
+ 783 0042 C0F81C28 		str	r2, [r0, #2076]
+ 784 0046 D3F8001B 		ldr	r1, [r3, #2816]
+ 785 004a 234A     		ldr	r2, .L108
+ 786 004c 0A40     		ands	r2, r2, r1
+ 787 004e C3F8002B 		str	r2, [r3, #2816]
+ 788              	.L102:
+ 789 0052 0020     		movs	r0, #0
+ 790 0054 30BC     		pop	{r4, r5}
+ 791 0056 7047     		bx	lr
+ 792              	.L105:
+ 793 0058 00EB4313 		add	r3, r0, r3, lsl #5
+ 794 005c D3F80029 		ldr	r2, [r3, #2304]
+ 795 0060 002A     		cmp	r2, #0
+ 796 0062 1EDB     		blt	.L107
+ 797              	.L101:
+ 798 0064 D0F83C58 		ldr	r5, [r0, #2108]
+ 799 0068 0A78     		ldrb	r2, [r1]	@ zero_extendqisi2
+ 800 006a 02F00F02 		and	r2, r2, #15
+ 801 006e 0124     		movs	r4, #1
+ 802 0070 04FA02F2 		lsl	r2, r4, r2
+ 803 0074 92B2     		uxth	r2, r2
+ 804 0076 25EA0202 		bic	r2, r5, r2
+ 805 007a C0F83C28 		str	r2, [r0, #2108]
+ 806 007e D0F81C28 		ldr	r2, [r0, #2076]
+ 807 0082 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 808 0084 01F00F01 		and	r1, r1, #15
+ 809 0088 8C40     		lsls	r4, r4, r1
+ 810 008a A4B2     		uxth	r4, r4
+ 811 008c 22EA0402 		bic	r2, r2, r4
+ 812 0090 C0F81C28 		str	r2, [r0, #2076]
+ 813 0094 D3F80019 		ldr	r1, [r3, #2304]
+ 814 0098 104A     		ldr	r2, .L108+4
+ 815 009a 0A40     		ands	r2, r2, r1
+ 816 009c C3F80029 		str	r2, [r3, #2304]
+ 817 00a0 D7E7     		b	.L102
+ 818              	.L107:
+ 819 00a2 D3F80029 		ldr	r2, [r3, #2304]
+ 820 00a6 42F00062 		orr	r2, r2, #134217728
+ 821 00aa C3F80029 		str	r2, [r3, #2304]
+ 822 00ae D3F80029 		ldr	r2, [r3, #2304]
+ 823 00b2 42F08042 		orr	r2, r2, #1073741824
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 15
+
+
+ 824 00b6 C3F80029 		str	r2, [r3, #2304]
+ 825 00ba D3E7     		b	.L101
+ 826              	.L106:
+ 827 00bc D3F8002B 		ldr	r2, [r3, #2816]
+ 828 00c0 42F00062 		orr	r2, r2, #134217728
+ 829 00c4 C3F8002B 		str	r2, [r3, #2816]
+ 830 00c8 D3F8002B 		ldr	r2, [r3, #2816]
+ 831 00cc 42F08042 		orr	r2, r2, #1073741824
+ 832 00d0 C3F8002B 		str	r2, [r3, #2816]
+ 833 00d4 9FE7     		b	.L103
+ 834              	.L109:
+ 835 00d6 00BF     		.align	2
+ 836              	.L108:
+ 837 00d8 0078F3EF 		.word	-269256704
+ 838 00dc 007833EC 		.word	-332171264
+ 840              		.section	.text.USB_DeactivateDedicatedEndpoint,"ax",%progbits
+ 841              		.align	1
+ 842              		.global	USB_DeactivateDedicatedEndpoint
+ 843              		.syntax unified
+ 844              		.thumb
+ 845              		.thumb_func
+ 847              	USB_DeactivateDedicatedEndpoint:
+ 848              		@ args = 0, pretend = 0, frame = 0
+ 849              		@ frame_needed = 0, uses_anonymous_args = 0
+ 850              		@ link register save eliminated.
+ 851 0000 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 852 0002 4A78     		ldrb	r2, [r1, #1]	@ zero_extendqisi2
+ 853 0004 012A     		cmp	r2, #1
+ 854 0006 18D0     		beq	.L115
+ 855 0008 00EB4313 		add	r3, r0, r3, lsl #5
+ 856 000c D3F8002B 		ldr	r2, [r3, #2816]
+ 857 0010 002A     		cmp	r2, #0
+ 858 0012 38DB     		blt	.L116
+ 859              	.L114:
+ 860 0014 D3F8002B 		ldr	r2, [r3, #2816]
+ 861 0018 22F40042 		bic	r2, r2, #32768
+ 862 001c C3F8002B 		str	r2, [r3, #2816]
+ 863 0020 D0F81C38 		ldr	r3, [r0, #2076]
+ 864 0024 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 865 0026 01F00F01 		and	r1, r1, #15
+ 866 002a 0122     		movs	r2, #1
+ 867 002c 8A40     		lsls	r2, r2, r1
+ 868 002e 23EA0243 		bic	r3, r3, r2, lsl #16
+ 869 0032 C0F81C38 		str	r3, [r0, #2076]
+ 870              	.L113:
+ 871 0036 0020     		movs	r0, #0
+ 872 0038 7047     		bx	lr
+ 873              	.L115:
+ 874 003a 00EB4313 		add	r3, r0, r3, lsl #5
+ 875 003e D3F80029 		ldr	r2, [r3, #2304]
+ 876 0042 002A     		cmp	r2, #0
+ 877 0044 12DB     		blt	.L117
+ 878              	.L112:
+ 879 0046 D3F80029 		ldr	r2, [r3, #2304]
+ 880 004a 22F40042 		bic	r2, r2, #32768
+ 881 004e C3F80029 		str	r2, [r3, #2304]
+ 882 0052 D0F81C28 		ldr	r2, [r0, #2076]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 16
+
+
+ 883 0056 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 884 0058 01F00F01 		and	r1, r1, #15
+ 885 005c 0123     		movs	r3, #1
+ 886 005e 8B40     		lsls	r3, r3, r1
+ 887 0060 9BB2     		uxth	r3, r3
+ 888 0062 22EA0303 		bic	r3, r2, r3
+ 889 0066 C0F81C38 		str	r3, [r0, #2076]
+ 890 006a E4E7     		b	.L113
+ 891              	.L117:
+ 892 006c D3F80029 		ldr	r2, [r3, #2304]
+ 893 0070 42F00062 		orr	r2, r2, #134217728
+ 894 0074 C3F80029 		str	r2, [r3, #2304]
+ 895 0078 D3F80029 		ldr	r2, [r3, #2304]
+ 896 007c 42F08042 		orr	r2, r2, #1073741824
+ 897 0080 C3F80029 		str	r2, [r3, #2304]
+ 898 0084 DFE7     		b	.L112
+ 899              	.L116:
+ 900 0086 D3F8002B 		ldr	r2, [r3, #2816]
+ 901 008a 42F00062 		orr	r2, r2, #134217728
+ 902 008e C3F8002B 		str	r2, [r3, #2816]
+ 903 0092 D3F8002B 		ldr	r2, [r3, #2816]
+ 904 0096 42F08042 		orr	r2, r2, #1073741824
+ 905 009a C3F8002B 		str	r2, [r3, #2816]
+ 906 009e B9E7     		b	.L114
+ 908              		.section	.text.USB_EPStopXfer,"ax",%progbits
+ 909              		.align	1
+ 910              		.global	USB_EPStopXfer
+ 911              		.syntax unified
+ 912              		.thumb
+ 913              		.thumb_func
+ 915              	USB_EPStopXfer:
+ 916              		@ args = 0, pretend = 0, frame = 8
+ 917              		@ frame_needed = 0, uses_anonymous_args = 0
+ 918              		@ link register save eliminated.
+ 919 0000 10B4     		push	{r4}
+ 920 0002 83B0     		sub	sp, sp, #12
+ 921 0004 0246     		mov	r2, r0
+ 922 0006 0023     		movs	r3, #0
+ 923 0008 0193     		str	r3, [sp, #4]
+ 924 000a 4878     		ldrb	r0, [r1, #1]	@ zero_extendqisi2
+ 925 000c 0128     		cmp	r0, #1
+ 926 000e 0BD0     		beq	.L127
+ 927 0010 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 928 0012 02EB4313 		add	r3, r2, r3, lsl #5
+ 929 0016 D3F8000B 		ldr	r0, [r3, #2816]
+ 930 001a 0028     		cmp	r0, #0
+ 931 001c 2DDB     		blt	.L128
+ 932 001e 0020     		movs	r0, #0
+ 933              	.L120:
+ 934 0020 03B0     		add	sp, sp, #12
+ 935              		@ sp needed
+ 936 0022 5DF8044B 		ldr	r4, [sp], #4
+ 937 0026 7047     		bx	lr
+ 938              	.L127:
+ 939 0028 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 940 002a 02EB4313 		add	r3, r2, r3, lsl #5
+ 941 002e D3F80049 		ldr	r4, [r3, #2304]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 17
+
+
+ 942 0032 002C     		cmp	r4, #0
+ 943 0034 01DB     		blt	.L129
+ 944 0036 0020     		movs	r0, #0
+ 945 0038 F2E7     		b	.L120
+ 946              	.L129:
+ 947 003a D3F80049 		ldr	r4, [r3, #2304]
+ 948 003e 44F00064 		orr	r4, r4, #134217728
+ 949 0042 C3F80049 		str	r4, [r3, #2304]
+ 950 0046 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 951 0048 02EB4313 		add	r3, r2, r3, lsl #5
+ 952 004c D3F80049 		ldr	r4, [r3, #2304]
+ 953 0050 44F08044 		orr	r4, r4, #1073741824
+ 954 0054 C3F80049 		str	r4, [r3, #2304]
+ 955              	.L121:
+ 956 0058 019B     		ldr	r3, [sp, #4]
+ 957 005a 0133     		adds	r3, r3, #1
+ 958 005c 0193     		str	r3, [sp, #4]
+ 959 005e 019C     		ldr	r4, [sp, #4]
+ 960 0060 42F21073 		movw	r3, #10000
+ 961 0064 9C42     		cmp	r4, r3
+ 962 0066 DBD8     		bhi	.L120
+ 963 0068 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 964 006a 02EB4313 		add	r3, r2, r3, lsl #5
+ 965 006e D3F80039 		ldr	r3, [r3, #2304]
+ 966 0072 002B     		cmp	r3, #0
+ 967 0074 F0DB     		blt	.L121
+ 968 0076 0020     		movs	r0, #0
+ 969 0078 D2E7     		b	.L120
+ 970              	.L128:
+ 971 007a D3F8000B 		ldr	r0, [r3, #2816]
+ 972 007e 40F00060 		orr	r0, r0, #134217728
+ 973 0082 C3F8000B 		str	r0, [r3, #2816]
+ 974 0086 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 975 0088 02EB4313 		add	r3, r2, r3, lsl #5
+ 976 008c D3F8000B 		ldr	r0, [r3, #2816]
+ 977 0090 40F08040 		orr	r0, r0, #1073741824
+ 978 0094 C3F8000B 		str	r0, [r3, #2816]
+ 979              	.L122:
+ 980 0098 019B     		ldr	r3, [sp, #4]
+ 981 009a 0133     		adds	r3, r3, #1
+ 982 009c 0193     		str	r3, [sp, #4]
+ 983 009e 0198     		ldr	r0, [sp, #4]
+ 984 00a0 42F21073 		movw	r3, #10000
+ 985 00a4 9842     		cmp	r0, r3
+ 986 00a6 08D8     		bhi	.L125
+ 987 00a8 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 988 00aa 02EB4313 		add	r3, r2, r3, lsl #5
+ 989 00ae D3F8003B 		ldr	r3, [r3, #2816]
+ 990 00b2 002B     		cmp	r3, #0
+ 991 00b4 F0DB     		blt	.L122
+ 992 00b6 0020     		movs	r0, #0
+ 993 00b8 B2E7     		b	.L120
+ 994              	.L125:
+ 995 00ba 0120     		movs	r0, #1
+ 996 00bc B0E7     		b	.L120
+ 998              		.section	.text.USB_WritePacket,"ax",%progbits
+ 999              		.align	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 18
+
+
+ 1000              		.global	USB_WritePacket
+ 1001              		.syntax unified
+ 1002              		.thumb
+ 1003              		.thumb_func
+ 1005              	USB_WritePacket:
+ 1006              		@ args = 4, pretend = 0, frame = 0
+ 1007              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1008 0000 10B5     		push	{r4, lr}
+ 1009 0002 9DF80840 		ldrb	r4, [sp, #8]	@ zero_extendqisi2
+ 1010 0006 84B9     		cbnz	r4, .L131
+ 1011 0008 0333     		adds	r3, r3, #3
+ 1012 000a 4FEA930E 		lsr	lr, r3, #2
+ 1013 000e 4FF0000C 		mov	ip, #0
+ 1014 0012 08E0     		b	.L132
+ 1015              	.L133:
+ 1016 0014 00EB0233 		add	r3, r0, r2, lsl #12
+ 1017 0018 03F58053 		add	r3, r3, #4096
+ 1018 001c 51F8044B 		ldr	r4, [r1], #4	@ unaligned
+ 1019 0020 1C60     		str	r4, [r3]
+ 1020 0022 0CF1010C 		add	ip, ip, #1
+ 1021              	.L132:
+ 1022 0026 F445     		cmp	ip, lr
+ 1023 0028 F4D3     		bcc	.L133
+ 1024              	.L131:
+ 1025 002a 0020     		movs	r0, #0
+ 1026 002c 10BD     		pop	{r4, pc}
+ 1028              		.section	.text.USB_EPStartXfer,"ax",%progbits
+ 1029              		.align	1
+ 1030              		.global	USB_EPStartXfer
+ 1031              		.syntax unified
+ 1032              		.thumb
+ 1033              		.thumb_func
+ 1035              	USB_EPStartXfer:
+ 1036              		@ args = 0, pretend = 0, frame = 0
+ 1037              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1038 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 1039 0002 83B0     		sub	sp, sp, #12
+ 1040 0004 0C78     		ldrb	r4, [r1]	@ zero_extendqisi2
+ 1041 0006 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+ 1042 0008 012B     		cmp	r3, #1
+ 1043 000a 2DD0     		beq	.L158
+ 1044 000c 00EB441C 		add	ip, r0, r4, lsl #5
+ 1045 0010 0CF53063 		add	r3, ip, #2816
+ 1046 0014 1D69     		ldr	r5, [r3, #16]
+ 1047 0016 6FF31205 		bfc	r5, #0, #19
+ 1048 001a 1D61     		str	r5, [r3, #16]
+ 1049 001c 1D69     		ldr	r5, [r3, #16]
+ 1050 001e 6FF3DC45 		bfc	r5, #19, #10
+ 1051 0022 1D61     		str	r5, [r3, #16]
+ 1052 0024 002C     		cmp	r4, #0
+ 1053 0026 40F0CE80 		bne	.L150
+ 1054 002a 0C69     		ldr	r4, [r1, #16]
+ 1055 002c 0CB1     		cbz	r4, .L151
+ 1056 002e 8C68     		ldr	r4, [r1, #8]
+ 1057 0030 0C61     		str	r4, [r1, #16]
+ 1058              	.L151:
+ 1059 0032 8C68     		ldr	r4, [r1, #8]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 19
+
+
+ 1060 0034 0C62     		str	r4, [r1, #32]
+ 1061 0036 1D69     		ldr	r5, [r3, #16]
+ 1062 0038 C4F31204 		ubfx	r4, r4, #0, #19
+ 1063 003c 2C43     		orrs	r4, r4, r5
+ 1064 003e 1C61     		str	r4, [r3, #16]
+ 1065 0040 1C69     		ldr	r4, [r3, #16]
+ 1066 0042 44F40024 		orr	r4, r4, #524288
+ 1067 0046 1C61     		str	r4, [r3, #16]
+ 1068              	.L152:
+ 1069 0048 012A     		cmp	r2, #1
+ 1070 004a 00F0DF80 		beq	.L159
+ 1071              	.L154:
+ 1072 004e 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
+ 1073 0050 012B     		cmp	r3, #1
+ 1074 0052 00F0E180 		beq	.L160
+ 1075              	.L155:
+ 1076 0056 DCF8003B 		ldr	r3, [ip, #2816]
+ 1077 005a 43F00443 		orr	r3, r3, #-2080374784
+ 1078 005e CCF8003B 		str	r3, [ip, #2816]
+ 1079              	.L146:
+ 1080 0062 0020     		movs	r0, #0
+ 1081 0064 03B0     		add	sp, sp, #12
+ 1082              		@ sp needed
+ 1083 0066 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1084              	.L158:
+ 1085 0068 0B69     		ldr	r3, [r1, #16]
+ 1086 006a 73BB     		cbnz	r3, .L137
+ 1087 006c 00EB4413 		add	r3, r0, r4, lsl #5
+ 1088 0070 D3F81059 		ldr	r5, [r3, #2320]
+ 1089 0074 6FF3DC45 		bfc	r5, #19, #10
+ 1090 0078 C3F81059 		str	r5, [r3, #2320]
+ 1091 007c D3F81059 		ldr	r5, [r3, #2320]
+ 1092 0080 45F40025 		orr	r5, r5, #524288
+ 1093 0084 C3F81059 		str	r5, [r3, #2320]
+ 1094 0088 D3F81059 		ldr	r5, [r3, #2320]
+ 1095 008c 6FF31205 		bfc	r5, #0, #19
+ 1096 0090 C3F81059 		str	r5, [r3, #2320]
+ 1097              	.L138:
+ 1098 0094 012A     		cmp	r2, #1
+ 1099 0096 54D0     		beq	.L161
+ 1100 0098 00EB4414 		add	r4, r0, r4, lsl #5
+ 1101 009c D4F80039 		ldr	r3, [r4, #2304]
+ 1102 00a0 43F00443 		orr	r3, r3, #-2080374784
+ 1103 00a4 C4F80039 		str	r3, [r4, #2304]
+ 1104 00a8 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
+ 1105 00aa 012B     		cmp	r3, #1
+ 1106 00ac 72D0     		beq	.L147
+ 1107 00ae 0B69     		ldr	r3, [r1, #16]
+ 1108 00b0 002B     		cmp	r3, #0
+ 1109 00b2 D6D0     		beq	.L146
+ 1110 00b4 D0F83438 		ldr	r3, [r0, #2100]
+ 1111 00b8 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 1112 00ba 01F00F01 		and	r1, r1, #15
+ 1113 00be 0122     		movs	r2, #1
+ 1114 00c0 8A40     		lsls	r2, r2, r1
+ 1115 00c2 1343     		orrs	r3, r3, r2
+ 1116 00c4 C0F83438 		str	r3, [r0, #2100]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 20
+
+
+ 1117 00c8 CBE7     		b	.L146
+ 1118              	.L137:
+ 1119 00ca 00EB4413 		add	r3, r0, r4, lsl #5
+ 1120 00ce 03F51063 		add	r3, r3, #2304
+ 1121 00d2 1D69     		ldr	r5, [r3, #16]
+ 1122 00d4 6FF31205 		bfc	r5, #0, #19
+ 1123 00d8 1D61     		str	r5, [r3, #16]
+ 1124 00da 1D69     		ldr	r5, [r3, #16]
+ 1125 00dc 6FF3DC45 		bfc	r5, #19, #10
+ 1126 00e0 1D61     		str	r5, [r3, #16]
+ 1127 00e2 84B9     		cbnz	r4, .L139
+ 1128 00e4 0E69     		ldr	r6, [r1, #16]
+ 1129 00e6 8D68     		ldr	r5, [r1, #8]
+ 1130 00e8 AE42     		cmp	r6, r5
+ 1131 00ea 00D9     		bls	.L140
+ 1132 00ec 0D61     		str	r5, [r1, #16]
+ 1133              	.L140:
+ 1134 00ee 1D69     		ldr	r5, [r3, #16]
+ 1135 00f0 45F40025 		orr	r5, r5, #524288
+ 1136 00f4 1D61     		str	r5, [r3, #16]
+ 1137              	.L141:
+ 1138 00f6 1D69     		ldr	r5, [r3, #16]
+ 1139 00f8 0E69     		ldr	r6, [r1, #16]
+ 1140 00fa C6F3120C 		ubfx	ip, r6, #0, #19
+ 1141 00fe 45EA0C05 		orr	r5, r5, ip
+ 1142 0102 1D61     		str	r5, [r3, #16]
+ 1143 0104 C6E7     		b	.L138
+ 1144              	.L139:
+ 1145 0106 0D69     		ldr	r5, [r1, #16]
+ 1146 0108 8E68     		ldr	r6, [r1, #8]
+ 1147 010a 3544     		add	r5, r5, r6
+ 1148 010c 013D     		subs	r5, r5, #1
+ 1149 010e B5FBF6F5 		udiv	r5, r5, r6
+ 1150 0112 1E69     		ldr	r6, [r3, #16]
+ 1151 0114 1FFA85FC 		uxth	ip, r5
+ 1152 0118 494F     		ldr	r7, .L163
+ 1153 011a 07EAC545 		and	r5, r7, r5, lsl #19
+ 1154 011e 3543     		orrs	r5, r5, r6
+ 1155 0120 1D61     		str	r5, [r3, #16]
+ 1156 0122 0D79     		ldrb	r5, [r1, #4]	@ zero_extendqisi2
+ 1157 0124 012D     		cmp	r5, #1
+ 1158 0126 E6D1     		bne	.L141
+ 1159 0128 1D69     		ldr	r5, [r3, #16]
+ 1160 012a 25F0C045 		bic	r5, r5, #1610612736
+ 1161 012e 1D61     		str	r5, [r3, #16]
+ 1162 0130 1D69     		ldr	r5, [r3, #16]
+ 1163 0132 4FEA4C7C 		lsl	ip, ip, #29
+ 1164 0136 0CF0C04C 		and	ip, ip, #1610612736
+ 1165 013a 45EA0C05 		orr	r5, r5, ip
+ 1166 013e 1D61     		str	r5, [r3, #16]
+ 1167 0140 D9E7     		b	.L141
+ 1168              	.L161:
+ 1169 0142 CB69     		ldr	r3, [r1, #28]
+ 1170 0144 1BB1     		cbz	r3, .L143
+ 1171 0146 00EB4412 		add	r2, r0, r4, lsl #5
+ 1172 014a C2F81439 		str	r3, [r2, #2324]
+ 1173              	.L143:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 21
+
+
+ 1174 014e 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
+ 1175 0150 012B     		cmp	r3, #1
+ 1176 0152 08D0     		beq	.L162
+ 1177              	.L144:
+ 1178 0154 00EB4414 		add	r4, r0, r4, lsl #5
+ 1179 0158 D4F80039 		ldr	r3, [r4, #2304]
+ 1180 015c 43F00443 		orr	r3, r3, #-2080374784
+ 1181 0160 C4F80039 		str	r3, [r4, #2304]
+ 1182 0164 7DE7     		b	.L146
+ 1183              	.L162:
+ 1184 0166 D0F80838 		ldr	r3, [r0, #2056]
+ 1185 016a 13F4807F 		tst	r3, #256
+ 1186 016e 08D1     		bne	.L145
+ 1187 0170 00EB4412 		add	r2, r0, r4, lsl #5
+ 1188 0174 D2F80039 		ldr	r3, [r2, #2304]
+ 1189 0178 43F00053 		orr	r3, r3, #536870912
+ 1190 017c C2F80039 		str	r3, [r2, #2304]
+ 1191 0180 E8E7     		b	.L144
+ 1192              	.L145:
+ 1193 0182 00EB4412 		add	r2, r0, r4, lsl #5
+ 1194 0186 D2F80039 		ldr	r3, [r2, #2304]
+ 1195 018a 43F08053 		orr	r3, r3, #268435456
+ 1196 018e C2F80039 		str	r3, [r2, #2304]
+ 1197 0192 DFE7     		b	.L144
+ 1198              	.L147:
+ 1199 0194 D0F80838 		ldr	r3, [r0, #2056]
+ 1200 0198 13F4807F 		tst	r3, #256
+ 1201 019c 0CD1     		bne	.L148
+ 1202 019e D4F80039 		ldr	r3, [r4, #2304]
+ 1203 01a2 43F00053 		orr	r3, r3, #536870912
+ 1204 01a6 C4F80039 		str	r3, [r4, #2304]
+ 1205              	.L149:
+ 1206 01aa 0092     		str	r2, [sp]
+ 1207 01ac 0B8A     		ldrh	r3, [r1, #16]
+ 1208 01ae 0A78     		ldrb	r2, [r1]	@ zero_extendqisi2
+ 1209 01b0 C968     		ldr	r1, [r1, #12]
+ 1210 01b2 FFF7FEFF 		bl	USB_WritePacket
+ 1211 01b6 54E7     		b	.L146
+ 1212              	.L148:
+ 1213 01b8 D4F80039 		ldr	r3, [r4, #2304]
+ 1214 01bc 43F08053 		orr	r3, r3, #268435456
+ 1215 01c0 C4F80039 		str	r3, [r4, #2304]
+ 1216 01c4 F1E7     		b	.L149
+ 1217              	.L150:
+ 1218 01c6 0C69     		ldr	r4, [r1, #16]
+ 1219 01c8 54B9     		cbnz	r4, .L153
+ 1220 01ca 1C69     		ldr	r4, [r3, #16]
+ 1221 01cc 8D68     		ldr	r5, [r1, #8]
+ 1222 01ce C5F31205 		ubfx	r5, r5, #0, #19
+ 1223 01d2 2C43     		orrs	r4, r4, r5
+ 1224 01d4 1C61     		str	r4, [r3, #16]
+ 1225 01d6 1C69     		ldr	r4, [r3, #16]
+ 1226 01d8 44F40024 		orr	r4, r4, #524288
+ 1227 01dc 1C61     		str	r4, [r3, #16]
+ 1228 01de 33E7     		b	.L152
+ 1229              	.L153:
+ 1230 01e0 8D68     		ldr	r5, [r1, #8]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 22
+
+
+ 1231 01e2 2C44     		add	r4, r4, r5
+ 1232 01e4 013C     		subs	r4, r4, #1
+ 1233 01e6 B4FBF5F4 		udiv	r4, r4, r5
+ 1234 01ea A4B2     		uxth	r4, r4
+ 1235 01ec 04FB05F5 		mul	r5, r4, r5
+ 1236 01f0 0D62     		str	r5, [r1, #32]
+ 1237 01f2 1D69     		ldr	r5, [r3, #16]
+ 1238 01f4 124E     		ldr	r6, .L163
+ 1239 01f6 06EAC444 		and	r4, r6, r4, lsl #19
+ 1240 01fa 2C43     		orrs	r4, r4, r5
+ 1241 01fc 1C61     		str	r4, [r3, #16]
+ 1242 01fe 1C69     		ldr	r4, [r3, #16]
+ 1243 0200 0D6A     		ldr	r5, [r1, #32]
+ 1244 0202 C5F31205 		ubfx	r5, r5, #0, #19
+ 1245 0206 2C43     		orrs	r4, r4, r5
+ 1246 0208 1C61     		str	r4, [r3, #16]
+ 1247 020a 1DE7     		b	.L152
+ 1248              	.L159:
+ 1249 020c CA68     		ldr	r2, [r1, #12]
+ 1250 020e 002A     		cmp	r2, #0
+ 1251 0210 3FF41DAF 		beq	.L154
+ 1252 0214 5A61     		str	r2, [r3, #20]
+ 1253 0216 1AE7     		b	.L154
+ 1254              	.L160:
+ 1255 0218 D0F80838 		ldr	r3, [r0, #2056]
+ 1256 021c 13F4807F 		tst	r3, #256
+ 1257 0220 06D1     		bne	.L156
+ 1258 0222 DCF8003B 		ldr	r3, [ip, #2816]
+ 1259 0226 43F00053 		orr	r3, r3, #536870912
+ 1260 022a CCF8003B 		str	r3, [ip, #2816]
+ 1261 022e 12E7     		b	.L155
+ 1262              	.L156:
+ 1263 0230 DCF8003B 		ldr	r3, [ip, #2816]
+ 1264 0234 43F08053 		orr	r3, r3, #268435456
+ 1265 0238 CCF8003B 		str	r3, [ip, #2816]
+ 1266 023c 0BE7     		b	.L155
+ 1267              	.L164:
+ 1268 023e 00BF     		.align	2
+ 1269              	.L163:
+ 1270 0240 0000F81F 		.word	536346624
+ 1272              		.section	.text.USB_ReadPacket,"ax",%progbits
+ 1273              		.align	1
+ 1274              		.global	USB_ReadPacket
+ 1275              		.syntax unified
+ 1276              		.thumb
+ 1277              		.thumb_func
+ 1279              	USB_ReadPacket:
+ 1280              		@ args = 0, pretend = 0, frame = 0
+ 1281              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1282 0000 10B5     		push	{r4, lr}
+ 1283 0002 8446     		mov	ip, r0
+ 1284 0004 0846     		mov	r0, r1
+ 1285 0006 4FEA920E 		lsr	lr, r2, #2
+ 1286 000a 02F00302 		and	r2, r2, #3
+ 1287 000e 0023     		movs	r3, #0
+ 1288 0010 05E0     		b	.L166
+ 1289              	.L167:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 23
+
+
+ 1290 0012 0CF58051 		add	r1, ip, #4096
+ 1291 0016 0968     		ldr	r1, [r1]
+ 1292 0018 40F8041B 		str	r1, [r0], #4	@ unaligned
+ 1293 001c 0133     		adds	r3, r3, #1
+ 1294              	.L166:
+ 1295 001e 7345     		cmp	r3, lr
+ 1296 0020 F7D3     		bcc	.L167
+ 1297 0022 7AB1     		cbz	r2, .L168
+ 1298 0024 0CF5805C 		add	ip, ip, #4096
+ 1299 0028 DCF80040 		ldr	r4, [ip]
+ 1300 002c 0021     		movs	r1, #0
+ 1301              	.L169:
+ 1302 002e CBB2     		uxtb	r3, r1
+ 1303 0030 DB00     		lsls	r3, r3, #3
+ 1304 0032 24FA03F3 		lsr	r3, r4, r3
+ 1305 0036 00F8013B 		strb	r3, [r0], #1
+ 1306 003a 0131     		adds	r1, r1, #1
+ 1307 003c 013A     		subs	r2, r2, #1
+ 1308 003e 92B2     		uxth	r2, r2
+ 1309 0040 002A     		cmp	r2, #0
+ 1310 0042 F4D1     		bne	.L169
+ 1311              	.L168:
+ 1312 0044 10BD     		pop	{r4, pc}
+ 1314              		.section	.text.USB_EPSetStall,"ax",%progbits
+ 1315              		.align	1
+ 1316              		.global	USB_EPSetStall
+ 1317              		.syntax unified
+ 1318              		.thumb
+ 1319              		.thumb_func
+ 1321              	USB_EPSetStall:
+ 1322              		@ args = 0, pretend = 0, frame = 0
+ 1323              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1324              		@ link register save eliminated.
+ 1325 0000 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 1326 0002 4A78     		ldrb	r2, [r1, #1]	@ zero_extendqisi2
+ 1327 0004 012A     		cmp	r2, #1
+ 1328 0006 14D0     		beq	.L176
+ 1329 0008 00EB4310 		add	r0, r0, r3, lsl #5
+ 1330 000c D0F8002B 		ldr	r2, [r0, #2816]
+ 1331 0010 002A     		cmp	r2, #0
+ 1332 0012 06DB     		blt	.L175
+ 1333 0014 2BB1     		cbz	r3, .L175
+ 1334 0016 D0F8003B 		ldr	r3, [r0, #2816]
+ 1335 001a 23F08043 		bic	r3, r3, #1073741824
+ 1336 001e C0F8003B 		str	r3, [r0, #2816]
+ 1337              	.L175:
+ 1338 0022 D0F8003B 		ldr	r3, [r0, #2816]
+ 1339 0026 43F40013 		orr	r3, r3, #2097152
+ 1340 002a C0F8003B 		str	r3, [r0, #2816]
+ 1341              	.L174:
+ 1342 002e 0020     		movs	r0, #0
+ 1343 0030 7047     		bx	lr
+ 1344              	.L176:
+ 1345 0032 00EB4310 		add	r0, r0, r3, lsl #5
+ 1346 0036 D0F80029 		ldr	r2, [r0, #2304]
+ 1347 003a 002A     		cmp	r2, #0
+ 1348 003c 06DB     		blt	.L173
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 24
+
+
+ 1349 003e 2BB1     		cbz	r3, .L173
+ 1350 0040 D0F80039 		ldr	r3, [r0, #2304]
+ 1351 0044 23F08043 		bic	r3, r3, #1073741824
+ 1352 0048 C0F80039 		str	r3, [r0, #2304]
+ 1353              	.L173:
+ 1354 004c D0F80039 		ldr	r3, [r0, #2304]
+ 1355 0050 43F40013 		orr	r3, r3, #2097152
+ 1356 0054 C0F80039 		str	r3, [r0, #2304]
+ 1357 0058 E9E7     		b	.L174
+ 1359              		.section	.text.USB_EPClearStall,"ax",%progbits
+ 1360              		.align	1
+ 1361              		.global	USB_EPClearStall
+ 1362              		.syntax unified
+ 1363              		.thumb
+ 1364              		.thumb_func
+ 1366              	USB_EPClearStall:
+ 1367              		@ args = 0, pretend = 0, frame = 0
+ 1368              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1369              		@ link register save eliminated.
+ 1370 0000 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 1371 0002 4A78     		ldrb	r2, [r1, #1]	@ zero_extendqisi2
+ 1372 0004 012A     		cmp	r2, #1
+ 1373 0006 0ED0     		beq	.L180
+ 1374 0008 00EB4310 		add	r0, r0, r3, lsl #5
+ 1375 000c D0F8003B 		ldr	r3, [r0, #2816]
+ 1376 0010 23F40013 		bic	r3, r3, #2097152
+ 1377 0014 C0F8003B 		str	r3, [r0, #2816]
+ 1378 0018 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
+ 1379 001a 023B     		subs	r3, r3, #2
+ 1380 001c DBB2     		uxtb	r3, r3
+ 1381 001e 012B     		cmp	r3, #1
+ 1382 0020 15D9     		bls	.L181
+ 1383              	.L179:
+ 1384 0022 0020     		movs	r0, #0
+ 1385 0024 7047     		bx	lr
+ 1386              	.L180:
+ 1387 0026 00EB4310 		add	r0, r0, r3, lsl #5
+ 1388 002a D0F80039 		ldr	r3, [r0, #2304]
+ 1389 002e 23F40013 		bic	r3, r3, #2097152
+ 1390 0032 C0F80039 		str	r3, [r0, #2304]
+ 1391 0036 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
+ 1392 0038 023B     		subs	r3, r3, #2
+ 1393 003a DBB2     		uxtb	r3, r3
+ 1394 003c 012B     		cmp	r3, #1
+ 1395 003e F0D8     		bhi	.L179
+ 1396 0040 D0F80039 		ldr	r3, [r0, #2304]
+ 1397 0044 43F08053 		orr	r3, r3, #268435456
+ 1398 0048 C0F80039 		str	r3, [r0, #2304]
+ 1399 004c E9E7     		b	.L179
+ 1400              	.L181:
+ 1401 004e D0F8003B 		ldr	r3, [r0, #2816]
+ 1402 0052 43F08053 		orr	r3, r3, #268435456
+ 1403 0056 C0F8003B 		str	r3, [r0, #2816]
+ 1404 005a E2E7     		b	.L179
+ 1406              		.section	.text.USB_StopDevice,"ax",%progbits
+ 1407              		.align	1
+ 1408              		.global	USB_StopDevice
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 25
+
+
+ 1409              		.syntax unified
+ 1410              		.thumb
+ 1411              		.thumb_func
+ 1413              	USB_StopDevice:
+ 1414              		@ args = 0, pretend = 0, frame = 0
+ 1415              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1416 0000 10B5     		push	{r4, lr}
+ 1417 0002 0446     		mov	r4, r0
+ 1418 0004 0022     		movs	r2, #0
+ 1419 0006 08E0     		b	.L183
+ 1420              	.L184:
+ 1421 0008 04EB4213 		add	r3, r4, r2, lsl #5
+ 1422 000c 4FF67F31 		movw	r1, #64383
+ 1423 0010 C3F80819 		str	r1, [r3, #2312]
+ 1424 0014 C3F8081B 		str	r1, [r3, #2824]
+ 1425 0018 0132     		adds	r2, r2, #1
+ 1426              	.L183:
+ 1427 001a 0E2A     		cmp	r2, #14
+ 1428 001c F4D9     		bls	.L184
+ 1429 001e 0022     		movs	r2, #0
+ 1430 0020 C4F81028 		str	r2, [r4, #2064]
+ 1431 0024 C4F81428 		str	r2, [r4, #2068]
+ 1432 0028 C4F81C28 		str	r2, [r4, #2076]
+ 1433 002c 2046     		mov	r0, r4
+ 1434 002e FFF7FEFF 		bl	USB_FlushRxFifo
+ 1435 0032 00B1     		cbz	r0, .L187
+ 1436              	.L185:
+ 1437 0034 10BD     		pop	{r4, pc}
+ 1438              	.L187:
+ 1439 0036 1021     		movs	r1, #16
+ 1440 0038 2046     		mov	r0, r4
+ 1441 003a FFF7FEFF 		bl	USB_FlushTxFifo
+ 1442 003e F9E7     		b	.L185
+ 1444              		.section	.text.USB_SetDevAddress,"ax",%progbits
+ 1445              		.align	1
+ 1446              		.global	USB_SetDevAddress
+ 1447              		.syntax unified
+ 1448              		.thumb
+ 1449              		.thumb_func
+ 1451              	USB_SetDevAddress:
+ 1452              		@ args = 0, pretend = 0, frame = 0
+ 1453              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1454              		@ link register save eliminated.
+ 1455 0000 D0F80038 		ldr	r3, [r0, #2048]
+ 1456 0004 23F4FE63 		bic	r3, r3, #2032
+ 1457 0008 C0F80038 		str	r3, [r0, #2048]
+ 1458 000c D0F80038 		ldr	r3, [r0, #2048]
+ 1459 0010 0901     		lsls	r1, r1, #4
+ 1460 0012 01F4FE61 		and	r1, r1, #2032
+ 1461 0016 0B43     		orrs	r3, r3, r1
+ 1462 0018 C0F80038 		str	r3, [r0, #2048]
+ 1463 001c 0020     		movs	r0, #0
+ 1464 001e 7047     		bx	lr
+ 1466              		.section	.text.USB_DevConnect,"ax",%progbits
+ 1467              		.align	1
+ 1468              		.global	USB_DevConnect
+ 1469              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 26
+
+
+ 1470              		.thumb
+ 1471              		.thumb_func
+ 1473              	USB_DevConnect:
+ 1474              		@ args = 0, pretend = 0, frame = 0
+ 1475              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1476              		@ link register save eliminated.
+ 1477 0000 D0F8003E 		ldr	r3, [r0, #3584]
+ 1478 0004 23F00303 		bic	r3, r3, #3
+ 1479 0008 C0F8003E 		str	r3, [r0, #3584]
+ 1480 000c D0F80438 		ldr	r3, [r0, #2052]
+ 1481 0010 23F00203 		bic	r3, r3, #2
+ 1482 0014 C0F80438 		str	r3, [r0, #2052]
+ 1483 0018 0020     		movs	r0, #0
+ 1484 001a 7047     		bx	lr
+ 1486              		.section	.text.USB_DevDisconnect,"ax",%progbits
+ 1487              		.align	1
+ 1488              		.global	USB_DevDisconnect
+ 1489              		.syntax unified
+ 1490              		.thumb
+ 1491              		.thumb_func
+ 1493              	USB_DevDisconnect:
+ 1494              		@ args = 0, pretend = 0, frame = 0
+ 1495              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1496              		@ link register save eliminated.
+ 1497 0000 D0F8003E 		ldr	r3, [r0, #3584]
+ 1498 0004 23F00303 		bic	r3, r3, #3
+ 1499 0008 C0F8003E 		str	r3, [r0, #3584]
+ 1500 000c D0F80438 		ldr	r3, [r0, #2052]
+ 1501 0010 43F00203 		orr	r3, r3, #2
+ 1502 0014 C0F80438 		str	r3, [r0, #2052]
+ 1503 0018 0020     		movs	r0, #0
+ 1504 001a 7047     		bx	lr
+ 1506              		.section	.text.USB_ReadInterrupts,"ax",%progbits
+ 1507              		.align	1
+ 1508              		.global	USB_ReadInterrupts
+ 1509              		.syntax unified
+ 1510              		.thumb
+ 1511              		.thumb_func
+ 1513              	USB_ReadInterrupts:
+ 1514              		@ args = 0, pretend = 0, frame = 0
+ 1515              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1516              		@ link register save eliminated.
+ 1517 0000 4269     		ldr	r2, [r0, #20]
+ 1518 0002 8069     		ldr	r0, [r0, #24]
+ 1519 0004 1040     		ands	r0, r0, r2
+ 1520 0006 7047     		bx	lr
+ 1522              		.section	.text.USB_ReadChInterrupts,"ax",%progbits
+ 1523              		.align	1
+ 1524              		.global	USB_ReadChInterrupts
+ 1525              		.syntax unified
+ 1526              		.thumb
+ 1527              		.thumb_func
+ 1529              	USB_ReadChInterrupts:
+ 1530              		@ args = 0, pretend = 0, frame = 0
+ 1531              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1532              		@ link register save eliminated.
+ 1533 0000 00EB4110 		add	r0, r0, r1, lsl #5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 27
+
+
+ 1534 0004 00F5A063 		add	r3, r0, #1280
+ 1535 0008 D0F80805 		ldr	r0, [r0, #1288]
+ 1536 000c DB68     		ldr	r3, [r3, #12]
+ 1537 000e 1840     		ands	r0, r0, r3
+ 1538 0010 7047     		bx	lr
+ 1540              		.section	.text.USB_ReadDevAllOutEpInterrupt,"ax",%progbits
+ 1541              		.align	1
+ 1542              		.global	USB_ReadDevAllOutEpInterrupt
+ 1543              		.syntax unified
+ 1544              		.thumb
+ 1545              		.thumb_func
+ 1547              	USB_ReadDevAllOutEpInterrupt:
+ 1548              		@ args = 0, pretend = 0, frame = 0
+ 1549              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1550              		@ link register save eliminated.
+ 1551 0000 D0F81838 		ldr	r3, [r0, #2072]
+ 1552 0004 00F50060 		add	r0, r0, #2048
+ 1553 0008 C069     		ldr	r0, [r0, #28]
+ 1554 000a 1840     		ands	r0, r0, r3
+ 1555 000c 000C     		lsrs	r0, r0, #16
+ 1556 000e 7047     		bx	lr
+ 1558              		.section	.text.USB_ReadDevAllInEpInterrupt,"ax",%progbits
+ 1559              		.align	1
+ 1560              		.global	USB_ReadDevAllInEpInterrupt
+ 1561              		.syntax unified
+ 1562              		.thumb
+ 1563              		.thumb_func
+ 1565              	USB_ReadDevAllInEpInterrupt:
+ 1566              		@ args = 0, pretend = 0, frame = 0
+ 1567              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1568              		@ link register save eliminated.
+ 1569 0000 D0F81838 		ldr	r3, [r0, #2072]
+ 1570 0004 00F50060 		add	r0, r0, #2048
+ 1571 0008 C069     		ldr	r0, [r0, #28]
+ 1572 000a 1840     		ands	r0, r0, r3
+ 1573 000c 80B2     		uxth	r0, r0
+ 1574 000e 7047     		bx	lr
+ 1576              		.section	.text.USB_ReadDevOutEPInterrupt,"ax",%progbits
+ 1577              		.align	1
+ 1578              		.global	USB_ReadDevOutEPInterrupt
+ 1579              		.syntax unified
+ 1580              		.thumb
+ 1581              		.thumb_func
+ 1583              	USB_ReadDevOutEPInterrupt:
+ 1584              		@ args = 0, pretend = 0, frame = 0
+ 1585              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1586              		@ link register save eliminated.
+ 1587 0000 00EB4111 		add	r1, r0, r1, lsl #5
+ 1588 0004 D1F8082B 		ldr	r2, [r1, #2824]
+ 1589 0008 00F50060 		add	r0, r0, #2048
+ 1590 000c 4069     		ldr	r0, [r0, #20]
+ 1591 000e 1040     		ands	r0, r0, r2
+ 1592 0010 7047     		bx	lr
+ 1594              		.section	.text.USB_ReadDevInEPInterrupt,"ax",%progbits
+ 1595              		.align	1
+ 1596              		.global	USB_ReadDevInEPInterrupt
+ 1597              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 28
+
+
+ 1598              		.thumb
+ 1599              		.thumb_func
+ 1601              	USB_ReadDevInEPInterrupt:
+ 1602              		@ args = 0, pretend = 0, frame = 0
+ 1603              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1604              		@ link register save eliminated.
+ 1605 0000 D0F81028 		ldr	r2, [r0, #2064]
+ 1606 0004 D0F83438 		ldr	r3, [r0, #2100]
+ 1607 0008 01F00F0C 		and	ip, r1, #15
+ 1608 000c 23FA0CF3 		lsr	r3, r3, ip
+ 1609 0010 DB01     		lsls	r3, r3, #7
+ 1610 0012 DBB2     		uxtb	r3, r3
+ 1611 0014 1343     		orrs	r3, r3, r2
+ 1612 0016 00EB4110 		add	r0, r0, r1, lsl #5
+ 1613 001a 00F51060 		add	r0, r0, #2304
+ 1614 001e 8068     		ldr	r0, [r0, #8]
+ 1615 0020 1840     		ands	r0, r0, r3
+ 1616 0022 7047     		bx	lr
+ 1618              		.section	.text.USB_ClearInterrupts,"ax",%progbits
+ 1619              		.align	1
+ 1620              		.global	USB_ClearInterrupts
+ 1621              		.syntax unified
+ 1622              		.thumb
+ 1623              		.thumb_func
+ 1625              	USB_ClearInterrupts:
+ 1626              		@ args = 0, pretend = 0, frame = 0
+ 1627              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1628              		@ link register save eliminated.
+ 1629 0000 4369     		ldr	r3, [r0, #20]
+ 1630 0002 0B40     		ands	r3, r3, r1
+ 1631 0004 4361     		str	r3, [r0, #20]
+ 1632 0006 7047     		bx	lr
+ 1634              		.section	.text.USB_GetMode,"ax",%progbits
+ 1635              		.align	1
+ 1636              		.global	USB_GetMode
+ 1637              		.syntax unified
+ 1638              		.thumb
+ 1639              		.thumb_func
+ 1641              	USB_GetMode:
+ 1642              		@ args = 0, pretend = 0, frame = 0
+ 1643              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1644              		@ link register save eliminated.
+ 1645 0000 4069     		ldr	r0, [r0, #20]
+ 1646 0002 00F00100 		and	r0, r0, #1
+ 1647 0006 7047     		bx	lr
+ 1649              		.section	.text.USB_SetCurrentMode,"ax",%progbits
+ 1650              		.align	1
+ 1651              		.global	USB_SetCurrentMode
+ 1652              		.syntax unified
+ 1653              		.thumb
+ 1654              		.thumb_func
+ 1656              	USB_SetCurrentMode:
+ 1657              		@ args = 0, pretend = 0, frame = 0
+ 1658              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1659 0000 38B5     		push	{r3, r4, r5, lr}
+ 1660 0002 0546     		mov	r5, r0
+ 1661 0004 C368     		ldr	r3, [r0, #12]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 29
+
+
+ 1662 0006 23F0C043 		bic	r3, r3, #1610612736
+ 1663 000a C360     		str	r3, [r0, #12]
+ 1664 000c 0129     		cmp	r1, #1
+ 1665 000e 13D0     		beq	.L208
+ 1666 0010 19BB     		cbnz	r1, .L205
+ 1667 0012 C368     		ldr	r3, [r0, #12]
+ 1668 0014 43F08043 		orr	r3, r3, #1073741824
+ 1669 0018 C360     		str	r3, [r0, #12]
+ 1670 001a 0024     		movs	r4, #0
+ 1671              	.L204:
+ 1672 001c 0A20     		movs	r0, #10
+ 1673 001e FFF7FEFF 		bl	HAL_Delay
+ 1674 0022 0A34     		adds	r4, r4, #10
+ 1675 0024 2846     		mov	r0, r5
+ 1676 0026 FFF7FEFF 		bl	USB_GetMode
+ 1677 002a 08B1     		cbz	r0, .L201
+ 1678 002c C72C     		cmp	r4, #199
+ 1679 002e F5D9     		bls	.L204
+ 1680              	.L201:
+ 1681 0030 C82C     		cmp	r4, #200
+ 1682 0032 14D0     		beq	.L206
+ 1683 0034 0020     		movs	r0, #0
+ 1684              	.L203:
+ 1685 0036 38BD     		pop	{r3, r4, r5, pc}
+ 1686              	.L208:
+ 1687 0038 C368     		ldr	r3, [r0, #12]
+ 1688 003a 43F00053 		orr	r3, r3, #536870912
+ 1689 003e C360     		str	r3, [r0, #12]
+ 1690 0040 0024     		movs	r4, #0
+ 1691              	.L202:
+ 1692 0042 0A20     		movs	r0, #10
+ 1693 0044 FFF7FEFF 		bl	HAL_Delay
+ 1694 0048 0A34     		adds	r4, r4, #10
+ 1695 004a 2846     		mov	r0, r5
+ 1696 004c FFF7FEFF 		bl	USB_GetMode
+ 1697 0050 0128     		cmp	r0, #1
+ 1698 0052 EDD0     		beq	.L201
+ 1699 0054 C72C     		cmp	r4, #199
+ 1700 0056 F4D9     		bls	.L202
+ 1701 0058 EAE7     		b	.L201
+ 1702              	.L205:
+ 1703 005a 0120     		movs	r0, #1
+ 1704 005c EBE7     		b	.L203
+ 1705              	.L206:
+ 1706 005e 0120     		movs	r0, #1
+ 1707 0060 E9E7     		b	.L203
+ 1709              		.section	.text.USB_ActivateSetup,"ax",%progbits
+ 1710              		.align	1
+ 1711              		.global	USB_ActivateSetup
+ 1712              		.syntax unified
+ 1713              		.thumb
+ 1714              		.thumb_func
+ 1716              	USB_ActivateSetup:
+ 1717              		@ args = 0, pretend = 0, frame = 0
+ 1718              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1719              		@ link register save eliminated.
+ 1720 0000 D0F80039 		ldr	r3, [r0, #2304]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 30
+
+
+ 1721 0004 6FF30A03 		bfc	r3, #0, #11
+ 1722 0008 C0F80039 		str	r3, [r0, #2304]
+ 1723 000c D0F80438 		ldr	r3, [r0, #2052]
+ 1724 0010 43F48073 		orr	r3, r3, #256
+ 1725 0014 C0F80438 		str	r3, [r0, #2052]
+ 1726 0018 0020     		movs	r0, #0
+ 1727 001a 7047     		bx	lr
+ 1729              		.section	.text.USB_EP0_OutStart,"ax",%progbits
+ 1730              		.align	1
+ 1731              		.global	USB_EP0_OutStart
+ 1732              		.syntax unified
+ 1733              		.thumb
+ 1734              		.thumb_func
+ 1736              	USB_EP0_OutStart:
+ 1737              		@ args = 0, pretend = 0, frame = 0
+ 1738              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1739              		@ link register save eliminated.
+ 1740 0000 10B4     		push	{r4}
+ 1741 0002 046C     		ldr	r4, [r0, #64]
+ 1742 0004 154B     		ldr	r3, .L215
+ 1743 0006 9C42     		cmp	r4, r3
+ 1744 0008 03D9     		bls	.L211
+ 1745 000a D0F8003B 		ldr	r3, [r0, #2816]
+ 1746 000e 002B     		cmp	r3, #0
+ 1747 0010 16DB     		blt	.L212
+ 1748              	.L211:
+ 1749 0012 0024     		movs	r4, #0
+ 1750 0014 C0F8104B 		str	r4, [r0, #2832]
+ 1751 0018 D0F8104B 		ldr	r4, [r0, #2832]
+ 1752 001c 44F40024 		orr	r4, r4, #524288
+ 1753 0020 C0F8104B 		str	r4, [r0, #2832]
+ 1754 0024 D0F8104B 		ldr	r4, [r0, #2832]
+ 1755 0028 44F01804 		orr	r4, r4, #24
+ 1756 002c C0F8104B 		str	r4, [r0, #2832]
+ 1757 0030 D0F8104B 		ldr	r4, [r0, #2832]
+ 1758 0034 44F0C044 		orr	r4, r4, #1610612736
+ 1759 0038 C0F8104B 		str	r4, [r0, #2832]
+ 1760 003c 0129     		cmp	r1, #1
+ 1761 003e 03D0     		beq	.L214
+ 1762              	.L212:
+ 1763 0040 0020     		movs	r0, #0
+ 1764 0042 5DF8044B 		ldr	r4, [sp], #4
+ 1765 0046 7047     		bx	lr
+ 1766              	.L214:
+ 1767 0048 C0F8142B 		str	r2, [r0, #2836]
+ 1768 004c D0F8003B 		ldr	r3, [r0, #2816]
+ 1769 0050 43F08023 		orr	r3, r3, #-2147450880
+ 1770 0054 C0F8003B 		str	r3, [r0, #2816]
+ 1771 0058 F2E7     		b	.L212
+ 1772              	.L216:
+ 1773 005a 00BF     		.align	2
+ 1774              	.L215:
+ 1775 005c 0A30544F 		.word	1330917386
+ 1777              		.section	.text.USB_HostInit,"ax",%progbits
+ 1778              		.align	1
+ 1779              		.global	USB_HostInit
+ 1780              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 31
+
+
+ 1781              		.thumb
+ 1782              		.thumb_func
+ 1784              	USB_HostInit:
+ 1785              		@ args = 20, pretend = 16, frame = 0
+ 1786              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1787 0000 84B0     		sub	sp, sp, #16
+ 1788 0002 38B5     		push	{r3, r4, r5, lr}
+ 1789 0004 0446     		mov	r4, r0
+ 1790 0006 05A8     		add	r0, sp, #20
+ 1791 0008 80E80E00 		stm	r0, {r1, r2, r3}
+ 1792 000c 0023     		movs	r3, #0
+ 1793 000e C4F8003E 		str	r3, [r4, #3584]
+ 1794 0012 A36B     		ldr	r3, [r4, #56]
+ 1795 0014 43F40013 		orr	r3, r3, #2097152
+ 1796 0018 A363     		str	r3, [r4, #56]
+ 1797 001a A36B     		ldr	r3, [r4, #56]
+ 1798 001c 23F40023 		bic	r3, r3, #524288
+ 1799 0020 A363     		str	r3, [r4, #56]
+ 1800 0022 A36B     		ldr	r3, [r4, #56]
+ 1801 0024 23F48023 		bic	r3, r3, #262144
+ 1802 0028 A363     		str	r3, [r4, #56]
+ 1803 002a E368     		ldr	r3, [r4, #12]
+ 1804 002c 13F0400F 		tst	r3, #64
+ 1805 0030 11D1     		bne	.L218
+ 1806 0032 9DF81730 		ldrb	r3, [sp, #23]	@ zero_extendqisi2
+ 1807 0036 012B     		cmp	r3, #1
+ 1808 0038 06D0     		beq	.L229
+ 1809 003a D4F80034 		ldr	r3, [r4, #1024]
+ 1810 003e 23F00403 		bic	r3, r3, #4
+ 1811 0042 C4F80034 		str	r3, [r4, #1024]
+ 1812 0046 0CE0     		b	.L220
+ 1813              	.L229:
+ 1814 0048 D4F80034 		ldr	r3, [r4, #1024]
+ 1815 004c 43F00403 		orr	r3, r3, #4
+ 1816 0050 C4F80034 		str	r3, [r4, #1024]
+ 1817 0054 05E0     		b	.L220
+ 1818              	.L218:
+ 1819 0056 D4F80034 		ldr	r3, [r4, #1024]
+ 1820 005a 23F00403 		bic	r3, r3, #4
+ 1821 005e C4F80034 		str	r3, [r4, #1024]
+ 1822              	.L220:
+ 1823 0062 1021     		movs	r1, #16
+ 1824 0064 2046     		mov	r0, r4
+ 1825 0066 FFF7FEFF 		bl	USB_FlushTxFifo
+ 1826 006a 0546     		mov	r5, r0
+ 1827 006c 00B1     		cbz	r0, .L221
+ 1828 006e 0125     		movs	r5, #1
+ 1829              	.L221:
+ 1830 0070 2046     		mov	r0, r4
+ 1831 0072 FFF7FEFF 		bl	USB_FlushRxFifo
+ 1832 0076 00B1     		cbz	r0, .L222
+ 1833 0078 0125     		movs	r5, #1
+ 1834              	.L222:
+ 1835 007a 0022     		movs	r2, #0
+ 1836 007c 09E0     		b	.L223
+ 1837              	.L224:
+ 1838 007e 04EB4213 		add	r3, r4, r2, lsl #5
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 32
+
+
+ 1839 0082 4FF0FF31 		mov	r1, #-1
+ 1840 0086 C3F80815 		str	r1, [r3, #1288]
+ 1841 008a 0021     		movs	r1, #0
+ 1842 008c C3F80C15 		str	r1, [r3, #1292]
+ 1843 0090 0132     		adds	r2, r2, #1
+ 1844              	.L223:
+ 1845 0092 9DF81530 		ldrb	r3, [sp, #21]	@ zero_extendqisi2
+ 1846 0096 9342     		cmp	r3, r2
+ 1847 0098 F1D8     		bhi	.L224
+ 1848 009a 0023     		movs	r3, #0
+ 1849 009c A361     		str	r3, [r4, #24]
+ 1850 009e 4FF0FF33 		mov	r3, #-1
+ 1851 00a2 6361     		str	r3, [r4, #20]
+ 1852 00a4 8023     		movs	r3, #128
+ 1853 00a6 6362     		str	r3, [r4, #36]
+ 1854 00a8 03F5C003 		add	r3, r3, #6291456
+ 1855 00ac A362     		str	r3, [r4, #40]
+ 1856 00ae 094B     		ldr	r3, .L230
+ 1857 00b0 C4F80031 		str	r3, [r4, #256]
+ 1858 00b4 9DF81630 		ldrb	r3, [sp, #22]	@ zero_extendqisi2
+ 1859 00b8 1BB9     		cbnz	r3, .L225
+ 1860 00ba A369     		ldr	r3, [r4, #24]
+ 1861 00bc 43F01003 		orr	r3, r3, #16
+ 1862 00c0 A361     		str	r3, [r4, #24]
+ 1863              	.L225:
+ 1864 00c2 A269     		ldr	r2, [r4, #24]
+ 1865 00c4 044B     		ldr	r3, .L230+4
+ 1866 00c6 1343     		orrs	r3, r3, r2
+ 1867 00c8 A361     		str	r3, [r4, #24]
+ 1868 00ca 2846     		mov	r0, r5
+ 1869 00cc BDE83840 		pop	{r3, r4, r5, lr}
+ 1870 00d0 04B0     		add	sp, sp, #16
+ 1871 00d2 7047     		bx	lr
+ 1872              	.L231:
+ 1873              		.align	2
+ 1874              	.L230:
+ 1875 00d4 E0004000 		.word	4194528
+ 1876 00d8 080020A3 		.word	-1558183928
+ 1878              		.section	.text.USB_InitFSLSPClkSel,"ax",%progbits
+ 1879              		.align	1
+ 1880              		.global	USB_InitFSLSPClkSel
+ 1881              		.syntax unified
+ 1882              		.thumb
+ 1883              		.thumb_func
+ 1885              	USB_InitFSLSPClkSel:
+ 1886              		@ args = 0, pretend = 0, frame = 0
+ 1887              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1888              		@ link register save eliminated.
+ 1889 0000 00F5806C 		add	ip, r0, #1024
+ 1890 0004 D0F80034 		ldr	r3, [r0, #1024]
+ 1891 0008 23F00303 		bic	r3, r3, #3
+ 1892 000c C0F80034 		str	r3, [r0, #1024]
+ 1893 0010 D0F80034 		ldr	r3, [r0, #1024]
+ 1894 0014 01F00302 		and	r2, r1, #3
+ 1895 0018 1343     		orrs	r3, r3, r2
+ 1896 001a C0F80034 		str	r3, [r0, #1024]
+ 1897 001e 0129     		cmp	r1, #1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 33
+
+
+ 1898 0020 07D0     		beq	.L236
+ 1899 0022 0229     		cmp	r1, #2
+ 1900 0024 0BD1     		bne	.L235
+ 1901 0026 41F27073 		movw	r3, #6000
+ 1902 002a CCF80430 		str	r3, [ip, #4]
+ 1903 002e 0020     		movs	r0, #0
+ 1904 0030 7047     		bx	lr
+ 1905              	.L236:
+ 1906 0032 4BF68033 		movw	r3, #48000
+ 1907 0036 CCF80430 		str	r3, [ip, #4]
+ 1908 003a 0020     		movs	r0, #0
+ 1909 003c 7047     		bx	lr
+ 1910              	.L235:
+ 1911 003e 0120     		movs	r0, #1
+ 1912 0040 7047     		bx	lr
+ 1914              		.section	.text.USB_ResetPort,"ax",%progbits
+ 1915              		.align	1
+ 1916              		.global	USB_ResetPort
+ 1917              		.syntax unified
+ 1918              		.thumb
+ 1919              		.thumb_func
+ 1921              	USB_ResetPort:
+ 1922              		@ args = 0, pretend = 0, frame = 8
+ 1923              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1924 0000 30B5     		push	{r4, r5, lr}
+ 1925 0002 83B0     		sub	sp, sp, #12
+ 1926 0004 0446     		mov	r4, r0
+ 1927 0006 0025     		movs	r5, #0
+ 1928 0008 0195     		str	r5, [sp, #4]
+ 1929 000a D0F84034 		ldr	r3, [r0, #1088]
+ 1930 000e 0193     		str	r3, [sp, #4]
+ 1931 0010 019B     		ldr	r3, [sp, #4]
+ 1932 0012 23F02E03 		bic	r3, r3, #46
+ 1933 0016 0193     		str	r3, [sp, #4]
+ 1934 0018 019B     		ldr	r3, [sp, #4]
+ 1935 001a 43F48073 		orr	r3, r3, #256
+ 1936 001e C0F84034 		str	r3, [r0, #1088]
+ 1937 0022 6420     		movs	r0, #100
+ 1938 0024 FFF7FEFF 		bl	HAL_Delay
+ 1939 0028 019B     		ldr	r3, [sp, #4]
+ 1940 002a 23F48073 		bic	r3, r3, #256
+ 1941 002e C4F84034 		str	r3, [r4, #1088]
+ 1942 0032 0A20     		movs	r0, #10
+ 1943 0034 FFF7FEFF 		bl	HAL_Delay
+ 1944 0038 2846     		mov	r0, r5
+ 1945 003a 03B0     		add	sp, sp, #12
+ 1946              		@ sp needed
+ 1947 003c 30BD     		pop	{r4, r5, pc}
+ 1949              		.section	.text.USB_DriveVbus,"ax",%progbits
+ 1950              		.align	1
+ 1951              		.global	USB_DriveVbus
+ 1952              		.syntax unified
+ 1953              		.thumb
+ 1954              		.thumb_func
+ 1956              	USB_DriveVbus:
+ 1957              		@ args = 0, pretend = 0, frame = 8
+ 1958              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 34
+
+
+ 1959              		@ link register save eliminated.
+ 1960 0000 82B0     		sub	sp, sp, #8
+ 1961 0002 0023     		movs	r3, #0
+ 1962 0004 0193     		str	r3, [sp, #4]
+ 1963 0006 D0F84034 		ldr	r3, [r0, #1088]
+ 1964 000a 0193     		str	r3, [sp, #4]
+ 1965 000c 019B     		ldr	r3, [sp, #4]
+ 1966 000e 23F02E03 		bic	r3, r3, #46
+ 1967 0012 0193     		str	r3, [sp, #4]
+ 1968 0014 019B     		ldr	r3, [sp, #4]
+ 1969 0016 13F4805F 		tst	r3, #4096
+ 1970 001a 01D1     		bne	.L240
+ 1971 001c 0129     		cmp	r1, #1
+ 1972 001e 0CD0     		beq	.L243
+ 1973              	.L240:
+ 1974 0020 019B     		ldr	r3, [sp, #4]
+ 1975 0022 13F4805F 		tst	r3, #4096
+ 1976 0026 05D0     		beq	.L241
+ 1977 0028 21B9     		cbnz	r1, .L241
+ 1978 002a 019B     		ldr	r3, [sp, #4]
+ 1979 002c 23F48053 		bic	r3, r3, #4096
+ 1980 0030 C0F84034 		str	r3, [r0, #1088]
+ 1981              	.L241:
+ 1982 0034 0020     		movs	r0, #0
+ 1983 0036 02B0     		add	sp, sp, #8
+ 1984              		@ sp needed
+ 1985 0038 7047     		bx	lr
+ 1986              	.L243:
+ 1987 003a 019B     		ldr	r3, [sp, #4]
+ 1988 003c 43F48053 		orr	r3, r3, #4096
+ 1989 0040 C0F84034 		str	r3, [r0, #1088]
+ 1990 0044 ECE7     		b	.L240
+ 1992              		.section	.text.USB_GetHostSpeed,"ax",%progbits
+ 1993              		.align	1
+ 1994              		.global	USB_GetHostSpeed
+ 1995              		.syntax unified
+ 1996              		.thumb
+ 1997              		.thumb_func
+ 1999              	USB_GetHostSpeed:
+ 2000              		@ args = 0, pretend = 0, frame = 8
+ 2001              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2002              		@ link register save eliminated.
+ 2003 0000 82B0     		sub	sp, sp, #8
+ 2004 0002 0023     		movs	r3, #0
+ 2005 0004 0193     		str	r3, [sp, #4]
+ 2006 0006 D0F84034 		ldr	r3, [r0, #1088]
+ 2007 000a 0193     		str	r3, [sp, #4]
+ 2008 000c 0198     		ldr	r0, [sp, #4]
+ 2009 000e C0F34140 		ubfx	r0, r0, #17, #2
+ 2010 0012 02B0     		add	sp, sp, #8
+ 2011              		@ sp needed
+ 2012 0014 7047     		bx	lr
+ 2014              		.section	.text.USB_GetCurrentFrame,"ax",%progbits
+ 2015              		.align	1
+ 2016              		.global	USB_GetCurrentFrame
+ 2017              		.syntax unified
+ 2018              		.thumb
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 35
+
+
+ 2019              		.thumb_func
+ 2021              	USB_GetCurrentFrame:
+ 2022              		@ args = 0, pretend = 0, frame = 0
+ 2023              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2024              		@ link register save eliminated.
+ 2025 0000 00F58060 		add	r0, r0, #1024
+ 2026 0004 8068     		ldr	r0, [r0, #8]
+ 2027 0006 80B2     		uxth	r0, r0
+ 2028 0008 7047     		bx	lr
+ 2030              		.section	.text.USB_HC_Init,"ax",%progbits
+ 2031              		.align	1
+ 2032              		.global	USB_HC_Init
+ 2033              		.syntax unified
+ 2034              		.thumb
+ 2035              		.thumb_func
+ 2037              	USB_HC_Init:
+ 2038              		@ args = 12, pretend = 0, frame = 0
+ 2039              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2040 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 2041 0004 9146     		mov	r9, r2
+ 2042 0006 1C46     		mov	r4, r3
+ 2043 0008 9DF82450 		ldrb	r5, [sp, #36]	@ zero_extendqisi2
+ 2044 000c 00EB4116 		add	r6, r0, r1, lsl #5
+ 2045 0010 06F5A063 		add	r3, r6, #1280
+ 2046 0014 4FF0FF32 		mov	r2, #-1
+ 2047 0018 9A60     		str	r2, [r3, #8]
+ 2048 001a 032D     		cmp	r5, #3
+ 2049 001c 71D8     		bhi	.L257
+ 2050 001e DFE805F0 		tbb	[pc, r5]
+ 2051              	.L250:
+ 2052 0022 02       		.byte	(.L251-.L250)/2
+ 2053 0023 62       		.byte	(.L252-.L250)/2
+ 2054 0024 02       		.byte	(.L251-.L250)/2
+ 2055 0025 54       		.byte	(.L249-.L250)/2
+ 2056              		.p2align 1
+ 2057              	.L251:
+ 2058 0026 40F29D42 		movw	r2, #1181
+ 2059 002a DA60     		str	r2, [r3, #12]
+ 2060 002c 19F0800F 		tst	r9, #128
+ 2061 0030 45D1     		bne	.L265
+ 2062 0032 0027     		movs	r7, #0
+ 2063              	.L248:
+ 2064 0034 0022     		movs	r2, #0
+ 2065 0036 5A60     		str	r2, [r3, #4]
+ 2066 0038 DA68     		ldr	r2, [r3, #12]
+ 2067 003a 42F00202 		orr	r2, r2, #2
+ 2068 003e DA60     		str	r2, [r3, #12]
+ 2069 0040 D0F81834 		ldr	r3, [r0, #1048]
+ 2070 0044 01F00F01 		and	r1, r1, #15
+ 2071 0048 0122     		movs	r2, #1
+ 2072 004a 8A40     		lsls	r2, r2, r1
+ 2073 004c 1343     		orrs	r3, r3, r2
+ 2074 004e C0F81834 		str	r3, [r0, #1048]
+ 2075 0052 8369     		ldr	r3, [r0, #24]
+ 2076 0054 43F00073 		orr	r3, r3, #33554432
+ 2077 0058 8361     		str	r3, [r0, #24]
+ 2078 005a 19F0800F 		tst	r9, #128
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 36
+
+
+ 2079 005e 52D1     		bne	.L266
+ 2080 0060 4FF00008 		mov	r8, #0
+ 2081              	.L253:
+ 2082 0064 FFF7FEFF 		bl	USB_GetHostSpeed
+ 2083 0068 9DF82030 		ldrb	r3, [sp, #32]	@ zero_extendqisi2
+ 2084 006c 022B     		cmp	r3, #2
+ 2085 006e 4DD0     		beq	.L267
+ 2086 0070 0022     		movs	r2, #0
+ 2087              	.L254:
+ 2088 0072 A305     		lsls	r3, r4, #22
+ 2089 0074 03F0FE53 		and	r3, r3, #532676608
+ 2090 0078 4FEAC929 		lsl	r9, r9, #11
+ 2091 007c 09F4F049 		and	r9, r9, #30720
+ 2092 0080 43EA0903 		orr	r3, r3, r9
+ 2093 0084 A904     		lsls	r1, r5, #18
+ 2094 0086 01F44021 		and	r1, r1, #786432
+ 2095 008a 0B43     		orrs	r3, r3, r1
+ 2096 008c BDF82810 		ldrh	r1, [sp, #40]
+ 2097 0090 C1F30A01 		ubfx	r1, r1, #0, #11
+ 2098 0094 0B43     		orrs	r3, r3, r1
+ 2099 0096 43EA0803 		orr	r3, r3, r8
+ 2100 009a 1343     		orrs	r3, r3, r2
+ 2101 009c 43F48013 		orr	r3, r3, #1048576
+ 2102 00a0 C6F80035 		str	r3, [r6, #1280]
+ 2103 00a4 032D     		cmp	r5, #3
+ 2104 00a6 01D0     		beq	.L255
+ 2105 00a8 012D     		cmp	r5, #1
+ 2106 00aa 05D1     		bne	.L256
+ 2107              	.L255:
+ 2108 00ac D6F80035 		ldr	r3, [r6, #1280]
+ 2109 00b0 43F00053 		orr	r3, r3, #536870912
+ 2110 00b4 C6F80035 		str	r3, [r6, #1280]
+ 2111              	.L256:
+ 2112 00b8 3846     		mov	r0, r7
+ 2113 00ba BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 2114              	.L265:
+ 2115 00be DA68     		ldr	r2, [r3, #12]
+ 2116 00c0 42F48072 		orr	r2, r2, #256
+ 2117 00c4 DA60     		str	r2, [r3, #12]
+ 2118 00c6 0027     		movs	r7, #0
+ 2119 00c8 B4E7     		b	.L248
+ 2120              	.L249:
+ 2121 00ca 40F29D62 		movw	r2, #1693
+ 2122 00ce DA60     		str	r2, [r3, #12]
+ 2123 00d0 19F0800F 		tst	r9, #128
+ 2124 00d4 01D1     		bne	.L268
+ 2125 00d6 0027     		movs	r7, #0
+ 2126 00d8 ACE7     		b	.L248
+ 2127              	.L268:
+ 2128 00da DA68     		ldr	r2, [r3, #12]
+ 2129 00dc 42F48072 		orr	r2, r2, #256
+ 2130 00e0 DA60     		str	r2, [r3, #12]
+ 2131 00e2 0027     		movs	r7, #0
+ 2132 00e4 A6E7     		b	.L248
+ 2133              	.L252:
+ 2134 00e6 40F22522 		movw	r2, #549
+ 2135 00ea DA60     		str	r2, [r3, #12]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 37
+
+
+ 2136 00ec 19F0800F 		tst	r9, #128
+ 2137 00f0 01D1     		bne	.L269
+ 2138 00f2 0027     		movs	r7, #0
+ 2139 00f4 9EE7     		b	.L248
+ 2140              	.L269:
+ 2141 00f6 DA68     		ldr	r2, [r3, #12]
+ 2142 00f8 42F4C072 		orr	r2, r2, #384
+ 2143 00fc DA60     		str	r2, [r3, #12]
+ 2144 00fe 0027     		movs	r7, #0
+ 2145 0100 98E7     		b	.L248
+ 2146              	.L257:
+ 2147 0102 0127     		movs	r7, #1
+ 2148 0104 96E7     		b	.L248
+ 2149              	.L266:
+ 2150 0106 4FF40048 		mov	r8, #32768
+ 2151 010a ABE7     		b	.L253
+ 2152              	.L267:
+ 2153 010c 0228     		cmp	r0, #2
+ 2154 010e 02D0     		beq	.L270
+ 2155 0110 4FF40032 		mov	r2, #131072
+ 2156 0114 ADE7     		b	.L254
+ 2157              	.L270:
+ 2158 0116 0022     		movs	r2, #0
+ 2159 0118 ABE7     		b	.L254
+ 2161              		.section	.text.USB_HC_StartXfer,"ax",%progbits
+ 2162              		.align	1
+ 2163              		.global	USB_HC_StartXfer
+ 2164              		.syntax unified
+ 2165              		.thumb
+ 2166              		.thumb_func
+ 2168              	USB_HC_StartXfer:
+ 2169              		@ args = 0, pretend = 0, frame = 8
+ 2170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2171 0000 70B5     		push	{r4, r5, r6, lr}
+ 2172 0002 84B0     		sub	sp, sp, #16
+ 2173 0004 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+ 2174 0006 8C79     		ldrb	r4, [r1, #6]	@ zero_extendqisi2
+ 2175 0008 012C     		cmp	r4, #1
+ 2176 000a 13D0     		beq	.L304
+ 2177 000c 0C6A     		ldr	r4, [r1, #32]
+ 2178 000e 002C     		cmp	r4, #0
+ 2179 0010 4BD0     		beq	.L300
+ 2180 0012 8D8A     		ldrh	r5, [r1, #20]
+ 2181 0014 04EB050C 		add	ip, r4, r5
+ 2182 0018 0CF1FF3C 		add	ip, ip, #-1
+ 2183 001c BCFBF5FC 		udiv	ip, ip, r5
+ 2184 0020 1FFA8CFC 		uxth	ip, ip
+ 2185 0024 BCF5807F 		cmp	ip, #256
+ 2186 0028 41D9     		bls	.L280
+ 2187 002a 2D02     		lsls	r5, r5, #8
+ 2188 002c CD61     		str	r5, [r1, #28]
+ 2189 002e 4FF4807C 		mov	ip, #256
+ 2190 0032 3CE0     		b	.L280
+ 2191              	.L304:
+ 2192 0034 CC78     		ldrb	r4, [r1, #3]	@ zero_extendqisi2
+ 2193 0036 24B1     		cbz	r4, .L273
+ 2194 0038 8C8A     		ldrh	r4, [r1, #20]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 38
+
+
+ 2195 003a CC61     		str	r4, [r1, #28]
+ 2196 003c 4FF0010C 		mov	ip, #1
+ 2197 0040 3CE0     		b	.L274
+ 2198              	.L273:
+ 2199 0042 8C7C     		ldrb	r4, [r1, #18]	@ zero_extendqisi2
+ 2200 0044 012C     		cmp	r4, #1
+ 2201 0046 06D0     		beq	.L305
+ 2202 0048 012A     		cmp	r2, #1
+ 2203 004a 26D0     		beq	.L306
+ 2204              	.L279:
+ 2205 004c 0C6A     		ldr	r4, [r1, #32]
+ 2206 004e CC61     		str	r4, [r1, #28]
+ 2207 0050 4FF0010C 		mov	ip, #1
+ 2208 0054 32E0     		b	.L274
+ 2209              	.L305:
+ 2210 0056 0C6A     		ldr	r4, [r1, #32]
+ 2211 0058 BC2C     		cmp	r4, #188
+ 2212 005a 0FD9     		bls	.L276
+ 2213 005c 8C8A     		ldrh	r4, [r1, #20]
+ 2214 005e CC61     		str	r4, [r1, #28]
+ 2215 0060 0C62     		str	r4, [r1, #32]
+ 2216 0062 CC68     		ldr	r4, [r1, #12]
+ 2217 0064 013C     		subs	r4, r4, #1
+ 2218 0066 012C     		cmp	r4, #1
+ 2219 0068 03D9     		bls	.L307
+ 2220 006a 0124     		movs	r4, #1
+ 2221 006c CC60     		str	r4, [r1, #12]
+ 2222 006e A446     		mov	ip, r4
+ 2223 0070 24E0     		b	.L274
+ 2224              	.L307:
+ 2225 0072 0224     		movs	r4, #2
+ 2226 0074 CC60     		str	r4, [r1, #12]
+ 2227 0076 4FF0010C 		mov	ip, #1
+ 2228 007a 1FE0     		b	.L274
+ 2229              	.L276:
+ 2230 007c CC61     		str	r4, [r1, #28]
+ 2231 007e CC68     		ldr	r4, [r1, #12]
+ 2232 0080 013C     		subs	r4, r4, #1
+ 2233 0082 012C     		cmp	r4, #1
+ 2234 0084 04D9     		bls	.L278
+ 2235 0086 0424     		movs	r4, #4
+ 2236 0088 CC60     		str	r4, [r1, #12]
+ 2237 008a 4FF0010C 		mov	ip, #1
+ 2238 008e 15E0     		b	.L274
+ 2239              	.L278:
+ 2240 0090 0324     		movs	r4, #3
+ 2241 0092 CC60     		str	r4, [r1, #12]
+ 2242 0094 4FF0010C 		mov	ip, #1
+ 2243 0098 10E0     		b	.L274
+ 2244              	.L306:
+ 2245 009a 0D6A     		ldr	r5, [r1, #32]
+ 2246 009c 8C8A     		ldrh	r4, [r1, #20]
+ 2247 009e A542     		cmp	r5, r4
+ 2248 00a0 D4D9     		bls	.L279
+ 2249 00a2 CC61     		str	r4, [r1, #28]
+ 2250 00a4 4FF0010C 		mov	ip, #1
+ 2251 00a8 08E0     		b	.L274
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 39
+
+
+ 2252              	.L300:
+ 2253 00aa 4FF0010C 		mov	ip, #1
+ 2254              	.L280:
+ 2255 00ae CD78     		ldrb	r5, [r1, #3]	@ zero_extendqisi2
+ 2256 00b0 002D     		cmp	r5, #0
+ 2257 00b2 60D0     		beq	.L281
+ 2258 00b4 8C8A     		ldrh	r4, [r1, #20]
+ 2259 00b6 04FB0CF4 		mul	r4, r4, ip
+ 2260 00ba CC61     		str	r4, [r1, #28]
+ 2261              	.L274:
+ 2262 00bc CC69     		ldr	r4, [r1, #28]
+ 2263 00be C4F31204 		ubfx	r4, r4, #0, #19
+ 2264 00c2 6F4D     		ldr	r5, .L310
+ 2265 00c4 05EACC45 		and	r5, r5, ip, lsl #19
+ 2266 00c8 2C43     		orrs	r4, r4, r5
+ 2267 00ca 91F816C0 		ldrb	ip, [r1, #22]	@ zero_extendqisi2
+ 2268 00ce 4FEA4C7C 		lsl	ip, ip, #29
+ 2269 00d2 0CF0C04C 		and	ip, ip, #1610612736
+ 2270 00d6 00EB4313 		add	r3, r0, r3, lsl #5
+ 2271 00da 03F5A06E 		add	lr, r3, #1280
+ 2272 00de 44EA0C04 		orr	r4, r4, ip
+ 2273 00e2 CEF81040 		str	r4, [lr, #16]
+ 2274 00e6 12B1     		cbz	r2, .L282
+ 2275 00e8 8C69     		ldr	r4, [r1, #24]
+ 2276 00ea CEF81440 		str	r4, [lr, #20]
+ 2277              	.L282:
+ 2278 00ee 00F58065 		add	r5, r0, #1024
+ 2279 00f2 AC68     		ldr	r4, [r5, #8]
+ 2280 00f4 D3F80065 		ldr	r6, [r3, #1280]
+ 2281 00f8 26F00056 		bic	r6, r6, #536870912
+ 2282 00fc C3F80065 		str	r6, [r3, #1280]
+ 2283 0100 D3F80065 		ldr	r6, [r3, #1280]
+ 2284 0104 6FEA040C 		mvn	ip, r4
+ 2285 0108 4FEA4C7C 		lsl	ip, ip, #29
+ 2286 010c 0CF0005C 		and	ip, ip, #536870912
+ 2287 0110 46EA0C06 		orr	r6, r6, ip
+ 2288 0114 C3F80065 		str	r6, [r3, #1280]
+ 2289 0118 8C79     		ldrb	r4, [r1, #6]	@ zero_extendqisi2
+ 2290 011a 012C     		cmp	r4, #1
+ 2291 011c 2DD0     		beq	.L308
+ 2292 011e 0024     		movs	r4, #0
+ 2293 0120 CEF80440 		str	r4, [lr, #4]
+ 2294              	.L287:
+ 2295 0124 D3F80045 		ldr	r4, [r3, #1280]
+ 2296 0128 0394     		str	r4, [sp, #12]
+ 2297 012a 039C     		ldr	r4, [sp, #12]
+ 2298 012c 24F08044 		bic	r4, r4, #1073741824
+ 2299 0130 0394     		str	r4, [sp, #12]
+ 2300 0132 CC78     		ldrb	r4, [r1, #3]	@ zero_extendqisi2
+ 2301 0134 002C     		cmp	r4, #0
+ 2302 0136 7DD0     		beq	.L293
+ 2303 0138 039C     		ldr	r4, [sp, #12]
+ 2304 013a 44F40044 		orr	r4, r4, #32768
+ 2305 013e 0394     		str	r4, [sp, #12]
+ 2306              	.L294:
+ 2307 0140 039C     		ldr	r4, [sp, #12]
+ 2308 0142 44F00044 		orr	r4, r4, #-2147483648
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 40
+
+
+ 2309 0146 0394     		str	r4, [sp, #12]
+ 2310 0148 039C     		ldr	r4, [sp, #12]
+ 2311 014a C3F80045 		str	r4, [r3, #1280]
+ 2312 014e 002A     		cmp	r2, #0
+ 2313 0150 40F08780 		bne	.L295
+ 2314 0154 CB78     		ldrb	r3, [r1, #3]	@ zero_extendqisi2
+ 2315 0156 002B     		cmp	r3, #0
+ 2316 0158 40F08380 		bne	.L295
+ 2317 015c 0B6A     		ldr	r3, [r1, #32]
+ 2318 015e 002B     		cmp	r3, #0
+ 2319 0160 7FD0     		beq	.L295
+ 2320 0162 CA79     		ldrb	r2, [r1, #7]	@ zero_extendqisi2
+ 2321 0164 002A     		cmp	r2, #0
+ 2322 0166 7CD1     		bne	.L295
+ 2323 0168 8A7C     		ldrb	r2, [r1, #18]	@ zero_extendqisi2
+ 2324 016a 032A     		cmp	r2, #3
+ 2325 016c 72D8     		bhi	.L296
+ 2326 016e DFE802F0 		tbb	[pc, r2]
+ 2327              	.L298:
+ 2328 0172 66       		.byte	(.L299-.L298)/2
+ 2329 0173 7B       		.byte	(.L297-.L298)/2
+ 2330 0174 66       		.byte	(.L299-.L298)/2
+ 2331 0175 7B       		.byte	(.L297-.L298)/2
+ 2332              		.p2align 1
+ 2333              	.L281:
+ 2334 0176 CC61     		str	r4, [r1, #28]
+ 2335 0178 A0E7     		b	.L274
+ 2336              	.L308:
+ 2337 017a 4E7C     		ldrb	r6, [r1, #17]	@ zero_extendqisi2
+ 2338 017c 0C7C     		ldrb	r4, [r1, #16]	@ zero_extendqisi2
+ 2339 017e 44EAC614 		orr	r4, r4, r6, lsl #7
+ 2340 0182 44F00044 		orr	r4, r4, #-2147483648
+ 2341 0186 CEF80440 		str	r4, [lr, #4]
+ 2342 018a DEF80C40 		ldr	r4, [lr, #12]
+ 2343 018e 44F06004 		orr	r4, r4, #96
+ 2344 0192 CEF80C40 		str	r4, [lr, #12]
+ 2345 0196 CC79     		ldrb	r4, [r1, #7]	@ zero_extendqisi2
+ 2346 0198 012C     		cmp	r4, #1
+ 2347 019a 12D0     		beq	.L309
+ 2348              	.L284:
+ 2349 019c 8C7C     		ldrb	r4, [r1, #18]	@ zero_extendqisi2
+ 2350 019e 012C     		cmp	r4, #1
+ 2351 01a0 1FD0     		beq	.L285
+ 2352 01a2 032C     		cmp	r4, #3
+ 2353 01a4 1DD0     		beq	.L285
+ 2354              	.L286:
+ 2355 01a6 8C7C     		ldrb	r4, [r1, #18]	@ zero_extendqisi2
+ 2356 01a8 012C     		cmp	r4, #1
+ 2357 01aa BBD1     		bne	.L287
+ 2358 01ac CC78     		ldrb	r4, [r1, #3]	@ zero_extendqisi2
+ 2359 01ae 002C     		cmp	r4, #0
+ 2360 01b0 B8D1     		bne	.L287
+ 2361 01b2 CC68     		ldr	r4, [r1, #12]
+ 2362 01b4 013C     		subs	r4, r4, #1
+ 2363 01b6 032C     		cmp	r4, #3
+ 2364 01b8 B4D8     		bhi	.L287
+ 2365 01ba DFE804F0 		tbb	[pc, r4]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 41
+
+
+ 2366              	.L289:
+ 2367 01be 1F       		.byte	(.L292-.L289)/2
+ 2368 01bf 26       		.byte	(.L291-.L289)/2
+ 2369 01c0 2D       		.byte	(.L290-.L289)/2
+ 2370 01c1 34       		.byte	(.L288-.L289)/2
+ 2371              		.p2align 1
+ 2372              	.L309:
+ 2373 01c2 CC78     		ldrb	r4, [r1, #3]	@ zero_extendqisi2
+ 2374 01c4 002C     		cmp	r4, #0
+ 2375 01c6 E9D1     		bne	.L284
+ 2376 01c8 DEF80440 		ldr	r4, [lr, #4]
+ 2377 01cc 44F48034 		orr	r4, r4, #65536
+ 2378 01d0 CEF80440 		str	r4, [lr, #4]
+ 2379 01d4 DEF80C40 		ldr	r4, [lr, #12]
+ 2380 01d8 44F04004 		orr	r4, r4, #64
+ 2381 01dc CEF80C40 		str	r4, [lr, #12]
+ 2382 01e0 DCE7     		b	.L284
+ 2383              	.L285:
+ 2384 01e2 CC79     		ldrb	r4, [r1, #7]	@ zero_extendqisi2
+ 2385 01e4 012C     		cmp	r4, #1
+ 2386 01e6 DED1     		bne	.L286
+ 2387 01e8 CC78     		ldrb	r4, [r1, #3]	@ zero_extendqisi2
+ 2388 01ea 012C     		cmp	r4, #1
+ 2389 01ec DBD1     		bne	.L286
+ 2390 01ee DEF80440 		ldr	r4, [lr, #4]
+ 2391 01f2 44F48034 		orr	r4, r4, #65536
+ 2392 01f6 CEF80440 		str	r4, [lr, #4]
+ 2393 01fa D4E7     		b	.L286
+ 2394              	.L292:
+ 2395 01fc DEF80440 		ldr	r4, [lr, #4]
+ 2396 0200 44F40044 		orr	r4, r4, #32768
+ 2397 0204 CEF80440 		str	r4, [lr, #4]
+ 2398 0208 8CE7     		b	.L287
+ 2399              	.L291:
+ 2400 020a DEF80440 		ldr	r4, [lr, #4]
+ 2401 020e 44F00E04 		orr	r4, r4, #14
+ 2402 0212 CEF80440 		str	r4, [lr, #4]
+ 2403 0216 85E7     		b	.L287
+ 2404              	.L290:
+ 2405 0218 DEF80440 		ldr	r4, [lr, #4]
+ 2406 021c 44F48044 		orr	r4, r4, #16384
+ 2407 0220 CEF80440 		str	r4, [lr, #4]
+ 2408 0224 7EE7     		b	.L287
+ 2409              	.L288:
+ 2410 0226 DEF80440 		ldr	r4, [lr, #4]
+ 2411 022a 44F44044 		orr	r4, r4, #49152
+ 2412 022e CEF80440 		str	r4, [lr, #4]
+ 2413 0232 77E7     		b	.L287
+ 2414              	.L293:
+ 2415 0234 039C     		ldr	r4, [sp, #12]
+ 2416 0236 24F40044 		bic	r4, r4, #32768
+ 2417 023a 0394     		str	r4, [sp, #12]
+ 2418 023c 80E7     		b	.L294
+ 2419              	.L299:
+ 2420 023e 0333     		adds	r3, r3, #3
+ 2421 0240 C26A     		ldr	r2, [r0, #44]
+ 2422 0242 92B2     		uxth	r2, r2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 42
+
+
+ 2423 0244 C3F38F03 		ubfx	r3, r3, #2, #16
+ 2424 0248 9A42     		cmp	r2, r3
+ 2425 024a 03D2     		bcs	.L296
+ 2426 024c 8369     		ldr	r3, [r0, #24]
+ 2427 024e 43F02003 		orr	r3, r3, #32
+ 2428 0252 8361     		str	r3, [r0, #24]
+ 2429              	.L296:
+ 2430 0254 0023     		movs	r3, #0
+ 2431 0256 0093     		str	r3, [sp]
+ 2432 0258 0B8C     		ldrh	r3, [r1, #32]
+ 2433 025a 4A78     		ldrb	r2, [r1, #1]	@ zero_extendqisi2
+ 2434 025c 8969     		ldr	r1, [r1, #24]
+ 2435 025e FFF7FEFF 		bl	USB_WritePacket
+ 2436              	.L295:
+ 2437 0262 0020     		movs	r0, #0
+ 2438 0264 04B0     		add	sp, sp, #16
+ 2439              		@ sp needed
+ 2440 0266 70BD     		pop	{r4, r5, r6, pc}
+ 2441              	.L297:
+ 2442 0268 0333     		adds	r3, r3, #3
+ 2443 026a 2A69     		ldr	r2, [r5, #16]
+ 2444 026c 92B2     		uxth	r2, r2
+ 2445 026e C3F38F03 		ubfx	r3, r3, #2, #16
+ 2446 0272 9A42     		cmp	r2, r3
+ 2447 0274 EED2     		bcs	.L296
+ 2448 0276 8369     		ldr	r3, [r0, #24]
+ 2449 0278 43F08063 		orr	r3, r3, #67108864
+ 2450 027c 8361     		str	r3, [r0, #24]
+ 2451 027e E9E7     		b	.L296
+ 2452              	.L311:
+ 2453              		.align	2
+ 2454              	.L310:
+ 2455 0280 0000F81F 		.word	536346624
+ 2457              		.section	.text.USB_HC_ReadInterrupt,"ax",%progbits
+ 2458              		.align	1
+ 2459              		.global	USB_HC_ReadInterrupt
+ 2460              		.syntax unified
+ 2461              		.thumb
+ 2462              		.thumb_func
+ 2464              	USB_HC_ReadInterrupt:
+ 2465              		@ args = 0, pretend = 0, frame = 0
+ 2466              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2467              		@ link register save eliminated.
+ 2468 0000 00F58060 		add	r0, r0, #1024
+ 2469 0004 4069     		ldr	r0, [r0, #20]
+ 2470 0006 80B2     		uxth	r0, r0
+ 2471 0008 7047     		bx	lr
+ 2473              		.section	.text.USB_HC_Halt,"ax",%progbits
+ 2474              		.align	1
+ 2475              		.global	USB_HC_Halt
+ 2476              		.syntax unified
+ 2477              		.thumb
+ 2478              		.thumb_func
+ 2480              	USB_HC_Halt:
+ 2481              		@ args = 0, pretend = 0, frame = 8
+ 2482              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2483              		@ link register save eliminated.
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 43
+
+
+ 2484 0000 70B4     		push	{r4, r5, r6}
+ 2485 0002 83B0     		sub	sp, sp, #12
+ 2486 0004 0023     		movs	r3, #0
+ 2487 0006 0193     		str	r3, [sp, #4]
+ 2488 0008 00EB4111 		add	r1, r0, r1, lsl #5
+ 2489 000c 01F5A062 		add	r2, r1, #1280
+ 2490 0010 D1F80035 		ldr	r3, [r1, #1280]
+ 2491 0014 C3F38143 		ubfx	r3, r3, #18, #2
+ 2492 0018 D1F80055 		ldr	r5, [r1, #1280]
+ 2493 001c 5468     		ldr	r4, [r2, #4]
+ 2494 001e 8668     		ldr	r6, [r0, #8]
+ 2495 0020 16F0200F 		tst	r6, #32
+ 2496 0024 08D0     		beq	.L314
+ 2497 0026 ED0F     		lsrs	r5, r5, #31
+ 2498 0028 E40F     		lsrs	r4, r4, #31
+ 2499 002a 2CB9     		cbnz	r4, .L314
+ 2500 002c 002D     		cmp	r5, #0
+ 2501 002e 5AD0     		beq	.L315
+ 2502 0030 012B     		cmp	r3, #1
+ 2503 0032 58D0     		beq	.L315
+ 2504 0034 032B     		cmp	r3, #3
+ 2505 0036 56D0     		beq	.L315
+ 2506              	.L314:
+ 2507 0038 1BB3     		cbz	r3, .L316
+ 2508 003a 022B     		cmp	r3, #2
+ 2509 003c 21D0     		beq	.L316
+ 2510 003e D1F80035 		ldr	r3, [r1, #1280]
+ 2511 0042 43F08043 		orr	r3, r3, #1073741824
+ 2512 0046 C1F80035 		str	r3, [r1, #1280]
+ 2513 004a D0F81034 		ldr	r3, [r0, #1040]
+ 2514 004e 13F47F0F 		tst	r3, #16711680
+ 2515 0052 4CD1     		bne	.L321
+ 2516 0054 D1F80035 		ldr	r3, [r1, #1280]
+ 2517 0058 23F00043 		bic	r3, r3, #-2147483648
+ 2518 005c C1F80035 		str	r3, [r1, #1280]
+ 2519 0060 D1F80035 		ldr	r3, [r1, #1280]
+ 2520 0064 43F00043 		orr	r3, r3, #-2147483648
+ 2521 0068 C1F80035 		str	r3, [r1, #1280]
+ 2522              	.L322:
+ 2523 006c 019B     		ldr	r3, [sp, #4]
+ 2524 006e 0133     		adds	r3, r3, #1
+ 2525 0070 0193     		str	r3, [sp, #4]
+ 2526 0072 019B     		ldr	r3, [sp, #4]
+ 2527 0074 B3F57A7F 		cmp	r3, #1000
+ 2528 0078 35D8     		bhi	.L315
+ 2529 007a 1368     		ldr	r3, [r2]
+ 2530 007c 002B     		cmp	r3, #0
+ 2531 007e F5DB     		blt	.L322
+ 2532 0080 31E0     		b	.L315
+ 2533              	.L316:
+ 2534 0082 D1F80035 		ldr	r3, [r1, #1280]
+ 2535 0086 43F08043 		orr	r3, r3, #1073741824
+ 2536 008a C1F80035 		str	r3, [r1, #1280]
+ 2537 008e 8368     		ldr	r3, [r0, #8]
+ 2538 0090 13F0200F 		tst	r3, #32
+ 2539 0094 21D1     		bne	.L318
+ 2540 0096 C36A     		ldr	r3, [r0, #44]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 44
+
+
+ 2541 0098 13F47F0F 		tst	r3, #16711680
+ 2542 009c 16D1     		bne	.L319
+ 2543 009e D1F80035 		ldr	r3, [r1, #1280]
+ 2544 00a2 23F00043 		bic	r3, r3, #-2147483648
+ 2545 00a6 C1F80035 		str	r3, [r1, #1280]
+ 2546 00aa D1F80035 		ldr	r3, [r1, #1280]
+ 2547 00ae 43F00043 		orr	r3, r3, #-2147483648
+ 2548 00b2 C1F80035 		str	r3, [r1, #1280]
+ 2549              	.L320:
+ 2550 00b6 019B     		ldr	r3, [sp, #4]
+ 2551 00b8 0133     		adds	r3, r3, #1
+ 2552 00ba 0193     		str	r3, [sp, #4]
+ 2553 00bc 019B     		ldr	r3, [sp, #4]
+ 2554 00be B3F57A7F 		cmp	r3, #1000
+ 2555 00c2 10D8     		bhi	.L315
+ 2556 00c4 1368     		ldr	r3, [r2]
+ 2557 00c6 002B     		cmp	r3, #0
+ 2558 00c8 F5DB     		blt	.L320
+ 2559 00ca 0CE0     		b	.L315
+ 2560              	.L319:
+ 2561 00cc D1F80035 		ldr	r3, [r1, #1280]
+ 2562 00d0 43F00043 		orr	r3, r3, #-2147483648
+ 2563 00d4 C1F80035 		str	r3, [r1, #1280]
+ 2564 00d8 05E0     		b	.L315
+ 2565              	.L318:
+ 2566 00da D1F80035 		ldr	r3, [r1, #1280]
+ 2567 00de 43F00043 		orr	r3, r3, #-2147483648
+ 2568 00e2 C1F80035 		str	r3, [r1, #1280]
+ 2569              	.L315:
+ 2570 00e6 0020     		movs	r0, #0
+ 2571 00e8 03B0     		add	sp, sp, #12
+ 2572              		@ sp needed
+ 2573 00ea 70BC     		pop	{r4, r5, r6}
+ 2574 00ec 7047     		bx	lr
+ 2575              	.L321:
+ 2576 00ee D1F80035 		ldr	r3, [r1, #1280]
+ 2577 00f2 43F00043 		orr	r3, r3, #-2147483648
+ 2578 00f6 C1F80035 		str	r3, [r1, #1280]
+ 2579 00fa F4E7     		b	.L315
+ 2581              		.section	.text.USB_DoPing,"ax",%progbits
+ 2582              		.align	1
+ 2583              		.global	USB_DoPing
+ 2584              		.syntax unified
+ 2585              		.thumb
+ 2586              		.thumb_func
+ 2588              	USB_DoPing:
+ 2589              		@ args = 0, pretend = 0, frame = 0
+ 2590              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2591              		@ link register save eliminated.
+ 2592 0000 00EB4110 		add	r0, r0, r1, lsl #5
+ 2593 0004 064A     		ldr	r2, .L325
+ 2594 0006 C0F81025 		str	r2, [r0, #1296]
+ 2595 000a D0F80035 		ldr	r3, [r0, #1280]
+ 2596 000e 23F08043 		bic	r3, r3, #1073741824
+ 2597 0012 43F00043 		orr	r3, r3, #-2147483648
+ 2598 0016 C0F80035 		str	r3, [r0, #1280]
+ 2599 001a 0020     		movs	r0, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 45
+
+
+ 2600 001c 7047     		bx	lr
+ 2601              	.L326:
+ 2602 001e 00BF     		.align	2
+ 2603              	.L325:
+ 2604 0020 00000880 		.word	-2146959360
+ 2606              		.section	.text.USB_StopHost,"ax",%progbits
+ 2607              		.align	1
+ 2608              		.global	USB_StopHost
+ 2609              		.syntax unified
+ 2610              		.thumb
+ 2611              		.thumb_func
+ 2613              	USB_StopHost:
+ 2614              		@ args = 0, pretend = 0, frame = 8
+ 2615              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2616 0000 30B5     		push	{r4, r5, lr}
+ 2617 0002 83B0     		sub	sp, sp, #12
+ 2618 0004 0446     		mov	r4, r0
+ 2619 0006 0023     		movs	r3, #0
+ 2620 0008 0193     		str	r3, [sp, #4]
+ 2621 000a FFF7FEFF 		bl	USB_DisableGlobalInt
+ 2622 000e 1021     		movs	r1, #16
+ 2623 0010 2046     		mov	r0, r4
+ 2624 0012 FFF7FEFF 		bl	USB_FlushTxFifo
+ 2625 0016 0546     		mov	r5, r0
+ 2626 0018 00B1     		cbz	r0, .L328
+ 2627 001a 0125     		movs	r5, #1
+ 2628              	.L328:
+ 2629 001c 2046     		mov	r0, r4
+ 2630 001e FFF7FEFF 		bl	USB_FlushRxFifo
+ 2631 0022 00B1     		cbz	r0, .L329
+ 2632 0024 0125     		movs	r5, #1
+ 2633              	.L329:
+ 2634 0026 0022     		movs	r2, #0
+ 2635 0028 0AE0     		b	.L330
+ 2636              	.L331:
+ 2637 002a 04EB4211 		add	r1, r4, r2, lsl #5
+ 2638 002e D1F80035 		ldr	r3, [r1, #1280]
+ 2639 0032 23F08023 		bic	r3, r3, #-2147450880
+ 2640 0036 43F08043 		orr	r3, r3, #1073741824
+ 2641 003a C1F80035 		str	r3, [r1, #1280]
+ 2642 003e 0132     		adds	r2, r2, #1
+ 2643              	.L330:
+ 2644 0040 0F2A     		cmp	r2, #15
+ 2645 0042 F2D9     		bls	.L331
+ 2646 0044 0021     		movs	r1, #0
+ 2647 0046 00E0     		b	.L332
+ 2648              	.L333:
+ 2649 0048 0131     		adds	r1, r1, #1
+ 2650              	.L332:
+ 2651 004a 0F29     		cmp	r1, #15
+ 2652 004c 16D8     		bhi	.L339
+ 2653 004e 04EB4110 		add	r0, r4, r1, lsl #5
+ 2654 0052 00F5A062 		add	r2, r0, #1280
+ 2655 0056 D0F80035 		ldr	r3, [r0, #1280]
+ 2656 005a 23F40043 		bic	r3, r3, #32768
+ 2657 005e 43F04043 		orr	r3, r3, #-1073741824
+ 2658 0062 C0F80035 		str	r3, [r0, #1280]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 46
+
+
+ 2659              	.L334:
+ 2660 0066 019B     		ldr	r3, [sp, #4]
+ 2661 0068 0133     		adds	r3, r3, #1
+ 2662 006a 0193     		str	r3, [sp, #4]
+ 2663 006c 019B     		ldr	r3, [sp, #4]
+ 2664 006e B3F57A7F 		cmp	r3, #1000
+ 2665 0072 E9D8     		bhi	.L333
+ 2666 0074 1368     		ldr	r3, [r2]
+ 2667 0076 002B     		cmp	r3, #0
+ 2668 0078 F5DB     		blt	.L334
+ 2669 007a E5E7     		b	.L333
+ 2670              	.L339:
+ 2671 007c 4FF0FF33 		mov	r3, #-1
+ 2672 0080 C4F81434 		str	r3, [r4, #1044]
+ 2673 0084 6361     		str	r3, [r4, #20]
+ 2674 0086 2046     		mov	r0, r4
+ 2675 0088 FFF7FEFF 		bl	USB_EnableGlobalInt
+ 2676 008c 2846     		mov	r0, r5
+ 2677 008e 03B0     		add	sp, sp, #12
+ 2678              		@ sp needed
+ 2679 0090 30BD     		pop	{r4, r5, pc}
+ 2681              		.section	.text.USB_ActivateRemoteWakeup,"ax",%progbits
+ 2682              		.align	1
+ 2683              		.global	USB_ActivateRemoteWakeup
+ 2684              		.syntax unified
+ 2685              		.thumb
+ 2686              		.thumb_func
+ 2688              	USB_ActivateRemoteWakeup:
+ 2689              		@ args = 0, pretend = 0, frame = 0
+ 2690              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2691              		@ link register save eliminated.
+ 2692 0000 D0F80838 		ldr	r3, [r0, #2056]
+ 2693 0004 00F50060 		add	r0, r0, #2048
+ 2694 0008 13F0010F 		tst	r3, #1
+ 2695 000c 03D0     		beq	.L341
+ 2696 000e 4368     		ldr	r3, [r0, #4]
+ 2697 0010 43F00103 		orr	r3, r3, #1
+ 2698 0014 4360     		str	r3, [r0, #4]
+ 2699              	.L341:
+ 2700 0016 0020     		movs	r0, #0
+ 2701 0018 7047     		bx	lr
+ 2703              		.section	.text.USB_DeActivateRemoteWakeup,"ax",%progbits
+ 2704              		.align	1
+ 2705              		.global	USB_DeActivateRemoteWakeup
+ 2706              		.syntax unified
+ 2707              		.thumb
+ 2708              		.thumb_func
+ 2710              	USB_DeActivateRemoteWakeup:
+ 2711              		@ args = 0, pretend = 0, frame = 0
+ 2712              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2713              		@ link register save eliminated.
+ 2714 0000 D0F80438 		ldr	r3, [r0, #2052]
+ 2715 0004 23F00103 		bic	r3, r3, #1
+ 2716 0008 C0F80438 		str	r3, [r0, #2052]
+ 2717 000c 0020     		movs	r0, #0
+ 2718 000e 7047     		bx	lr
+ 2720              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 47
+
+
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 48
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_ll_usb.c
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:18     .text.USB_CoreReset:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:23     .text.USB_CoreReset:00000000 USB_CoreReset
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:68     .text.USB_CoreInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:74     .text.USB_CoreInit:00000000 USB_CoreInit
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:141    .text.USB_SetTurnaroundTime:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:147    .text.USB_SetTurnaroundTime:00000000 USB_SetTurnaroundTime
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:241    .text.USB_SetTurnaroundTime:000000a8 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:258    .text.USB_EnableGlobalInt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:264    .text.USB_EnableGlobalInt:00000000 USB_EnableGlobalInt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:275    .text.USB_DisableGlobalInt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:281    .text.USB_DisableGlobalInt:00000000 USB_DisableGlobalInt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:292    .text.USB_FlushTxFifo:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:298    .text.USB_FlushTxFifo:00000000 USB_FlushTxFifo
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:343    .text.USB_FlushRxFifo:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:349    .text.USB_FlushRxFifo:00000000 USB_FlushRxFifo
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:393    .text.USB_SetDevSpeed:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:399    .text.USB_SetDevSpeed:00000000 USB_SetDevSpeed
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:410    .text.USB_DevInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:416    .text.USB_DevInit:00000000 USB_DevInit
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:592    .text.USB_DevInit:00000194 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:595    .text.USB_GetDevSpeed:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:601    .text.USB_GetDevSpeed:00000000 USB_GetDevSpeed
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:625    .text.USB_ActivateEndpoint:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:631    .text.USB_ActivateEndpoint:00000000 USB_ActivateEndpoint
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:686    .text.USB_ActivateDedicatedEndpoint:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:692    .text.USB_ActivateDedicatedEndpoint:00000000 USB_ActivateDedicatedEndpoint
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:751    .text.USB_DeactivateEndpoint:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:757    .text.USB_DeactivateEndpoint:00000000 USB_DeactivateEndpoint
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:837    .text.USB_DeactivateEndpoint:000000d8 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:841    .text.USB_DeactivateDedicatedEndpoint:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:847    .text.USB_DeactivateDedicatedEndpoint:00000000 USB_DeactivateDedicatedEndpoint
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:909    .text.USB_EPStopXfer:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:915    .text.USB_EPStopXfer:00000000 USB_EPStopXfer
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:999    .text.USB_WritePacket:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1005   .text.USB_WritePacket:00000000 USB_WritePacket
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1029   .text.USB_EPStartXfer:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1035   .text.USB_EPStartXfer:00000000 USB_EPStartXfer
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1270   .text.USB_EPStartXfer:00000240 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1273   .text.USB_ReadPacket:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1279   .text.USB_ReadPacket:00000000 USB_ReadPacket
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1315   .text.USB_EPSetStall:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1321   .text.USB_EPSetStall:00000000 USB_EPSetStall
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1360   .text.USB_EPClearStall:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1366   .text.USB_EPClearStall:00000000 USB_EPClearStall
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1407   .text.USB_StopDevice:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1413   .text.USB_StopDevice:00000000 USB_StopDevice
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1445   .text.USB_SetDevAddress:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1451   .text.USB_SetDevAddress:00000000 USB_SetDevAddress
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1467   .text.USB_DevConnect:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1473   .text.USB_DevConnect:00000000 USB_DevConnect
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1487   .text.USB_DevDisconnect:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1493   .text.USB_DevDisconnect:00000000 USB_DevDisconnect
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1507   .text.USB_ReadInterrupts:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1513   .text.USB_ReadInterrupts:00000000 USB_ReadInterrupts
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1523   .text.USB_ReadChInterrupts:00000000 $t
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 49
+
+
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1529   .text.USB_ReadChInterrupts:00000000 USB_ReadChInterrupts
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1541   .text.USB_ReadDevAllOutEpInterrupt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1547   .text.USB_ReadDevAllOutEpInterrupt:00000000 USB_ReadDevAllOutEpInterrupt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1559   .text.USB_ReadDevAllInEpInterrupt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1565   .text.USB_ReadDevAllInEpInterrupt:00000000 USB_ReadDevAllInEpInterrupt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1577   .text.USB_ReadDevOutEPInterrupt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1583   .text.USB_ReadDevOutEPInterrupt:00000000 USB_ReadDevOutEPInterrupt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1595   .text.USB_ReadDevInEPInterrupt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1601   .text.USB_ReadDevInEPInterrupt:00000000 USB_ReadDevInEPInterrupt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1619   .text.USB_ClearInterrupts:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1625   .text.USB_ClearInterrupts:00000000 USB_ClearInterrupts
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1635   .text.USB_GetMode:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1641   .text.USB_GetMode:00000000 USB_GetMode
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1650   .text.USB_SetCurrentMode:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1656   .text.USB_SetCurrentMode:00000000 USB_SetCurrentMode
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1710   .text.USB_ActivateSetup:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1716   .text.USB_ActivateSetup:00000000 USB_ActivateSetup
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1730   .text.USB_EP0_OutStart:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1736   .text.USB_EP0_OutStart:00000000 USB_EP0_OutStart
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1775   .text.USB_EP0_OutStart:0000005c $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1778   .text.USB_HostInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1784   .text.USB_HostInit:00000000 USB_HostInit
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1875   .text.USB_HostInit:000000d4 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1879   .text.USB_InitFSLSPClkSel:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1885   .text.USB_InitFSLSPClkSel:00000000 USB_InitFSLSPClkSel
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1915   .text.USB_ResetPort:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1921   .text.USB_ResetPort:00000000 USB_ResetPort
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1950   .text.USB_DriveVbus:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1956   .text.USB_DriveVbus:00000000 USB_DriveVbus
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1993   .text.USB_GetHostSpeed:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:1999   .text.USB_GetHostSpeed:00000000 USB_GetHostSpeed
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2015   .text.USB_GetCurrentFrame:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2021   .text.USB_GetCurrentFrame:00000000 USB_GetCurrentFrame
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2031   .text.USB_HC_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2037   .text.USB_HC_Init:00000000 USB_HC_Init
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2052   .text.USB_HC_Init:00000022 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2056   .text.USB_HC_Init:00000026 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2162   .text.USB_HC_StartXfer:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2168   .text.USB_HC_StartXfer:00000000 USB_HC_StartXfer
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2328   .text.USB_HC_StartXfer:00000172 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2332   .text.USB_HC_StartXfer:00000176 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2367   .text.USB_HC_StartXfer:000001be $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2371   .text.USB_HC_StartXfer:000001c2 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2455   .text.USB_HC_StartXfer:00000280 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2458   .text.USB_HC_ReadInterrupt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2464   .text.USB_HC_ReadInterrupt:00000000 USB_HC_ReadInterrupt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2474   .text.USB_HC_Halt:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2480   .text.USB_HC_Halt:00000000 USB_HC_Halt
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2582   .text.USB_DoPing:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2588   .text.USB_DoPing:00000000 USB_DoPing
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2604   .text.USB_DoPing:00000020 $d
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2607   .text.USB_StopHost:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2613   .text.USB_StopHost:00000000 USB_StopHost
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2682   .text.USB_ActivateRemoteWakeup:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2688   .text.USB_ActivateRemoteWakeup:00000000 USB_ActivateRemoteWakeup
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2704   .text.USB_DeActivateRemoteWakeup:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s:2710   .text.USB_DeActivateRemoteWakeup:00000000 USB_DeActivateRemoteWakeup
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccS7yvVf.s 			page 50
+
+
+
+UNDEFINED SYMBOLS
+HAL_Delay

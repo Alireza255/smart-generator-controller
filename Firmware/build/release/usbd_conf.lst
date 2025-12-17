@@ -1,0 +1,781 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"usbd_conf.c"
+  16              		.text
+  17              		.section	.text.HAL_PCD_MspInit,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_PCD_MspInit
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_PCD_MspInit:
+  25              		@ args = 0, pretend = 0, frame = 32
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 30B5     		push	{r4, r5, lr}
+  28 0002 89B0     		sub	sp, sp, #36
+  29 0004 0023     		movs	r3, #0
+  30 0006 0393     		str	r3, [sp, #12]
+  31 0008 0493     		str	r3, [sp, #16]
+  32 000a 0593     		str	r3, [sp, #20]
+  33 000c 0693     		str	r3, [sp, #24]
+  34 000e 0793     		str	r3, [sp, #28]
+  35 0010 0368     		ldr	r3, [r0]
+  36 0012 B3F1A04F 		cmp	r3, #1342177280
+  37 0016 01D0     		beq	.L4
+  38              	.L1:
+  39 0018 09B0     		add	sp, sp, #36
+  40              		@ sp needed
+  41 001a 30BD     		pop	{r4, r5, pc}
+  42              	.L4:
+  43 001c 03AA     		add	r2, sp, #12
+  44 001e 0025     		movs	r5, #0
+  45 0020 0195     		str	r5, [sp, #4]
+  46 0022 174C     		ldr	r4, .L5
+  47 0024 236B     		ldr	r3, [r4, #48]
+  48 0026 43F00103 		orr	r3, r3, #1
+  49 002a 2363     		str	r3, [r4, #48]
+  50 002c 236B     		ldr	r3, [r4, #48]
+  51 002e 03F00103 		and	r3, r3, #1
+  52 0032 0193     		str	r3, [sp, #4]
+  53 0034 019B     		ldr	r3, [sp, #4]
+  54 0036 4FF4C053 		mov	r3, #6144
+  55 003a 0393     		str	r3, [sp, #12]
+  56 003c 0223     		movs	r3, #2
+  57 003e 0493     		str	r3, [sp, #16]
+  58 0040 0323     		movs	r3, #3
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 2
+
+
+  59 0042 0693     		str	r3, [sp, #24]
+  60 0044 0A23     		movs	r3, #10
+  61 0046 0793     		str	r3, [sp, #28]
+  62 0048 1146     		mov	r1, r2
+  63 004a 0E48     		ldr	r0, .L5+4
+  64 004c FFF7FEFF 		bl	HAL_GPIO_Init
+  65 0050 636B     		ldr	r3, [r4, #52]
+  66 0052 43F08003 		orr	r3, r3, #128
+  67 0056 6363     		str	r3, [r4, #52]
+  68 0058 0295     		str	r5, [sp, #8]
+  69 005a 636C     		ldr	r3, [r4, #68]
+  70 005c 43F48043 		orr	r3, r3, #16384
+  71 0060 6364     		str	r3, [r4, #68]
+  72 0062 636C     		ldr	r3, [r4, #68]
+  73 0064 03F48043 		and	r3, r3, #16384
+  74 0068 0293     		str	r3, [sp, #8]
+  75 006a 029B     		ldr	r3, [sp, #8]
+  76 006c 2A46     		mov	r2, r5
+  77 006e 0721     		movs	r1, #7
+  78 0070 4320     		movs	r0, #67
+  79 0072 FFF7FEFF 		bl	HAL_NVIC_SetPriority
+  80 0076 4320     		movs	r0, #67
+  81 0078 FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+  82 007c CCE7     		b	.L1
+  83              	.L6:
+  84 007e 00BF     		.align	2
+  85              	.L5:
+  86 0080 00380240 		.word	1073887232
+  87 0084 00000240 		.word	1073872896
+  89              		.section	.text.HAL_PCD_MspDeInit,"ax",%progbits
+  90              		.align	1
+  91              		.global	HAL_PCD_MspDeInit
+  92              		.syntax unified
+  93              		.thumb
+  94              		.thumb_func
+  96              	HAL_PCD_MspDeInit:
+  97              		@ args = 0, pretend = 0, frame = 0
+  98              		@ frame_needed = 0, uses_anonymous_args = 0
+  99 0000 08B5     		push	{r3, lr}
+ 100 0002 0368     		ldr	r3, [r0]
+ 101 0004 B3F1A04F 		cmp	r3, #1342177280
+ 102 0008 00D0     		beq	.L10
+ 103              	.L7:
+ 104 000a 08BD     		pop	{r3, pc}
+ 105              	.L10:
+ 106 000c 064A     		ldr	r2, .L11
+ 107 000e 536B     		ldr	r3, [r2, #52]
+ 108 0010 23F08003 		bic	r3, r3, #128
+ 109 0014 5363     		str	r3, [r2, #52]
+ 110 0016 4FF4C051 		mov	r1, #6144
+ 111 001a 0448     		ldr	r0, .L11+4
+ 112 001c FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 113 0020 4320     		movs	r0, #67
+ 114 0022 FFF7FEFF 		bl	HAL_NVIC_DisableIRQ
+ 115 0026 F0E7     		b	.L7
+ 116              	.L12:
+ 117              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 3
+
+
+ 118              	.L11:
+ 119 0028 00380240 		.word	1073887232
+ 120 002c 00000240 		.word	1073872896
+ 122              		.section	.text.HAL_PCD_SetupStageCallback,"ax",%progbits
+ 123              		.align	1
+ 124              		.global	HAL_PCD_SetupStageCallback
+ 125              		.syntax unified
+ 126              		.thumb
+ 127              		.thumb_func
+ 129              	HAL_PCD_SetupStageCallback:
+ 130              		@ args = 0, pretend = 0, frame = 0
+ 131              		@ frame_needed = 0, uses_anonymous_args = 0
+ 132 0000 08B5     		push	{r3, lr}
+ 133 0002 00F29C41 		addw	r1, r0, #1180
+ 134 0006 D0F8E004 		ldr	r0, [r0, #1248]
+ 135 000a FFF7FEFF 		bl	USBD_LL_SetupStage
+ 136 000e 08BD     		pop	{r3, pc}
+ 138              		.section	.text.HAL_PCD_DataOutStageCallback,"ax",%progbits
+ 139              		.align	1
+ 140              		.global	HAL_PCD_DataOutStageCallback
+ 141              		.syntax unified
+ 142              		.thumb
+ 143              		.thumb_func
+ 145              	HAL_PCD_DataOutStageCallback:
+ 146              		@ args = 0, pretend = 0, frame = 0
+ 147              		@ frame_needed = 0, uses_anonymous_args = 0
+ 148 0000 08B5     		push	{r3, lr}
+ 149 0002 01EBC103 		add	r3, r1, r1, lsl #3
+ 150 0006 00EB8303 		add	r3, r0, r3, lsl #2
+ 151 000a D3F86022 		ldr	r2, [r3, #608]
+ 152 000e D0F8E004 		ldr	r0, [r0, #1248]
+ 153 0012 FFF7FEFF 		bl	USBD_LL_DataOutStage
+ 154 0016 08BD     		pop	{r3, pc}
+ 156              		.section	.text.HAL_PCD_DataInStageCallback,"ax",%progbits
+ 157              		.align	1
+ 158              		.global	HAL_PCD_DataInStageCallback
+ 159              		.syntax unified
+ 160              		.thumb
+ 161              		.thumb_func
+ 163              	HAL_PCD_DataInStageCallback:
+ 164              		@ args = 0, pretend = 0, frame = 0
+ 165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 166 0000 08B5     		push	{r3, lr}
+ 167 0002 01EBC103 		add	r3, r1, r1, lsl #3
+ 168 0006 00EB8303 		add	r3, r0, r3, lsl #2
+ 169 000a 1A6A     		ldr	r2, [r3, #32]
+ 170 000c D0F8E004 		ldr	r0, [r0, #1248]
+ 171 0010 FFF7FEFF 		bl	USBD_LL_DataInStage
+ 172 0014 08BD     		pop	{r3, pc}
+ 174              		.section	.text.HAL_PCD_SOFCallback,"ax",%progbits
+ 175              		.align	1
+ 176              		.global	HAL_PCD_SOFCallback
+ 177              		.syntax unified
+ 178              		.thumb
+ 179              		.thumb_func
+ 181              	HAL_PCD_SOFCallback:
+ 182              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 4
+
+
+ 183              		@ frame_needed = 0, uses_anonymous_args = 0
+ 184 0000 08B5     		push	{r3, lr}
+ 185 0002 D0F8E004 		ldr	r0, [r0, #1248]
+ 186 0006 FFF7FEFF 		bl	USBD_LL_SOF
+ 187 000a 08BD     		pop	{r3, pc}
+ 189              		.section	.text.HAL_PCD_ResetCallback,"ax",%progbits
+ 190              		.align	1
+ 191              		.global	HAL_PCD_ResetCallback
+ 192              		.syntax unified
+ 193              		.thumb
+ 194              		.thumb_func
+ 196              	HAL_PCD_ResetCallback:
+ 197              		@ args = 0, pretend = 0, frame = 0
+ 198              		@ frame_needed = 0, uses_anonymous_args = 0
+ 199 0000 10B5     		push	{r4, lr}
+ 200 0002 0446     		mov	r4, r0
+ 201 0004 C379     		ldrb	r3, [r0, #7]	@ zero_extendqisi2
+ 202 0006 022B     		cmp	r3, #2
+ 203 0008 09D1     		bne	.L24
+ 204              	.L22:
+ 205 000a 0121     		movs	r1, #1
+ 206 000c D4F8E004 		ldr	r0, [r4, #1248]
+ 207 0010 FFF7FEFF 		bl	USBD_LL_SetSpeed
+ 208 0014 D4F8E004 		ldr	r0, [r4, #1248]
+ 209 0018 FFF7FEFF 		bl	USBD_LL_Reset
+ 210 001c 10BD     		pop	{r4, pc}
+ 211              	.L24:
+ 212 001e FFF7FEFF 		bl	Error_Handler
+ 213 0022 F2E7     		b	.L22
+ 215              		.section	.text.HAL_PCD_SuspendCallback,"ax",%progbits
+ 216              		.align	1
+ 217              		.global	HAL_PCD_SuspendCallback
+ 218              		.syntax unified
+ 219              		.thumb
+ 220              		.thumb_func
+ 222              	HAL_PCD_SuspendCallback:
+ 223              		@ args = 0, pretend = 0, frame = 0
+ 224              		@ frame_needed = 0, uses_anonymous_args = 0
+ 225 0000 10B5     		push	{r4, lr}
+ 226 0002 0446     		mov	r4, r0
+ 227 0004 D0F8E004 		ldr	r0, [r0, #1248]
+ 228 0008 FFF7FEFF 		bl	USBD_LL_Suspend
+ 229 000c 2268     		ldr	r2, [r4]
+ 230 000e D2F8003E 		ldr	r3, [r2, #3584]
+ 231 0012 43F00103 		orr	r3, r3, #1
+ 232 0016 C2F8003E 		str	r3, [r2, #3584]
+ 233 001a E37A     		ldrb	r3, [r4, #11]	@ zero_extendqisi2
+ 234 001c 23B1     		cbz	r3, .L25
+ 235 001e 034A     		ldr	r2, .L28
+ 236 0020 1369     		ldr	r3, [r2, #16]
+ 237 0022 43F00603 		orr	r3, r3, #6
+ 238 0026 1361     		str	r3, [r2, #16]
+ 239              	.L25:
+ 240 0028 10BD     		pop	{r4, pc}
+ 241              	.L29:
+ 242 002a 00BF     		.align	2
+ 243              	.L28:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 5
+
+
+ 244 002c 00ED00E0 		.word	-536810240
+ 246              		.section	.text.HAL_PCD_ResumeCallback,"ax",%progbits
+ 247              		.align	1
+ 248              		.global	HAL_PCD_ResumeCallback
+ 249              		.syntax unified
+ 250              		.thumb
+ 251              		.thumb_func
+ 253              	HAL_PCD_ResumeCallback:
+ 254              		@ args = 0, pretend = 0, frame = 0
+ 255              		@ frame_needed = 0, uses_anonymous_args = 0
+ 256 0000 08B5     		push	{r3, lr}
+ 257 0002 D0F8E004 		ldr	r0, [r0, #1248]
+ 258 0006 FFF7FEFF 		bl	USBD_LL_Resume
+ 259 000a 08BD     		pop	{r3, pc}
+ 261              		.section	.text.HAL_PCD_ISOOUTIncompleteCallback,"ax",%progbits
+ 262              		.align	1
+ 263              		.global	HAL_PCD_ISOOUTIncompleteCallback
+ 264              		.syntax unified
+ 265              		.thumb
+ 266              		.thumb_func
+ 268              	HAL_PCD_ISOOUTIncompleteCallback:
+ 269              		@ args = 0, pretend = 0, frame = 0
+ 270              		@ frame_needed = 0, uses_anonymous_args = 0
+ 271 0000 08B5     		push	{r3, lr}
+ 272 0002 D0F8E004 		ldr	r0, [r0, #1248]
+ 273 0006 FFF7FEFF 		bl	USBD_LL_IsoOUTIncomplete
+ 274 000a 08BD     		pop	{r3, pc}
+ 276              		.section	.text.HAL_PCD_ISOINIncompleteCallback,"ax",%progbits
+ 277              		.align	1
+ 278              		.global	HAL_PCD_ISOINIncompleteCallback
+ 279              		.syntax unified
+ 280              		.thumb
+ 281              		.thumb_func
+ 283              	HAL_PCD_ISOINIncompleteCallback:
+ 284              		@ args = 0, pretend = 0, frame = 0
+ 285              		@ frame_needed = 0, uses_anonymous_args = 0
+ 286 0000 08B5     		push	{r3, lr}
+ 287 0002 D0F8E004 		ldr	r0, [r0, #1248]
+ 288 0006 FFF7FEFF 		bl	USBD_LL_IsoINIncomplete
+ 289 000a 08BD     		pop	{r3, pc}
+ 291              		.section	.text.HAL_PCD_ConnectCallback,"ax",%progbits
+ 292              		.align	1
+ 293              		.global	HAL_PCD_ConnectCallback
+ 294              		.syntax unified
+ 295              		.thumb
+ 296              		.thumb_func
+ 298              	HAL_PCD_ConnectCallback:
+ 299              		@ args = 0, pretend = 0, frame = 0
+ 300              		@ frame_needed = 0, uses_anonymous_args = 0
+ 301 0000 08B5     		push	{r3, lr}
+ 302 0002 D0F8E004 		ldr	r0, [r0, #1248]
+ 303 0006 FFF7FEFF 		bl	USBD_LL_DevConnected
+ 304 000a 08BD     		pop	{r3, pc}
+ 306              		.section	.text.HAL_PCD_DisconnectCallback,"ax",%progbits
+ 307              		.align	1
+ 308              		.global	HAL_PCD_DisconnectCallback
+ 309              		.syntax unified
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 6
+
+
+ 310              		.thumb
+ 311              		.thumb_func
+ 313              	HAL_PCD_DisconnectCallback:
+ 314              		@ args = 0, pretend = 0, frame = 0
+ 315              		@ frame_needed = 0, uses_anonymous_args = 0
+ 316 0000 08B5     		push	{r3, lr}
+ 317 0002 D0F8E004 		ldr	r0, [r0, #1248]
+ 318 0006 FFF7FEFF 		bl	USBD_LL_DevDisconnected
+ 319 000a 08BD     		pop	{r3, pc}
+ 321              		.section	.text.USBD_LL_Init,"ax",%progbits
+ 322              		.align	1
+ 323              		.global	USBD_LL_Init
+ 324              		.syntax unified
+ 325              		.thumb
+ 326              		.thumb_func
+ 328              	USBD_LL_Init:
+ 329              		@ args = 0, pretend = 0, frame = 0
+ 330              		@ frame_needed = 0, uses_anonymous_args = 0
+ 331 0000 0278     		ldrb	r2, [r0]	@ zero_extendqisi2
+ 332 0002 0AB1     		cbz	r2, .L47
+ 333 0004 0020     		movs	r0, #0
+ 334 0006 7047     		bx	lr
+ 335              	.L47:
+ 336 0008 10B5     		push	{r4, lr}
+ 337 000a 0346     		mov	r3, r0
+ 338 000c 1548     		ldr	r0, .L49
+ 339 000e C0F8E034 		str	r3, [r0, #1248]
+ 340 0012 C3F8C802 		str	r0, [r3, #712]
+ 341 0016 4FF0A043 		mov	r3, #1342177280
+ 342 001a 0360     		str	r3, [r0]
+ 343 001c 0423     		movs	r3, #4
+ 344 001e 0371     		strb	r3, [r0, #4]
+ 345 0020 0222     		movs	r2, #2
+ 346 0022 C271     		strb	r2, [r0, #7]
+ 347 0024 0023     		movs	r3, #0
+ 348 0026 8371     		strb	r3, [r0, #6]
+ 349 0028 4272     		strb	r2, [r0, #9]
+ 350 002a 8372     		strb	r3, [r0, #10]
+ 351 002c C372     		strb	r3, [r0, #11]
+ 352 002e 0373     		strb	r3, [r0, #12]
+ 353 0030 8373     		strb	r3, [r0, #14]
+ 354 0032 C373     		strb	r3, [r0, #15]
+ 355 0034 FFF7FEFF 		bl	HAL_PCD_Init
+ 356 0038 80B9     		cbnz	r0, .L48
+ 357              	.L42:
+ 358 003a 0A4C     		ldr	r4, .L49
+ 359 003c 8021     		movs	r1, #128
+ 360 003e 2046     		mov	r0, r4
+ 361 0040 FFF7FEFF 		bl	HAL_PCDEx_SetRxFiFo
+ 362 0044 4022     		movs	r2, #64
+ 363 0046 0021     		movs	r1, #0
+ 364 0048 2046     		mov	r0, r4
+ 365 004a FFF7FEFF 		bl	HAL_PCDEx_SetTxFiFo
+ 366 004e 8022     		movs	r2, #128
+ 367 0050 0121     		movs	r1, #1
+ 368 0052 2046     		mov	r0, r4
+ 369 0054 FFF7FEFF 		bl	HAL_PCDEx_SetTxFiFo
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 7
+
+
+ 370 0058 0020     		movs	r0, #0
+ 371 005a 10BD     		pop	{r4, pc}
+ 372              	.L48:
+ 373 005c FFF7FEFF 		bl	Error_Handler
+ 374 0060 EBE7     		b	.L42
+ 375              	.L50:
+ 376 0062 00BF     		.align	2
+ 377              	.L49:
+ 378 0064 00000000 		.word	hpcd_USB_OTG_FS
+ 380              		.section	.text.USBD_LL_IsStallEP,"ax",%progbits
+ 381              		.align	1
+ 382              		.global	USBD_LL_IsStallEP
+ 383              		.syntax unified
+ 384              		.thumb
+ 385              		.thumb_func
+ 387              	USBD_LL_IsStallEP:
+ 388              		@ args = 0, pretend = 0, frame = 0
+ 389              		@ frame_needed = 0, uses_anonymous_args = 0
+ 390              		@ link register save eliminated.
+ 391 0000 D0F8C832 		ldr	r3, [r0, #712]
+ 392 0004 11F0800F 		tst	r1, #128
+ 393 0008 08D1     		bne	.L54
+ 394 000a 01F07F01 		and	r1, r1, #127
+ 395 000e 01EBC101 		add	r1, r1, r1, lsl #3
+ 396 0012 03EB8103 		add	r3, r3, r1, lsl #2
+ 397 0016 93F85602 		ldrb	r0, [r3, #598]	@ zero_extendqisi2
+ 398 001a 7047     		bx	lr
+ 399              	.L54:
+ 400 001c 01F07F01 		and	r1, r1, #127
+ 401 0020 01EBC101 		add	r1, r1, r1, lsl #3
+ 402 0024 03EB8103 		add	r3, r3, r1, lsl #2
+ 403 0028 987D     		ldrb	r0, [r3, #22]	@ zero_extendqisi2
+ 404 002a 7047     		bx	lr
+ 406              		.section	.text.USBD_LL_GetRxDataSize,"ax",%progbits
+ 407              		.align	1
+ 408              		.global	USBD_LL_GetRxDataSize
+ 409              		.syntax unified
+ 410              		.thumb
+ 411              		.thumb_func
+ 413              	USBD_LL_GetRxDataSize:
+ 414              		@ args = 0, pretend = 0, frame = 0
+ 415              		@ frame_needed = 0, uses_anonymous_args = 0
+ 416 0000 08B5     		push	{r3, lr}
+ 417 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 418 0006 FFF7FEFF 		bl	HAL_PCD_EP_GetRxCount
+ 419 000a 08BD     		pop	{r3, pc}
+ 421              		.section	.text.USBD_static_malloc,"ax",%progbits
+ 422              		.align	1
+ 423              		.global	USBD_static_malloc
+ 424              		.syntax unified
+ 425              		.thumb
+ 426              		.thumb_func
+ 428              	USBD_static_malloc:
+ 429              		@ args = 0, pretend = 0, frame = 0
+ 430              		@ frame_needed = 0, uses_anonymous_args = 0
+ 431              		@ link register save eliminated.
+ 432 0000 0048     		ldr	r0, .L58
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 8
+
+
+ 433 0002 7047     		bx	lr
+ 434              	.L59:
+ 435              		.align	2
+ 436              	.L58:
+ 437 0004 00000000 		.word	mem.0
+ 439              		.section	.text.USBD_static_free,"ax",%progbits
+ 440              		.align	1
+ 441              		.global	USBD_static_free
+ 442              		.syntax unified
+ 443              		.thumb
+ 444              		.thumb_func
+ 446              	USBD_static_free:
+ 447              		@ args = 0, pretend = 0, frame = 0
+ 448              		@ frame_needed = 0, uses_anonymous_args = 0
+ 449              		@ link register save eliminated.
+ 450 0000 7047     		bx	lr
+ 452              		.section	.text.USBD_LL_Delay,"ax",%progbits
+ 453              		.align	1
+ 454              		.global	USBD_LL_Delay
+ 455              		.syntax unified
+ 456              		.thumb
+ 457              		.thumb_func
+ 459              	USBD_LL_Delay:
+ 460              		@ args = 0, pretend = 0, frame = 0
+ 461              		@ frame_needed = 0, uses_anonymous_args = 0
+ 462 0000 08B5     		push	{r3, lr}
+ 463 0002 FFF7FEFF 		bl	HAL_Delay
+ 464 0006 08BD     		pop	{r3, pc}
+ 466              		.section	.text.USBD_Get_USB_Status,"ax",%progbits
+ 467              		.align	1
+ 468              		.global	USBD_Get_USB_Status
+ 469              		.syntax unified
+ 470              		.thumb
+ 471              		.thumb_func
+ 473              	USBD_Get_USB_Status:
+ 474              		@ args = 0, pretend = 0, frame = 0
+ 475              		@ frame_needed = 0, uses_anonymous_args = 0
+ 476              		@ link register save eliminated.
+ 477 0000 0328     		cmp	r0, #3
+ 478 0002 05D8     		bhi	.L69
+ 479 0004 DFE800F0 		tbb	[pc, r0]
+ 480              	.L66:
+ 481 0008 05       		.byte	(.L64-.L66)/2
+ 482 0009 04       		.byte	(.L69-.L66)/2
+ 483 000a 02       		.byte	(.L67-.L66)/2
+ 484 000b 05       		.byte	(.L64-.L66)/2
+ 485              		.p2align 1
+ 486              	.L67:
+ 487 000c 0120     		movs	r0, #1
+ 488 000e 7047     		bx	lr
+ 489              	.L69:
+ 490 0010 0320     		movs	r0, #3
+ 491              	.L64:
+ 492 0012 7047     		bx	lr
+ 494              		.section	.text.USBD_LL_DeInit,"ax",%progbits
+ 495              		.align	1
+ 496              		.global	USBD_LL_DeInit
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 9
+
+
+ 497              		.syntax unified
+ 498              		.thumb
+ 499              		.thumb_func
+ 501              	USBD_LL_DeInit:
+ 502              		@ args = 0, pretend = 0, frame = 0
+ 503              		@ frame_needed = 0, uses_anonymous_args = 0
+ 504 0000 08B5     		push	{r3, lr}
+ 505 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 506 0006 FFF7FEFF 		bl	HAL_PCD_DeInit
+ 507 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 508 000e 08BD     		pop	{r3, pc}
+ 510              		.section	.text.USBD_LL_Start,"ax",%progbits
+ 511              		.align	1
+ 512              		.global	USBD_LL_Start
+ 513              		.syntax unified
+ 514              		.thumb
+ 515              		.thumb_func
+ 517              	USBD_LL_Start:
+ 518              		@ args = 0, pretend = 0, frame = 0
+ 519              		@ frame_needed = 0, uses_anonymous_args = 0
+ 520 0000 08B5     		push	{r3, lr}
+ 521 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 522 0006 FFF7FEFF 		bl	HAL_PCD_Start
+ 523 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 524 000e 08BD     		pop	{r3, pc}
+ 526              		.section	.text.USBD_LL_Stop,"ax",%progbits
+ 527              		.align	1
+ 528              		.global	USBD_LL_Stop
+ 529              		.syntax unified
+ 530              		.thumb
+ 531              		.thumb_func
+ 533              	USBD_LL_Stop:
+ 534              		@ args = 0, pretend = 0, frame = 0
+ 535              		@ frame_needed = 0, uses_anonymous_args = 0
+ 536 0000 08B5     		push	{r3, lr}
+ 537 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 538 0006 FFF7FEFF 		bl	HAL_PCD_Stop
+ 539 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 540 000e 08BD     		pop	{r3, pc}
+ 542              		.section	.text.USBD_LL_OpenEP,"ax",%progbits
+ 543              		.align	1
+ 544              		.global	USBD_LL_OpenEP
+ 545              		.syntax unified
+ 546              		.thumb
+ 547              		.thumb_func
+ 549              	USBD_LL_OpenEP:
+ 550              		@ args = 0, pretend = 0, frame = 0
+ 551              		@ frame_needed = 0, uses_anonymous_args = 0
+ 552 0000 08B5     		push	{r3, lr}
+ 553 0002 9446     		mov	ip, r2
+ 554 0004 1A46     		mov	r2, r3
+ 555 0006 6346     		mov	r3, ip
+ 556 0008 D0F8C802 		ldr	r0, [r0, #712]
+ 557 000c FFF7FEFF 		bl	HAL_PCD_EP_Open
+ 558 0010 FFF7FEFF 		bl	USBD_Get_USB_Status
+ 559 0014 08BD     		pop	{r3, pc}
+ 561              		.section	.text.USBD_LL_CloseEP,"ax",%progbits
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 10
+
+
+ 562              		.align	1
+ 563              		.global	USBD_LL_CloseEP
+ 564              		.syntax unified
+ 565              		.thumb
+ 566              		.thumb_func
+ 568              	USBD_LL_CloseEP:
+ 569              		@ args = 0, pretend = 0, frame = 0
+ 570              		@ frame_needed = 0, uses_anonymous_args = 0
+ 571 0000 08B5     		push	{r3, lr}
+ 572 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 573 0006 FFF7FEFF 		bl	HAL_PCD_EP_Close
+ 574 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 575 000e 08BD     		pop	{r3, pc}
+ 577              		.section	.text.USBD_LL_FlushEP,"ax",%progbits
+ 578              		.align	1
+ 579              		.global	USBD_LL_FlushEP
+ 580              		.syntax unified
+ 581              		.thumb
+ 582              		.thumb_func
+ 584              	USBD_LL_FlushEP:
+ 585              		@ args = 0, pretend = 0, frame = 0
+ 586              		@ frame_needed = 0, uses_anonymous_args = 0
+ 587 0000 08B5     		push	{r3, lr}
+ 588 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 589 0006 FFF7FEFF 		bl	HAL_PCD_EP_Flush
+ 590 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 591 000e 08BD     		pop	{r3, pc}
+ 593              		.section	.text.USBD_LL_StallEP,"ax",%progbits
+ 594              		.align	1
+ 595              		.global	USBD_LL_StallEP
+ 596              		.syntax unified
+ 597              		.thumb
+ 598              		.thumb_func
+ 600              	USBD_LL_StallEP:
+ 601              		@ args = 0, pretend = 0, frame = 0
+ 602              		@ frame_needed = 0, uses_anonymous_args = 0
+ 603 0000 08B5     		push	{r3, lr}
+ 604 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 605 0006 FFF7FEFF 		bl	HAL_PCD_EP_SetStall
+ 606 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 607 000e 08BD     		pop	{r3, pc}
+ 609              		.section	.text.USBD_LL_ClearStallEP,"ax",%progbits
+ 610              		.align	1
+ 611              		.global	USBD_LL_ClearStallEP
+ 612              		.syntax unified
+ 613              		.thumb
+ 614              		.thumb_func
+ 616              	USBD_LL_ClearStallEP:
+ 617              		@ args = 0, pretend = 0, frame = 0
+ 618              		@ frame_needed = 0, uses_anonymous_args = 0
+ 619 0000 08B5     		push	{r3, lr}
+ 620 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 621 0006 FFF7FEFF 		bl	HAL_PCD_EP_ClrStall
+ 622 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 623 000e 08BD     		pop	{r3, pc}
+ 625              		.section	.text.USBD_LL_SetUSBAddress,"ax",%progbits
+ 626              		.align	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 11
+
+
+ 627              		.global	USBD_LL_SetUSBAddress
+ 628              		.syntax unified
+ 629              		.thumb
+ 630              		.thumb_func
+ 632              	USBD_LL_SetUSBAddress:
+ 633              		@ args = 0, pretend = 0, frame = 0
+ 634              		@ frame_needed = 0, uses_anonymous_args = 0
+ 635 0000 08B5     		push	{r3, lr}
+ 636 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 637 0006 FFF7FEFF 		bl	HAL_PCD_SetAddress
+ 638 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 639 000e 08BD     		pop	{r3, pc}
+ 641              		.section	.text.USBD_LL_Transmit,"ax",%progbits
+ 642              		.align	1
+ 643              		.global	USBD_LL_Transmit
+ 644              		.syntax unified
+ 645              		.thumb
+ 646              		.thumb_func
+ 648              	USBD_LL_Transmit:
+ 649              		@ args = 0, pretend = 0, frame = 0
+ 650              		@ frame_needed = 0, uses_anonymous_args = 0
+ 651 0000 08B5     		push	{r3, lr}
+ 652 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 653 0006 FFF7FEFF 		bl	HAL_PCD_EP_Transmit
+ 654 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 655 000e 08BD     		pop	{r3, pc}
+ 657              		.section	.text.USBD_LL_PrepareReceive,"ax",%progbits
+ 658              		.align	1
+ 659              		.global	USBD_LL_PrepareReceive
+ 660              		.syntax unified
+ 661              		.thumb
+ 662              		.thumb_func
+ 664              	USBD_LL_PrepareReceive:
+ 665              		@ args = 0, pretend = 0, frame = 0
+ 666              		@ frame_needed = 0, uses_anonymous_args = 0
+ 667 0000 08B5     		push	{r3, lr}
+ 668 0002 D0F8C802 		ldr	r0, [r0, #712]
+ 669 0006 FFF7FEFF 		bl	HAL_PCD_EP_Receive
+ 670 000a FFF7FEFF 		bl	USBD_Get_USB_Status
+ 671 000e 08BD     		pop	{r3, pc}
+ 673              		.section	.bss.mem.0,"aw",%nobits
+ 674              		.align	2
+ 677              	mem.0:
+ 678 0000 00000000 		.space	544
+ 678      00000000 
+ 678      00000000 
+ 678      00000000 
+ 678      00000000 
+ 679              		.global	hpcd_USB_OTG_FS
+ 680              		.section	.bss.hpcd_USB_OTG_FS,"aw",%nobits
+ 681              		.align	2
+ 684              	hpcd_USB_OTG_FS:
+ 685 0000 00000000 		.space	1252
+ 685      00000000 
+ 685      00000000 
+ 685      00000000 
+ 685      00000000 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 12
+
+
+ 686              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 usbd_conf.c
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:18     .text.HAL_PCD_MspInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:24     .text.HAL_PCD_MspInit:00000000 HAL_PCD_MspInit
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:86     .text.HAL_PCD_MspInit:00000080 $d
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:90     .text.HAL_PCD_MspDeInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:96     .text.HAL_PCD_MspDeInit:00000000 HAL_PCD_MspDeInit
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:119    .text.HAL_PCD_MspDeInit:00000028 $d
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:123    .text.HAL_PCD_SetupStageCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:129    .text.HAL_PCD_SetupStageCallback:00000000 HAL_PCD_SetupStageCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:139    .text.HAL_PCD_DataOutStageCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:145    .text.HAL_PCD_DataOutStageCallback:00000000 HAL_PCD_DataOutStageCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:157    .text.HAL_PCD_DataInStageCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:163    .text.HAL_PCD_DataInStageCallback:00000000 HAL_PCD_DataInStageCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:175    .text.HAL_PCD_SOFCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:181    .text.HAL_PCD_SOFCallback:00000000 HAL_PCD_SOFCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:190    .text.HAL_PCD_ResetCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:196    .text.HAL_PCD_ResetCallback:00000000 HAL_PCD_ResetCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:216    .text.HAL_PCD_SuspendCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:222    .text.HAL_PCD_SuspendCallback:00000000 HAL_PCD_SuspendCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:244    .text.HAL_PCD_SuspendCallback:0000002c $d
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:247    .text.HAL_PCD_ResumeCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:253    .text.HAL_PCD_ResumeCallback:00000000 HAL_PCD_ResumeCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:262    .text.HAL_PCD_ISOOUTIncompleteCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:268    .text.HAL_PCD_ISOOUTIncompleteCallback:00000000 HAL_PCD_ISOOUTIncompleteCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:277    .text.HAL_PCD_ISOINIncompleteCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:283    .text.HAL_PCD_ISOINIncompleteCallback:00000000 HAL_PCD_ISOINIncompleteCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:292    .text.HAL_PCD_ConnectCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:298    .text.HAL_PCD_ConnectCallback:00000000 HAL_PCD_ConnectCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:307    .text.HAL_PCD_DisconnectCallback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:313    .text.HAL_PCD_DisconnectCallback:00000000 HAL_PCD_DisconnectCallback
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:322    .text.USBD_LL_Init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:328    .text.USBD_LL_Init:00000000 USBD_LL_Init
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:378    .text.USBD_LL_Init:00000064 $d
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:684    .bss.hpcd_USB_OTG_FS:00000000 hpcd_USB_OTG_FS
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:381    .text.USBD_LL_IsStallEP:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:387    .text.USBD_LL_IsStallEP:00000000 USBD_LL_IsStallEP
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:407    .text.USBD_LL_GetRxDataSize:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:413    .text.USBD_LL_GetRxDataSize:00000000 USBD_LL_GetRxDataSize
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:422    .text.USBD_static_malloc:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:428    .text.USBD_static_malloc:00000000 USBD_static_malloc
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:437    .text.USBD_static_malloc:00000004 $d
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:677    .bss.mem.0:00000000 mem.0
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:440    .text.USBD_static_free:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:446    .text.USBD_static_free:00000000 USBD_static_free
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:453    .text.USBD_LL_Delay:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:459    .text.USBD_LL_Delay:00000000 USBD_LL_Delay
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:467    .text.USBD_Get_USB_Status:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:473    .text.USBD_Get_USB_Status:00000000 USBD_Get_USB_Status
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:481    .text.USBD_Get_USB_Status:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:485    .text.USBD_Get_USB_Status:0000000c $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:495    .text.USBD_LL_DeInit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:501    .text.USBD_LL_DeInit:00000000 USBD_LL_DeInit
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:511    .text.USBD_LL_Start:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:517    .text.USBD_LL_Start:00000000 USBD_LL_Start
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:527    .text.USBD_LL_Stop:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:533    .text.USBD_LL_Stop:00000000 USBD_LL_Stop
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s 			page 14
+
+
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:543    .text.USBD_LL_OpenEP:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:549    .text.USBD_LL_OpenEP:00000000 USBD_LL_OpenEP
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:562    .text.USBD_LL_CloseEP:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:568    .text.USBD_LL_CloseEP:00000000 USBD_LL_CloseEP
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:578    .text.USBD_LL_FlushEP:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:584    .text.USBD_LL_FlushEP:00000000 USBD_LL_FlushEP
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:594    .text.USBD_LL_StallEP:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:600    .text.USBD_LL_StallEP:00000000 USBD_LL_StallEP
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:610    .text.USBD_LL_ClearStallEP:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:616    .text.USBD_LL_ClearStallEP:00000000 USBD_LL_ClearStallEP
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:626    .text.USBD_LL_SetUSBAddress:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:632    .text.USBD_LL_SetUSBAddress:00000000 USBD_LL_SetUSBAddress
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:642    .text.USBD_LL_Transmit:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:648    .text.USBD_LL_Transmit:00000000 USBD_LL_Transmit
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:658    .text.USBD_LL_PrepareReceive:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:664    .text.USBD_LL_PrepareReceive:00000000 USBD_LL_PrepareReceive
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:674    .bss.mem.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccMzVIOa.s:681    .bss.hpcd_USB_OTG_FS:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+HAL_NVIC_SetPriority
+HAL_NVIC_EnableIRQ
+HAL_GPIO_DeInit
+HAL_NVIC_DisableIRQ
+USBD_LL_SetupStage
+USBD_LL_DataOutStage
+USBD_LL_DataInStage
+USBD_LL_SOF
+USBD_LL_SetSpeed
+USBD_LL_Reset
+Error_Handler
+USBD_LL_Suspend
+USBD_LL_Resume
+USBD_LL_IsoOUTIncomplete
+USBD_LL_IsoINIncomplete
+USBD_LL_DevConnected
+USBD_LL_DevDisconnected
+HAL_PCD_Init
+HAL_PCDEx_SetRxFiFo
+HAL_PCDEx_SetTxFiFo
+HAL_PCD_EP_GetRxCount
+HAL_Delay
+HAL_PCD_DeInit
+HAL_PCD_Start
+HAL_PCD_Stop
+HAL_PCD_EP_Open
+HAL_PCD_EP_Close
+HAL_PCD_EP_Flush
+HAL_PCD_EP_SetStall
+HAL_PCD_EP_ClrStall
+HAL_PCD_SetAddress
+HAL_PCD_EP_Transmit
+HAL_PCD_EP_Receive

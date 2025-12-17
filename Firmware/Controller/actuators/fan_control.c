@@ -49,12 +49,16 @@ void fan_control_update()
     {
        fan2_command = false;
     }
-    if (get_bit(runtime.status, STATUS_CLT_ERROR))
+
+    if (get_bit(runtime.status, STATUS_CLT_ERROR) && config.fan1_enabled)
     {
         fan1_command = true;
+    }
+    if (get_bit(runtime.status, STATUS_CLT_ERROR) && config.fan2_enabled)
+    {
         fan2_command = true;
     }
-    
+
     output_set(&fan1_output, fan1_command);
     change_bit(&runtime.status, STATUS_FAN1_ON, fan1_command);
         

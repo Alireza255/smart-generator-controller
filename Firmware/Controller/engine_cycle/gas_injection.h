@@ -11,6 +11,6 @@
 
 void gas_injection_init(electronic_throttle_t *gas_control_etb);
 
-void gas_injection_update(void *arg);
+void gas_injection_update(time_us_t timestamp);
 
 #endif //GAS_INJECTION_H

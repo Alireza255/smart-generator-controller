@@ -54,32 +54,17 @@ typedef struct __attribute__((packed))
     /* Governer (PID) floats */
     float governer_target_rpm;
     float governer_idle_rpm;
-    float governer_pid_Kp;
-    float governer_pid_Ki;
-    float governer_pid_Kd;
-    float governer_pid_limit_integrator_min;
-    float governer_pid_limit_integrator_max;
-    float governer_pid_derivative_filter_tau;
+    pid_parameters_config_t governer_pid_parameters;
 
     /* ETB1 (grouped) */
     table_1d_t etb1_feedforward_table;
-    float etb1_pid_Kp;
-    float etb1_pid_Ki;
-    float etb1_pid_Kd;
-    float etb1_pid_limit_integrator_min;
-    float etb1_pid_limit_integrator_max;
-    float etb1_pid_derivative_filter_tau;
+    pid_parameters_config_t etb1_pid_parameters;
     float etb1_end_of_travel_duty_cycle_limit_upper;
     float etb1_end_of_travel_duty_cycle_limit_lower;
 
     /* ETB2 (grouped) */
     table_1d_t etb2_feedforward_table;
-    float etb2_pid_Kp;
-    float etb2_pid_Ki;
-    float etb2_pid_Kd;
-    float etb2_pid_limit_integrator_min;
-    float etb2_pid_limit_integrator_max;
-    float etb2_pid_derivative_filter_tau;
+    pid_parameters_config_t etb2_pid_parameters;
     float etb2_end_of_travel_duty_cycle_limit_upper;
     float etb2_end_of_travel_duty_cycle_limit_lower;
 
@@ -159,6 +144,12 @@ typedef struct __attribute__((packed))
     uint8_t fan2_enabled;
 
 } config_t;
+
+typedef struct
+{
+    bool timing_light_enabled;
+    bool trigger_light_enabled;
+} diagnostics_config_t;
 
 typedef struct {
     /* ---------- 4-byte items (uint32 and floats) ---------- */
@@ -245,5 +236,6 @@ typedef enum
 
 extern config_t config;
 extern runtime_t runtime;
+extern diagnostics_config_t diagnostics_config;
 
 #endif // CONFIGURATION_H

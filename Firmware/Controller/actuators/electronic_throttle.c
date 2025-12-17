@@ -1,5 +1,6 @@
 #include "electronic_throttle.h"
 
+void electronic_throttle_watchdog_timeout(void *arg);
 
 void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps_t *sensor, dc_motor_t *motor, table_1d_t *feed_forward_table, status_t status_flag)
 {
@@ -17,35 +18,55 @@ void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps
 
     etb->pid->limit_output_max = (float)255;
     etb->pid->limit_output_min = (float)-255;
-    etb->pid->limit_integrator_max = (float)250;
-    etb->pid->limit_integrator_min = (float)-250;
-
-    // electronic_throttle_auto_tune(etb);
-
-    // electronic_throttle_update(etb);
-
+    etb->pid->config->limit_integrator_max = (float)250;
+    etb->pid->config->limit_integrator_min = (float)-250;
+    const osTimerAttr_t timer_attr = {
+        .name = NULL,
+        .cb_mem = etb->watchdog_timer_cb,
+        .cb_size = sizeof(etb->watchdog_timer_cb)
+    };
+    etb->watchdog_timer = osTimerNew(electronic_throttle_watchdog_timeout, osTimerOnce, (void*)etb, &timer_attr);
+    osTimerStart(etb->watchdog_timer, ELECTRONIC_THROTTLE_PRISISTANT_ERROR_TIMEOUT);
     etb->status_flag = status_flag;
     change_bit(&runtime.status, status_flag, true);
     etb->control_loop_give_up_control = false;
+    etb->setpoint_override = false;
 }
 
+void electronic_throttle_watchdog_timeout(void *arg)
+{
+    if (arg == NULL)
+    {
+        return;
+    }
+    electronic_throttle_t *etb = (electronic_throttle_t*)arg;
+    change_bit(&runtime.status, etb->status_flag, false);
+
+}
 void electronic_throttle_set(electronic_throttle_t *etb, percent_t position)
 {
-    // if (!IS_IN_RANGE(position, (percent_t)0, (percent_t)100))
-    // {
-    //     etb->target_position = ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION;
-    // }
-
+    if (etb->setpoint_override)
+    {
+        return;
+    }
+    
     etb->target_position = CLAMP(position, (percent_t)0, (percent_t)100);
 }
-
-void electronic_throttle_update(void *arg)
+void electronic_throttle_override_enable(electronic_throttle_t *etb, percent_t position)
 {
+    etb->setpoint_override = true;
+    etb->target_position = CLAMP(position, (percent_t)0, (percent_t)100);
 
-    electronic_throttle_t *etb = (electronic_throttle_t *)arg;
+}
+void electronic_throttle_override_disable(electronic_throttle_t *etb)
+{
+    etb->setpoint_override = false;
+}
+
+void electronic_throttle_update(electronic_throttle_t *etb ,time_us_t timestamp)
+{
     if (etb == NULL || etb->pid == NULL || etb->sensor == NULL || etb->motor == NULL)
     {
-        log_error("Electronic throttle not initialized");
         return;
     }
     if (etb->control_loop_give_up_control)
@@ -78,11 +99,16 @@ void electronic_throttle_update(void *arg)
         is_feed_forward_available = true;
     }
 
-    percent_t motor_effort = CLAMP(feed_forward + pid_compute(etb->pid, get_time_us(), position), (float)-255, (float)255);
+    percent_t motor_effort = CLAMP(feed_forward + pid_compute(etb->pid, timestamp, position), (float)-255, (float)255);
     dc_motor_direction_t dir = motor_effort > 0 ? MOTOR_DIRECTION_FORWARD : MOTOR_DIRECTION_REVERSE;
+    volatile bool is_possibly_jammed = ABS(etb->pid->prev_error) > ELECTRONIC_THROTTLE_ERROR_TOLARANCE || ABS(motor_effort) > (float)250;
+    if (!is_possibly_jammed)
+    {
+        osTimerStart(etb->watchdog_timer, ELECTRONIC_THROTTLE_PRISISTANT_ERROR_TIMEOUT);
+    }
+    
     /* Limiting the end of travel duty cycle for protection */
     float margine = 5;
-
     if (!etb->is_duty_cycle_limiting_enabled)
     {
         dc_motor_set(etb->motor, dir, (uint8_t)ABS(motor_effort));
@@ -268,16 +294,17 @@ void electronic_throttle_auto_tune(electronic_throttle_t *etb)
     // Settings End
 
     const uint8_t table_size = SIZE_OF_ARRAY(etb->feed_forward_table->data);
-
+    const percent_t point_distrobiution_divide_offset = 5;
+    percent_t point_distrobiution_divide_point = resting_position + point_distrobiution_divide_offset;
     for (size_t i = 0; i < table_size; i++)
     {
         if (i <= (table_size / 2))
         {
-            etb->feed_forward_table->x_bins[i] = (float)i / (float)(table_size / 2) * resting_position;
+            etb->feed_forward_table->x_bins[i] = (float)i / (float)(table_size / 2) * point_distrobiution_divide_point;
         }
         else
         {
-            etb->feed_forward_table->x_bins[i] = (float)(i - (table_size / 2)) / (float)(table_size / 2 - 1) * ((float)100 - resting_position) + resting_position;
+            etb->feed_forward_table->x_bins[i] = (float)(i - (table_size / 2)) / (float)(table_size / 2 - 1) * ((float)100 - point_distrobiution_divide_point) + point_distrobiution_divide_point;
         }
     }
 

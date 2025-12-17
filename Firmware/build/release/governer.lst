@@ -1,0 +1,183 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"governer.c"
+  16              		.text
+  17              		.section	.rodata.governer_init.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 476F7665 		.ascii	"Governer init failed!\000"
+  20      726E6572 
+  20      20696E69 
+  20      74206661 
+  20      696C6564 
+  21              		.section	.text.governer_init,"ax",%progbits
+  22              		.align	1
+  23              		.global	governer_init
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  28              	governer_init:
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 10B5     		push	{r4, lr}
+  32 0002 58B1     		cbz	r0, .L2
+  33 0004 51B1     		cbz	r1, .L2
+  34 0006 074A     		ldr	r2, .L6
+  35 0008 1060     		str	r0, [r2]
+  36 000a 074C     		ldr	r4, .L6+4
+  37 000c 2046     		mov	r0, r4
+  38 000e FFF7FEFF 		bl	pid_init
+  39 0012 064B     		ldr	r3, .L6+8
+  40 0014 A360     		str	r3, [r4, #8]	@ float
+  41 0016 0023     		movs	r3, #0
+  42 0018 6360     		str	r3, [r4, #4]	@ float
+  43              	.L1:
+  44 001a 10BD     		pop	{r4, pc}
+  45              	.L2:
+  46 001c 0448     		ldr	r0, .L6+12
+  47 001e FFF7FEFF 		bl	log_error
+  48 0022 FAE7     		b	.L1
+  49              	.L7:
+  50              		.align	2
+  51              	.L6:
+  52 0024 00000000 		.word	governer_etb
+  53 0028 00000000 		.word	governer_pid
+  54 002c 0000C842 		.word	1120403456
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s 			page 2
+
+
+  55 0030 00000000 		.word	.LC0
+  57              		.section	.text.governer_update,"ax",%progbits
+  58              		.align	1
+  59              		.global	governer_update
+  60              		.syntax unified
+  61              		.thumb
+  62              		.thumb_func
+  64              	governer_update:
+  65              		@ args = 0, pretend = 0, frame = 0
+  66              		@ frame_needed = 0, uses_anonymous_args = 0
+  67 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  68 0002 184B     		ldr	r3, .L13
+  69 0004 1B68     		ldr	r3, [r3]
+  70 0006 ABB1     		cbz	r3, .L8
+  71 0008 0446     		mov	r4, r0
+  72 000a 174B     		ldr	r3, .L13+4
+  73 000c 93F87830 		ldrb	r3, [r3, #120]	@ zero_extendqisi2
+  74 0010 032B     		cmp	r3, #3
+  75 0012 10D0     		beq	.L10
+  76 0014 154A     		ldr	r2, .L13+8
+  77 0016 D2F88836 		ldr	r3, [r2, #1672]	@ unaligned
+  78 001a 00EE103A 		vmov	s0, r3	@ int
+  79 001e 124B     		ldr	r3, .L13+4
+  80 0020 0021     		movs	r1, #0
+  81 0022 83F87910 		strb	r1, [r3, #121]
+  82 0026 D2F8CC26 		ldr	r2, [r2, #1740]	@ unaligned
+  83 002a DA61     		str	r2, [r3, #28]	@ float
+  84              	.L11:
+  85 002c 0D4B     		ldr	r3, .L13
+  86 002e 1868     		ldr	r0, [r3]
+  87 0030 FFF7FEFF 		bl	electronic_throttle_set
+  88              	.L8:
+  89 0034 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+  90              	.L10:
+  91 0036 0C4D     		ldr	r5, .L13+4
+  92 0038 0223     		movs	r3, #2
+  93 003a 85F87930 		strb	r3, [r5, #121]
+  94 003e 0B4E     		ldr	r6, .L13+8
+  95 0040 D6F8C836 		ldr	r3, [r6, #1736]	@ unaligned
+  96 0044 00EE103A 		vmov	s0, r3	@ int
+  97 0048 094F     		ldr	r7, .L13+12
+  98 004a 3846     		mov	r0, r7
+  99 004c FFF7FEFF 		bl	pid_set_setpoint
+ 100 0050 FFF7FEFF 		bl	crankshaft_get_rpm
+ 101 0054 2146     		mov	r1, r4
+ 102 0056 3846     		mov	r0, r7
+ 103 0058 FFF7FEFF 		bl	pid_compute
+ 104 005c D6F8C836 		ldr	r3, [r6, #1736]	@ unaligned
+ 105 0060 EB61     		str	r3, [r5, #28]	@ float
+ 106 0062 E3E7     		b	.L11
+ 107              	.L14:
+ 108              		.align	2
+ 109              	.L13:
+ 110 0064 00000000 		.word	governer_etb
+ 111 0068 00000000 		.word	runtime
+ 112 006c 00100000 		.word	config+4096
+ 113 0070 00000000 		.word	governer_pid
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s 			page 3
+
+
+ 115              		.section	.text.governer_get_status,"ax",%progbits
+ 116              		.align	1
+ 117              		.global	governer_get_status
+ 118              		.syntax unified
+ 119              		.thumb
+ 120              		.thumb_func
+ 122              	governer_get_status:
+ 123              		@ args = 0, pretend = 0, frame = 0
+ 124              		@ frame_needed = 0, uses_anonymous_args = 0
+ 125              		@ link register save eliminated.
+ 126 0000 014B     		ldr	r3, .L16
+ 127 0002 93F87900 		ldrb	r0, [r3, #121]	@ zero_extendqisi2
+ 128 0006 7047     		bx	lr
+ 129              	.L17:
+ 130              		.align	2
+ 131              	.L16:
+ 132 0008 00000000 		.word	runtime
+ 134              		.section	.bss.governer_pid,"aw",%nobits
+ 135              		.align	2
+ 138              	governer_pid:
+ 139 0000 00000000 		.space	40
+ 139      00000000 
+ 139      00000000 
+ 139      00000000 
+ 139      00000000 
+ 140              		.global	governer_etb
+ 141              		.section	.bss.governer_etb,"aw",%nobits
+ 142              		.align	2
+ 145              	governer_etb:
+ 146 0000 00000000 		.space	4
+ 147              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 governer.c
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:18     .rodata.governer_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:22     .text.governer_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:28     .text.governer_init:00000000 governer_init
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:52     .text.governer_init:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:145    .bss.governer_etb:00000000 governer_etb
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:138    .bss.governer_pid:00000000 governer_pid
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:58     .text.governer_update:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:64     .text.governer_update:00000000 governer_update
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:110    .text.governer_update:00000064 $d
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:116    .text.governer_get_status:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:122    .text.governer_get_status:00000000 governer_get_status
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:132    .text.governer_get_status:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:135    .bss.governer_pid:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccMWGTnU.s:142    .bss.governer_etb:00000000 $d
+
+UNDEFINED SYMBOLS
+pid_init
+log_error
+electronic_throttle_set
+pid_set_setpoint
+crankshaft_get_rpm
+pid_compute
+runtime
+config

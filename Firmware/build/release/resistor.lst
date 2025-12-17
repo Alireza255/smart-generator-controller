@@ -1,0 +1,139 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"resistor.c"
+  16              		.text
+  17              		.section	.rodata.resistor_init.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 52657369 		.ascii	"Resistor init failed!\000"
+  20      73746F72 
+  20      20696E69 
+  20      74206661 
+  20      696C6564 
+  21              		.section	.text.resistor_init,"ax",%progbits
+  22              		.align	1
+  23              		.global	resistor_init
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  28              	resistor_init:
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 08B5     		push	{r3, lr}
+  32 0002 20B1     		cbz	r0, .L5
+  33 0004 80ED010A 		vstr.32	s0, [r0, #4]
+  34 0008 0170     		strb	r1, [r0]
+  35 000a 0272     		strb	r2, [r0, #8]
+  36              	.L1:
+  37 000c 08BD     		pop	{r3, pc}
+  38              	.L5:
+  39 000e 0248     		ldr	r0, .L6
+  40 0010 FFF7FEFF 		bl	log_error
+  41 0014 FAE7     		b	.L1
+  42              	.L7:
+  43 0016 00BF     		.align	2
+  44              	.L6:
+  45 0018 00000000 		.word	.LC0
+  47              		.section	.text.resistor_get_resistance,"ax",%progbits
+  48              		.align	1
+  49              		.global	resistor_get_resistance
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  54              	resistor_get_resistance:
+  55              		@ args = 0, pretend = 0, frame = 8
+  56              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s 			page 2
+
+
+  57 0000 10B5     		push	{r4, lr}
+  58 0002 82B0     		sub	sp, sp, #8
+  59 0004 0446     		mov	r4, r0
+  60 0006 007A     		ldrb	r0, [r0, #8]	@ zero_extendqisi2
+  61 0008 FFF7FEFF 		bl	analog_inputs_get_voltage
+  62 000c 8DED010A 		vstr.32	s0, [sp, #4]
+  63 0010 9DED017A 		vldr.32	s14, [sp, #4]
+  64 0014 F5EE007A 		vmov.f32	s15, #2.5e-1
+  65 0018 B4EEE77A 		vcmpe.f32	s14, s15
+  66 001c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  67 0020 2FDB     		blt	.L18
+  68 0022 9DED017A 		vldr.32	s14, [sp, #4]
+  69 0026 F1EE037A 		vmov.f32	s15, #4.75e+0
+  70 002a B4EEE77A 		vcmpe.f32	s14, s15
+  71 002e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  72 0032 2AD8     		bhi	.L19
+  73 0034 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+  74 0036 ABB1     		cbz	r3, .L21
+  75 0038 DDED017A 		vldr.32	s15, [sp, #4]
+  76 003c F5EE407A 		vcmp.f32	s15, #0
+  77 0040 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  78 0044 24D0     		beq	.L15
+  79 0046 9DED017A 		vldr.32	s14, [sp, #4]
+  80 004a F1EE047A 		vmov.f32	s15, #5.0e+0
+  81 004e 77EEC77A 		vsub.f32	s15, s15, s14
+  82 0052 94ED017A 		vldr.32	s14, [r4, #4]
+  83 0056 67EE877A 		vmul.f32	s15, s15, s14
+  84 005a 9DED017A 		vldr.32	s14, [sp, #4]
+  85 005e 87EE870A 		vdiv.f32	s0, s15, s14
+  86 0062 10E0     		b	.L8
+  87              	.L21:
+  88 0064 94ED017A 		vldr.32	s14, [r4, #4]
+  89 0068 DDED017A 		vldr.32	s15, [sp, #4]
+  90 006c 27EE277A 		vmul.f32	s14, s14, s15
+  91 0070 DDED016A 		vldr.32	s13, [sp, #4]
+  92 0074 F1EE047A 		vmov.f32	s15, #5.0e+0
+  93 0078 77EEE67A 		vsub.f32	s15, s15, s13
+  94 007c 87EE270A 		vdiv.f32	s0, s14, s15
+  95 0080 01E0     		b	.L8
+  96              	.L18:
+  97 0082 9FED050A 		vldr.32	s0, .L22
+  98              	.L8:
+  99 0086 02B0     		add	sp, sp, #8
+ 100              		@ sp needed
+ 101 0088 10BD     		pop	{r4, pc}
+ 102              	.L19:
+ 103 008a 9FED030A 		vldr.32	s0, .L22
+ 104 008e FAE7     		b	.L8
+ 105              	.L15:
+ 106 0090 9FED020A 		vldr.32	s0, .L22+4
+ 107 0094 F7E7     		b	.L8
+ 108              	.L23:
+ 109 0096 00BF     		.align	2
+ 110              	.L22:
+ 111 0098 0000C07F 		.word	2143289344
+ 112 009c 0000807F 		.word	2139095040
+ 114              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s 			page 3
+
+
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 resistor.c
+C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s:18     .rodata.resistor_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s:22     .text.resistor_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s:28     .text.resistor_init:00000000 resistor_init
+C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s:45     .text.resistor_init:00000018 $d
+C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s:48     .text.resistor_get_resistance:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s:54     .text.resistor_get_resistance:00000000 resistor_get_resistance
+C:\Users\alireza\AppData\Local\Temp\ccPgx4eq.s:111    .text.resistor_get_resistance:00000098 $d
+
+UNDEFINED SYMBOLS
+log_error
+analog_inputs_get_voltage

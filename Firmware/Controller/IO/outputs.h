@@ -27,7 +27,7 @@ void output_fan2_set(bool state);
 void output_set(controller_output_pin_t *pin, bool state);
 void output_override(controller_output_pin_t *pin, bool forced_state);
 void output_override_clear(controller_output_pin_t *pin);
-
+bool output_get_state(controller_output_pin_t *pin);
 void output_fire_ignition(controller_output_pin_t *pin);
 void output_fire_injection(controller_output_pin_t *pin);
 

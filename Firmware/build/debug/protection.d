@@ -62,16 +62,18 @@ build/debug/protection.o: controller/algorithm/protection.c \
  Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ controller/utils/timing_light.h controller/utils/timing.h \
  controller/engine_cycle/injection.h controller/controller.h \
  controller/utils/comms.h controller/actuators/dc_motors.h \
  controller/IO/thermistor.h controller/utils/pid.h \
- controller/utils/timing.h controller/actuators/electronic_throttle.h \
+ controller/actuators/electronic_throttle.h \
  controller/actuators/dc_motors.h Core/Inc/adc.h \
  controller/algorithm/governer.h controller/actuators/fan_control.h \
  controller/utils/trigger_simulator.h controller/utils/utils.h \
  controller/config_and_runtime.h controller/utils/ee.h \
  controller/engine_cycle/gas_injection.h \
- controller/algorithm/fuel/fuel_math.h
+ controller/algorithm/fuel/fuel_math.h controller/utils/trigger_logger.h \
+ controller/algorithm/protection.h
 controller/algorithm/protection.h:
 controller/config_and_runtime.h:
 controller/constants.h:
@@ -150,13 +152,14 @@ Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+controller/utils/timing_light.h:
+controller/utils/timing.h:
 controller/engine_cycle/injection.h:
 controller/controller.h:
 controller/utils/comms.h:
 controller/actuators/dc_motors.h:
 controller/IO/thermistor.h:
 controller/utils/pid.h:
-controller/utils/timing.h:
 controller/actuators/electronic_throttle.h:
 controller/actuators/dc_motors.h:
 Core/Inc/adc.h:
@@ -168,3 +171,5 @@ controller/config_and_runtime.h:
 controller/utils/ee.h:
 controller/engine_cycle/gas_injection.h:
 controller/algorithm/fuel/fuel_math.h:
+controller/utils/trigger_logger.h:
+controller/algorithm/protection.h:

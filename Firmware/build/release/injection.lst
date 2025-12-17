@@ -1,0 +1,956 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"injection.c"
+  16              		.text
+  17              		.section	.rodata.injection_switch_to_batch.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 696E6A65 		.ascii	"injection init failed. unkown firing order.\000"
+  20      6374696F 
+  20      6E20696E 
+  20      69742066 
+  20      61696C65 
+  21              		.section	.text.injection_switch_to_batch,"ax",%progbits
+  22              		.align	1
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	injection_switch_to_batch:
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30 0000 08B5     		push	{r3, lr}
+  31 0002 104B     		ldr	r3, .L7
+  32 0004 0122     		movs	r2, #1
+  33 0006 1A70     		strb	r2, [r3]
+  34 0008 0F4B     		ldr	r3, .L7+4
+  35 000a 93F8CE3A 		ldrb	r3, [r3, #2766]	@ zero_extendqisi2
+  36 000e 2BB1     		cbz	r3, .L2
+  37 0010 9342     		cmp	r3, r2
+  38 0012 15D0     		beq	.L1
+  39 0014 0D48     		ldr	r0, .L7+8
+  40 0016 FFF7FEFF 		bl	log_error
+  41 001a 11E0     		b	.L1
+  42              	.L2:
+  43 001c 0C4B     		ldr	r3, .L7+12
+  44 001e 0022     		movs	r2, #0
+  45 0020 1A61     		str	r2, [r3, #16]	@ float
+  46 0022 0C4A     		ldr	r2, .L7+16
+  47 0024 9A62     		str	r2, [r3, #40]	@ float
+  48 0026 0C4A     		ldr	r2, .L7+20
+  49 0028 9A60     		str	r2, [r3, #8]
+  50 002a 02F12401 		add	r1, r2, #36
+  51 002e D960     		str	r1, [r3, #12]
+  52 0030 02F10C01 		add	r1, r2, #12
+  53 0034 1962     		str	r1, [r3, #32]
+  54 0036 1832     		adds	r2, r2, #24
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 2
+
+
+  55 0038 5A62     		str	r2, [r3, #36]
+  56 003a 084B     		ldr	r3, .L7+24
+  57 003c 0222     		movs	r2, #2
+  58 003e 1A70     		strb	r2, [r3]
+  59              	.L1:
+  60 0040 08BD     		pop	{r3, pc}
+  61              	.L8:
+  62 0042 00BF     		.align	2
+  63              	.L7:
+  64 0044 00000000 		.word	operating_in_forced_batch_injection
+  65 0048 00100000 		.word	config+4096
+  66 004c 00000000 		.word	.LC0
+  67 0050 00000000 		.word	injection_events
+  68 0054 00003443 		.word	1127481344
+  69 0058 00000000 		.word	injector_output
+  70 005c 00000000 		.word	number_of_events
+  72              		.section	.text.injection_switch_to_sequential,"ax",%progbits
+  73              		.align	1
+  74              		.syntax unified
+  75              		.thumb
+  76              		.thumb_func
+  78              	injection_switch_to_sequential:
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81 0000 08B5     		push	{r3, lr}
+  82 0002 124B     		ldr	r3, .L15
+  83 0004 0022     		movs	r2, #0
+  84 0006 1A70     		strb	r2, [r3]
+  85 0008 114B     		ldr	r3, .L15+4
+  86 000a 93F8CE3A 		ldrb	r3, [r3, #2766]	@ zero_extendqisi2
+  87 000e 2BB1     		cbz	r3, .L10
+  88 0010 012B     		cmp	r3, #1
+  89 0012 19D0     		beq	.L9
+  90 0014 0F48     		ldr	r0, .L15+8
+  91 0016 FFF7FEFF 		bl	log_error
+  92 001a 15E0     		b	.L9
+  93              	.L10:
+  94 001c 0E4B     		ldr	r3, .L15+12
+  95 001e 0F4A     		ldr	r2, .L15+16
+  96 0020 1A61     		str	r2, [r3, #16]	@ float
+  97 0022 0F4A     		ldr	r2, .L15+20
+  98 0024 1A64     		str	r2, [r3, #64]	@ float
+  99 0026 0022     		movs	r2, #0
+ 100 0028 9A65     		str	r2, [r3, #88]	@ float
+ 101 002a 0E4A     		ldr	r2, .L15+24
+ 102 002c 9A62     		str	r2, [r3, #40]	@ float
+ 103 002e 0E4A     		ldr	r2, .L15+28
+ 104 0030 9A60     		str	r2, [r3, #8]
+ 105 0032 02F10C01 		add	r1, r2, #12
+ 106 0036 1962     		str	r1, [r3, #32]
+ 107 0038 02F11801 		add	r1, r2, #24
+ 108 003c 9963     		str	r1, [r3, #56]
+ 109 003e 2432     		adds	r2, r2, #36
+ 110 0040 1A65     		str	r2, [r3, #80]
+ 111 0042 0A4B     		ldr	r3, .L15+32
+ 112 0044 0422     		movs	r2, #4
+ 113 0046 1A70     		strb	r2, [r3]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 3
+
+
+ 114              	.L9:
+ 115 0048 08BD     		pop	{r3, pc}
+ 116              	.L16:
+ 117 004a 00BF     		.align	2
+ 118              	.L15:
+ 119 004c 00000000 		.word	operating_in_forced_batch_injection
+ 120 0050 00100000 		.word	config+4096
+ 121 0054 00000000 		.word	.LC0
+ 122 0058 00000000 		.word	injection_events
+ 123 005c 0000B443 		.word	1135869952
+ 124 0060 00000744 		.word	1141309440
+ 125 0064 00003443 		.word	1127481344
+ 126 0068 00000000 		.word	injector_output
+ 127 006c 00000000 		.word	number_of_events
+ 129              		.section	.text.injector_stop_injection,"ax",%progbits
+ 130              		.align	1
+ 131              		.syntax unified
+ 132              		.thumb
+ 133              		.thumb_func
+ 135              	injector_stop_injection:
+ 136              		@ args = 0, pretend = 0, frame = 0
+ 137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 138 0000 80B1     		cbz	r0, .L21
+ 139 0002 10B5     		push	{r4, lr}
+ 140 0004 0446     		mov	r4, r0
+ 141 0006 8068     		ldr	r0, [r0, #8]
+ 142 0008 20B1     		cbz	r0, .L19
+ 143 000a 0021     		movs	r1, #0
+ 144 000c FFF7FEFF 		bl	output_set
+ 145 0010 0323     		movs	r3, #3
+ 146 0012 2375     		strb	r3, [r4, #20]
+ 147              	.L19:
+ 148 0014 E068     		ldr	r0, [r4, #12]
+ 149 0016 20B1     		cbz	r0, .L17
+ 150 0018 0021     		movs	r1, #0
+ 151 001a FFF7FEFF 		bl	output_set
+ 152 001e 0323     		movs	r3, #3
+ 153 0020 2375     		strb	r3, [r4, #20]
+ 154              	.L17:
+ 155 0022 10BD     		pop	{r4, pc}
+ 156              	.L21:
+ 157 0024 7047     		bx	lr
+ 159              		.section	.rodata.injection_watchdog_check.str1.4,"aMS",%progbits,1
+ 160              		.align	2
+ 161              	.LC1:
+ 162 0000 696E6A65 		.ascii	"injection watchdog fired.\000"
+ 162      6374696F 
+ 162      6E207761 
+ 162      74636864 
+ 162      6F672066 
+ 163              		.section	.text.injection_watchdog_check,"ax",%progbits
+ 164              		.align	1
+ 165              		.syntax unified
+ 166              		.thumb
+ 167              		.thumb_func
+ 169              	injection_watchdog_check:
+ 170              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 4
+
+
+ 171              		@ frame_needed = 0, uses_anonymous_args = 0
+ 172 0000 38B5     		push	{r3, r4, r5, lr}
+ 173 0002 0024     		movs	r4, #0
+ 174 0004 00E0     		b	.L25
+ 175              	.L26:
+ 176 0006 0134     		adds	r4, r4, #1
+ 177              	.L25:
+ 178 0008 0F4B     		ldr	r3, .L30
+ 179 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 180 000c A342     		cmp	r3, r4
+ 181 000e 19D9     		bls	.L29
+ 182 0010 04EB4403 		add	r3, r4, r4, lsl #1
+ 183 0014 0D4D     		ldr	r5, .L30+4
+ 184 0016 05EBC305 		add	r5, r5, r3, lsl #3
+ 185 001a 2B7D     		ldrb	r3, [r5, #20]	@ zero_extendqisi2
+ 186 001c 022B     		cmp	r3, #2
+ 187 001e F2D1     		bne	.L26
+ 188 0020 FFF7FEFF 		bl	get_time_us
+ 189 0024 6B68     		ldr	r3, [r5, #4]
+ 190 0026 C01A     		subs	r0, r0, r3
+ 191 0028 0028     		cmp	r0, #0
+ 192 002a ECDD     		ble	.L26
+ 193 002c 2846     		mov	r0, r5
+ 194 002e FFF7FEFF 		bl	injector_stop_injection
+ 195 0032 074A     		ldr	r2, .L30+8
+ 196 0034 1368     		ldr	r3, [r2]
+ 197 0036 43F40023 		orr	r3, r3, #524288
+ 198 003a 1360     		str	r3, [r2]
+ 199 003c 0548     		ldr	r0, .L30+12
+ 200 003e FFF7FEFF 		bl	log_error
+ 201 0042 E0E7     		b	.L26
+ 202              	.L29:
+ 203 0044 38BD     		pop	{r3, r4, r5, pc}
+ 204              	.L31:
+ 205 0046 00BF     		.align	2
+ 206              	.L30:
+ 207 0048 00000000 		.word	number_of_events
+ 208 004c 00000000 		.word	injection_events
+ 209 0050 00000000 		.word	runtime
+ 210 0054 00000000 		.word	.LC1
+ 212              		.section	.text.injector_start_injection,"ax",%progbits
+ 213              		.align	1
+ 214              		.syntax unified
+ 215              		.thumb
+ 216              		.thumb_func
+ 218              	injector_start_injection:
+ 219              		@ args = 0, pretend = 0, frame = 0
+ 220              		@ frame_needed = 0, uses_anonymous_args = 0
+ 221 0000 80B1     		cbz	r0, .L36
+ 222 0002 10B5     		push	{r4, lr}
+ 223 0004 0446     		mov	r4, r0
+ 224 0006 8068     		ldr	r0, [r0, #8]
+ 225 0008 20B1     		cbz	r0, .L34
+ 226 000a 0121     		movs	r1, #1
+ 227 000c FFF7FEFF 		bl	output_set
+ 228 0010 0223     		movs	r3, #2
+ 229 0012 2375     		strb	r3, [r4, #20]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 5
+
+
+ 230              	.L34:
+ 231 0014 E068     		ldr	r0, [r4, #12]
+ 232 0016 20B1     		cbz	r0, .L32
+ 233 0018 0121     		movs	r1, #1
+ 234 001a FFF7FEFF 		bl	output_set
+ 235 001e 0223     		movs	r3, #2
+ 236 0020 2375     		strb	r3, [r4, #20]
+ 237              	.L32:
+ 238 0022 10BD     		pop	{r4, pc}
+ 239              	.L36:
+ 240 0024 7047     		bx	lr
+ 242              		.section	.text.schedule_injection_event,"ax",%progbits
+ 243              		.align	1
+ 244              		.syntax unified
+ 245              		.thumb
+ 246              		.thumb_func
+ 248              	schedule_injection_event:
+ 249              		@ args = 0, pretend = 0, frame = 0
+ 250              		@ frame_needed = 0, uses_anonymous_args = 0
+ 251 0000 C0B1     		cbz	r0, .L42
+ 252 0002 10B5     		push	{r4, lr}
+ 253 0004 0446     		mov	r4, r0
+ 254 0006 FFF7FEFF 		bl	get_time_us
+ 255 000a 0346     		mov	r3, r0
+ 256 000c 2268     		ldr	r2, [r4]
+ 257 000e 121A     		subs	r2, r2, r0
+ 258 0010 002A     		cmp	r2, #0
+ 259 0012 0EDB     		blt	.L39
+ 260 0014 6068     		ldr	r0, [r4, #4]
+ 261 0016 C31A     		subs	r3, r0, r3
+ 262 0018 002B     		cmp	r3, #0
+ 263 001a 0ADB     		blt	.L39
+ 264 001c 0123     		movs	r3, #1
+ 265 001e 2375     		strb	r3, [r4, #20]
+ 266 0020 2246     		mov	r2, r4
+ 267 0022 0549     		ldr	r1, .L45
+ 268 0024 FFF7FEFF 		bl	scheduler_schedule_event_with_arg
+ 269 0028 2246     		mov	r2, r4
+ 270 002a 0449     		ldr	r1, .L45+4
+ 271 002c 2068     		ldr	r0, [r4]
+ 272 002e FFF7FEFF 		bl	scheduler_schedule_event_with_arg
+ 273              	.L39:
+ 274 0032 10BD     		pop	{r4, pc}
+ 275              	.L42:
+ 276 0034 7047     		bx	lr
+ 277              	.L46:
+ 278 0036 00BF     		.align	2
+ 279              	.L45:
+ 280 0038 00000000 		.word	injector_stop_injection
+ 281 003c 00000000 		.word	injector_start_injection
+ 283              		.section	.rodata.injection_init.str1.4,"aMS",%progbits,1
+ 284              		.align	2
+ 285              	.LC2:
+ 286 0000 53657175 		.ascii	"Sequential injection not possible for 6 cylinders, "
+ 286      656E7469 
+ 286      616C2069 
+ 286      6E6A6563 
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 6
+
+
+ 286      74696F6E 
+ 287 0033 64656661 		.ascii	"defaulting to batch fire.\000"
+ 287      756C7469 
+ 287      6E672074 
+ 287      6F206261 
+ 287      74636820 
+ 288              		.section	.text.injection_init,"ax",%progbits
+ 289              		.align	1
+ 290              		.global	injection_init
+ 291              		.syntax unified
+ 292              		.thumb
+ 293              		.thumb_func
+ 295              	injection_init:
+ 296              		@ args = 0, pretend = 0, frame = 0
+ 297              		@ frame_needed = 0, uses_anonymous_args = 0
+ 298 0000 08B5     		push	{r3, lr}
+ 299 0002 5A4B     		ldr	r3, .L62
+ 300 0004 93F8D53A 		ldrb	r3, [r3, #2773]	@ zero_extendqisi2
+ 301 0008 002B     		cmp	r3, #0
+ 302 000a 00F0AD80 		beq	.L59
+ 303 000e 574A     		ldr	r2, .L62
+ 304 0010 92F8CE2A 		ldrb	r2, [r2, #2766]	@ zero_extendqisi2
+ 305 0014 9AB1     		cbz	r2, .L49
+ 306 0016 012A     		cmp	r2, #1
+ 307 0018 50D0     		beq	.L50
+ 308 001a 5548     		ldr	r0, .L62+4
+ 309 001c FFF7FEFF 		bl	log_error
+ 310              	.L54:
+ 311 0020 544B     		ldr	r3, .L62+8
+ 312 0022 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 313 0024 002B     		cmp	r3, #0
+ 314 0026 40F09180 		bne	.L57
+ 315 002a 534A     		ldr	r2, .L62+12
+ 316 002c 1368     		ldr	r3, [r2]
+ 317 002e 43F48023 		orr	r3, r3, #262144
+ 318 0032 1360     		str	r3, [r2]
+ 319 0034 43F00103 		orr	r3, r3, #1
+ 320 0038 1360     		str	r3, [r2]
+ 321 003a 0020     		movs	r0, #0
+ 322 003c 95E0     		b	.L48
+ 323              	.L49:
+ 324 003e 4F4A     		ldr	r2, .L62+16
+ 325 0040 0421     		movs	r1, #4
+ 326 0042 1170     		strb	r1, [r2]
+ 327 0044 022B     		cmp	r3, #2
+ 328 0046 0FD0     		beq	.L52
+ 329 0048 032B     		cmp	r3, #3
+ 330 004a 20D0     		beq	.L53
+ 331 004c 012B     		cmp	r3, #1
+ 332 004e E7D1     		bne	.L54
+ 333 0050 4B4B     		ldr	r3, .L62+20
+ 334 0052 4C4A     		ldr	r2, .L62+24
+ 335 0054 9A60     		str	r2, [r3, #8]
+ 336 0056 1A62     		str	r2, [r3, #32]
+ 337 0058 0022     		movs	r2, #0
+ 338 005a 1A61     		str	r2, [r3, #16]	@ float
+ 339 005c 4A4A     		ldr	r2, .L62+28
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 7
+
+
+ 340 005e 9A62     		str	r2, [r3, #40]	@ float
+ 341 0060 444B     		ldr	r3, .L62+8
+ 342 0062 0222     		movs	r2, #2
+ 343 0064 1A70     		strb	r2, [r3]
+ 344 0066 DBE7     		b	.L54
+ 345              	.L52:
+ 346 0068 454B     		ldr	r3, .L62+20
+ 347 006a 0022     		movs	r2, #0
+ 348 006c 1A61     		str	r2, [r3, #16]	@ float
+ 349 006e 464A     		ldr	r2, .L62+28
+ 350 0070 9A62     		str	r2, [r3, #40]	@ float
+ 351 0072 444A     		ldr	r2, .L62+24
+ 352 0074 9A60     		str	r2, [r3, #8]
+ 353 0076 02F12401 		add	r1, r2, #36
+ 354 007a D960     		str	r1, [r3, #12]
+ 355 007c 02F10C01 		add	r1, r2, #12
+ 356 0080 1962     		str	r1, [r3, #32]
+ 357 0082 1832     		adds	r2, r2, #24
+ 358 0084 5A62     		str	r2, [r3, #36]
+ 359 0086 3B4B     		ldr	r3, .L62+8
+ 360 0088 0222     		movs	r2, #2
+ 361 008a 1A70     		strb	r2, [r3]
+ 362 008c C8E7     		b	.L54
+ 363              	.L53:
+ 364 008e 3C4B     		ldr	r3, .L62+20
+ 365 0090 3E4A     		ldr	r2, .L62+32
+ 366 0092 1A61     		str	r2, [r3, #16]	@ float
+ 367 0094 3E4A     		ldr	r2, .L62+36
+ 368 0096 1A64     		str	r2, [r3, #64]	@ float
+ 369 0098 0022     		movs	r2, #0
+ 370 009a 9A65     		str	r2, [r3, #88]	@ float
+ 371 009c 3A4A     		ldr	r2, .L62+28
+ 372 009e 9A62     		str	r2, [r3, #40]	@ float
+ 373 00a0 384A     		ldr	r2, .L62+24
+ 374 00a2 9A60     		str	r2, [r3, #8]
+ 375 00a4 02F10C01 		add	r1, r2, #12
+ 376 00a8 1962     		str	r1, [r3, #32]
+ 377 00aa 02F11801 		add	r1, r2, #24
+ 378 00ae 9963     		str	r1, [r3, #56]
+ 379 00b0 2432     		adds	r2, r2, #36
+ 380 00b2 1A65     		str	r2, [r3, #80]
+ 381 00b4 2F4B     		ldr	r3, .L62+8
+ 382 00b6 0422     		movs	r2, #4
+ 383 00b8 1A70     		strb	r2, [r3]
+ 384 00ba B1E7     		b	.L54
+ 385              	.L50:
+ 386 00bc 2F4A     		ldr	r2, .L62+16
+ 387 00be 0621     		movs	r1, #6
+ 388 00c0 1170     		strb	r1, [r2]
+ 389 00c2 022B     		cmp	r3, #2
+ 390 00c4 12D0     		beq	.L55
+ 391 00c6 032B     		cmp	r3, #3
+ 392 00c8 22D0     		beq	.L56
+ 393 00ca 012B     		cmp	r3, #1
+ 394 00cc A8D1     		bne	.L54
+ 395 00ce 2C4B     		ldr	r3, .L62+20
+ 396 00d0 0022     		movs	r2, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 8
+
+
+ 397 00d2 1A61     		str	r2, [r3, #16]	@ float
+ 398 00d4 2F4A     		ldr	r2, .L62+40
+ 399 00d6 9A62     		str	r2, [r3, #40]	@ float
+ 400 00d8 2F4A     		ldr	r2, .L62+44
+ 401 00da 1A64     		str	r2, [r3, #64]	@ float
+ 402 00dc 294A     		ldr	r2, .L62+24
+ 403 00de 9A60     		str	r2, [r3, #8]
+ 404 00e0 1A62     		str	r2, [r3, #32]
+ 405 00e2 9A63     		str	r2, [r3, #56]
+ 406 00e4 234B     		ldr	r3, .L62+8
+ 407 00e6 0322     		movs	r2, #3
+ 408 00e8 1A70     		strb	r2, [r3]
+ 409 00ea 99E7     		b	.L54
+ 410              	.L55:
+ 411 00ec 244B     		ldr	r3, .L62+20
+ 412 00ee 0022     		movs	r2, #0
+ 413 00f0 1A61     		str	r2, [r3, #16]	@ float
+ 414 00f2 284A     		ldr	r2, .L62+40
+ 415 00f4 9A62     		str	r2, [r3, #40]	@ float
+ 416 00f6 284A     		ldr	r2, .L62+44
+ 417 00f8 1A64     		str	r2, [r3, #64]	@ float
+ 418 00fa 224A     		ldr	r2, .L62+24
+ 419 00fc 9A60     		str	r2, [r3, #8]
+ 420 00fe 02F10C01 		add	r1, r2, #12
+ 421 0102 1962     		str	r1, [r3, #32]
+ 422 0104 1832     		adds	r2, r2, #24
+ 423 0106 9A63     		str	r2, [r3, #56]
+ 424 0108 1A4B     		ldr	r3, .L62+8
+ 425 010a 0322     		movs	r2, #3
+ 426 010c 1A70     		strb	r2, [r3]
+ 427 010e 87E7     		b	.L54
+ 428              	.L56:
+ 429 0110 164B     		ldr	r3, .L62
+ 430 0112 0222     		movs	r2, #2
+ 431 0114 83F8D52A 		strb	r2, [r3, #2773]
+ 432 0118 174A     		ldr	r2, .L62+12
+ 433 011a 1368     		ldr	r3, [r2]
+ 434 011c 43F40023 		orr	r3, r3, #524288
+ 435 0120 1360     		str	r3, [r2]
+ 436 0122 174B     		ldr	r3, .L62+20
+ 437 0124 0022     		movs	r2, #0
+ 438 0126 1A61     		str	r2, [r3, #16]	@ float
+ 439 0128 1A4A     		ldr	r2, .L62+40
+ 440 012a 9A62     		str	r2, [r3, #40]	@ float
+ 441 012c 1A4A     		ldr	r2, .L62+44
+ 442 012e 1A64     		str	r2, [r3, #64]	@ float
+ 443 0130 144A     		ldr	r2, .L62+24
+ 444 0132 9A60     		str	r2, [r3, #8]
+ 445 0134 02F10C01 		add	r1, r2, #12
+ 446 0138 1962     		str	r1, [r3, #32]
+ 447 013a 1832     		adds	r2, r2, #24
+ 448 013c 9A63     		str	r2, [r3, #56]
+ 449 013e 0D4B     		ldr	r3, .L62+8
+ 450 0140 0322     		movs	r2, #3
+ 451 0142 1A70     		strb	r2, [r3]
+ 452 0144 1548     		ldr	r0, .L62+48
+ 453 0146 FFF7FEFF 		bl	log_error
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 9
+
+
+ 454 014a 69E7     		b	.L54
+ 455              	.L57:
+ 456 014c 0023     		movs	r3, #0
+ 457 014e 1A46     		mov	r2, r3
+ 458 0150 0121     		movs	r1, #1
+ 459 0152 1348     		ldr	r0, .L62+52
+ 460 0154 FFF7FEFF 		bl	osTimerNew
+ 461 0158 10B1     		cbz	r0, .L58
+ 462 015a 0121     		movs	r1, #1
+ 463 015c FFF7FEFF 		bl	osTimerStart
+ 464              	.L58:
+ 465 0160 0120     		movs	r0, #1
+ 466 0162 104B     		ldr	r3, .L62+56
+ 467 0164 1870     		strb	r0, [r3]
+ 468 0166 00E0     		b	.L48
+ 469              	.L59:
+ 470 0168 0120     		movs	r0, #1
+ 471              	.L48:
+ 472 016a 08BD     		pop	{r3, pc}
+ 473              	.L63:
+ 474              		.align	2
+ 475              	.L62:
+ 476 016c 00100000 		.word	config+4096
+ 477 0170 00000000 		.word	.LC0
+ 478 0174 00000000 		.word	number_of_events
+ 479 0178 00000000 		.word	runtime
+ 480 017c 00000000 		.word	number_of_injections
+ 481 0180 00000000 		.word	injection_events
+ 482 0184 00000000 		.word	injector_output
+ 483 0188 00003443 		.word	1127481344
+ 484 018c 0000B443 		.word	1135869952
+ 485 0190 00000744 		.word	1141309440
+ 486 0194 0000F042 		.word	1123024896
+ 487 0198 00007043 		.word	1131413504
+ 488 019c 00000000 		.word	.LC2
+ 489 01a0 00000000 		.word	injection_watchdog_check
+ 490 01a4 00000000 		.word	injection_initialized
+ 492              		.section	.text.get_pulse_width,"ax",%progbits
+ 493              		.align	1
+ 494              		.global	get_pulse_width
+ 495              		.syntax unified
+ 496              		.thumb
+ 497              		.thumb_func
+ 499              	get_pulse_width:
+ 500              		@ args = 0, pretend = 0, frame = 0
+ 501              		@ frame_needed = 0, uses_anonymous_args = 0
+ 502 0000 08B5     		push	{r3, lr}
+ 503 0002 FFF7FEFF 		bl	fuel_get_required_mass_petrol_per_cycle
+ 504 0006 DFED0F7A 		vldr.32	s15, .L66
+ 505 000a 80EE277A 		vdiv.f32	s14, s0, s15
+ 506 000e 0E4B     		ldr	r3, .L66+4
+ 507 0010 D3F8C436 		ldr	r3, [r3, #1732]	@ unaligned
+ 508 0014 07EE903A 		vmov	s15, r3
+ 509 0018 C7EE277A 		vdiv.f32	s15, s14, s15
+ 510 001c 9FED0B7A 		vldr.32	s14, .L66+8
+ 511 0020 67EE877A 		vmul.f32	s15, s15, s14
+ 512 0024 9FED0A7A 		vldr.32	s14, .L66+12
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 10
+
+
+ 513 0028 67EE877A 		vmul.f32	s15, s15, s14
+ 514 002c 094B     		ldr	r3, .L66+16
+ 515 002e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 516 0030 07EE103A 		vmov	s14, r3	@ int
+ 517 0034 B8EE477A 		vcvt.f32.u32	s14, s14
+ 518 0038 87EE870A 		vdiv.f32	s0, s15, s14
+ 519 003c 064B     		ldr	r3, .L66+20
+ 520 003e 83ED1D0A 		vstr.32	s0, [r3, #116]
+ 521 0042 08BD     		pop	{r3, pc}
+ 522              	.L67:
+ 523              		.align	2
+ 524              	.L66:
+ 525 0044 CDCC2C3F 		.word	1059900621
+ 526 0048 00100000 		.word	config+4096
+ 527 004c 00007042 		.word	1114636288
+ 528 0050 00007A44 		.word	1148846080
+ 529 0054 00000000 		.word	number_of_injections
+ 530 0058 00000000 		.word	runtime
+ 532              		.section	.rodata.injection_trigger_event_handle.str1.4,"aMS",%progbits,1
+ 533              		.align	2
+ 534              	.LC3:
+ 535 0000 43616D20 		.ascii	"Cam phase not known. Switching to batch injection.\000"
+ 535      70686173 
+ 535      65206E6F 
+ 535      74206B6E 
+ 535      6F776E2E 
+ 536              		.section	.text.injection_trigger_event_handle,"ax",%progbits
+ 537              		.align	1
+ 538              		.global	injection_trigger_event_handle
+ 539              		.syntax unified
+ 540              		.thumb
+ 541              		.thumb_func
+ 543              	injection_trigger_event_handle:
+ 544              		@ args = 0, pretend = 0, frame = 0
+ 545              		@ frame_needed = 0, uses_anonymous_args = 0
+ 546 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 547 0002 2DED088B 		vpush.64	{d8, d9, d10, d11}
+ 548 0006 9A4B     		ldr	r3, .L112
+ 549 0008 93F8D53A 		ldrb	r3, [r3, #2773]	@ zero_extendqisi2
+ 550 000c 002B     		cmp	r3, #0
+ 551 000e 00F02C81 		beq	.L68
+ 552 0012 B0EE409A 		vmov.f32	s18, s0
+ 553 0016 F0EE608A 		vmov.f32	s17, s1
+ 554 001a 0546     		mov	r5, r0
+ 555 001c 954A     		ldr	r2, .L112+4
+ 556 001e 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 557 0020 002A     		cmp	r2, #0
+ 558 0022 00F02281 		beq	.L68
+ 559 0026 944A     		ldr	r2, .L112+8
+ 560 0028 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 561 002a 002A     		cmp	r2, #0
+ 562 002c 00F01D81 		beq	.L68
+ 563 0030 924A     		ldr	r2, .L112+12
+ 564 0032 1268     		ldr	r2, [r2]
+ 565 0034 C2F3C006 		ubfx	r6, r2, #3, #1
+ 566 0038 12F0080F 		tst	r2, #8
+ 567 003c 00F01581 		beq	.L68
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 11
+
+
+ 568 0040 8B49     		ldr	r1, .L112
+ 569 0042 D1F8C016 		ldr	r1, [r1, #1728]	@ unaligned
+ 570 0046 0AEE101A 		vmov	s20, r1	@ int
+ 571 004a B5EEC0AA 		vcmpe.f32	s20, #0
+ 572 004e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 573 0052 09D4     		bmi	.L94
+ 574 0054 DFED8A7A 		vldr.32	s15, .L112+16
+ 575 0058 B4EEE7AA 		vcmpe.f32	s20, s15
+ 576 005c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 577 0060 04DD     		ble	.L70
+ 578 0062 B0EE67AA 		vmov.f32	s20, s15
+ 579 0066 01E0     		b	.L70
+ 580              	.L94:
+ 581 0068 9FED86AA 		vldr.32	s20, .L112+20
+ 582              	.L70:
+ 583 006c C2F30014 		ubfx	r4, r2, #4, #1
+ 584 0070 032B     		cmp	r3, #3
+ 585 0072 0BD0     		beq	.L107
+ 586 0074 0024     		movs	r4, #0
+ 587              	.L72:
+ 588              		.syntax unified
+ 589              	@ 263 "controller/engine_cycle/injection.c" 1
+ 590 0076 00BF     		nop
+ 591              	@ 0 "" 2
+ 592              		.thumb
+ 593              		.syntax unified
+ 594 0078 7D4B     		ldr	r3, .L112
+ 595 007a 93F8D53A 		ldrb	r3, [r3, #2773]	@ zero_extendqisi2
+ 596 007e 032B     		cmp	r3, #3
+ 597 0080 15D0     		beq	.L108
+ 598 0082 F0EE499A 		vmov.f32	s19, s18
+ 599 0086 0026     		movs	r6, #0
+ 600              	.L74:
+ 601 0088 0024     		movs	r4, #0
+ 602 008a 24E0     		b	.L75
+ 603              	.L107:
+ 604 008c 4CB9     		cbnz	r4, .L73
+ 605 008e 42F00402 		orr	r2, r2, #4
+ 606 0092 7A4B     		ldr	r3, .L112+12
+ 607 0094 1A60     		str	r2, [r3]
+ 608 0096 7C48     		ldr	r0, .L112+24
+ 609 0098 FFF7FEFF 		bl	log_error
+ 610 009c FFF7FEFF 		bl	injection_switch_to_batch
+ 611 00a0 E9E7     		b	.L72
+ 612              	.L73:
+ 613 00a2 FFF7FEFF 		bl	injection_switch_to_sequential
+ 614 00a6 FFF7FEFF 		bl	camshaft_get_phase
+ 615 00aa 0446     		mov	r4, r0
+ 616 00ac E3E7     		b	.L72
+ 617              	.L108:
+ 618 00ae 774B     		ldr	r3, .L112+28
+ 619 00b0 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 620 00b2 53B9     		cbnz	r3, .L97
+ 621 00b4 07EE904A 		vmov	s15, r4	@ int
+ 622 00b8 F8EE679A 		vcvt.f32.u32	s19, s15
+ 623 00bc DFED747A 		vldr.32	s15, .L112+32
+ 624 00c0 69EEA79A 		vmul.f32	s19, s19, s15
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 12
+
+
+ 625 00c4 79EE899A 		vadd.f32	s19, s19, s18
+ 626 00c8 DEE7     		b	.L74
+ 627              	.L97:
+ 628 00ca F0EE499A 		vmov.f32	s19, s18
+ 629 00ce 0026     		movs	r6, #0
+ 630 00d0 DAE7     		b	.L74
+ 631              	.L76:
+ 632 00d2 86B1     		cbz	r6, .L109
+ 633              	.L77:
+ 634 00d4 0134     		adds	r4, r4, #1
+ 635              	.L75:
+ 636 00d6 6F4B     		ldr	r3, .L112+36
+ 637 00d8 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 638 00da A342     		cmp	r3, r4
+ 639 00dc 40F2C580 		bls	.L68
+ 640 00e0 04EB4403 		add	r3, r4, r4, lsl #1
+ 641 00e4 6C4F     		ldr	r7, .L112+40
+ 642 00e6 07EBC307 		add	r7, r7, r3, lsl #3
+ 643 00ea 3B7D     		ldrb	r3, [r7, #20]	@ zero_extendqisi2
+ 644 00ec 032B     		cmp	r3, #3
+ 645 00ee F0D0     		beq	.L76
+ 646 00f0 002B     		cmp	r3, #0
+ 647 00f2 EED0     		beq	.L76
+ 648 00f4 EEE7     		b	.L77
+ 649              	.L109:
+ 650 00f6 FFF7FEFF 		bl	crankshaft_get_next_trigger_angle
+ 651 00fa B0EE40BA 		vmov.f32	s22, s0
+ 652 00fe 04EB4402 		add	r2, r4, r4, lsl #1
+ 653 0102 654B     		ldr	r3, .L112+40
+ 654 0104 03EBC203 		add	r3, r3, r2, lsl #3
+ 655 0108 D3ED047A 		vldr.32	s15, [r3, #16]
+ 656 010c 77EECAAA 		vsub.f32	s21, s15, s20
+ 657 0110 03E0     		b	.L78
+ 658              	.L79:
+ 659 0112 DFED5F7A 		vldr.32	s15, .L112+32
+ 660 0116 7AEEA7AA 		vadd.f32	s21, s21, s15
+ 661              	.L78:
+ 662 011a F5EEC0AA 		vcmpe.f32	s21, #0
+ 663 011e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 664 0122 F6D4     		bmi	.L79
+ 665 0124 03E0     		b	.L80
+ 666              	.L81:
+ 667 0126 DFED5A7A 		vldr.32	s15, .L112+32
+ 668 012a 7AEEE7AA 		vsub.f32	s21, s21, s15
+ 669              	.L80:
+ 670 012e DFED587A 		vldr.32	s15, .L112+32
+ 671 0132 F4EEE7AA 		vcmpe.f32	s21, s15
+ 672 0136 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 673 013a F4DA     		bge	.L81
+ 674 013c F5EE408A 		vcmp.f32	s17, #0
+ 675 0140 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 676 0144 0CD0     		beq	.L98
+ 677 0146 68EEA77A 		vmul.f32	s15, s17, s15
+ 678 014a 9FED547A 		vldr.32	s14, .L112+44
+ 679 014e 87EE878A 		vdiv.f32	s16, s15, s14
+ 680              	.L82:
+ 681 0152 FFF7FEFF 		bl	get_pulse_width
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 13
+
+
+ 682 0156 20EE088A 		vmul.f32	s16, s0, s16
+ 683 015a 3AEEC88A 		vsub.f32	s16, s21, s16
+ 684 015e 06E0     		b	.L83
+ 685              	.L98:
+ 686 0160 9FED488A 		vldr.32	s16, .L112+20
+ 687 0164 F5E7     		b	.L82
+ 688              	.L84:
+ 689 0166 DFED4A7A 		vldr.32	s15, .L112+32
+ 690 016a 38EE278A 		vadd.f32	s16, s16, s15
+ 691              	.L83:
+ 692 016e B5EEC08A 		vcmpe.f32	s16, #0
+ 693 0172 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 694 0176 F6D4     		bmi	.L84
+ 695 0178 03E0     		b	.L85
+ 696              	.L86:
+ 697 017a DFED457A 		vldr.32	s15, .L112+32
+ 698 017e 38EE678A 		vsub.f32	s16, s16, s15
+ 699              	.L85:
+ 700 0182 DFED437A 		vldr.32	s15, .L112+32
+ 701 0186 B4EEE78A 		vcmpe.f32	s16, s15
+ 702 018a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 703 018e F4DA     		bge	.L86
+ 704 0190 B0EE481A 		vmov.f32	s2, s16
+ 705 0194 F0EE490A 		vmov.f32	s1, s18
+ 706 0198 B0EE4B0A 		vmov.f32	s0, s22
+ 707 019c FFF7FEFF 		bl	is_phase_in_range
+ 708 01a0 0028     		cmp	r0, #0
+ 709 01a2 97D1     		bne	.L77
+ 710 01a4 7AEEE97A 		vsub.f32	s15, s21, s19
+ 711 01a8 F5EEC07A 		vcmpe.f32	s15, #0
+ 712 01ac F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 713 01b0 49D4     		bmi	.L110
+ 714              	.L87:
+ 715 01b2 F5EEC08A 		vcmpe.f32	s17, #0
+ 716 01b6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 717 01ba 49D9     		bls	.L99
+ 718 01bc F5EEC07A 		vcmpe.f32	s15, #0
+ 719 01c0 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 720 01c4 46D9     		bls	.L100
+ 721 01c6 DFED326A 		vldr.32	s13, .L112+32
+ 722 01ca 68EEA66A 		vmul.f32	s13, s17, s13
+ 723 01ce 9FED346A 		vldr.32	s12, .L112+48
+ 724 01d2 86EE267A 		vdiv.f32	s14, s12, s13
+ 725 01d6 67EE277A 		vmul.f32	s15, s14, s15
+ 726 01da FCEEE77A 		vcvt.u32.f32	s15, s15
+ 727 01de 17EE903A 		vmov	r3, s15	@ int
+ 728              	.L89:
+ 729 01e2 E818     		adds	r0, r5, r3
+ 730 01e4 38EE698A 		vsub.f32	s16, s16, s19
+ 731 01e8 B5EEC08A 		vcmpe.f32	s16, #0
+ 732 01ec F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 733 01f0 32D4     		bmi	.L111
+ 734              	.L90:
+ 735 01f2 F5EEC08A 		vcmpe.f32	s17, #0
+ 736 01f6 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 737 01fa 32D9     		bls	.L101
+ 738 01fc B5EEC08A 		vcmpe.f32	s16, #0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 14
+
+
+ 739 0200 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 740 0204 2FD9     		bls	.L102
+ 741 0206 9FED227A 		vldr.32	s14, .L112+32
+ 742 020a 28EE877A 		vmul.f32	s14, s17, s14
+ 743 020e DFED246A 		vldr.32	s13, .L112+48
+ 744 0212 C6EE877A 		vdiv.f32	s15, s13, s14
+ 745 0216 67EE887A 		vmul.f32	s15, s15, s16
+ 746 021a FCEEE77A 		vcvt.u32.f32	s15, s15
+ 747 021e 17EE902A 		vmov	r2, s15	@ int
+ 748              	.L92:
+ 749 0222 A918     		adds	r1, r5, r2
+ 750 0224 9B1A     		subs	r3, r3, r2
+ 751 0226 312B     		cmp	r3, #49
+ 752 0228 7FF654AF 		bls	.L77
+ 753 022c 1A4B     		ldr	r3, .L112+40
+ 754 022e 04EB4402 		add	r2, r4, r4, lsl #1
+ 755 0232 03EBC20C 		add	ip, r3, r2, lsl #3
+ 756 0236 CCF80400 		str	r0, [ip, #4]
+ 757 023a 43F83210 		str	r1, [r3, r2, lsl #3]
+ 758 023e 3846     		mov	r0, r7
+ 759 0240 FFF7FEFF 		bl	schedule_injection_event
+ 760 0244 46E7     		b	.L77
+ 761              	.L110:
+ 762 0246 9FED127A 		vldr.32	s14, .L112+32
+ 763 024a 77EE877A 		vadd.f32	s15, s15, s14
+ 764 024e B0E7     		b	.L87
+ 765              	.L99:
+ 766 0250 0023     		movs	r3, #0
+ 767 0252 C6E7     		b	.L89
+ 768              	.L100:
+ 769 0254 0023     		movs	r3, #0
+ 770 0256 C4E7     		b	.L89
+ 771              	.L111:
+ 772 0258 DFED0D7A 		vldr.32	s15, .L112+32
+ 773 025c 38EE278A 		vadd.f32	s16, s16, s15
+ 774 0260 C7E7     		b	.L90
+ 775              	.L101:
+ 776 0262 0022     		movs	r2, #0
+ 777 0264 DDE7     		b	.L92
+ 778              	.L102:
+ 779 0266 0022     		movs	r2, #0
+ 780 0268 DBE7     		b	.L92
+ 781              	.L68:
+ 782 026a BDEC088B 		vldm	sp!, {d8-d11}
+ 783 026e F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 784              	.L113:
+ 785              		.align	2
+ 786              	.L112:
+ 787 0270 00100000 		.word	config+4096
+ 788 0274 00000000 		.word	injection_initialized
+ 789 0278 00000000 		.word	is_injection_allowed
+ 790 027c 00000000 		.word	runtime
+ 791 0280 00003443 		.word	1127481344
+ 792 0284 00000000 		.word	0
+ 793 0288 00000000 		.word	.LC3
+ 794 028c 00000000 		.word	operating_in_forced_batch_injection
+ 795 0290 0000B443 		.word	1135869952
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 15
+
+
+ 796 0294 00000000 		.word	number_of_events
+ 797 0298 00000000 		.word	injection_events
+ 798 029c 00606A47 		.word	1198153728
+ 799 02a0 C0E1644C 		.word	1281679808
+ 801              		.section	.text.injection_disable,"ax",%progbits
+ 802              		.align	1
+ 803              		.global	injection_disable
+ 804              		.syntax unified
+ 805              		.thumb
+ 806              		.thumb_func
+ 808              	injection_disable:
+ 809              		@ args = 0, pretend = 0, frame = 0
+ 810              		@ frame_needed = 0, uses_anonymous_args = 0
+ 811              		@ link register save eliminated.
+ 812 0000 014B     		ldr	r3, .L115
+ 813 0002 0022     		movs	r2, #0
+ 814 0004 1A70     		strb	r2, [r3]
+ 815 0006 7047     		bx	lr
+ 816              	.L116:
+ 817              		.align	2
+ 818              	.L115:
+ 819 0008 00000000 		.word	is_injection_allowed
+ 821              		.section	.bss.operating_in_forced_batch_injection,"aw",%nobits
+ 824              	operating_in_forced_batch_injection:
+ 825 0000 00       		.space	1
+ 826              		.section	.data.is_injection_allowed,"aw"
+ 829              	is_injection_allowed:
+ 830 0000 01       		.byte	1
+ 831              		.section	.bss.injection_initialized,"aw",%nobits
+ 834              	injection_initialized:
+ 835 0000 00       		.space	1
+ 836              		.section	.bss.number_of_injections,"aw",%nobits
+ 839              	number_of_injections:
+ 840 0000 00       		.space	1
+ 841              		.section	.bss.number_of_events,"aw",%nobits
+ 844              	number_of_events:
+ 845 0000 00       		.space	1
+ 846              		.global	injection_events
+ 847              		.section	.bss.injection_events,"aw",%nobits
+ 848              		.align	2
+ 851              	injection_events:
+ 852 0000 00000000 		.space	192
+ 852      00000000 
+ 852      00000000 
+ 852      00000000 
+ 852      00000000 
+ 853              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 injection.c
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:18     .rodata.injection_switch_to_batch.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:22     .text.injection_switch_to_batch:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:27     .text.injection_switch_to_batch:00000000 injection_switch_to_batch
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:64     .text.injection_switch_to_batch:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:824    .bss.operating_in_forced_batch_injection:00000000 operating_in_forced_batch_injection
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:851    .bss.injection_events:00000000 injection_events
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:844    .bss.number_of_events:00000000 number_of_events
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:73     .text.injection_switch_to_sequential:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:78     .text.injection_switch_to_sequential:00000000 injection_switch_to_sequential
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:119    .text.injection_switch_to_sequential:0000004c $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:130    .text.injector_stop_injection:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:135    .text.injector_stop_injection:00000000 injector_stop_injection
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:160    .rodata.injection_watchdog_check.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:164    .text.injection_watchdog_check:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:169    .text.injection_watchdog_check:00000000 injection_watchdog_check
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:207    .text.injection_watchdog_check:00000048 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:213    .text.injector_start_injection:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:218    .text.injector_start_injection:00000000 injector_start_injection
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:243    .text.schedule_injection_event:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:248    .text.schedule_injection_event:00000000 schedule_injection_event
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:280    .text.schedule_injection_event:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:284    .rodata.injection_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:289    .text.injection_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:295    .text.injection_init:00000000 injection_init
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:476    .text.injection_init:0000016c $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:839    .bss.number_of_injections:00000000 number_of_injections
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:834    .bss.injection_initialized:00000000 injection_initialized
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:493    .text.get_pulse_width:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:499    .text.get_pulse_width:00000000 get_pulse_width
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:525    .text.get_pulse_width:00000044 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:533    .rodata.injection_trigger_event_handle.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:537    .text.injection_trigger_event_handle:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:543    .text.injection_trigger_event_handle:00000000 injection_trigger_event_handle
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:787    .text.injection_trigger_event_handle:00000270 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:829    .data.is_injection_allowed:00000000 is_injection_allowed
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:802    .text.injection_disable:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:808    .text.injection_disable:00000000 injection_disable
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:819    .text.injection_disable:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:825    .bss.operating_in_forced_batch_injection:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:835    .bss.injection_initialized:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:840    .bss.number_of_injections:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:845    .bss.number_of_events:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s:848    .bss.injection_events:00000000 $d
+
+UNDEFINED SYMBOLS
+log_error
+config
+injector_output
+output_set
+get_time_us
+runtime
+scheduler_schedule_event_with_arg
+osTimerNew
+osTimerStart
+fuel_get_required_mass_petrol_per_cycle
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccKppzuZ.s 			page 17
+
+
+camshaft_get_phase
+crankshaft_get_next_trigger_angle
+is_phase_in_range

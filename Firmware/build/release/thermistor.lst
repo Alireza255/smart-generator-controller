@@ -1,0 +1,158 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"thermistor.c"
+  16              		.text
+  17              		.section	.rodata.thermistor_init.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 54686572 		.ascii	"Thermistor init failed!\000"
+  20      6D697374 
+  20      6F722069 
+  20      6E697420 
+  20      6661696C 
+  21              		.section	.text.thermistor_init,"ax",%progbits
+  22              		.align	1
+  23              		.global	thermistor_init
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  28              	thermistor_init:
+  29              		@ args = 28, pretend = 16, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 84B0     		sub	sp, sp, #16
+  32 0002 10B5     		push	{r4, lr}
+  33 0004 2DED028B 		vpush.64	{d8}
+  34 0008 0DF1140C 		add	ip, sp, #20
+  35 000c 8CE80E00 		stm	ip, {r1, r2, r3}
+  36 0010 0028     		cmp	r0, #0
+  37 0012 60D0     		beq	.L5
+  38 0014 0446     		mov	r4, r0
+  39 0016 9DED080A 		vldr.32	s0, [sp, #32]
+  40 001a FFF7FEFF 		bl	logf
+  41 001e F0EE408A 		vmov.f32	s17, s0
+  42 0022 9DED090A 		vldr.32	s0, [sp, #36]
+  43 0026 FFF7FEFF 		bl	logf
+  44 002a B0EE408A 		vmov.f32	s16, s0
+  45 002e 9DED0A0A 		vldr.32	s0, [sp, #40]
+  46 0032 FFF7FEFF 		bl	logf
+  47 0036 9FED2A6A 		vldr.32	s12, .L6
+  48 003a DDED057A 		vldr.32	s15, [sp, #20]
+  49 003e 77EE867A 		vadd.f32	s15, s15, s12
+  50 0042 F7EE005A 		vmov.f32	s11, #1.0e+0
+  51 0046 C5EEA76A 		vdiv.f32	s13, s11, s15
+  52 004a DDED067A 		vldr.32	s15, [sp, #24]
+  53 004e 77EE867A 		vadd.f32	s15, s15, s12
+  54 0052 85EEA77A 		vdiv.f32	s14, s11, s15
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s 			page 2
+
+
+  55 0056 DDED077A 		vldr.32	s15, [sp, #28]
+  56 005a 77EE867A 		vadd.f32	s15, s15, s12
+  57 005e 85EEA76A 		vdiv.f32	s12, s11, s15
+  58 0062 37EE667A 		vsub.f32	s14, s14, s13
+  59 0066 78EE685A 		vsub.f32	s11, s16, s17
+  60 006a C7EE257A 		vdiv.f32	s15, s14, s11
+  61 006e 36EE666A 		vsub.f32	s12, s12, s13
+  62 0072 70EE685A 		vsub.f32	s11, s0, s17
+  63 0076 86EE257A 		vdiv.f32	s14, s12, s11
+  64 007a 37EE677A 		vsub.f32	s14, s14, s15
+  65 007e 30EE486A 		vsub.f32	s12, s0, s16
+  66 0082 C7EE065A 		vdiv.f32	s11, s14, s12
+  67 0086 38EE887A 		vadd.f32	s14, s17, s16
+  68 008a 37EE007A 		vadd.f32	s14, s14, s0
+  69 008e 85EE876A 		vdiv.f32	s12, s11, s14
+  70 0092 84ED056A 		vstr.32	s12, [r4, #20]
+  71 0096 68EEA85A 		vmul.f32	s11, s17, s17
+  72 009a 28EE887A 		vmul.f32	s14, s17, s16
+  73 009e 35EE877A 		vadd.f32	s14, s11, s14
+  74 00a2 28EE088A 		vmul.f32	s16, s16, s16
+  75 00a6 37EE087A 		vadd.f32	s14, s14, s16
+  76 00aa 26EE077A 		vmul.f32	s14, s12, s14
+  77 00ae 77EEC77A 		vsub.f32	s15, s15, s14
+  78 00b2 C4ED047A 		vstr.32	s15, [r4, #16]
+  79 00b6 26EE256A 		vmul.f32	s12, s12, s11
+  80 00ba 77EE867A 		vadd.f32	s15, s15, s12
+  81 00be 27EEA80A 		vmul.f32	s0, s15, s17
+  82 00c2 76EEC06A 		vsub.f32	s13, s13, s0
+  83 00c6 C4ED036A 		vstr.32	s13, [r4, #12]
+  84              	.L1:
+  85 00ca BDEC028B 		vldm	sp!, {d8}
+  86 00ce BDE81040 		pop	{r4, lr}
+  87 00d2 04B0     		add	sp, sp, #16
+  88 00d4 7047     		bx	lr
+  89              	.L5:
+  90 00d6 0348     		ldr	r0, .L6+4
+  91 00d8 FFF7FEFF 		bl	log_error
+  92 00dc F5E7     		b	.L1
+  93              	.L7:
+  94 00de 00BF     		.align	2
+  95              	.L6:
+  96 00e0 33938843 		.word	1133024051
+  97 00e4 00000000 		.word	.LC0
+  99              		.section	.text.thermistor_get_temp,"ax",%progbits
+ 100              		.align	1
+ 101              		.global	thermistor_get_temp
+ 102              		.syntax unified
+ 103              		.thumb
+ 104              		.thumb_func
+ 106              	thermistor_get_temp:
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109 0000 10B5     		push	{r4, lr}
+ 110 0002 0446     		mov	r4, r0
+ 111 0004 FFF7FEFF 		bl	resistor_get_resistance
+ 112 0008 FFF7FEFF 		bl	logf
+ 113 000c 60EE006A 		vmul.f32	s13, s0, s0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s 			page 3
+
+
+ 114 0010 66EE806A 		vmul.f32	s13, s13, s0
+ 115 0014 D4ED037A 		vldr.32	s15, [r4, #12]
+ 116 0018 94ED047A 		vldr.32	s14, [r4, #16]
+ 117 001c 27EE007A 		vmul.f32	s14, s14, s0
+ 118 0020 77EE877A 		vadd.f32	s15, s15, s14
+ 119 0024 94ED057A 		vldr.32	s14, [r4, #20]
+ 120 0028 27EE267A 		vmul.f32	s14, s14, s13
+ 121 002c 77EE877A 		vadd.f32	s15, s15, s14
+ 122 0030 B7EE007A 		vmov.f32	s14, #1.0e+0
+ 123 0034 87EE270A 		vdiv.f32	s0, s14, s15
+ 124 0038 DFED027A 		vldr.32	s15, .L10
+ 125 003c 30EE670A 		vsub.f32	s0, s0, s15
+ 126 0040 10BD     		pop	{r4, pc}
+ 127              	.L11:
+ 128 0042 00BF     		.align	2
+ 129              	.L10:
+ 130 0044 33938843 		.word	1133024051
+ 132              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 thermistor.c
+C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s:18     .rodata.thermistor_init.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s:22     .text.thermistor_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s:28     .text.thermistor_init:00000000 thermistor_init
+C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s:96     .text.thermistor_init:000000e0 $d
+C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s:100    .text.thermistor_get_temp:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s:106    .text.thermistor_get_temp:00000000 thermistor_get_temp
+C:\Users\alireza\AppData\Local\Temp\ccPxzXYB.s:130    .text.thermistor_get_temp:00000044 $d
+
+UNDEFINED SYMBOLS
+logf
+log_error
+resistor_get_resistance

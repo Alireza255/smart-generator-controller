@@ -1,0 +1,80 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"timing_light.c"
+  16              		.text
+  17              		.section	.text.turn_off_pin,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	turn_off_pin:
+  24              		@ args = 0, pretend = 0, frame = 0
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26 0000 18B1     		cbz	r0, .L4
+  27 0002 08B5     		push	{r3, lr}
+  28 0004 FFF7FEFF 		bl	output_override_clear
+  29 0008 08BD     		pop	{r3, pc}
+  30              	.L4:
+  31 000a 7047     		bx	lr
+  33              		.section	.text.timing_light_pulse_a_pin,"ax",%progbits
+  34              		.align	1
+  35              		.global	timing_light_pulse_a_pin
+  36              		.syntax unified
+  37              		.thumb
+  38              		.thumb_func
+  40              	timing_light_pulse_a_pin:
+  41              		@ args = 0, pretend = 0, frame = 0
+  42              		@ frame_needed = 0, uses_anonymous_args = 0
+  43 0000 68B1     		cbz	r0, .L10
+  44 0002 10B5     		push	{r4, lr}
+  45 0004 0446     		mov	r4, r0
+  46 0006 FFF7FEFF 		bl	get_time_us
+  47 000a 2246     		mov	r2, r4
+  48 000c 0449     		ldr	r1, .L13
+  49 000e 6430     		adds	r0, r0, #100
+  50 0010 FFF7FEFF 		bl	scheduler_schedule_event_with_arg
+  51 0014 0121     		movs	r1, #1
+  52 0016 2046     		mov	r0, r4
+  53 0018 FFF7FEFF 		bl	output_override
+  54 001c 10BD     		pop	{r4, pc}
+  55              	.L10:
+  56 001e 7047     		bx	lr
+  57              	.L14:
+  58              		.align	2
+  59              	.L13:
+  60 0020 00000000 		.word	turn_off_pin
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s 			page 2
+
+
+  62              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 timing_light.c
+C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s:18     .text.turn_off_pin:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s:23     .text.turn_off_pin:00000000 turn_off_pin
+C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s:34     .text.timing_light_pulse_a_pin:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s:40     .text.timing_light_pulse_a_pin:00000000 timing_light_pulse_a_pin
+C:\Users\alireza\AppData\Local\Temp\cc7A9c1R.s:60     .text.timing_light_pulse_a_pin:00000020 $d
+
+UNDEFINED SYMBOLS
+output_override_clear
+get_time_us
+scheduler_schedule_event_with_arg
+output_override

@@ -1,0 +1,299 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_it.c"
+  16              		.text
+  17              		.section	.text.NMI_Handler,"ax",%progbits
+  18              		.align	1
+  19              		.global	NMI_Handler
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	NMI_Handler:
+  25              		@ Volatile: function does not return.
+  26              		@ args = 0, pretend = 0, frame = 0
+  27              		@ frame_needed = 0, uses_anonymous_args = 0
+  28              		@ link register save eliminated.
+  29              	.L2:
+  30 0000 FEE7     		b	.L2
+  32              		.section	.text.HardFault_Handler,"ax",%progbits
+  33              		.align	1
+  34              		.global	HardFault_Handler
+  35              		.syntax unified
+  36              		.thumb
+  37              		.thumb_func
+  39              	HardFault_Handler:
+  40              		@ args = 0, pretend = 0, frame = 64
+  41              		@ frame_needed = 0, uses_anonymous_args = 0
+  42              		@ link register save eliminated.
+  43 0000 90B0     		sub	sp, sp, #64
+  44              		.syntax unified
+  45              	@ 975 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  46 0002 EFF31483 		MRS r3, control
+  47              	@ 0 "" 2
+  48              		.thumb
+  49              		.syntax unified
+  50 0006 13F0020F 		tst	r3, #2
+  51 000a 25D0     		beq	.L4
+  52              		.syntax unified
+  53              	@ 97 "Core/Src/stm32f4xx_it.c" 1
+  54 000c EFF30983 		MRS r3, PSP
+  55              	@ 0 "" 2
+  56              		.thumb
+  57              		.syntax unified
+  58              	.L5:
+  59 0010 1A68     		ldr	r2, [r3]
+  60 0012 0F92     		str	r2, [sp, #60]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s 			page 2
+
+
+  61 0014 5A68     		ldr	r2, [r3, #4]
+  62 0016 0E92     		str	r2, [sp, #56]
+  63 0018 9A68     		ldr	r2, [r3, #8]
+  64 001a 0D92     		str	r2, [sp, #52]
+  65 001c DA68     		ldr	r2, [r3, #12]
+  66 001e 0C92     		str	r2, [sp, #48]
+  67 0020 1A69     		ldr	r2, [r3, #16]
+  68 0022 0B92     		str	r2, [sp, #44]
+  69 0024 5A69     		ldr	r2, [r3, #20]
+  70 0026 0A92     		str	r2, [sp, #40]
+  71 0028 9A69     		ldr	r2, [r3, #24]
+  72 002a 0992     		str	r2, [sp, #36]
+  73 002c DA69     		ldr	r2, [r3, #28]
+  74 002e 0892     		str	r2, [sp, #32]
+  75 0030 0B4A     		ldr	r2, .L8
+  76 0032 916A     		ldr	r1, [r2, #40]
+  77 0034 0791     		str	r1, [sp, #28]
+  78 0036 D16A     		ldr	r1, [r2, #44]
+  79 0038 0691     		str	r1, [sp, #24]
+  80 003a 516B     		ldr	r1, [r2, #52]
+  81 003c 0591     		str	r1, [sp, #20]
+  82 003e 926B     		ldr	r2, [r2, #56]
+  83 0040 0492     		str	r2, [sp, #16]
+  84 0042 53F8042C 		ldr	r2, [r3, #-4]
+  85 0046 0392     		str	r2, [sp, #12]
+  86 0048 53F8082C 		ldr	r2, [r3, #-8]
+  87 004c 0292     		str	r2, [sp, #8]
+  88 004e 53F80C3C 		ldr	r3, [r3, #-12]
+  89 0052 0193     		str	r3, [sp, #4]
+  90              		.syntax unified
+  91              	@ 124 "Core/Src/stm32f4xx_it.c" 1
+  92 0054 00BF     		nop
+  93              	@ 0 "" 2
+  94              		.thumb
+  95              		.syntax unified
+  96              	.L6:
+  97 0056 FEE7     		b	.L6
+  98              	.L4:
+  99              		.syntax unified
+ 100              	@ 100 "Core/Src/stm32f4xx_it.c" 1
+ 101 0058 EFF30883 		MRS r3, MSP
+ 102              	@ 0 "" 2
+ 103              		.thumb
+ 104              		.syntax unified
+ 105 005c D8E7     		b	.L5
+ 106              	.L9:
+ 107 005e 00BF     		.align	2
+ 108              	.L8:
+ 109 0060 00ED00E0 		.word	-536810240
+ 111              		.section	.text.MemManage_Handler,"ax",%progbits
+ 112              		.align	1
+ 113              		.global	MemManage_Handler
+ 114              		.syntax unified
+ 115              		.thumb
+ 116              		.thumb_func
+ 118              	MemManage_Handler:
+ 119              		@ Volatile: function does not return.
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s 			page 3
+
+
+ 120              		@ args = 0, pretend = 0, frame = 0
+ 121              		@ frame_needed = 0, uses_anonymous_args = 0
+ 122              		@ link register save eliminated.
+ 123              	.L11:
+ 124 0000 FEE7     		b	.L11
+ 126              		.section	.text.BusFault_Handler,"ax",%progbits
+ 127              		.align	1
+ 128              		.global	BusFault_Handler
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 133              	BusFault_Handler:
+ 134              		@ Volatile: function does not return.
+ 135              		@ args = 0, pretend = 0, frame = 0
+ 136              		@ frame_needed = 0, uses_anonymous_args = 0
+ 137              		@ link register save eliminated.
+ 138              	.L13:
+ 139 0000 FEE7     		b	.L13
+ 141              		.section	.text.UsageFault_Handler,"ax",%progbits
+ 142              		.align	1
+ 143              		.global	UsageFault_Handler
+ 144              		.syntax unified
+ 145              		.thumb
+ 146              		.thumb_func
+ 148              	UsageFault_Handler:
+ 149              		@ Volatile: function does not return.
+ 150              		@ args = 0, pretend = 0, frame = 0
+ 151              		@ frame_needed = 0, uses_anonymous_args = 0
+ 152              		@ link register save eliminated.
+ 153              	.L15:
+ 154 0000 FEE7     		b	.L15
+ 156              		.section	.text.DebugMon_Handler,"ax",%progbits
+ 157              		.align	1
+ 158              		.global	DebugMon_Handler
+ 159              		.syntax unified
+ 160              		.thumb
+ 161              		.thumb_func
+ 163              	DebugMon_Handler:
+ 164              		@ args = 0, pretend = 0, frame = 0
+ 165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 166              		@ link register save eliminated.
+ 167 0000 7047     		bx	lr
+ 169              		.section	.text.EXTI9_5_IRQHandler,"ax",%progbits
+ 170              		.align	1
+ 171              		.global	EXTI9_5_IRQHandler
+ 172              		.syntax unified
+ 173              		.thumb
+ 174              		.thumb_func
+ 176              	EXTI9_5_IRQHandler:
+ 177              		@ args = 0, pretend = 0, frame = 0
+ 178              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179 0000 08B5     		push	{r3, lr}
+ 180 0002 4FF48070 		mov	r0, #256
+ 181 0006 FFF7FEFF 		bl	HAL_GPIO_EXTI_IRQHandler
+ 182 000a 4FF40070 		mov	r0, #512
+ 183 000e FFF7FEFF 		bl	HAL_GPIO_EXTI_IRQHandler
+ 184 0012 08BD     		pop	{r3, pc}
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s 			page 4
+
+
+ 186              		.section	.text.TIM1_TRG_COM_TIM11_IRQHandler,"ax",%progbits
+ 187              		.align	1
+ 188              		.global	TIM1_TRG_COM_TIM11_IRQHandler
+ 189              		.syntax unified
+ 190              		.thumb
+ 191              		.thumb_func
+ 193              	TIM1_TRG_COM_TIM11_IRQHandler:
+ 194              		@ args = 0, pretend = 0, frame = 0
+ 195              		@ frame_needed = 0, uses_anonymous_args = 0
+ 196 0000 08B5     		push	{r3, lr}
+ 197 0002 0248     		ldr	r0, .L21
+ 198 0004 FFF7FEFF 		bl	HAL_TIM_IRQHandler
+ 199 0008 08BD     		pop	{r3, pc}
+ 200              	.L22:
+ 201 000a 00BF     		.align	2
+ 202              	.L21:
+ 203 000c 00000000 		.word	htim11
+ 205              		.section	.text.TIM2_IRQHandler,"ax",%progbits
+ 206              		.align	1
+ 207              		.global	TIM2_IRQHandler
+ 208              		.syntax unified
+ 209              		.thumb
+ 210              		.thumb_func
+ 212              	TIM2_IRQHandler:
+ 213              		@ args = 0, pretend = 0, frame = 0
+ 214              		@ frame_needed = 0, uses_anonymous_args = 0
+ 215 0000 08B5     		push	{r3, lr}
+ 216 0002 FFF7FEFF 		bl	scheduler_timer_callback
+ 217 0006 0248     		ldr	r0, .L25
+ 218 0008 FFF7FEFF 		bl	HAL_TIM_IRQHandler
+ 219 000c 08BD     		pop	{r3, pc}
+ 220              	.L26:
+ 221 000e 00BF     		.align	2
+ 222              	.L25:
+ 223 0010 00000000 		.word	htim2
+ 225              		.section	.text.DMA2_Stream0_IRQHandler,"ax",%progbits
+ 226              		.align	1
+ 227              		.global	DMA2_Stream0_IRQHandler
+ 228              		.syntax unified
+ 229              		.thumb
+ 230              		.thumb_func
+ 232              	DMA2_Stream0_IRQHandler:
+ 233              		@ args = 0, pretend = 0, frame = 0
+ 234              		@ frame_needed = 0, uses_anonymous_args = 0
+ 235 0000 08B5     		push	{r3, lr}
+ 236 0002 0248     		ldr	r0, .L29
+ 237 0004 FFF7FEFF 		bl	HAL_DMA_IRQHandler
+ 238 0008 08BD     		pop	{r3, pc}
+ 239              	.L30:
+ 240 000a 00BF     		.align	2
+ 241              	.L29:
+ 242 000c 00000000 		.word	hdma_adc1
+ 244              		.section	.text.OTG_FS_IRQHandler,"ax",%progbits
+ 245              		.align	1
+ 246              		.global	OTG_FS_IRQHandler
+ 247              		.syntax unified
+ 248              		.thumb
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s 			page 5
+
+
+ 249              		.thumb_func
+ 251              	OTG_FS_IRQHandler:
+ 252              		@ args = 0, pretend = 0, frame = 0
+ 253              		@ frame_needed = 0, uses_anonymous_args = 0
+ 254 0000 08B5     		push	{r3, lr}
+ 255 0002 0248     		ldr	r0, .L33
+ 256 0004 FFF7FEFF 		bl	HAL_PCD_IRQHandler
+ 257 0008 08BD     		pop	{r3, pc}
+ 258              	.L34:
+ 259 000a 00BF     		.align	2
+ 260              	.L33:
+ 261 000c 00000000 		.word	hpcd_USB_OTG_FS
+ 263              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_it.c
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:18     .text.NMI_Handler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:24     .text.NMI_Handler:00000000 NMI_Handler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:33     .text.HardFault_Handler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:39     .text.HardFault_Handler:00000000 HardFault_Handler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:109    .text.HardFault_Handler:00000060 $d
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:112    .text.MemManage_Handler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:118    .text.MemManage_Handler:00000000 MemManage_Handler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:127    .text.BusFault_Handler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:133    .text.BusFault_Handler:00000000 BusFault_Handler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:142    .text.UsageFault_Handler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:148    .text.UsageFault_Handler:00000000 UsageFault_Handler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:157    .text.DebugMon_Handler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:163    .text.DebugMon_Handler:00000000 DebugMon_Handler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:170    .text.EXTI9_5_IRQHandler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:176    .text.EXTI9_5_IRQHandler:00000000 EXTI9_5_IRQHandler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:187    .text.TIM1_TRG_COM_TIM11_IRQHandler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:193    .text.TIM1_TRG_COM_TIM11_IRQHandler:00000000 TIM1_TRG_COM_TIM11_IRQHandler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:203    .text.TIM1_TRG_COM_TIM11_IRQHandler:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:206    .text.TIM2_IRQHandler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:212    .text.TIM2_IRQHandler:00000000 TIM2_IRQHandler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:223    .text.TIM2_IRQHandler:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:226    .text.DMA2_Stream0_IRQHandler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:232    .text.DMA2_Stream0_IRQHandler:00000000 DMA2_Stream0_IRQHandler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:242    .text.DMA2_Stream0_IRQHandler:0000000c $d
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:245    .text.OTG_FS_IRQHandler:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:251    .text.OTG_FS_IRQHandler:00000000 OTG_FS_IRQHandler
+C:\Users\alireza\AppData\Local\Temp\ccw6dFz5.s:261    .text.OTG_FS_IRQHandler:0000000c $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_EXTI_IRQHandler
+HAL_TIM_IRQHandler
+htim11
+scheduler_timer_callback
+htim2
+HAL_DMA_IRQHandler
+hdma_adc1
+HAL_PCD_IRQHandler
+hpcd_USB_OTG_FS

@@ -1,0 +1,984 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"trigger_logger.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "controller/utils/trigger_logger.c"
+  20              		.section	.text.trigger_logger_entry_add_composite,"ax",%progbits
+  21              		.align	1
+  22              		.global	trigger_logger_entry_add_composite
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	trigger_logger_entry_add_composite:
+  28              	.LVL0:
+  29              	.LFB235:
+   1:controller/utils/trigger_logger.c **** #include "trigger_logger.h"
+   2:controller/utils/trigger_logger.c **** 
+   3:controller/utils/trigger_logger.c **** static time_us_t tooth_data[FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES] = {0};
+   4:controller/utils/trigger_logger.c **** static uint8_t composite_data[FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES * sizeof(time_us_t) + FRIMWARE_T
+   5:controller/utils/trigger_logger.c **** static volatile bool trigger_logging_enabled = true;
+   6:controller/utils/trigger_logger.c **** static volatile size_t buffer_index = 0;
+   7:controller/utils/trigger_logger.c **** static bool is_logging_composite = 0;
+   8:controller/utils/trigger_logger.c **** 
+   9:controller/utils/trigger_logger.c **** void trigger_logger_entry_add_composite(time_us_t timestamp, composite_logger_state_t state)
+  10:controller/utils/trigger_logger.c **** {
+  30              		.loc 1 10 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  11:controller/utils/trigger_logger.c ****     if (!trigger_logging_enabled) return;
+  35              		.loc 1 11 5 view .LVU1
+  36              		.loc 1 11 9 is_stmt 0 view .LVU2
+  37 0000 264B     		ldr	r3, .L16
+  38 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  39              		.loc 1 11 8 view .LVU3
+  40 0004 002B     		cmp	r3, #0
+  41 0006 34D0     		beq	.L1
+  12:controller/utils/trigger_logger.c ****     if (!is_logging_composite) return;
+  42              		.loc 1 12 5 is_stmt 1 view .LVU4
+  43              		.loc 1 12 9 is_stmt 0 view .LVU5
+  44 0008 254B     		ldr	r3, .L16+4
+  45 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  46              		.loc 1 12 8 view .LVU6
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 2
+
+
+  47 000c 8BB3     		cbz	r3, .L1
+  13:controller/utils/trigger_logger.c ****     if (buffer_index >= FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES - 1)
+  48              		.loc 1 13 5 is_stmt 1 view .LVU7
+  49              		.loc 1 13 22 is_stmt 0 view .LVU8
+  50 000e 254B     		ldr	r3, .L16+8
+  51 0010 1B68     		ldr	r3, [r3]
+  52              		.loc 1 13 8 view .LVU9
+  53 0012 7D2B     		cmp	r3, #125
+  54 0014 2ED8     		bhi	.L15
+  14:controller/utils/trigger_logger.c ****     {
+  15:controller/utils/trigger_logger.c ****         change_bit(&runtime.status, STATUS_TOOTH_LOG_READY, true);
+  16:controller/utils/trigger_logger.c ****         return;
+  17:controller/utils/trigger_logger.c ****     }
+  18:controller/utils/trigger_logger.c ****     change_bit(&runtime.status, STATUS_TOOTH_LOG_READY, false);
+  55              		.loc 1 18 5 is_stmt 1 view .LVU10
+  56              	.LVL1:
+  57              	.LBB22:
+  58              	.LBI22:
+  59              		.file 2 "controller/utils/utils.h"
+   1:controller/utils/utils.h **** /**
+   2:controller/utils/utils.h ****  * @file utils.h
+   3:controller/utils/utils.h ****  * @brief Header file containing utility functions and definitions for the smart generator controll
+   4:controller/utils/utils.h ****  *
+   5:controller/utils/utils.h ****  * This file provides declarations for utility functions and macros that are
+   6:controller/utils/utils.h ****  * used throughout the firmware to support various functionalities.
+   7:controller/utils/utils.h ****  *
+   8:controller/utils/utils.h ****  * @note Ensure that this file is included wherever utility functions are required.
+   9:controller/utils/utils.h ****  */
+  10:controller/utils/utils.h **** #ifndef UTILS_H
+  11:controller/utils/utils.h **** #define UTILS_H
+  12:controller/utils/utils.h **** 
+  13:controller/utils/utils.h **** #include "types.h"
+  14:controller/utils/utils.h **** #include "math.h"
+  15:controller/utils/utils.h **** 
+  16:controller/utils/utils.h **** #define PI 3.14159265358979323846f
+  17:controller/utils/utils.h **** #define IS_IN_RANGE(value, min, max) ((value) >= (min) && (value) <= (max))
+  18:controller/utils/utils.h **** #define ABS(value) ((value) < 0 ? -(value) : (value))
+  19:controller/utils/utils.h **** #define CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+  20:controller/utils/utils.h **** 
+  21:controller/utils/utils.h **** #define SIZE_OF_ARRAY(arr) (sizeof(arr) / sizeof(arr[0]))
+  22:controller/utils/utils.h **** 
+  23:controller/utils/utils.h **** bool is_phase_in_range(float test, float current, float next);
+  24:controller/utils/utils.h **** 
+  25:controller/utils/utils.h **** size_t nearest_index_float(const float *arr, size_t size, float target);
+  26:controller/utils/utils.h **** size_t nearest_index_u8(const uint8_t *arr, size_t size, uint8_t target);
+  27:controller/utils/utils.h **** size_t nearest_index_u16(const uint16_t *arr, size_t size, uint16_t target);
+  28:controller/utils/utils.h **** size_t nearest_index_u32(const uint32_t *arr, size_t size, uint32_t target);
+  29:controller/utils/utils.h **** 
+  30:controller/utils/utils.h **** static inline void change_bit(uint32_t *var, uint8_t bit, bool state)
+  60              		.loc 2 30 20 view .LVU11
+  61              	.LBB23:
+  31:controller/utils/utils.h **** {
+  32:controller/utils/utils.h ****     if (bit > 31)
+  62              		.loc 2 32 5 view .LVU12
+  33:controller/utils/utils.h ****     {
+  34:controller/utils/utils.h ****         return;
+  35:controller/utils/utils.h ****     }
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 3
+
+
+  36:controller/utils/utils.h ****     if (state)
+  63              		.loc 2 36 5 view .LVU13
+  37:controller/utils/utils.h ****     {
+  38:controller/utils/utils.h ****         *var |= (1u << bit);
+  39:controller/utils/utils.h ****     }
+  40:controller/utils/utils.h ****     else
+  41:controller/utils/utils.h ****     {
+  42:controller/utils/utils.h ****         *var &= ~(1u << bit);
+  64              		.loc 2 42 9 view .LVU14
+  65 0016 244A     		ldr	r2, .L16+12
+  66 0018 1368     		ldr	r3, [r2]
+  67              		.loc 2 42 14 is_stmt 0 view .LVU15
+  68 001a 23F00053 		bic	r3, r3, #536870912
+  69 001e 1360     		str	r3, [r2]
+  70              	.LVL2:
+  71              		.loc 2 42 14 view .LVU16
+  72              	.LBE23:
+  73              	.LBE22:
+  19:controller/utils/trigger_logger.c **** 
+  20:controller/utils/trigger_logger.c ****     uint8_t *entry_index = &composite_data[buffer_index];
+  74              		.loc 1 20 5 is_stmt 1 view .LVU17
+  75              		.loc 1 20 43 is_stmt 0 view .LVU18
+  76 0020 204B     		ldr	r3, .L16+8
+  77 0022 1B68     		ldr	r3, [r3]
+  78              		.loc 1 20 14 view .LVU19
+  79 0024 214A     		ldr	r2, .L16+16
+  80 0026 03EB020C 		add	ip, r3, r2
+  81              	.LVL3:
+  21:controller/utils/trigger_logger.c ****     *(time_us_t*)entry_index = timestamp;
+  82              		.loc 1 21 5 is_stmt 1 view .LVU20
+  83              		.loc 1 21 30 is_stmt 0 view .LVU21
+  84 002a D050     		str	r0, [r2, r3]
+  22:controller/utils/trigger_logger.c ****     entry_index += sizeof(time_us_t);
+  85              		.loc 1 22 5 is_stmt 1 view .LVU22
+  86              	.LVL4:
+  23:controller/utils/trigger_logger.c ****     uint8_t state_translated = 0;
+  87              		.loc 1 23 5 view .LVU23
+  24:controller/utils/trigger_logger.c ****     change_bit8(&state_translated, 0, state.primary);
+  88              		.loc 1 24 5 view .LVU24
+  89              	.LBB24:
+  90              	.LBI24:
+  43:controller/utils/utils.h ****     }
+  44:controller/utils/utils.h **** }
+  45:controller/utils/utils.h **** static inline void change_bit8(uint8_t *var, uint8_t bit, bool state)
+  91              		.loc 2 45 20 view .LVU25
+  92              	.LBB25:
+  46:controller/utils/utils.h **** {
+  47:controller/utils/utils.h ****     if (bit > 7)
+  93              		.loc 2 47 5 view .LVU26
+  48:controller/utils/utils.h ****     {
+  49:controller/utils/utils.h ****         return;   // invalid bit index
+  50:controller/utils/utils.h ****     }
+  51:controller/utils/utils.h **** 
+  52:controller/utils/utils.h ****     if (state)
+  94              		.loc 2 52 5 view .LVU27
+  95              		.loc 2 52 8 is_stmt 0 view .LVU28
+  96 002c 11F0010F 		tst	r1, #1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 4
+
+
+  97 0030 26D0     		beq	.L14
+  53:controller/utils/utils.h ****     {
+  54:controller/utils/utils.h ****         *var |= (uint8_t)(1u << bit);     // set bit
+  98              		.loc 2 54 14 view .LVU29
+  99 0032 0123     		movs	r3, #1
+ 100              	.L4:
+ 101              	.LVL5:
+ 102              		.loc 2 54 14 view .LVU30
+ 103              	.LBE25:
+ 104              	.LBE24:
+  25:controller/utils/trigger_logger.c ****     change_bit8(&state_translated, 1, state.secondary);
+ 105              		.loc 1 25 5 is_stmt 1 view .LVU31
+ 106              	.LBB27:
+ 107              	.LBI27:
+  45:controller/utils/utils.h **** {
+ 108              		.loc 2 45 20 view .LVU32
+ 109              	.LBB28:
+  47:controller/utils/utils.h ****     {
+ 110              		.loc 2 47 5 view .LVU33
+  52:controller/utils/utils.h ****     {
+ 111              		.loc 2 52 5 view .LVU34
+  52:controller/utils/utils.h ****     {
+ 112              		.loc 2 52 8 is_stmt 0 view .LVU35
+ 113 0034 11F0020F 		tst	r1, #2
+ 114 0038 01D0     		beq	.L5
+ 115              		.loc 2 54 9 is_stmt 1 view .LVU36
+ 116              		.loc 2 54 14 is_stmt 0 view .LVU37
+ 117 003a 43F00203 		orr	r3, r3, #2
+ 118              	.LVL6:
+ 119              	.L5:
+ 120              		.loc 2 54 14 view .LVU38
+ 121              	.LBE28:
+ 122              	.LBE27:
+  26:controller/utils/trigger_logger.c ****     change_bit8(&state_translated, 2, state.tertiary);
+ 123              		.loc 1 26 5 is_stmt 1 view .LVU39
+ 124              	.LBB29:
+ 125              	.LBI29:
+  45:controller/utils/utils.h **** {
+ 126              		.loc 2 45 20 view .LVU40
+ 127              	.LBB30:
+  47:controller/utils/utils.h ****     {
+ 128              		.loc 2 47 5 view .LVU41
+  52:controller/utils/utils.h ****     {
+ 129              		.loc 2 52 5 view .LVU42
+  52:controller/utils/utils.h ****     {
+ 130              		.loc 2 52 8 is_stmt 0 view .LVU43
+ 131 003e 11F0040F 		tst	r1, #4
+ 132 0042 1FD0     		beq	.L6
+ 133              		.loc 2 54 9 is_stmt 1 view .LVU44
+ 134              		.loc 2 54 14 is_stmt 0 view .LVU45
+ 135 0044 43F00403 		orr	r3, r3, #4
+ 136              	.LVL7:
+ 137              	.L7:
+ 138              		.loc 2 54 14 view .LVU46
+ 139              	.LBE30:
+ 140              	.LBE29:
+  27:controller/utils/trigger_logger.c ****     change_bit8(&state_translated, 3, state.trigger);
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 5
+
+
+ 141              		.loc 1 27 5 is_stmt 1 view .LVU47
+ 142              	.LBB32:
+ 143              	.LBI32:
+  45:controller/utils/utils.h **** {
+ 144              		.loc 2 45 20 view .LVU48
+ 145              	.LBB33:
+  47:controller/utils/utils.h ****     {
+ 146              		.loc 2 47 5 view .LVU49
+  52:controller/utils/utils.h ****     {
+ 147              		.loc 2 52 5 view .LVU50
+  52:controller/utils/utils.h ****     {
+ 148              		.loc 2 52 8 is_stmt 0 view .LVU51
+ 149 0048 11F0080F 		tst	r1, #8
+ 150 004c 1DD0     		beq	.L8
+ 151              		.loc 2 54 9 is_stmt 1 view .LVU52
+ 152              		.loc 2 54 14 is_stmt 0 view .LVU53
+ 153 004e 43F00803 		orr	r3, r3, #8
+ 154              	.LVL8:
+ 155              	.L9:
+ 156              		.loc 2 54 14 view .LVU54
+ 157              	.LBE33:
+ 158              	.LBE32:
+  28:controller/utils/trigger_logger.c ****     change_bit8(&state_translated, 4, state.sync);
+ 159              		.loc 1 28 5 is_stmt 1 view .LVU55
+ 160              	.LBB35:
+ 161              	.LBI35:
+  45:controller/utils/utils.h **** {
+ 162              		.loc 2 45 20 view .LVU56
+ 163              	.LBB36:
+  47:controller/utils/utils.h ****     {
+ 164              		.loc 2 47 5 view .LVU57
+  52:controller/utils/utils.h ****     {
+ 165              		.loc 2 52 5 view .LVU58
+  52:controller/utils/utils.h ****     {
+ 166              		.loc 2 52 8 is_stmt 0 view .LVU59
+ 167 0052 11F0100F 		tst	r1, #16
+ 168 0056 1BD0     		beq	.L10
+ 169              		.loc 2 54 9 is_stmt 1 view .LVU60
+ 170              		.loc 2 54 14 is_stmt 0 view .LVU61
+ 171 0058 43F01003 		orr	r3, r3, #16
+ 172              	.LVL9:
+ 173              	.L11:
+ 174              		.loc 2 54 14 view .LVU62
+ 175              	.LBE36:
+ 176              	.LBE35:
+  29:controller/utils/trigger_logger.c ****     change_bit8(&state_translated, 5, state.engine_cycle);
+ 177              		.loc 1 29 5 is_stmt 1 view .LVU63
+ 178              	.LBB38:
+ 179              	.LBI38:
+  45:controller/utils/utils.h **** {
+ 180              		.loc 2 45 20 view .LVU64
+ 181              	.LBB39:
+  47:controller/utils/utils.h ****     {
+ 182              		.loc 2 47 5 view .LVU65
+  52:controller/utils/utils.h ****     {
+ 183              		.loc 2 52 5 view .LVU66
+  52:controller/utils/utils.h ****     {
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 6
+
+
+ 184              		.loc 2 52 8 is_stmt 0 view .LVU67
+ 185 005c 11F0200F 		tst	r1, #32
+ 186 0060 19D0     		beq	.L12
+ 187              		.loc 2 54 9 is_stmt 1 view .LVU68
+ 188              		.loc 2 54 14 is_stmt 0 view .LVU69
+ 189 0062 43F02003 		orr	r3, r3, #32
+ 190              	.LVL10:
+ 191              	.L13:
+ 192              		.loc 2 54 14 view .LVU70
+ 193              	.LBE39:
+ 194              	.LBE38:
+  30:controller/utils/trigger_logger.c ****     *(uint8_t*)entry_index = state_translated;
+ 195              		.loc 1 30 5 is_stmt 1 view .LVU71
+ 196              		.loc 1 30 28 is_stmt 0 view .LVU72
+ 197 0066 8CF80430 		strb	r3, [ip, #4]
+  31:controller/utils/trigger_logger.c ****     buffer_index++;
+ 198              		.loc 1 31 5 is_stmt 1 view .LVU73
+ 199              		.loc 1 31 17 is_stmt 0 view .LVU74
+ 200 006a 0E4A     		ldr	r2, .L16+8
+ 201 006c 1368     		ldr	r3, [r2]
+ 202              	.LVL11:
+ 203              		.loc 1 31 17 view .LVU75
+ 204 006e 0133     		adds	r3, r3, #1
+ 205 0070 1360     		str	r3, [r2]
+ 206              	.LVL12:
+ 207              	.L1:
+  32:controller/utils/trigger_logger.c **** }
+ 208              		.loc 1 32 1 view .LVU76
+ 209 0072 7047     		bx	lr
+ 210              	.L15:
+  15:controller/utils/trigger_logger.c ****         return;
+ 211              		.loc 1 15 9 is_stmt 1 view .LVU77
+ 212              	.LVL13:
+ 213              	.LBB41:
+ 214              	.LBI41:
+  30:controller/utils/utils.h **** {
+ 215              		.loc 2 30 20 view .LVU78
+ 216              	.LBB42:
+  32:controller/utils/utils.h ****     {
+ 217              		.loc 2 32 5 view .LVU79
+  36:controller/utils/utils.h ****     {
+ 218              		.loc 2 36 5 view .LVU80
+  38:controller/utils/utils.h ****     }
+ 219              		.loc 2 38 9 view .LVU81
+ 220 0074 0C4A     		ldr	r2, .L16+12
+ 221 0076 1368     		ldr	r3, [r2]
+  38:controller/utils/utils.h ****     }
+ 222              		.loc 2 38 14 is_stmt 0 view .LVU82
+ 223 0078 43F00053 		orr	r3, r3, #536870912
+ 224 007c 1360     		str	r3, [r2]
+ 225              	.LVL14:
+  38:controller/utils/utils.h ****     }
+ 226              		.loc 2 38 14 view .LVU83
+ 227              	.LBE42:
+ 228              	.LBE41:
+  16:controller/utils/trigger_logger.c ****     }
+ 229              		.loc 1 16 9 is_stmt 1 view .LVU84
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 7
+
+
+ 230 007e 7047     		bx	lr
+ 231              	.LVL15:
+ 232              	.L14:
+ 233              	.LBB43:
+ 234              	.LBB26:
+  55:controller/utils/utils.h ****     }
+  56:controller/utils/utils.h ****     else
+  57:controller/utils/utils.h ****     {
+  58:controller/utils/utils.h ****         *var &= (uint8_t)~(1u << bit);    // clear bit
+ 235              		.loc 2 58 14 is_stmt 0 view .LVU85
+ 236 0080 0023     		movs	r3, #0
+ 237 0082 D7E7     		b	.L4
+ 238              	.LVL16:
+ 239              	.L6:
+ 240              		.loc 2 58 14 view .LVU86
+ 241              	.LBE26:
+ 242              	.LBE43:
+ 243              	.LBB44:
+ 244              	.LBB31:
+ 245              		.loc 2 58 9 is_stmt 1 view .LVU87
+ 246              		.loc 2 58 14 is_stmt 0 view .LVU88
+ 247 0084 03F0FB03 		and	r3, r3, #251
+ 248              	.LVL17:
+ 249              		.loc 2 58 14 view .LVU89
+ 250 0088 DEE7     		b	.L7
+ 251              	.LVL18:
+ 252              	.L8:
+ 253              		.loc 2 58 14 view .LVU90
+ 254              	.LBE31:
+ 255              	.LBE44:
+ 256              	.LBB45:
+ 257              	.LBB34:
+ 258              		.loc 2 58 9 is_stmt 1 view .LVU91
+ 259              		.loc 2 58 14 is_stmt 0 view .LVU92
+ 260 008a 03F0F703 		and	r3, r3, #247
+ 261              	.LVL19:
+ 262              		.loc 2 58 14 view .LVU93
+ 263 008e E0E7     		b	.L9
+ 264              	.LVL20:
+ 265              	.L10:
+ 266              		.loc 2 58 14 view .LVU94
+ 267              	.LBE34:
+ 268              	.LBE45:
+ 269              	.LBB46:
+ 270              	.LBB37:
+ 271              		.loc 2 58 9 is_stmt 1 view .LVU95
+ 272              		.loc 2 58 14 is_stmt 0 view .LVU96
+ 273 0090 03F0EF03 		and	r3, r3, #239
+ 274              	.LVL21:
+ 275              		.loc 2 58 14 view .LVU97
+ 276 0094 E2E7     		b	.L11
+ 277              	.LVL22:
+ 278              	.L12:
+ 279              		.loc 2 58 14 view .LVU98
+ 280              	.LBE37:
+ 281              	.LBE46:
+ 282              	.LBB47:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 8
+
+
+ 283              	.LBB40:
+ 284              		.loc 2 58 9 is_stmt 1 view .LVU99
+ 285              		.loc 2 58 14 is_stmt 0 view .LVU100
+ 286 0096 03F0DF03 		and	r3, r3, #223
+ 287              	.LVL23:
+ 288              		.loc 2 58 14 view .LVU101
+ 289 009a E4E7     		b	.L13
+ 290              	.L17:
+ 291              		.align	2
+ 292              	.L16:
+ 293 009c 00000000 		.word	trigger_logging_enabled
+ 294 00a0 00000000 		.word	is_logging_composite
+ 295 00a4 00000000 		.word	buffer_index
+ 296 00a8 00000000 		.word	runtime
+ 297 00ac 00000000 		.word	composite_data
+ 298              	.LBE40:
+ 299              	.LBE47:
+ 300              		.cfi_endproc
+ 301              	.LFE235:
+ 303              		.section	.text.trigger_logger_entry_add_tooth,"ax",%progbits
+ 304              		.align	1
+ 305              		.global	trigger_logger_entry_add_tooth
+ 306              		.syntax unified
+ 307              		.thumb
+ 308              		.thumb_func
+ 310              	trigger_logger_entry_add_tooth:
+ 311              	.LVL24:
+ 312              	.LFB236:
+  33:controller/utils/trigger_logger.c **** void trigger_logger_entry_add_tooth(time_us_t timestamp)
+  34:controller/utils/trigger_logger.c **** {
+ 313              		.loc 1 34 1 is_stmt 1 view -0
+ 314              		.cfi_startproc
+ 315              		@ args = 0, pretend = 0, frame = 0
+ 316              		@ frame_needed = 0, uses_anonymous_args = 0
+ 317              		@ link register save eliminated.
+  35:controller/utils/trigger_logger.c ****     if (!trigger_logging_enabled) return;
+ 318              		.loc 1 35 5 view .LVU103
+ 319              		.loc 1 35 9 is_stmt 0 view .LVU104
+ 320 0000 124B     		ldr	r3, .L25
+ 321 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 322              		.loc 1 35 8 view .LVU105
+ 323 0004 03B3     		cbz	r3, .L22
+  36:controller/utils/trigger_logger.c ****     if (is_logging_composite) return;
+ 324              		.loc 1 36 5 is_stmt 1 view .LVU106
+ 325              		.loc 1 36 9 is_stmt 0 view .LVU107
+ 326 0006 124B     		ldr	r3, .L25+4
+ 327 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 328              		.loc 1 36 8 view .LVU108
+ 329 000a EBB9     		cbnz	r3, .L22
+  37:controller/utils/trigger_logger.c ****     if (buffer_index >= FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES - 1)
+ 330              		.loc 1 37 5 is_stmt 1 view .LVU109
+ 331              		.loc 1 37 22 is_stmt 0 view .LVU110
+ 332 000c 114B     		ldr	r3, .L25+8
+ 333 000e 1B68     		ldr	r3, [r3]
+ 334              		.loc 1 37 8 view .LVU111
+ 335 0010 7D2B     		cmp	r3, #125
+ 336 0012 13D8     		bhi	.L24
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 9
+
+
+  34:controller/utils/trigger_logger.c ****     if (!trigger_logging_enabled) return;
+ 337              		.loc 1 34 1 view .LVU112
+ 338 0014 30B4     		push	{r4, r5}
+ 339              		.cfi_def_cfa_offset 8
+ 340              		.cfi_offset 4, -8
+ 341              		.cfi_offset 5, -4
+  38:controller/utils/trigger_logger.c ****     {
+  39:controller/utils/trigger_logger.c ****         change_bit(&runtime.status, STATUS_TOOTH_LOG_READY, true);
+  40:controller/utils/trigger_logger.c ****         return;
+  41:controller/utils/trigger_logger.c ****     }
+  42:controller/utils/trigger_logger.c ****     change_bit(&runtime.status, STATUS_TOOTH_LOG_READY, false);
+ 342              		.loc 1 42 5 is_stmt 1 view .LVU113
+ 343              	.LVL25:
+ 344              	.LBB48:
+ 345              	.LBI48:
+  30:controller/utils/utils.h **** {
+ 346              		.loc 2 30 20 view .LVU114
+ 347              	.LBB49:
+  32:controller/utils/utils.h ****     {
+ 348              		.loc 2 32 5 view .LVU115
+  36:controller/utils/utils.h ****     {
+ 349              		.loc 2 36 5 view .LVU116
+  42:controller/utils/utils.h ****     }
+ 350              		.loc 2 42 9 view .LVU117
+ 351 0016 104A     		ldr	r2, .L25+12
+ 352 0018 1368     		ldr	r3, [r2]
+  42:controller/utils/utils.h ****     }
+ 353              		.loc 2 42 14 is_stmt 0 view .LVU118
+ 354 001a 23F00053 		bic	r3, r3, #536870912
+ 355 001e 1360     		str	r3, [r2]
+ 356              	.LVL26:
+  42:controller/utils/utils.h ****     }
+ 357              		.loc 2 42 14 view .LVU119
+ 358              	.LBE49:
+ 359              	.LBE48:
+  43:controller/utils/trigger_logger.c **** 
+  44:controller/utils/trigger_logger.c ****     static time_us_t prev_time = 0;
+ 360              		.loc 1 44 5 is_stmt 1 view .LVU120
+  45:controller/utils/trigger_logger.c ****     // simple logger
+  46:controller/utils/trigger_logger.c ****     tooth_data[buffer_index] = timestamp - prev_time;
+ 361              		.loc 1 46 5 view .LVU121
+ 362              		.loc 1 46 15 is_stmt 0 view .LVU122
+ 363 0020 0C4B     		ldr	r3, .L25+8
+ 364 0022 1D68     		ldr	r5, [r3]
+ 365              		.loc 1 46 42 view .LVU123
+ 366 0024 0D49     		ldr	r1, .L25+16
+ 367 0026 0A68     		ldr	r2, [r1]
+ 368 0028 821A     		subs	r2, r0, r2
+ 369              		.loc 1 46 30 view .LVU124
+ 370 002a 0D4C     		ldr	r4, .L25+20
+ 371 002c 44F82520 		str	r2, [r4, r5, lsl #2]
+  47:controller/utils/trigger_logger.c ****     prev_time = timestamp;
+ 372              		.loc 1 47 5 is_stmt 1 view .LVU125
+ 373              		.loc 1 47 15 is_stmt 0 view .LVU126
+ 374 0030 0860     		str	r0, [r1]
+  48:controller/utils/trigger_logger.c **** 
+  49:controller/utils/trigger_logger.c ****     buffer_index++;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 10
+
+
+ 375              		.loc 1 49 5 is_stmt 1 view .LVU127
+ 376              		.loc 1 49 17 is_stmt 0 view .LVU128
+ 377 0032 1A68     		ldr	r2, [r3]
+ 378 0034 0132     		adds	r2, r2, #1
+ 379 0036 1A60     		str	r2, [r3]
+  50:controller/utils/trigger_logger.c **** }
+ 380              		.loc 1 50 1 view .LVU129
+ 381 0038 30BC     		pop	{r4, r5}
+ 382              		.cfi_restore 5
+ 383              		.cfi_restore 4
+ 384              		.cfi_def_cfa_offset 0
+ 385 003a 7047     		bx	lr
+ 386              	.L24:
+  39:controller/utils/trigger_logger.c ****         return;
+ 387              		.loc 1 39 9 is_stmt 1 view .LVU130
+ 388              	.LVL27:
+ 389              	.LBB50:
+ 390              	.LBI50:
+  30:controller/utils/utils.h **** {
+ 391              		.loc 2 30 20 view .LVU131
+ 392              	.LBB51:
+  32:controller/utils/utils.h ****     {
+ 393              		.loc 2 32 5 view .LVU132
+  36:controller/utils/utils.h ****     {
+ 394              		.loc 2 36 5 view .LVU133
+  38:controller/utils/utils.h ****     }
+ 395              		.loc 2 38 9 view .LVU134
+ 396 003c 064A     		ldr	r2, .L25+12
+ 397 003e 1368     		ldr	r3, [r2]
+  38:controller/utils/utils.h ****     }
+ 398              		.loc 2 38 14 is_stmt 0 view .LVU135
+ 399 0040 43F00053 		orr	r3, r3, #536870912
+ 400 0044 1360     		str	r3, [r2]
+ 401              	.LVL28:
+  38:controller/utils/utils.h ****     }
+ 402              		.loc 2 38 14 view .LVU136
+ 403              	.LBE51:
+ 404              	.LBE50:
+  40:controller/utils/trigger_logger.c ****     }
+ 405              		.loc 1 40 9 is_stmt 1 view .LVU137
+ 406 0046 7047     		bx	lr
+ 407              	.L22:
+ 408 0048 7047     		bx	lr
+ 409              	.L26:
+ 410 004a 00BF     		.align	2
+ 411              	.L25:
+ 412 004c 00000000 		.word	trigger_logging_enabled
+ 413 0050 00000000 		.word	is_logging_composite
+ 414 0054 00000000 		.word	buffer_index
+ 415 0058 00000000 		.word	runtime
+ 416 005c 00000000 		.word	prev_time.0
+ 417 0060 00000000 		.word	tooth_data
+ 418              		.cfi_endproc
+ 419              	.LFE236:
+ 421              		.section	.text.trigger_logger_get_composite_data,"ax",%progbits
+ 422              		.align	1
+ 423              		.global	trigger_logger_get_composite_data
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 11
+
+
+ 424              		.syntax unified
+ 425              		.thumb
+ 426              		.thumb_func
+ 428              	trigger_logger_get_composite_data:
+ 429              	.LFB237:
+  51:controller/utils/trigger_logger.c **** 
+  52:controller/utils/trigger_logger.c **** uint8_t *trigger_logger_get_composite_data()
+  53:controller/utils/trigger_logger.c **** {
+ 430              		.loc 1 53 1 view -0
+ 431              		.cfi_startproc
+ 432              		@ args = 0, pretend = 0, frame = 0
+ 433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 434              		@ link register save eliminated.
+  54:controller/utils/trigger_logger.c ****     return composite_data;
+ 435              		.loc 1 54 5 view .LVU139
+  55:controller/utils/trigger_logger.c **** }
+ 436              		.loc 1 55 1 is_stmt 0 view .LVU140
+ 437 0000 0048     		ldr	r0, .L28
+ 438 0002 7047     		bx	lr
+ 439              	.L29:
+ 440              		.align	2
+ 441              	.L28:
+ 442 0004 00000000 		.word	composite_data
+ 443              		.cfi_endproc
+ 444              	.LFE237:
+ 446              		.section	.text.trigger_logger_get_composite_data_size,"ax",%progbits
+ 447              		.align	1
+ 448              		.global	trigger_logger_get_composite_data_size
+ 449              		.syntax unified
+ 450              		.thumb
+ 451              		.thumb_func
+ 453              	trigger_logger_get_composite_data_size:
+ 454              	.LFB238:
+  56:controller/utils/trigger_logger.c **** size_t trigger_logger_get_composite_data_size()
+  57:controller/utils/trigger_logger.c **** {
+ 455              		.loc 1 57 1 is_stmt 1 view -0
+ 456              		.cfi_startproc
+ 457              		@ args = 0, pretend = 0, frame = 0
+ 458              		@ frame_needed = 0, uses_anonymous_args = 0
+ 459              		@ link register save eliminated.
+  58:controller/utils/trigger_logger.c ****     return sizeof(composite_data);
+ 460              		.loc 1 58 5 view .LVU142
+  59:controller/utils/trigger_logger.c **** }
+ 461              		.loc 1 59 1 is_stmt 0 view .LVU143
+ 462 0000 40F27B20 		movw	r0, #635
+ 463 0004 7047     		bx	lr
+ 464              		.cfi_endproc
+ 465              	.LFE238:
+ 467              		.section	.text.trigger_logger_get_tooth_data,"ax",%progbits
+ 468              		.align	1
+ 469              		.global	trigger_logger_get_tooth_data
+ 470              		.syntax unified
+ 471              		.thumb
+ 472              		.thumb_func
+ 474              	trigger_logger_get_tooth_data:
+ 475              	.LFB239:
+  60:controller/utils/trigger_logger.c **** uint8_t *trigger_logger_get_tooth_data()
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 12
+
+
+  61:controller/utils/trigger_logger.c **** {
+ 476              		.loc 1 61 1 is_stmt 1 view -0
+ 477              		.cfi_startproc
+ 478              		@ args = 0, pretend = 0, frame = 0
+ 479              		@ frame_needed = 0, uses_anonymous_args = 0
+ 480              		@ link register save eliminated.
+  62:controller/utils/trigger_logger.c ****     return (uint8_t*)tooth_data;
+ 481              		.loc 1 62 5 view .LVU145
+  63:controller/utils/trigger_logger.c **** }
+ 482              		.loc 1 63 1 is_stmt 0 view .LVU146
+ 483 0000 0048     		ldr	r0, .L32
+ 484 0002 7047     		bx	lr
+ 485              	.L33:
+ 486              		.align	2
+ 487              	.L32:
+ 488 0004 00000000 		.word	tooth_data
+ 489              		.cfi_endproc
+ 490              	.LFE239:
+ 492              		.section	.text.trigger_logger_get_tooth_data_size,"ax",%progbits
+ 493              		.align	1
+ 494              		.global	trigger_logger_get_tooth_data_size
+ 495              		.syntax unified
+ 496              		.thumb
+ 497              		.thumb_func
+ 499              	trigger_logger_get_tooth_data_size:
+ 500              	.LFB240:
+  64:controller/utils/trigger_logger.c **** size_t trigger_logger_get_tooth_data_size()
+  65:controller/utils/trigger_logger.c **** {
+ 501              		.loc 1 65 1 is_stmt 1 view -0
+ 502              		.cfi_startproc
+ 503              		@ args = 0, pretend = 0, frame = 0
+ 504              		@ frame_needed = 0, uses_anonymous_args = 0
+ 505              		@ link register save eliminated.
+  66:controller/utils/trigger_logger.c ****     return sizeof(tooth_data);
+ 506              		.loc 1 66 5 view .LVU148
+  67:controller/utils/trigger_logger.c **** }
+ 507              		.loc 1 67 1 is_stmt 0 view .LVU149
+ 508 0000 4FF4FE70 		mov	r0, #508
+ 509 0004 7047     		bx	lr
+ 510              		.cfi_endproc
+ 511              	.LFE240:
+ 513              		.section	.text.trigger_logger_get_buffer_status,"ax",%progbits
+ 514              		.align	1
+ 515              		.global	trigger_logger_get_buffer_status
+ 516              		.syntax unified
+ 517              		.thumb
+ 518              		.thumb_func
+ 520              	trigger_logger_get_buffer_status:
+ 521              	.LFB241:
+  68:controller/utils/trigger_logger.c **** bool trigger_logger_get_buffer_status()
+  69:controller/utils/trigger_logger.c **** {
+ 522              		.loc 1 69 1 is_stmt 1 view -0
+ 523              		.cfi_startproc
+ 524              		@ args = 0, pretend = 0, frame = 0
+ 525              		@ frame_needed = 0, uses_anonymous_args = 0
+ 526              		@ link register save eliminated.
+  70:controller/utils/trigger_logger.c ****     return buffer_index >= FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES - 1;
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 13
+
+
+ 527              		.loc 1 70 5 view .LVU151
+ 528 0000 034B     		ldr	r3, .L36
+ 529 0002 1868     		ldr	r0, [r3]
+  71:controller/utils/trigger_logger.c **** }
+ 530              		.loc 1 71 1 is_stmt 0 view .LVU152
+ 531 0004 7D28     		cmp	r0, #125
+ 532 0006 94BF     		ite	ls
+ 533 0008 0020     		movls	r0, #0
+ 534 000a 0120     		movhi	r0, #1
+ 535 000c 7047     		bx	lr
+ 536              	.L37:
+ 537 000e 00BF     		.align	2
+ 538              	.L36:
+ 539 0010 00000000 		.word	buffer_index
+ 540              		.cfi_endproc
+ 541              	.LFE241:
+ 543              		.section	.text.trigger_logger_tooth_start,"ax",%progbits
+ 544              		.align	1
+ 545              		.global	trigger_logger_tooth_start
+ 546              		.syntax unified
+ 547              		.thumb
+ 548              		.thumb_func
+ 550              	trigger_logger_tooth_start:
+ 551              	.LFB242:
+  72:controller/utils/trigger_logger.c **** 
+  73:controller/utils/trigger_logger.c **** void trigger_logger_tooth_start()
+  74:controller/utils/trigger_logger.c **** {
+ 552              		.loc 1 74 1 is_stmt 1 view -0
+ 553              		.cfi_startproc
+ 554              		@ args = 0, pretend = 0, frame = 0
+ 555              		@ frame_needed = 0, uses_anonymous_args = 0
+ 556              		@ link register save eliminated.
+  75:controller/utils/trigger_logger.c ****     is_logging_composite = false;
+ 557              		.loc 1 75 5 view .LVU154
+ 558              		.loc 1 75 26 is_stmt 0 view .LVU155
+ 559 0000 0023     		movs	r3, #0
+ 560 0002 044A     		ldr	r2, .L39
+ 561 0004 1370     		strb	r3, [r2]
+  76:controller/utils/trigger_logger.c ****     trigger_logging_enabled = true;
+ 562              		.loc 1 76 5 is_stmt 1 view .LVU156
+ 563              		.loc 1 76 29 is_stmt 0 view .LVU157
+ 564 0006 044A     		ldr	r2, .L39+4
+ 565 0008 0121     		movs	r1, #1
+ 566 000a 1170     		strb	r1, [r2]
+  77:controller/utils/trigger_logger.c ****     buffer_index = 0;
+ 567              		.loc 1 77 5 is_stmt 1 view .LVU158
+ 568              		.loc 1 77 18 is_stmt 0 view .LVU159
+ 569 000c 034A     		ldr	r2, .L39+8
+ 570 000e 1360     		str	r3, [r2]
+  78:controller/utils/trigger_logger.c **** }
+ 571              		.loc 1 78 1 view .LVU160
+ 572 0010 7047     		bx	lr
+ 573              	.L40:
+ 574 0012 00BF     		.align	2
+ 575              	.L39:
+ 576 0014 00000000 		.word	is_logging_composite
+ 577 0018 00000000 		.word	trigger_logging_enabled
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 14
+
+
+ 578 001c 00000000 		.word	buffer_index
+ 579              		.cfi_endproc
+ 580              	.LFE242:
+ 582              		.section	.text.trigger_logger_tooth_stop,"ax",%progbits
+ 583              		.align	1
+ 584              		.global	trigger_logger_tooth_stop
+ 585              		.syntax unified
+ 586              		.thumb
+ 587              		.thumb_func
+ 589              	trigger_logger_tooth_stop:
+ 590              	.LFB243:
+  79:controller/utils/trigger_logger.c **** void trigger_logger_tooth_stop()
+  80:controller/utils/trigger_logger.c **** {
+ 591              		.loc 1 80 1 is_stmt 1 view -0
+ 592              		.cfi_startproc
+ 593              		@ args = 0, pretend = 0, frame = 0
+ 594              		@ frame_needed = 0, uses_anonymous_args = 0
+ 595              		@ link register save eliminated.
+  81:controller/utils/trigger_logger.c ****     trigger_logging_enabled = false;
+ 596              		.loc 1 81 5 view .LVU162
+ 597              		.loc 1 81 29 is_stmt 0 view .LVU163
+ 598 0000 014B     		ldr	r3, .L42
+ 599 0002 0022     		movs	r2, #0
+ 600 0004 1A70     		strb	r2, [r3]
+  82:controller/utils/trigger_logger.c **** }
+ 601              		.loc 1 82 1 view .LVU164
+ 602 0006 7047     		bx	lr
+ 603              	.L43:
+ 604              		.align	2
+ 605              	.L42:
+ 606 0008 00000000 		.word	trigger_logging_enabled
+ 607              		.cfi_endproc
+ 608              	.LFE243:
+ 610              		.section	.text.trigger_logger_composite_start,"ax",%progbits
+ 611              		.align	1
+ 612              		.global	trigger_logger_composite_start
+ 613              		.syntax unified
+ 614              		.thumb
+ 615              		.thumb_func
+ 617              	trigger_logger_composite_start:
+ 618              	.LFB244:
+  83:controller/utils/trigger_logger.c **** 
+  84:controller/utils/trigger_logger.c **** void trigger_logger_composite_start()
+  85:controller/utils/trigger_logger.c **** {
+ 619              		.loc 1 85 1 is_stmt 1 view -0
+ 620              		.cfi_startproc
+ 621              		@ args = 0, pretend = 0, frame = 0
+ 622              		@ frame_needed = 0, uses_anonymous_args = 0
+ 623              		@ link register save eliminated.
+  86:controller/utils/trigger_logger.c ****     is_logging_composite = true;
+ 624              		.loc 1 86 5 view .LVU166
+ 625              		.loc 1 86 26 is_stmt 0 view .LVU167
+ 626 0000 0123     		movs	r3, #1
+ 627 0002 044A     		ldr	r2, .L45
+ 628 0004 1370     		strb	r3, [r2]
+  87:controller/utils/trigger_logger.c ****     trigger_logging_enabled = true;
+ 629              		.loc 1 87 5 is_stmt 1 view .LVU168
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 15
+
+
+ 630              		.loc 1 87 29 is_stmt 0 view .LVU169
+ 631 0006 044A     		ldr	r2, .L45+4
+ 632 0008 1370     		strb	r3, [r2]
+  88:controller/utils/trigger_logger.c ****     buffer_index = 0;
+ 633              		.loc 1 88 5 is_stmt 1 view .LVU170
+ 634              		.loc 1 88 18 is_stmt 0 view .LVU171
+ 635 000a 044B     		ldr	r3, .L45+8
+ 636 000c 0022     		movs	r2, #0
+ 637 000e 1A60     		str	r2, [r3]
+  89:controller/utils/trigger_logger.c **** }
+ 638              		.loc 1 89 1 view .LVU172
+ 639 0010 7047     		bx	lr
+ 640              	.L46:
+ 641 0012 00BF     		.align	2
+ 642              	.L45:
+ 643 0014 00000000 		.word	is_logging_composite
+ 644 0018 00000000 		.word	trigger_logging_enabled
+ 645 001c 00000000 		.word	buffer_index
+ 646              		.cfi_endproc
+ 647              	.LFE244:
+ 649              		.section	.text.trigger_logger_composite_stop,"ax",%progbits
+ 650              		.align	1
+ 651              		.global	trigger_logger_composite_stop
+ 652              		.syntax unified
+ 653              		.thumb
+ 654              		.thumb_func
+ 656              	trigger_logger_composite_stop:
+ 657              	.LFB245:
+  90:controller/utils/trigger_logger.c **** void trigger_logger_composite_stop()
+  91:controller/utils/trigger_logger.c **** {
+ 658              		.loc 1 91 1 is_stmt 1 view -0
+ 659              		.cfi_startproc
+ 660              		@ args = 0, pretend = 0, frame = 0
+ 661              		@ frame_needed = 0, uses_anonymous_args = 0
+ 662              		@ link register save eliminated.
+  92:controller/utils/trigger_logger.c ****     trigger_logging_enabled = false;
+ 663              		.loc 1 92 5 view .LVU174
+ 664              		.loc 1 92 29 is_stmt 0 view .LVU175
+ 665 0000 014B     		ldr	r3, .L48
+ 666 0002 0022     		movs	r2, #0
+ 667 0004 1A70     		strb	r2, [r3]
+  93:controller/utils/trigger_logger.c **** }
+ 668              		.loc 1 93 1 view .LVU176
+ 669 0006 7047     		bx	lr
+ 670              	.L49:
+ 671              		.align	2
+ 672              	.L48:
+ 673 0008 00000000 		.word	trigger_logging_enabled
+ 674              		.cfi_endproc
+ 675              	.LFE245:
+ 677              		.section	.bss.prev_time.0,"aw",%nobits
+ 678              		.align	2
+ 681              	prev_time.0:
+ 682 0000 00000000 		.space	4
+ 683              		.section	.bss.is_logging_composite,"aw",%nobits
+ 686              	is_logging_composite:
+ 687 0000 00       		.space	1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 16
+
+
+ 688              		.section	.bss.buffer_index,"aw",%nobits
+ 689              		.align	2
+ 692              	buffer_index:
+ 693 0000 00000000 		.space	4
+ 694              		.section	.data.trigger_logging_enabled,"aw"
+ 697              	trigger_logging_enabled:
+ 698 0000 01       		.byte	1
+ 699              		.section	.bss.composite_data,"aw",%nobits
+ 700              		.align	2
+ 703              	composite_data:
+ 704 0000 00000000 		.space	635
+ 704      00000000 
+ 704      00000000 
+ 704      00000000 
+ 704      00000000 
+ 705              		.section	.bss.tooth_data,"aw",%nobits
+ 706              		.align	2
+ 709              	tooth_data:
+ 710 0000 00000000 		.space	508
+ 710      00000000 
+ 710      00000000 
+ 710      00000000 
+ 710      00000000 
+ 711              		.text
+ 712              	.Letext0:
+ 713              		.file 3 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 714              		.file 4 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 715              		.file 5 "C:/Users/alireza/AppData/Roaming/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-
+ 716              		.file 6 "controller/types.h"
+ 717              		.file 7 "controller/config_and_runtime.h"
+ 718              		.file 8 "controller/utils/trigger_logger.h"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s 			page 17
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 trigger_logger.c
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:21     .text.trigger_logger_entry_add_composite:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:27     .text.trigger_logger_entry_add_composite:00000000 trigger_logger_entry_add_composite
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:293    .text.trigger_logger_entry_add_composite:0000009c $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:697    .data.trigger_logging_enabled:00000000 trigger_logging_enabled
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:686    .bss.is_logging_composite:00000000 is_logging_composite
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:692    .bss.buffer_index:00000000 buffer_index
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:703    .bss.composite_data:00000000 composite_data
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:304    .text.trigger_logger_entry_add_tooth:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:310    .text.trigger_logger_entry_add_tooth:00000000 trigger_logger_entry_add_tooth
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:412    .text.trigger_logger_entry_add_tooth:0000004c $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:681    .bss.prev_time.0:00000000 prev_time.0
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:709    .bss.tooth_data:00000000 tooth_data
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:422    .text.trigger_logger_get_composite_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:428    .text.trigger_logger_get_composite_data:00000000 trigger_logger_get_composite_data
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:442    .text.trigger_logger_get_composite_data:00000004 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:447    .text.trigger_logger_get_composite_data_size:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:453    .text.trigger_logger_get_composite_data_size:00000000 trigger_logger_get_composite_data_size
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:468    .text.trigger_logger_get_tooth_data:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:474    .text.trigger_logger_get_tooth_data:00000000 trigger_logger_get_tooth_data
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:488    .text.trigger_logger_get_tooth_data:00000004 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:493    .text.trigger_logger_get_tooth_data_size:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:499    .text.trigger_logger_get_tooth_data_size:00000000 trigger_logger_get_tooth_data_size
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:514    .text.trigger_logger_get_buffer_status:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:520    .text.trigger_logger_get_buffer_status:00000000 trigger_logger_get_buffer_status
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:539    .text.trigger_logger_get_buffer_status:00000010 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:544    .text.trigger_logger_tooth_start:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:550    .text.trigger_logger_tooth_start:00000000 trigger_logger_tooth_start
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:576    .text.trigger_logger_tooth_start:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:583    .text.trigger_logger_tooth_stop:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:589    .text.trigger_logger_tooth_stop:00000000 trigger_logger_tooth_stop
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:606    .text.trigger_logger_tooth_stop:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:611    .text.trigger_logger_composite_start:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:617    .text.trigger_logger_composite_start:00000000 trigger_logger_composite_start
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:643    .text.trigger_logger_composite_start:00000014 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:650    .text.trigger_logger_composite_stop:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:656    .text.trigger_logger_composite_stop:00000000 trigger_logger_composite_stop
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:673    .text.trigger_logger_composite_stop:00000008 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:678    .bss.prev_time.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:687    .bss.is_logging_composite:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:689    .bss.buffer_index:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:700    .bss.composite_data:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\cc92r2L0.s:706    .bss.tooth_data:00000000 $d
+
+UNDEFINED SYMBOLS
+runtime

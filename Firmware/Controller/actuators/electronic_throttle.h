@@ -7,7 +7,7 @@
 #ifndef ELECTRONIC_THROTTLE_H
 #define ELECTRONIC_THROTTLE_H
 
-#include "cmsis_os2.h"
+#include "cmsis_os.h"
 #include "dc_motors.h"
 #include "pid.h"
 #include "sensors.h"
@@ -19,6 +19,8 @@
 #define ELECTRONIC_THROTTLE_FAIL_SAFE_POSITION (percent_t)0
 #define ELECTRONIC_THROTTLE_NEAR_END_OF_TRAVEL_THRESHOLD (percent_t)0.8f
 #define ELECTRONIC_THROTTLE_AUTO_CALIB_MIN_VBAT (voltage_t)11
+#define ELECTRONIC_THROTTLE_ERROR_TOLARANCE (percent_t)5
+#define ELECTRONIC_THROTTLE_PRISISTANT_ERROR_TIMEOUT (time_ms_t) 2000
 
 typedef struct
 {
@@ -31,8 +33,11 @@ typedef struct
     percent_t current_position;
     percent_t duty_cycle_limiting_lower;
     percent_t duty_cycle_limiting_upper;
+    osTimerId_t watchdog_timer;
+    uint8_t watchdog_timer_cb[sizeof(StaticTimer_t)];
     bool is_duty_cycle_limiting_enabled;
     bool control_loop_give_up_control;
+    bool setpoint_override;
 } electronic_throttle_t;
 
 /**
@@ -43,12 +48,14 @@ void electronic_throttle_init(electronic_throttle_t *etb, pid_t *pid, sensor_tps
 void electronic_throttle_auto_tune(electronic_throttle_t *etb);
 
 void electronic_throttle_set(electronic_throttle_t *etb, percent_t position);
+void electronic_throttle_override_enable(electronic_throttle_t *etb, percent_t position);
+void electronic_throttle_override_disable(electronic_throttle_t *etb);
 
 void electronic_throttle_disable(electronic_throttle_t *etb);
 void electronic_throttle_enable(electronic_throttle_t *etb);
 
 
-void electronic_throttle_update(void *arg);
+void electronic_throttle_update(electronic_throttle_t *etb ,time_us_t timestamp);
 
 /**
  * @brief Limits the duty cycle in order to not burn out the motor in case the control loop asks the motor to something stupid.

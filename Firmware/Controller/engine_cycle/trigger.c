@@ -1,38 +1,11 @@
 #include "trigger.h"
 #include "controller.h"
 
-static void crank_timeout_callback(void *argument);
-
 static angle_t next_tooth_angle = 0;
 
 static trigger_crankshaft_t crank_trigger = {0};
 static trigger_camshaft_t cam_trigger = {0};
 
-static time_us_t tooth_logger_buffer[FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES] = {0};
-volatile bool tooth_logger_enabled = false;
-volatile size_t tooth_logger_buffer_index = 0;
-
-static osTimerId_t crank_timeout_timer = NULL;
-
-static void crank_timeout_callback(void *argument)
-{
-    (void)argument;
-
-    // No tooth arrived in time → signal lost
-    runtime.rpm = 0;
-    runtime.crankshaft_angle = 0;
-    next_tooth_angle = 0;
-
-    crank_trigger.counted_teeth = 0;
-
-    change_bit(&runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED, false);
-
-    runtime.spinning_state = SS_STOPPED;
-    change_bit(&runtime.status, STATUS_CRANKING, false);
-    change_bit(&runtime.status, STATUS_RUNNING, false);
-
-
-}
 
 void trigger_crankshaft_init(trigger_wheel_type_crankshaft_t wheel_type)
 {
@@ -63,15 +36,6 @@ void trigger_crankshaft_init(trigger_wheel_type_crankshaft_t wheel_type)
   change_bit(&runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED, false);
   change_bit(&runtime.status, STATUS_TRIGGER_ERROR, false);
 
-    crank_timeout_timer = osTimerNew(crank_timeout_callback,
-                                     osTimerOnce,
-                                     NULL,
-                                     NULL);
-
-    if (crank_timeout_timer == NULL)
-    {
-        log_error("Failed to create crank timeout timer");
-    }
   crank_trigger.initialized = true;
 }
 
@@ -85,7 +49,7 @@ void trigger_camshaft_init(trigger_wheel_type_camshaft_t wheel_type, uint8_t *fi
     change_bit(&runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED, false);
     return;
   }
-  
+
   switch (wheel_type)
   {
   case TRIGGER_WHEEL_TYPE_CAM_HALF_CIRCLE:
@@ -96,13 +60,11 @@ void trigger_camshaft_init(trigger_wheel_type_camshaft_t wheel_type, uint8_t *fi
     break;
   }
 
-  
-
   cam_trigger.initialized = true;
   cam_trigger.filtering = filtering;
 }
 
-void trigger_crankshaft_signal_handle()
+void trigger_crank_handle(trigger_event_t *event)
 {
 
   if (!crank_trigger.initialized)
@@ -112,38 +74,40 @@ void trigger_crankshaft_signal_handle()
     change_bit(&runtime.status, STATUS_TRIGGER_ERROR, true);
     return;
   }
-
-  time_us_t current_tooth_time = get_time_us();
-
-  /* Debounce: ignore too-close pulses */
-  if (crank_trigger.tooth_time_history[0] != 0 &&
-      (current_tooth_time - crank_trigger.tooth_time_history[0]) < crank_trigger.filter_time)
+  if (event->type == TRIGGER_EVENT_TYPE_TIMEOUT)
   {
-    return; // noise
-  }
+    // No tooth arrived in time → signal lost
+    runtime.rpm = 0;
 
-  /* --- FIRST EVENT: initialize the history so prev_tooth_gap is valid next time --- */
-  if (crank_trigger.tooth_time_history[0] == 0)
-  {
-    crank_trigger.tooth_time_history[0] = current_tooth_time;
-    crank_trigger.tooth_time_history[1] = current_tooth_time;
+    change_bit(&runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED, false);
+
+    runtime.spinning_state = SS_STOPPED;
+    change_bit(&runtime.status, STATUS_CRANKING, false);
+    change_bit(&runtime.status, STATUS_RUNNING, false);
     return;
   }
 
+  time_us_t current_tooth_time = event->timestamp;
   time_us_t current_tooth_gap = current_tooth_time - crank_trigger.tooth_time_history[0];
   time_us_t prev_tooth_gap = crank_trigger.tooth_time_history[0] - crank_trigger.tooth_time_history[1];
 
   crank_trigger.tooth_time_history[1] = crank_trigger.tooth_time_history[0];
   crank_trigger.tooth_time_history[0] = current_tooth_time;
 
+  /* Debounce: ignore too-close pulses */
+  if (current_tooth_gap < crank_trigger.filter_time)
+  {
+    return; // noise
+  }
+
   if (prev_tooth_gap <= 0)
   {
-    return; // Don't devide by 0 okay? :)
+    return; // Don't devide by 0 okay? :)   Also also for a few more events to fill the history so prev_tooth_gap will be correct
   }
 
   bool is_sync_event = false;
-
-  if (IS_IN_RANGE((float)current_tooth_gap / (float)prev_tooth_gap, (float)TRIGGER_TOOTH_GAP_SYNC_RATIO_LOWER, (float)TRIGGER_TOOTH_GAP_SYNC_RATIO_UPPER))
+  float gap_ratio = (float)current_tooth_gap / (float)prev_tooth_gap;
+  if (IS_IN_RANGE(gap_ratio, (float)TRIGGER_TOOTH_GAP_SYNC_RATIO_LOWER, (float)TRIGGER_TOOTH_GAP_SYNC_RATIO_UPPER * crank_trigger.missing_teeth))
   {
     is_sync_event = true;
   }
@@ -152,15 +116,14 @@ void trigger_crankshaft_signal_handle()
 
   if (is_sync_event)
   {
-    if ((crank_trigger.counted_teeth) + 1 == crank_trigger.trigger_actual_teeth)
+    if (crank_trigger.current_tooth_index == (crank_trigger.trigger_actual_teeth - 1))
     {
       /**
-       * If wer are at a sync event and we have counted the currect number of teeth so far,
+       * If were are at a sync event and we have counted the currect number of teeth so far,
        * we have correctly determined the angle of and rpm at each trigger event in the last
        * rotation.
        */
       is_trigger_sync_achieved = true;
-      crank_trigger.counted_teeth = 0;
       runtime.total_revolutions++;
     }
     else
@@ -172,26 +135,25 @@ void trigger_crankshaft_signal_handle()
       runtime.sync_loss_counter++;
       is_trigger_sync_achieved = false;
       // We will reset the teeth we have counted so far to hopefully achieve sync on the next rotation
-      crank_trigger.counted_teeth = 0;
       runtime.total_revolutions = 0;
     }
+    crank_trigger.current_tooth_index = 0;
   }
   else
   {
-    crank_trigger.counted_teeth++;
+    crank_trigger.current_tooth_index++;
   }
 
   change_bit(&runtime.status, STATUS_TRIGGER_CRANKSHAFT_SYNCED, is_trigger_sync_achieved);
 
-  runtime.crankshaft_angle = wrap_angle_360(360.0f / (angle_t)crank_trigger.full_teeth * (angle_t)crank_trigger.counted_teeth + (angle_t)config.trigger_offset_deg);
-  
+  runtime.crankshaft_angle = wrap_angle_360(360.0f / (angle_t)crank_trigger.full_teeth * (angle_t)crank_trigger.current_tooth_index + (angle_t)config.trigger_offset_deg);
+
   if (!is_sync_event)
   {
     runtime.rpm = (rpm_t)((float)CONVERSION_FACTOR_SECONDS_TO_MICROSECONDS * (float)CONVERSION_FACTOR_MINUTES_TO_SECONDS / (float)current_tooth_gap / (float)crank_trigger.full_teeth);
   }
-  
-  
-  if (crank_trigger.counted_teeth >= crank_trigger.trigger_actual_teeth - 1)
+
+  if (crank_trigger.current_tooth_index >= crank_trigger.trigger_actual_teeth - 1)
   {
     next_tooth_angle = (angle_t)wrap_angle_360(config.trigger_offset_deg);
   }
@@ -250,27 +212,7 @@ void trigger_crankshaft_signal_handle()
   change_bit(&runtime.status, STATUS_CRANKING, runtime.spinning_state == SS_CRANKING);
   change_bit(&runtime.status, STATUS_RUNNING, runtime.spinning_state == SS_RUNNING);
 
-  if (tooth_logger_enabled)
-  {
-    if (tooth_logger_buffer_index >= FRIMWARE_TOOTH_LOGGER_BUFFER_ENTRIES)
-    {
-      change_bit(&runtime.status, STATUS_TOOTH_LOG_READY, true);
-    }
-    else
-    {
-      tooth_logger_buffer[tooth_logger_buffer_index] = current_tooth_time;
-      tooth_logger_buffer_index++;
-    }
-  }
   
-  osTimerStart(crank_timeout_timer, 25);
-  /* call trigger driven events such as ignition etc... */
-  if (!is_trigger_sync_achieved)
-  {
-    return;
-  }
-  trigger_driven_events_callback();
-
 }
 
 void trigger_camshaft_signal_handle(bool is_rising_edge)
@@ -283,7 +225,7 @@ void trigger_camshaft_signal_handle(bool is_rising_edge)
   {
     return;
   }
-  
+
   time_us_t filter_time = 0;
   float on_to_off_ratio_allowed_jitter = 0;
   switch (*cam_trigger.filtering)
@@ -330,7 +272,7 @@ void trigger_camshaft_signal_handle(bool is_rising_edge)
     change_bit(&runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED, false);
     return;
   }
-  
+
   change_bit(&runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED, true);
 
   if (is_rising_edge)
@@ -374,22 +316,6 @@ angle_t crankshaft_get_next_trigger_angle()
 __weak void trigger_driven_events_callback()
 {
   /* This is a weak function. User can override it in their code */
-}
-
-
-void trigger_tooth_logger_start()
-{
-  tooth_logger_enabled = true;
-  tooth_logger_buffer_index = 0;
-}
-void trigger_tooth_logger_stop()
-{
-  tooth_logger_enabled = false;
-  tooth_logger_buffer_index = 0;
-}
-time_us_t *trigger_tooth_logger_get_buffer()
-{
-  return tooth_logger_buffer;
 }
 
 spinning_state_t trigger_spinning_state_get()

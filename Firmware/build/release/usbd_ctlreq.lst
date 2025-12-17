@@ -1,0 +1,1120 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"usbd_ctlreq.c"
+  16              		.text
+  17              		.section	.text.USBD_GetLen,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	USBD_GetLen:
+  24              		@ args = 0, pretend = 0, frame = 0
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26              		@ link register save eliminated.
+  27 0000 0346     		mov	r3, r0
+  28 0002 0020     		movs	r0, #0
+  29 0004 02E0     		b	.L2
+  30              	.L3:
+  31 0006 0130     		adds	r0, r0, #1
+  32 0008 C0B2     		uxtb	r0, r0
+  33 000a 0133     		adds	r3, r3, #1
+  34              	.L2:
+  35 000c 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+  36 000e 002A     		cmp	r2, #0
+  37 0010 F9D1     		bne	.L3
+  38 0012 7047     		bx	lr
+  40              		.section	.text.USBD_ParseSetupRequest,"ax",%progbits
+  41              		.align	1
+  42              		.global	USBD_ParseSetupRequest
+  43              		.syntax unified
+  44              		.thumb
+  45              		.thumb_func
+  47              	USBD_ParseSetupRequest:
+  48              		@ args = 0, pretend = 0, frame = 0
+  49              		@ frame_needed = 0, uses_anonymous_args = 0
+  50              		@ link register save eliminated.
+  51 0000 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+  52 0002 0370     		strb	r3, [r0]
+  53 0004 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+  54 0006 4370     		strb	r3, [r0, #1]
+  55 0008 8B78     		ldrb	r3, [r1, #2]	@ zero_extendqisi2
+  56 000a CA78     		ldrb	r2, [r1, #3]	@ zero_extendqisi2
+  57 000c 43EA0223 		orr	r3, r3, r2, lsl #8
+  58 0010 4380     		strh	r3, [r0, #2]	@ movhi
+  59 0012 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
+  60 0014 4A79     		ldrb	r2, [r1, #5]	@ zero_extendqisi2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 2
+
+
+  61 0016 43EA0223 		orr	r3, r3, r2, lsl #8
+  62 001a 8380     		strh	r3, [r0, #4]	@ movhi
+  63 001c 8B79     		ldrb	r3, [r1, #6]	@ zero_extendqisi2
+  64 001e CA79     		ldrb	r2, [r1, #7]	@ zero_extendqisi2
+  65 0020 43EA0223 		orr	r3, r3, r2, lsl #8
+  66 0024 C380     		strh	r3, [r0, #6]	@ movhi
+  67 0026 7047     		bx	lr
+  69              		.section	.text.USBD_CtlError,"ax",%progbits
+  70              		.align	1
+  71              		.global	USBD_CtlError
+  72              		.syntax unified
+  73              		.thumb
+  74              		.thumb_func
+  76              	USBD_CtlError:
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79 0000 10B5     		push	{r4, lr}
+  80 0002 0446     		mov	r4, r0
+  81 0004 8021     		movs	r1, #128
+  82 0006 FFF7FEFF 		bl	USBD_LL_StallEP
+  83 000a 0021     		movs	r1, #0
+  84 000c 2046     		mov	r0, r4
+  85 000e FFF7FEFF 		bl	USBD_LL_StallEP
+  86 0012 10BD     		pop	{r4, pc}
+  88              		.section	.text.USBD_GetDescriptor,"ax",%progbits
+  89              		.align	1
+  90              		.syntax unified
+  91              		.thumb
+  92              		.thumb_func
+  94              	USBD_GetDescriptor:
+  95              		@ args = 0, pretend = 0, frame = 8
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97 0000 30B5     		push	{r4, r5, lr}
+  98 0002 83B0     		sub	sp, sp, #12
+  99 0004 0446     		mov	r4, r0
+ 100 0006 0D46     		mov	r5, r1
+ 101 0008 0023     		movs	r3, #0
+ 102 000a ADF80630 		strh	r3, [sp, #6]	@ movhi
+ 103 000e 4A88     		ldrh	r2, [r1, #2]
+ 104 0010 130A     		lsrs	r3, r2, #8
+ 105 0012 013B     		subs	r3, r3, #1
+ 106 0014 062B     		cmp	r3, #6
+ 107 0016 00F2AA80 		bhi	.L8
+ 108 001a DFE803F0 		tbb	[pc, r3]
+ 109              	.L10:
+ 110 001e 04       		.byte	(.L14-.L10)/2
+ 111 001f 1E       		.byte	(.L13-.L10)/2
+ 112 0020 32       		.byte	(.L12-.L10)/2
+ 113 0021 A8       		.byte	(.L8-.L10)/2
+ 114 0022 A8       		.byte	(.L8-.L10)/2
+ 115 0023 8C       		.byte	(.L11-.L10)/2
+ 116 0024 99       		.byte	(.L9-.L10)/2
+ 117 0025 00       		.p2align 1
+ 118              	.L14:
+ 119 0026 D0F8B432 		ldr	r3, [r0, #692]
+ 120 002a 1B68     		ldr	r3, [r3]
+ 121 002c 0DF10601 		add	r1, sp, #6
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 3
+
+
+ 122 0030 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ 123 0032 9847     		blx	r3
+ 124              	.L15:
+ 125 0034 EA88     		ldrh	r2, [r5, #6]
+ 126 0036 002A     		cmp	r2, #0
+ 127 0038 00F0A380 		beq	.L35
+ 128 003c BDF80630 		ldrh	r3, [sp, #6]
+ 129 0040 002B     		cmp	r3, #0
+ 130 0042 00F09980 		beq	.L36
+ 131 0046 9A42     		cmp	r2, r3
+ 132 0048 28BF     		it	cs
+ 133 004a 1A46     		movcs	r2, r3
+ 134 004c ADF80620 		strh	r2, [sp, #6]	@ movhi
+ 135 0050 0146     		mov	r1, r0
+ 136 0052 2046     		mov	r0, r4
+ 137 0054 FFF7FEFF 		bl	USBD_CtlSendData
+ 138 0058 8CE0     		b	.L7
+ 139              	.L13:
+ 140 005a 037C     		ldrb	r3, [r0, #16]	@ zero_extendqisi2
+ 141 005c 43B9     		cbnz	r3, .L16
+ 142 005e D0F8B832 		ldr	r3, [r0, #696]
+ 143 0062 9B6A     		ldr	r3, [r3, #40]
+ 144 0064 0DF10600 		add	r0, sp, #6
+ 145 0068 9847     		blx	r3
+ 146 006a 0223     		movs	r3, #2
+ 147 006c 4370     		strb	r3, [r0, #1]
+ 148 006e E1E7     		b	.L15
+ 149              	.L16:
+ 150 0070 D0F8B832 		ldr	r3, [r0, #696]
+ 151 0074 DB6A     		ldr	r3, [r3, #44]
+ 152 0076 0DF10600 		add	r0, sp, #6
+ 153 007a 9847     		blx	r3
+ 154 007c 0223     		movs	r3, #2
+ 155 007e 4370     		strb	r3, [r0, #1]
+ 156 0080 D8E7     		b	.L15
+ 157              	.L12:
+ 158 0082 D2B2     		uxtb	r2, r2
+ 159 0084 052A     		cmp	r2, #5
+ 160 0086 52D8     		bhi	.L17
+ 161 0088 DFE802F0 		tbb	[pc, r2]
+ 162              	.L19:
+ 163 008c 03       		.byte	(.L24-.L19)/2
+ 164 008d 10       		.byte	(.L23-.L19)/2
+ 165 008e 1D       		.byte	(.L22-.L19)/2
+ 166 008f 2A       		.byte	(.L21-.L19)/2
+ 167 0090 37       		.byte	(.L20-.L19)/2
+ 168 0091 44       		.byte	(.L18-.L19)/2
+ 169              		.p2align 1
+ 170              	.L24:
+ 171 0092 D0F8B432 		ldr	r3, [r0, #692]
+ 172 0096 5B68     		ldr	r3, [r3, #4]
+ 173 0098 23B1     		cbz	r3, .L25
+ 174 009a 0DF10601 		add	r1, sp, #6
+ 175 009e 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ 176 00a0 9847     		blx	r3
+ 177 00a2 C7E7     		b	.L15
+ 178              	.L25:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 4
+
+
+ 179 00a4 2946     		mov	r1, r5
+ 180 00a6 FFF7FEFF 		bl	USBD_CtlError
+ 181 00aa 63E0     		b	.L7
+ 182              	.L23:
+ 183 00ac D0F8B432 		ldr	r3, [r0, #692]
+ 184 00b0 9B68     		ldr	r3, [r3, #8]
+ 185 00b2 23B1     		cbz	r3, .L27
+ 186 00b4 0DF10601 		add	r1, sp, #6
+ 187 00b8 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ 188 00ba 9847     		blx	r3
+ 189 00bc BAE7     		b	.L15
+ 190              	.L27:
+ 191 00be 2946     		mov	r1, r5
+ 192 00c0 FFF7FEFF 		bl	USBD_CtlError
+ 193 00c4 56E0     		b	.L7
+ 194              	.L22:
+ 195 00c6 D0F8B432 		ldr	r3, [r0, #692]
+ 196 00ca DB68     		ldr	r3, [r3, #12]
+ 197 00cc 23B1     		cbz	r3, .L28
+ 198 00ce 0DF10601 		add	r1, sp, #6
+ 199 00d2 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ 200 00d4 9847     		blx	r3
+ 201 00d6 ADE7     		b	.L15
+ 202              	.L28:
+ 203 00d8 2946     		mov	r1, r5
+ 204 00da FFF7FEFF 		bl	USBD_CtlError
+ 205 00de 49E0     		b	.L7
+ 206              	.L21:
+ 207 00e0 D0F8B432 		ldr	r3, [r0, #692]
+ 208 00e4 1B69     		ldr	r3, [r3, #16]
+ 209 00e6 23B1     		cbz	r3, .L29
+ 210 00e8 0DF10601 		add	r1, sp, #6
+ 211 00ec 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ 212 00ee 9847     		blx	r3
+ 213 00f0 A0E7     		b	.L15
+ 214              	.L29:
+ 215 00f2 2946     		mov	r1, r5
+ 216 00f4 FFF7FEFF 		bl	USBD_CtlError
+ 217 00f8 3CE0     		b	.L7
+ 218              	.L20:
+ 219 00fa D0F8B432 		ldr	r3, [r0, #692]
+ 220 00fe 5B69     		ldr	r3, [r3, #20]
+ 221 0100 23B1     		cbz	r3, .L30
+ 222 0102 0DF10601 		add	r1, sp, #6
+ 223 0106 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ 224 0108 9847     		blx	r3
+ 225 010a 93E7     		b	.L15
+ 226              	.L30:
+ 227 010c 2946     		mov	r1, r5
+ 228 010e FFF7FEFF 		bl	USBD_CtlError
+ 229 0112 2FE0     		b	.L7
+ 230              	.L18:
+ 231 0114 D0F8B432 		ldr	r3, [r0, #692]
+ 232 0118 9B69     		ldr	r3, [r3, #24]
+ 233 011a 23B1     		cbz	r3, .L31
+ 234 011c 0DF10601 		add	r1, sp, #6
+ 235 0120 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 5
+
+
+ 236 0122 9847     		blx	r3
+ 237 0124 86E7     		b	.L15
+ 238              	.L31:
+ 239 0126 2946     		mov	r1, r5
+ 240 0128 FFF7FEFF 		bl	USBD_CtlError
+ 241 012c 22E0     		b	.L7
+ 242              	.L17:
+ 243 012e 2946     		mov	r1, r5
+ 244 0130 FFF7FEFF 		bl	USBD_CtlError
+ 245 0134 1EE0     		b	.L7
+ 246              	.L11:
+ 247 0136 037C     		ldrb	r3, [r0, #16]	@ zero_extendqisi2
+ 248 0138 33B9     		cbnz	r3, .L32
+ 249 013a D0F8B832 		ldr	r3, [r0, #696]
+ 250 013e 5B6B     		ldr	r3, [r3, #52]
+ 251 0140 0DF10600 		add	r0, sp, #6
+ 252 0144 9847     		blx	r3
+ 253 0146 75E7     		b	.L15
+ 254              	.L32:
+ 255 0148 2946     		mov	r1, r5
+ 256 014a FFF7FEFF 		bl	USBD_CtlError
+ 257 014e 11E0     		b	.L7
+ 258              	.L9:
+ 259 0150 037C     		ldrb	r3, [r0, #16]	@ zero_extendqisi2
+ 260 0152 43B9     		cbnz	r3, .L33
+ 261 0154 D0F8B832 		ldr	r3, [r0, #696]
+ 262 0158 1B6B     		ldr	r3, [r3, #48]
+ 263 015a 0DF10600 		add	r0, sp, #6
+ 264 015e 9847     		blx	r3
+ 265 0160 0723     		movs	r3, #7
+ 266 0162 4370     		strb	r3, [r0, #1]
+ 267 0164 66E7     		b	.L15
+ 268              	.L33:
+ 269 0166 2946     		mov	r1, r5
+ 270 0168 FFF7FEFF 		bl	USBD_CtlError
+ 271 016c 02E0     		b	.L7
+ 272              	.L8:
+ 273 016e 2946     		mov	r1, r5
+ 274 0170 FFF7FEFF 		bl	USBD_CtlError
+ 275              	.L7:
+ 276 0174 03B0     		add	sp, sp, #12
+ 277              		@ sp needed
+ 278 0176 30BD     		pop	{r4, r5, pc}
+ 279              	.L36:
+ 280 0178 2946     		mov	r1, r5
+ 281 017a 2046     		mov	r0, r4
+ 282 017c FFF7FEFF 		bl	USBD_CtlError
+ 283 0180 F8E7     		b	.L7
+ 284              	.L35:
+ 285 0182 2046     		mov	r0, r4
+ 286 0184 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 287 0188 F4E7     		b	.L7
+ 289              		.section	.text.USBD_SetAddress,"ax",%progbits
+ 290              		.align	1
+ 291              		.syntax unified
+ 292              		.thumb
+ 293              		.thumb_func
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 6
+
+
+ 295              	USBD_SetAddress:
+ 296              		@ args = 0, pretend = 0, frame = 0
+ 297              		@ frame_needed = 0, uses_anonymous_args = 0
+ 298 0000 38B5     		push	{r3, r4, r5, lr}
+ 299 0002 0446     		mov	r4, r0
+ 300 0004 8B88     		ldrh	r3, [r1, #4]
+ 301 0006 F3B9     		cbnz	r3, .L40
+ 302 0008 CB88     		ldrh	r3, [r1, #6]
+ 303 000a E3B9     		cbnz	r3, .L40
+ 304 000c 4B88     		ldrh	r3, [r1, #2]
+ 305 000e 7F2B     		cmp	r3, #127
+ 306 0010 19D8     		bhi	.L40
+ 307 0012 03F07F05 		and	r5, r3, #127
+ 308 0016 90F89C32 		ldrb	r3, [r0, #668]	@ zero_extendqisi2
+ 309 001a 032B     		cmp	r3, #3
+ 310 001c 0CD0     		beq	.L45
+ 311 001e 80F89E52 		strb	r5, [r0, #670]
+ 312 0022 2946     		mov	r1, r5
+ 313 0024 FFF7FEFF 		bl	USBD_LL_SetUSBAddress
+ 314 0028 2046     		mov	r0, r4
+ 315 002a FFF7FEFF 		bl	USBD_CtlSendStatus
+ 316 002e 35B1     		cbz	r5, .L43
+ 317 0030 0223     		movs	r3, #2
+ 318 0032 84F89C32 		strb	r3, [r4, #668]
+ 319 0036 09E0     		b	.L39
+ 320              	.L45:
+ 321 0038 FFF7FEFF 		bl	USBD_CtlError
+ 322 003c 06E0     		b	.L39
+ 323              	.L43:
+ 324 003e 0123     		movs	r3, #1
+ 325 0040 84F89C32 		strb	r3, [r4, #668]
+ 326 0044 02E0     		b	.L39
+ 327              	.L40:
+ 328 0046 2046     		mov	r0, r4
+ 329 0048 FFF7FEFF 		bl	USBD_CtlError
+ 330              	.L39:
+ 331 004c 38BD     		pop	{r3, r4, r5, pc}
+ 333              		.section	.text.USBD_SetConfig,"ax",%progbits
+ 334              		.align	1
+ 335              		.syntax unified
+ 336              		.thumb
+ 337              		.thumb_func
+ 339              	USBD_SetConfig:
+ 340              		@ args = 0, pretend = 0, frame = 0
+ 341              		@ frame_needed = 0, uses_anonymous_args = 0
+ 342 0000 70B5     		push	{r4, r5, r6, lr}
+ 343 0002 0446     		mov	r4, r0
+ 344 0004 0E46     		mov	r6, r1
+ 345 0006 8D78     		ldrb	r5, [r1, #2]	@ zero_extendqisi2
+ 346 0008 2F4B     		ldr	r3, .L61
+ 347 000a 1D70     		strb	r5, [r3]
+ 348 000c 012D     		cmp	r5, #1
+ 349 000e 10D8     		bhi	.L59
+ 350 0010 90F89C32 		ldrb	r3, [r0, #668]	@ zero_extendqisi2
+ 351 0014 DAB2     		uxtb	r2, r3
+ 352 0016 022B     		cmp	r3, #2
+ 353 0018 0FD0     		beq	.L49
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 7
+
+
+ 354 001a 032A     		cmp	r2, #3
+ 355 001c 26D0     		beq	.L50
+ 356 001e FFF7FEFF 		bl	USBD_CtlError
+ 357 0022 294B     		ldr	r3, .L61
+ 358 0024 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 359 0026 2046     		mov	r0, r4
+ 360 0028 FFF7FEFF 		bl	USBD_ClrClassConfig
+ 361 002c 0325     		movs	r5, #3
+ 362              	.L48:
+ 363 002e 2846     		mov	r0, r5
+ 364 0030 70BD     		pop	{r4, r5, r6, pc}
+ 365              	.L59:
+ 366 0032 FFF7FEFF 		bl	USBD_CtlError
+ 367 0036 0325     		movs	r5, #3
+ 368 0038 F9E7     		b	.L48
+ 369              	.L49:
+ 370 003a A5B1     		cbz	r5, .L52
+ 371 003c 4560     		str	r5, [r0, #4]
+ 372 003e 2946     		mov	r1, r5
+ 373 0040 FFF7FEFF 		bl	USBD_SetClassConfig
+ 374 0044 0546     		mov	r5, r0
+ 375 0046 38B1     		cbz	r0, .L53
+ 376 0048 3146     		mov	r1, r6
+ 377 004a 2046     		mov	r0, r4
+ 378 004c FFF7FEFF 		bl	USBD_CtlError
+ 379 0050 0223     		movs	r3, #2
+ 380 0052 84F89C32 		strb	r3, [r4, #668]
+ 381 0056 EAE7     		b	.L48
+ 382              	.L53:
+ 383 0058 2046     		mov	r0, r4
+ 384 005a FFF7FEFF 		bl	USBD_CtlSendStatus
+ 385 005e 0323     		movs	r3, #3
+ 386 0060 84F89C32 		strb	r3, [r4, #668]
+ 387 0064 E3E7     		b	.L48
+ 388              	.L52:
+ 389 0066 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 390 006a E0E7     		b	.L48
+ 391              	.L50:
+ 392 006c CDB1     		cbz	r5, .L60
+ 393 006e 4168     		ldr	r1, [r0, #4]
+ 394 0070 8D42     		cmp	r5, r1
+ 395 0072 25D0     		beq	.L55
+ 396 0074 C9B2     		uxtb	r1, r1
+ 397 0076 FFF7FEFF 		bl	USBD_ClrClassConfig
+ 398 007a 134B     		ldr	r3, .L61
+ 399 007c 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 400 007e 6160     		str	r1, [r4, #4]
+ 401 0080 2046     		mov	r0, r4
+ 402 0082 FFF7FEFF 		bl	USBD_SetClassConfig
+ 403 0086 0546     		mov	r5, r0
+ 404 0088 B0B1     		cbz	r0, .L56
+ 405 008a 3146     		mov	r1, r6
+ 406 008c 2046     		mov	r0, r4
+ 407 008e FFF7FEFF 		bl	USBD_CtlError
+ 408 0092 2179     		ldrb	r1, [r4, #4]	@ zero_extendqisi2
+ 409 0094 2046     		mov	r0, r4
+ 410 0096 FFF7FEFF 		bl	USBD_ClrClassConfig
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 8
+
+
+ 411 009a 0223     		movs	r3, #2
+ 412 009c 84F89C32 		strb	r3, [r4, #668]
+ 413 00a0 C5E7     		b	.L48
+ 414              	.L60:
+ 415 00a2 0223     		movs	r3, #2
+ 416 00a4 80F89C32 		strb	r3, [r0, #668]
+ 417 00a8 4560     		str	r5, [r0, #4]
+ 418 00aa 2946     		mov	r1, r5
+ 419 00ac FFF7FEFF 		bl	USBD_ClrClassConfig
+ 420 00b0 2046     		mov	r0, r4
+ 421 00b2 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 422 00b6 BAE7     		b	.L48
+ 423              	.L56:
+ 424 00b8 2046     		mov	r0, r4
+ 425 00ba FFF7FEFF 		bl	USBD_CtlSendStatus
+ 426 00be B6E7     		b	.L48
+ 427              	.L55:
+ 428 00c0 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 429 00c4 0025     		movs	r5, #0
+ 430 00c6 B2E7     		b	.L48
+ 431              	.L62:
+ 432              		.align	2
+ 433              	.L61:
+ 434 00c8 00000000 		.word	cfgidx.0
+ 436              		.section	.text.USBD_GetConfig,"ax",%progbits
+ 437              		.align	1
+ 438              		.syntax unified
+ 439              		.thumb
+ 440              		.thumb_func
+ 442              	USBD_GetConfig:
+ 443              		@ args = 0, pretend = 0, frame = 0
+ 444              		@ frame_needed = 0, uses_anonymous_args = 0
+ 445 0000 08B5     		push	{r3, lr}
+ 446 0002 CB88     		ldrh	r3, [r1, #6]
+ 447 0004 012B     		cmp	r3, #1
+ 448 0006 0BD1     		bne	.L71
+ 449 0008 90F89C32 		ldrb	r3, [r0, #668]	@ zero_extendqisi2
+ 450 000c DAB2     		uxtb	r2, r3
+ 451 000e 022B     		cmp	r3, #2
+ 452 0010 09D9     		bls	.L72
+ 453 0012 032A     		cmp	r2, #3
+ 454 0014 11D1     		bne	.L68
+ 455 0016 0122     		movs	r2, #1
+ 456 0018 011D     		adds	r1, r0, #4
+ 457 001a FFF7FEFF 		bl	USBD_CtlSendData
+ 458 001e 01E0     		b	.L63
+ 459              	.L71:
+ 460 0020 FFF7FEFF 		bl	USBD_CtlError
+ 461              	.L63:
+ 462 0024 08BD     		pop	{r3, pc}
+ 463              	.L72:
+ 464 0026 52B2     		sxtb	r2, r2
+ 465 0028 3AB1     		cbz	r2, .L68
+ 466 002a 0146     		mov	r1, r0
+ 467 002c 0023     		movs	r3, #0
+ 468 002e 41F8083F 		str	r3, [r1, #8]!
+ 469 0032 0122     		movs	r2, #1
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 9
+
+
+ 470 0034 FFF7FEFF 		bl	USBD_CtlSendData
+ 471 0038 F4E7     		b	.L63
+ 472              	.L68:
+ 473 003a FFF7FEFF 		bl	USBD_CtlError
+ 474 003e F1E7     		b	.L63
+ 476              		.section	.text.USBD_GetStatus,"ax",%progbits
+ 477              		.align	1
+ 478              		.syntax unified
+ 479              		.thumb
+ 480              		.thumb_func
+ 482              	USBD_GetStatus:
+ 483              		@ args = 0, pretend = 0, frame = 0
+ 484              		@ frame_needed = 0, uses_anonymous_args = 0
+ 485 0000 08B5     		push	{r3, lr}
+ 486 0002 90F89C32 		ldrb	r3, [r0, #668]	@ zero_extendqisi2
+ 487 0006 013B     		subs	r3, r3, #1
+ 488 0008 022B     		cmp	r3, #2
+ 489 000a 12D8     		bhi	.L74
+ 490 000c CB88     		ldrh	r3, [r1, #6]
+ 491 000e 022B     		cmp	r3, #2
+ 492 0010 0CD1     		bne	.L79
+ 493 0012 0123     		movs	r3, #1
+ 494 0014 C360     		str	r3, [r0, #12]
+ 495 0016 D0F8A432 		ldr	r3, [r0, #676]
+ 496 001a 0BB1     		cbz	r3, .L77
+ 497 001c 0323     		movs	r3, #3
+ 498 001e C360     		str	r3, [r0, #12]
+ 499              	.L77:
+ 500 0020 0222     		movs	r2, #2
+ 501 0022 00F10C01 		add	r1, r0, #12
+ 502 0026 FFF7FEFF 		bl	USBD_CtlSendData
+ 503              	.L73:
+ 504 002a 08BD     		pop	{r3, pc}
+ 505              	.L79:
+ 506 002c FFF7FEFF 		bl	USBD_CtlError
+ 507 0030 FBE7     		b	.L73
+ 508              	.L74:
+ 509 0032 FFF7FEFF 		bl	USBD_CtlError
+ 510 0036 F8E7     		b	.L73
+ 512              		.section	.text.USBD_SetFeature,"ax",%progbits
+ 513              		.align	1
+ 514              		.syntax unified
+ 515              		.thumb
+ 516              		.thumb_func
+ 518              	USBD_SetFeature:
+ 519              		@ args = 0, pretend = 0, frame = 0
+ 520              		@ frame_needed = 0, uses_anonymous_args = 0
+ 521 0000 08B5     		push	{r3, lr}
+ 522 0002 4B88     		ldrh	r3, [r1, #2]
+ 523 0004 012B     		cmp	r3, #1
+ 524 0006 04D0     		beq	.L85
+ 525 0008 022B     		cmp	r3, #2
+ 526 000a 07D0     		beq	.L86
+ 527 000c FFF7FEFF 		bl	USBD_CtlError
+ 528              	.L80:
+ 529 0010 08BD     		pop	{r3, pc}
+ 530              	.L85:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 10
+
+
+ 531 0012 C0F8A432 		str	r3, [r0, #676]
+ 532 0016 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 533 001a F9E7     		b	.L80
+ 534              	.L86:
+ 535 001c 8B88     		ldrh	r3, [r1, #4]
+ 536 001e 1B0A     		lsrs	r3, r3, #8
+ 537 0020 80F8A032 		strb	r3, [r0, #672]
+ 538 0024 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 539 0028 F2E7     		b	.L80
+ 541              		.section	.text.USBD_ClrFeature,"ax",%progbits
+ 542              		.align	1
+ 543              		.syntax unified
+ 544              		.thumb
+ 545              		.thumb_func
+ 547              	USBD_ClrFeature:
+ 548              		@ args = 0, pretend = 0, frame = 0
+ 549              		@ frame_needed = 0, uses_anonymous_args = 0
+ 550 0000 08B5     		push	{r3, lr}
+ 551 0002 90F89C32 		ldrb	r3, [r0, #668]	@ zero_extendqisi2
+ 552 0006 013B     		subs	r3, r3, #1
+ 553 0008 022B     		cmp	r3, #2
+ 554 000a 09D8     		bhi	.L88
+ 555 000c 4B88     		ldrh	r3, [r1, #2]
+ 556 000e 012B     		cmp	r3, #1
+ 557 0010 00D0     		beq	.L91
+ 558              	.L87:
+ 559 0012 08BD     		pop	{r3, pc}
+ 560              	.L91:
+ 561 0014 0023     		movs	r3, #0
+ 562 0016 C0F8A432 		str	r3, [r0, #676]
+ 563 001a FFF7FEFF 		bl	USBD_CtlSendStatus
+ 564 001e F8E7     		b	.L87
+ 565              	.L88:
+ 566 0020 FFF7FEFF 		bl	USBD_CtlError
+ 567 0024 F5E7     		b	.L87
+ 569              		.section	.text.USBD_StdDevReq,"ax",%progbits
+ 570              		.align	1
+ 571              		.global	USBD_StdDevReq
+ 572              		.syntax unified
+ 573              		.thumb
+ 574              		.thumb_func
+ 576              	USBD_StdDevReq:
+ 577              		@ args = 0, pretend = 0, frame = 0
+ 578              		@ frame_needed = 0, uses_anonymous_args = 0
+ 579 0000 38B5     		push	{r3, r4, r5, lr}
+ 580 0002 0C78     		ldrb	r4, [r1]	@ zero_extendqisi2
+ 581 0004 04F06004 		and	r4, r4, #96
+ 582 0008 202C     		cmp	r4, #32
+ 583 000a 06D0     		beq	.L93
+ 584 000c 402C     		cmp	r4, #64
+ 585 000e 04D0     		beq	.L93
+ 586 0010 6CB1     		cbz	r4, .L94
+ 587 0012 FFF7FEFF 		bl	USBD_CtlError
+ 588 0016 0024     		movs	r4, #0
+ 589 0018 07E0     		b	.L96
+ 590              	.L93:
+ 591 001a D0F8D432 		ldr	r3, [r0, #724]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 11
+
+
+ 592 001e AE33     		adds	r3, r3, #174
+ 593 0020 50F82330 		ldr	r3, [r0, r3, lsl #2]
+ 594 0024 9B68     		ldr	r3, [r3, #8]
+ 595 0026 9847     		blx	r3
+ 596 0028 0446     		mov	r4, r0
+ 597              	.L96:
+ 598 002a 2046     		mov	r0, r4
+ 599 002c 38BD     		pop	{r3, r4, r5, pc}
+ 600              	.L94:
+ 601 002e 4D78     		ldrb	r5, [r1, #1]	@ zero_extendqisi2
+ 602 0030 092D     		cmp	r5, #9
+ 603 0032 1DD8     		bhi	.L97
+ 604 0034 DFE805F0 		tbb	[pc, r5]
+ 605              	.L99:
+ 606 0038 12       		.byte	(.L105-.L99)/2
+ 607 0039 19       		.byte	(.L104-.L99)/2
+ 608 003a 1C       		.byte	(.L97-.L99)/2
+ 609 003b 16       		.byte	(.L103-.L99)/2
+ 610 003c 1C       		.byte	(.L97-.L99)/2
+ 611 003d 08       		.byte	(.L102-.L99)/2
+ 612 003e 05       		.byte	(.L101-.L99)/2
+ 613 003f 1C       		.byte	(.L97-.L99)/2
+ 614 0040 0F       		.byte	(.L100-.L99)/2
+ 615 0041 0B       		.byte	(.L98-.L99)/2
+ 616              		.p2align 1
+ 617              	.L101:
+ 618 0042 FFF7FEFF 		bl	USBD_GetDescriptor
+ 619 0046 F0E7     		b	.L96
+ 620              	.L102:
+ 621 0048 FFF7FEFF 		bl	USBD_SetAddress
+ 622 004c EDE7     		b	.L96
+ 623              	.L98:
+ 624 004e FFF7FEFF 		bl	USBD_SetConfig
+ 625 0052 0446     		mov	r4, r0
+ 626 0054 E9E7     		b	.L96
+ 627              	.L100:
+ 628 0056 FFF7FEFF 		bl	USBD_GetConfig
+ 629 005a E6E7     		b	.L96
+ 630              	.L105:
+ 631 005c FFF7FEFF 		bl	USBD_GetStatus
+ 632 0060 2C46     		mov	r4, r5
+ 633 0062 E2E7     		b	.L96
+ 634              	.L103:
+ 635 0064 FFF7FEFF 		bl	USBD_SetFeature
+ 636 0068 DFE7     		b	.L96
+ 637              	.L104:
+ 638 006a FFF7FEFF 		bl	USBD_ClrFeature
+ 639 006e DCE7     		b	.L96
+ 640              	.L97:
+ 641 0070 FFF7FEFF 		bl	USBD_CtlError
+ 642 0074 D9E7     		b	.L96
+ 644              		.section	.text.USBD_StdItfReq,"ax",%progbits
+ 645              		.align	1
+ 646              		.global	USBD_StdItfReq
+ 647              		.syntax unified
+ 648              		.thumb
+ 649              		.thumb_func
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 12
+
+
+ 651              	USBD_StdItfReq:
+ 652              		@ args = 0, pretend = 0, frame = 0
+ 653              		@ frame_needed = 0, uses_anonymous_args = 0
+ 654 0000 70B5     		push	{r4, r5, r6, lr}
+ 655 0002 0546     		mov	r5, r0
+ 656 0004 0C46     		mov	r4, r1
+ 657 0006 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 658 0008 03F06003 		and	r3, r3, #96
+ 659 000c 202B     		cmp	r3, #32
+ 660 000e 07D0     		beq	.L109
+ 661 0010 402B     		cmp	r3, #64
+ 662 0012 05D0     		beq	.L109
+ 663 0014 23B1     		cbz	r3, .L109
+ 664 0016 FFF7FEFF 		bl	USBD_CtlError
+ 665 001a 0026     		movs	r6, #0
+ 666              	.L114:
+ 667 001c 3046     		mov	r0, r6
+ 668 001e 70BD     		pop	{r4, r5, r6, pc}
+ 669              	.L109:
+ 670 0020 95F89C32 		ldrb	r3, [r5, #668]	@ zero_extendqisi2
+ 671 0024 013B     		subs	r3, r3, #1
+ 672 0026 022B     		cmp	r3, #2
+ 673 0028 26D8     		bhi	.L111
+ 674 002a 2179     		ldrb	r1, [r4, #4]	@ zero_extendqisi2
+ 675 002c 0129     		cmp	r1, #1
+ 676 002e 05D9     		bls	.L118
+ 677 0030 2146     		mov	r1, r4
+ 678 0032 2846     		mov	r0, r5
+ 679 0034 FFF7FEFF 		bl	USBD_CtlError
+ 680 0038 0026     		movs	r6, #0
+ 681 003a EFE7     		b	.L114
+ 682              	.L118:
+ 683 003c 2846     		mov	r0, r5
+ 684 003e FFF7FEFF 		bl	USBD_CoreFindIF
+ 685 0042 68B9     		cbnz	r0, .L115
+ 686 0044 00F1AE02 		add	r2, r0, #174
+ 687 0048 55F82220 		ldr	r2, [r5, r2, lsl #2]
+ 688 004c 9168     		ldr	r1, [r2, #8]
+ 689 004e 89B1     		cbz	r1, .L116
+ 690 0050 C5F8D402 		str	r0, [r5, #724]
+ 691 0054 9368     		ldr	r3, [r2, #8]
+ 692 0056 2146     		mov	r1, r4
+ 693 0058 2846     		mov	r0, r5
+ 694 005a 9847     		blx	r3
+ 695 005c 0646     		mov	r6, r0
+ 696 005e 00E0     		b	.L113
+ 697              	.L115:
+ 698 0060 0326     		movs	r6, #3
+ 699              	.L113:
+ 700 0062 E388     		ldrh	r3, [r4, #6]
+ 701 0064 002B     		cmp	r3, #0
+ 702 0066 D9D1     		bne	.L114
+ 703 0068 002E     		cmp	r6, #0
+ 704 006a D7D1     		bne	.L114
+ 705 006c 2846     		mov	r0, r5
+ 706 006e FFF7FEFF 		bl	USBD_CtlSendStatus
+ 707 0072 D3E7     		b	.L114
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 13
+
+
+ 708              	.L116:
+ 709 0074 0326     		movs	r6, #3
+ 710 0076 F4E7     		b	.L113
+ 711              	.L111:
+ 712 0078 2146     		mov	r1, r4
+ 713 007a 2846     		mov	r0, r5
+ 714 007c FFF7FEFF 		bl	USBD_CtlError
+ 715 0080 0026     		movs	r6, #0
+ 716 0082 CBE7     		b	.L114
+ 718              		.section	.text.USBD_StdEPReq,"ax",%progbits
+ 719              		.align	1
+ 720              		.global	USBD_StdEPReq
+ 721              		.syntax unified
+ 722              		.thumb
+ 723              		.thumb_func
+ 725              	USBD_StdEPReq:
+ 726              		@ args = 0, pretend = 0, frame = 0
+ 727              		@ frame_needed = 0, uses_anonymous_args = 0
+ 728 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 729 0004 0646     		mov	r6, r0
+ 730 0006 0D46     		mov	r5, r1
+ 731 0008 8B88     		ldrh	r3, [r1, #4]
+ 732 000a DFB2     		uxtb	r7, r3
+ 733 000c 0C78     		ldrb	r4, [r1]	@ zero_extendqisi2
+ 734 000e 04F06004 		and	r4, r4, #96
+ 735 0012 202C     		cmp	r4, #32
+ 736 0014 08D0     		beq	.L120
+ 737 0016 402C     		cmp	r4, #64
+ 738 0018 06D0     		beq	.L120
+ 739 001a DCB1     		cbz	r4, .L121
+ 740 001c FFF7FEFF 		bl	USBD_CtlError
+ 741 0020 0024     		movs	r4, #0
+ 742              	.L123:
+ 743 0022 2046     		mov	r0, r4
+ 744 0024 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 745              	.L120:
+ 746 0028 3946     		mov	r1, r7
+ 747 002a 3046     		mov	r0, r6
+ 748 002c FFF7FEFF 		bl	USBD_CoreFindEP
+ 749 0030 0446     		mov	r4, r0
+ 750 0032 0028     		cmp	r0, #0
+ 751 0034 40F0FC80 		bne	.L152
+ 752 0038 C6F8D402 		str	r0, [r6, #724]
+ 753 003c 00F1AE03 		add	r3, r0, #174
+ 754 0040 56F82330 		ldr	r3, [r6, r3, lsl #2]
+ 755 0044 9B68     		ldr	r3, [r3, #8]
+ 756 0046 002B     		cmp	r3, #0
+ 757 0048 EBD0     		beq	.L123
+ 758 004a 2946     		mov	r1, r5
+ 759 004c 3046     		mov	r0, r6
+ 760 004e 9847     		blx	r3
+ 761 0050 0446     		mov	r4, r0
+ 762 0052 E6E7     		b	.L123
+ 763              	.L121:
+ 764 0054 91F80180 		ldrb	r8, [r1, #1]	@ zero_extendqisi2
+ 765 0058 B8F1010F 		cmp	r8, #1
+ 766 005c 31D0     		beq	.L124
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 14
+
+
+ 767 005e B8F1030F 		cmp	r8, #3
+ 768 0062 05D0     		beq	.L125
+ 769 0064 B8F1000F 		cmp	r8, #0
+ 770 0068 67D0     		beq	.L126
+ 771 006a FFF7FEFF 		bl	USBD_CtlError
+ 772 006e D8E7     		b	.L123
+ 773              	.L125:
+ 774 0070 90F89C32 		ldrb	r3, [r0, #668]	@ zero_extendqisi2
+ 775 0074 DAB2     		uxtb	r2, r3
+ 776 0076 022B     		cmp	r3, #2
+ 777 0078 04D0     		beq	.L128
+ 778 007a 032A     		cmp	r2, #3
+ 779 007c 12D0     		beq	.L129
+ 780 007e FFF7FEFF 		bl	USBD_CtlError
+ 781 0082 CEE7     		b	.L123
+ 782              	.L128:
+ 783 0084 0FB1     		cbz	r7, .L131
+ 784 0086 802F     		cmp	r7, #128
+ 785 0088 04D1     		bne	.L160
+ 786              	.L131:
+ 787 008a 2946     		mov	r1, r5
+ 788 008c 3046     		mov	r0, r6
+ 789 008e FFF7FEFF 		bl	USBD_CtlError
+ 790 0092 C6E7     		b	.L123
+ 791              	.L160:
+ 792 0094 3946     		mov	r1, r7
+ 793 0096 FFF7FEFF 		bl	USBD_LL_StallEP
+ 794 009a 8021     		movs	r1, #128
+ 795 009c 3046     		mov	r0, r6
+ 796 009e FFF7FEFF 		bl	USBD_LL_StallEP
+ 797 00a2 BEE7     		b	.L123
+ 798              	.L129:
+ 799 00a4 4B88     		ldrh	r3, [r1, #2]
+ 800 00a6 23B9     		cbnz	r3, .L132
+ 801 00a8 1FB1     		cbz	r7, .L132
+ 802 00aa 802F     		cmp	r7, #128
+ 803 00ac 01D0     		beq	.L132
+ 804 00ae CB88     		ldrh	r3, [r1, #6]
+ 805 00b0 1BB1     		cbz	r3, .L161
+ 806              	.L132:
+ 807 00b2 3046     		mov	r0, r6
+ 808 00b4 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 809 00b8 B3E7     		b	.L123
+ 810              	.L161:
+ 811 00ba 3946     		mov	r1, r7
+ 812 00bc FFF7FEFF 		bl	USBD_LL_StallEP
+ 813 00c0 F7E7     		b	.L132
+ 814              	.L124:
+ 815 00c2 90F89C32 		ldrb	r3, [r0, #668]	@ zero_extendqisi2
+ 816 00c6 DAB2     		uxtb	r2, r3
+ 817 00c8 022B     		cmp	r3, #2
+ 818 00ca 04D0     		beq	.L133
+ 819 00cc 032A     		cmp	r2, #3
+ 820 00ce 12D0     		beq	.L134
+ 821 00d0 FFF7FEFF 		bl	USBD_CtlError
+ 822 00d4 A5E7     		b	.L123
+ 823              	.L133:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 15
+
+
+ 824 00d6 0FB1     		cbz	r7, .L136
+ 825 00d8 802F     		cmp	r7, #128
+ 826 00da 04D1     		bne	.L162
+ 827              	.L136:
+ 828 00dc 2946     		mov	r1, r5
+ 829 00de 3046     		mov	r0, r6
+ 830 00e0 FFF7FEFF 		bl	USBD_CtlError
+ 831 00e4 9DE7     		b	.L123
+ 832              	.L162:
+ 833 00e6 3946     		mov	r1, r7
+ 834 00e8 FFF7FEFF 		bl	USBD_LL_StallEP
+ 835 00ec 8021     		movs	r1, #128
+ 836 00ee 3046     		mov	r0, r6
+ 837 00f0 FFF7FEFF 		bl	USBD_LL_StallEP
+ 838 00f4 95E7     		b	.L123
+ 839              	.L134:
+ 840 00f6 4B88     		ldrh	r3, [r1, #2]
+ 841 00f8 002B     		cmp	r3, #0
+ 842 00fa 92D1     		bne	.L123
+ 843 00fc 17F07F0F 		tst	r7, #127
+ 844 0100 17D1     		bne	.L163
+ 845              	.L137:
+ 846 0102 3046     		mov	r0, r6
+ 847 0104 FFF7FEFF 		bl	USBD_CtlSendStatus
+ 848 0108 3946     		mov	r1, r7
+ 849 010a 3046     		mov	r0, r6
+ 850 010c FFF7FEFF 		bl	USBD_CoreFindEP
+ 851 0110 0028     		cmp	r0, #0
+ 852 0112 86D1     		bne	.L123
+ 853 0114 C6F8D402 		str	r0, [r6, #724]
+ 854 0118 00F1AE02 		add	r2, r0, #174
+ 855 011c 56F82220 		ldr	r2, [r6, r2, lsl #2]
+ 856 0120 9268     		ldr	r2, [r2, #8]
+ 857 0122 002A     		cmp	r2, #0
+ 858 0124 00F08680 		beq	.L153
+ 859 0128 2946     		mov	r1, r5
+ 860 012a 3046     		mov	r0, r6
+ 861 012c 9047     		blx	r2
+ 862 012e 0446     		mov	r4, r0
+ 863 0130 77E7     		b	.L123
+ 864              	.L163:
+ 865 0132 3946     		mov	r1, r7
+ 866 0134 FFF7FEFF 		bl	USBD_LL_ClearStallEP
+ 867 0138 E3E7     		b	.L137
+ 868              	.L126:
+ 869 013a 90F89C22 		ldrb	r2, [r0, #668]	@ zero_extendqisi2
+ 870 013e D1B2     		uxtb	r1, r2
+ 871 0140 022A     		cmp	r2, #2
+ 872 0142 06D0     		beq	.L138
+ 873 0144 0329     		cmp	r1, #3
+ 874 0146 29D0     		beq	.L139
+ 875 0148 2946     		mov	r1, r5
+ 876 014a FFF7FEFF 		bl	USBD_CtlError
+ 877 014e 4446     		mov	r4, r8
+ 878 0150 67E7     		b	.L123
+ 879              	.L138:
+ 880 0152 0FB1     		cbz	r7, .L141
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 16
+
+
+ 881 0154 802F     		cmp	r7, #128
+ 882 0156 13D1     		bne	.L164
+ 883              	.L141:
+ 884 0158 13F0800F 		tst	r3, #128
+ 885 015c 15D1     		bne	.L165
+ 886 015e 07F07F07 		and	r7, r7, #127
+ 887 0162 07EB8707 		add	r7, r7, r7, lsl #2
+ 888 0166 B900     		lsls	r1, r7, #2
+ 889 0168 01F5A871 		add	r1, r1, #336
+ 890 016c 3144     		add	r1, r1, r6
+ 891 016e 0431     		adds	r1, r1, #4
+ 892              	.L143:
+ 893 0170 0023     		movs	r3, #0
+ 894 0172 0B60     		str	r3, [r1]
+ 895 0174 0222     		movs	r2, #2
+ 896 0176 3046     		mov	r0, r6
+ 897 0178 FFF7FEFF 		bl	USBD_CtlSendData
+ 898 017c 4446     		mov	r4, r8
+ 899 017e 50E7     		b	.L123
+ 900              	.L164:
+ 901 0180 2946     		mov	r1, r5
+ 902 0182 FFF7FEFF 		bl	USBD_CtlError
+ 903 0186 4446     		mov	r4, r8
+ 904 0188 4BE7     		b	.L123
+ 905              	.L165:
+ 906 018a 07F07F07 		and	r7, r7, #127
+ 907 018e 07EB8707 		add	r7, r7, r7, lsl #2
+ 908 0192 B900     		lsls	r1, r7, #2
+ 909 0194 1031     		adds	r1, r1, #16
+ 910 0196 3144     		add	r1, r1, r6
+ 911 0198 0431     		adds	r1, r1, #4
+ 912 019a E9E7     		b	.L143
+ 913              	.L139:
+ 914 019c 5BB2     		sxtb	r3, r3
+ 915 019e 002B     		cmp	r3, #0
+ 916 01a0 1FDB     		blt	.L166
+ 917 01a2 07F00F02 		and	r2, r7, #15
+ 918 01a6 02EB8202 		add	r2, r2, r2, lsl #2
+ 919 01aa 00EB8202 		add	r2, r0, r2, lsl #2
+ 920 01ae B2F86421 		ldrh	r2, [r2, #356]
+ 921 01b2 22B3     		cbz	r2, .L167
+ 922              	.L145:
+ 923 01b4 002B     		cmp	r3, #0
+ 924 01b6 27DB     		blt	.L168
+ 925 01b8 07F07F03 		and	r3, r7, #127
+ 926 01bc 03EB8303 		add	r3, r3, r3, lsl #2
+ 927 01c0 9C00     		lsls	r4, r3, #2
+ 928 01c2 04F5A874 		add	r4, r4, #336
+ 929 01c6 3444     		add	r4, r4, r6
+ 930 01c8 0434     		adds	r4, r4, #4
+ 931              	.L147:
+ 932 01ca 0FB1     		cbz	r7, .L148
+ 933 01cc 802F     		cmp	r7, #128
+ 934 01ce 24D1     		bne	.L149
+ 935              	.L148:
+ 936 01d0 0023     		movs	r3, #0
+ 937 01d2 2360     		str	r3, [r4]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 17
+
+
+ 938              	.L150:
+ 939 01d4 0222     		movs	r2, #2
+ 940 01d6 2146     		mov	r1, r4
+ 941 01d8 3046     		mov	r0, r6
+ 942 01da FFF7FEFF 		bl	USBD_CtlSendData
+ 943 01de 4446     		mov	r4, r8
+ 944 01e0 1FE7     		b	.L123
+ 945              	.L166:
+ 946 01e2 07F00F02 		and	r2, r7, #15
+ 947 01e6 02EB8202 		add	r2, r2, r2, lsl #2
+ 948 01ea 00EB8202 		add	r2, r0, r2, lsl #2
+ 949 01ee 928C     		ldrh	r2, [r2, #36]
+ 950 01f0 002A     		cmp	r2, #0
+ 951 01f2 DFD1     		bne	.L145
+ 952 01f4 2946     		mov	r1, r5
+ 953 01f6 FFF7FEFF 		bl	USBD_CtlError
+ 954 01fa 4446     		mov	r4, r8
+ 955 01fc 11E7     		b	.L123
+ 956              	.L167:
+ 957 01fe 2946     		mov	r1, r5
+ 958 0200 FFF7FEFF 		bl	USBD_CtlError
+ 959 0204 4446     		mov	r4, r8
+ 960 0206 0CE7     		b	.L123
+ 961              	.L168:
+ 962 0208 07F07F03 		and	r3, r7, #127
+ 963 020c 03EB8303 		add	r3, r3, r3, lsl #2
+ 964 0210 9C00     		lsls	r4, r3, #2
+ 965 0212 1034     		adds	r4, r4, #16
+ 966 0214 3444     		add	r4, r4, r6
+ 967 0216 0434     		adds	r4, r4, #4
+ 968 0218 D7E7     		b	.L147
+ 969              	.L149:
+ 970 021a 3946     		mov	r1, r7
+ 971 021c 3046     		mov	r0, r6
+ 972 021e FFF7FEFF 		bl	USBD_LL_IsStallEP
+ 973 0222 10B1     		cbz	r0, .L151
+ 974 0224 0123     		movs	r3, #1
+ 975 0226 2360     		str	r3, [r4]
+ 976 0228 D4E7     		b	.L150
+ 977              	.L151:
+ 978 022a 0023     		movs	r3, #0
+ 979 022c 2360     		str	r3, [r4]
+ 980 022e D1E7     		b	.L150
+ 981              	.L152:
+ 982 0230 0024     		movs	r4, #0
+ 983 0232 F6E6     		b	.L123
+ 984              	.L153:
+ 985 0234 0446     		mov	r4, r0
+ 986 0236 F4E6     		b	.L123
+ 988              		.section	.text.USBD_GetString,"ax",%progbits
+ 989              		.align	1
+ 990              		.global	USBD_GetString
+ 991              		.syntax unified
+ 992              		.thumb
+ 993              		.thumb_func
+ 995              	USBD_GetString:
+ 996              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 18
+
+
+ 997              		@ frame_needed = 0, uses_anonymous_args = 0
+ 998 0000 00B3     		cbz	r0, .L176
+ 999 0002 70B5     		push	{r4, r5, r6, lr}
+ 1000 0004 0D46     		mov	r5, r1
+ 1001 0006 1646     		mov	r6, r2
+ 1002 0008 0446     		mov	r4, r0
+ 1003 000a FFF7FEFF 		bl	USBD_GetLen
+ 1004 000e 0130     		adds	r0, r0, #1
+ 1005 0010 4300     		lsls	r3, r0, #1
+ 1006 0012 B3F5007F 		cmp	r3, #512
+ 1007 0016 06D8     		bhi	.L174
+ 1008 0018 9BB2     		uxth	r3, r3
+ 1009              	.L171:
+ 1010 001a 3380     		strh	r3, [r6]	@ movhi
+ 1011 001c 2B70     		strb	r3, [r5]
+ 1012 001e 0323     		movs	r3, #3
+ 1013 0020 6B70     		strb	r3, [r5, #1]
+ 1014 0022 0223     		movs	r3, #2
+ 1015 0024 0AE0     		b	.L172
+ 1016              	.L174:
+ 1017 0026 4FF40073 		mov	r3, #512
+ 1018 002a F6E7     		b	.L171
+ 1019              	.L173:
+ 1020 002c EA54     		strb	r2, [r5, r3]
+ 1021 002e 0134     		adds	r4, r4, #1
+ 1022 0030 5A1C     		adds	r2, r3, #1
+ 1023 0032 D2B2     		uxtb	r2, r2
+ 1024 0034 0021     		movs	r1, #0
+ 1025 0036 A954     		strb	r1, [r5, r2]
+ 1026 0038 0233     		adds	r3, r3, #2
+ 1027 003a DBB2     		uxtb	r3, r3
+ 1028              	.L172:
+ 1029 003c 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 1030 003e 002A     		cmp	r2, #0
+ 1031 0040 F4D1     		bne	.L173
+ 1032 0042 70BD     		pop	{r4, r5, r6, pc}
+ 1033              	.L176:
+ 1034 0044 7047     		bx	lr
+ 1036              		.section	.bss.cfgidx.0,"aw",%nobits
+ 1039              	cfgidx.0:
+ 1040 0000 00       		.space	1
+ 1041              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 usbd_ctlreq.c
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:18     .text.USBD_GetLen:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:23     .text.USBD_GetLen:00000000 USBD_GetLen
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:41     .text.USBD_ParseSetupRequest:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:47     .text.USBD_ParseSetupRequest:00000000 USBD_ParseSetupRequest
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:70     .text.USBD_CtlError:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:76     .text.USBD_CtlError:00000000 USBD_CtlError
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:89     .text.USBD_GetDescriptor:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:94     .text.USBD_GetDescriptor:00000000 USBD_GetDescriptor
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:110    .text.USBD_GetDescriptor:0000001e $d
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:163    .text.USBD_GetDescriptor:0000008c $d
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:169    .text.USBD_GetDescriptor:00000092 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:290    .text.USBD_SetAddress:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:295    .text.USBD_SetAddress:00000000 USBD_SetAddress
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:334    .text.USBD_SetConfig:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:339    .text.USBD_SetConfig:00000000 USBD_SetConfig
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:434    .text.USBD_SetConfig:000000c8 $d
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:1039   .bss.cfgidx.0:00000000 cfgidx.0
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:437    .text.USBD_GetConfig:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:442    .text.USBD_GetConfig:00000000 USBD_GetConfig
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:477    .text.USBD_GetStatus:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:482    .text.USBD_GetStatus:00000000 USBD_GetStatus
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:513    .text.USBD_SetFeature:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:518    .text.USBD_SetFeature:00000000 USBD_SetFeature
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:542    .text.USBD_ClrFeature:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:547    .text.USBD_ClrFeature:00000000 USBD_ClrFeature
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:570    .text.USBD_StdDevReq:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:576    .text.USBD_StdDevReq:00000000 USBD_StdDevReq
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:606    .text.USBD_StdDevReq:00000038 $d
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:616    .text.USBD_StdDevReq:00000042 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:645    .text.USBD_StdItfReq:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:651    .text.USBD_StdItfReq:00000000 USBD_StdItfReq
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:719    .text.USBD_StdEPReq:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:725    .text.USBD_StdEPReq:00000000 USBD_StdEPReq
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:989    .text.USBD_GetString:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:995    .text.USBD_GetString:00000000 USBD_GetString
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:1040   .bss.cfgidx.0:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:117    .text.USBD_GetDescriptor:00000025 $d
+C:\Users\alireza\AppData\Local\Temp\ccGocDtl.s:117    .text.USBD_GetDescriptor:00000026 $t
+
+UNDEFINED SYMBOLS
+USBD_LL_StallEP
+USBD_CtlSendData
+USBD_CtlSendStatus
+USBD_LL_SetUSBAddress
+USBD_ClrClassConfig
+USBD_SetClassConfig
+USBD_CoreFindIF
+USBD_CoreFindEP
+USBD_LL_ClearStallEP
+USBD_LL_IsStallEP

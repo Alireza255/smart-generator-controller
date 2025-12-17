@@ -1,0 +1,181 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccyYngde.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"pid.c"
+  16              		.text
+  17              		.section	.text.pid_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	pid_init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	pid_init:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 0346     		mov	r3, r0
+  29 0002 48B1     		cbz	r0, .L1
+  30 0004 41B1     		cbz	r1, .L1
+  31 0006 0022     		movs	r2, #0
+  32 0008 C260     		str	r2, [r0, #12]	@ float
+  33 000a 0261     		str	r2, [r0, #16]	@ float
+  34 000c 4261     		str	r2, [r0, #20]	@ float
+  35 000e 8261     		str	r2, [r0, #24]	@ float
+  36 0010 0020     		movs	r0, #0
+  37 0012 D861     		str	r0, [r3, #28]
+  38 0014 5A62     		str	r2, [r3, #36]	@ float
+  39 0016 1960     		str	r1, [r3]
+  40              	.L1:
+  41 0018 7047     		bx	lr
+  43              		.section	.text.pid_set_setpoint,"ax",%progbits
+  44              		.align	1
+  45              		.global	pid_set_setpoint
+  46              		.syntax unified
+  47              		.thumb
+  48              		.thumb_func
+  50              	pid_set_setpoint:
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53              		@ link register save eliminated.
+  54 0000 80ED080A 		vstr.32	s0, [r0, #32]
+  55 0004 7047     		bx	lr
+  57              		.section	.text.pid_get_error,"ax",%progbits
+  58              		.align	1
+  59              		.global	pid_get_error
+  60              		.syntax unified
+  61              		.thumb
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccyYngde.s 			page 2
+
+
+  62              		.thumb_func
+  64              	pid_get_error:
+  65              		@ args = 0, pretend = 0, frame = 0
+  66              		@ frame_needed = 0, uses_anonymous_args = 0
+  67              		@ link register save eliminated.
+  68 0000 90ED050A 		vldr.32	s0, [r0, #20]
+  69 0004 7047     		bx	lr
+  71              		.section	.text.pid_compute,"ax",%progbits
+  72              		.align	1
+  73              		.global	pid_compute
+  74              		.syntax unified
+  75              		.thumb
+  76              		.thumb_func
+  78              	pid_compute:
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              		@ link register save eliminated.
+  82 0000 0368     		ldr	r3, [r0]
+  83 0002 002B     		cmp	r3, #0
+  84 0004 79D0     		beq	.L15
+  85 0006 C269     		ldr	r2, [r0, #28]
+  86 0008 8A1A     		subs	r2, r1, r2
+  87 000a 07EE902A 		vmov	s15, r2	@ int
+  88 000e F8EE677A 		vcvt.f32.u32	s15, s15
+  89 0012 9FED3B7A 		vldr.32	s14, .L22
+  90 0016 C7EE876A 		vdiv.f32	s13, s15, s14
+  91 001a 90ED086A 		vldr.32	s12, [r0, #32]
+  92 001e 36EE406A 		vsub.f32	s12, s12, s0
+  93 0022 D3ED005A 		vldr.32	s11, [r3]
+  94 0026 65EE865A 		vmul.f32	s11, s11, s12
+  95 002a 90ED037A 		vldr.32	s14, [r0, #12]
+  96 002e D3ED017A 		vldr.32	s15, [r3, #4]
+  97 0032 B6EE005A 		vmov.f32	s10, #5.0e-1
+  98 0036 67EE857A 		vmul.f32	s15, s15, s10
+  99 003a 67EEA67A 		vmul.f32	s15, s15, s13
+ 100 003e 90ED055A 		vldr.32	s10, [r0, #20]
+ 101 0042 35EE065A 		vadd.f32	s10, s10, s12
+ 102 0046 67EE857A 		vmul.f32	s15, s15, s10
+ 103 004a 77EE277A 		vadd.f32	s15, s14, s15
+ 104 004e C0ED037A 		vstr.32	s15, [r0, #12]
+ 105 0052 93ED047A 		vldr.32	s14, [r3, #16]
+ 106 0056 F4EEC77A 		vcmpe.f32	s15, s14
+ 107 005a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 108 005e 38DD     		ble	.L20
+ 109 0060 80ED037A 		vstr.32	s14, [r0, #12]
+ 110              	.L9:
+ 111 0064 D3ED027A 		vldr.32	s15, [r3, #8]
+ 112 0068 77EEA77A 		vadd.f32	s15, s15, s15
+ 113 006c 90ED067A 		vldr.32	s14, [r0, #24]
+ 114 0070 30EE477A 		vsub.f32	s14, s0, s14
+ 115 0074 67EE877A 		vmul.f32	s15, s15, s14
+ 116 0078 93ED057A 		vldr.32	s14, [r3, #20]
+ 117 007c 37EE077A 		vadd.f32	s14, s14, s14
+ 118 0080 37EE665A 		vsub.f32	s10, s14, s13
+ 119 0084 D0ED044A 		vldr.32	s9, [r0, #16]
+ 120 0088 25EE245A 		vmul.f32	s10, s10, s9
+ 121 008c 77EE857A 		vadd.f32	s15, s15, s10
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccyYngde.s 			page 3
+
+
+ 122 0090 F1EE677A 		vneg.f32	s15, s15
+ 123 0094 37EE267A 		vadd.f32	s14, s14, s13
+ 124 0098 C7EE876A 		vdiv.f32	s13, s15, s14
+ 125 009c C0ED046A 		vstr.32	s13, [r0, #16]
+ 126 00a0 D0ED037A 		vldr.32	s15, [r0, #12]
+ 127 00a4 77EEA57A 		vadd.f32	s15, s15, s11
+ 128 00a8 76EEA77A 		vadd.f32	s15, s13, s15
+ 129 00ac C0ED097A 		vstr.32	s15, [r0, #36]
+ 130 00b0 90ED027A 		vldr.32	s14, [r0, #8]
+ 131 00b4 F4EEC77A 		vcmpe.f32	s15, s14
+ 132 00b8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 133 00bc 13DD     		ble	.L21
+ 134 00be 80ED097A 		vstr.32	s14, [r0, #36]
+ 135              	.L13:
+ 136 00c2 80ED056A 		vstr.32	s12, [r0, #20]
+ 137 00c6 80ED060A 		vstr.32	s0, [r0, #24]
+ 138 00ca C161     		str	r1, [r0, #28]
+ 139 00cc 90ED090A 		vldr.32	s0, [r0, #36]
+ 140 00d0 7047     		bx	lr
+ 141              	.L20:
+ 142 00d2 93ED037A 		vldr.32	s14, [r3, #12]
+ 143 00d6 F4EEC77A 		vcmpe.f32	s15, s14
+ 144 00da F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 145 00de C1D5     		bpl	.L9
+ 146 00e0 80ED037A 		vstr.32	s14, [r0, #12]
+ 147 00e4 BEE7     		b	.L9
+ 148              	.L21:
+ 149 00e6 90ED017A 		vldr.32	s14, [r0, #4]
+ 150 00ea F4EEC77A 		vcmpe.f32	s15, s14
+ 151 00ee F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 152 00f2 E6D5     		bpl	.L13
+ 153 00f4 80ED097A 		vstr.32	s14, [r0, #36]
+ 154 00f8 E3E7     		b	.L13
+ 155              	.L15:
+ 156 00fa 9FED020A 		vldr.32	s0, .L22+4
+ 157 00fe 7047     		bx	lr
+ 158              	.L23:
+ 159              		.align	2
+ 160              	.L22:
+ 161 0100 00247449 		.word	1232348160
+ 162 0104 00000000 		.word	0
+ 164              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccyYngde.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 pid.c
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:18     .text.pid_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:24     .text.pid_init:00000000 pid_init
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:44     .text.pid_set_setpoint:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:50     .text.pid_set_setpoint:00000000 pid_set_setpoint
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:58     .text.pid_get_error:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:64     .text.pid_get_error:00000000 pid_get_error
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:72     .text.pid_compute:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:78     .text.pid_compute:00000000 pid_compute
+C:\Users\alireza\AppData\Local\Temp\ccyYngde.s:161    .text.pid_compute:00000100 $d
+
+NO UNDEFINED SYMBOLS

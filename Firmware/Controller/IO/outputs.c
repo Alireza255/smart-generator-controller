@@ -49,6 +49,14 @@ controller_output_pin_t ignition_output[FIRMWARE_IGNITION_OUTPUT_COUNT] = {
     {.gpio = IGNITION_OUTPUT_4_GPIO_Port, .pin = IGNITION_OUTPUT_4_Pin, .override_active = false, .last_normal_state = false}
 };
 
+bool output_get_state(controller_output_pin_t *pin)
+{
+    if (pin == NULL)
+    {
+        return true;
+    }
+    return HAL_GPIO_ReadPin(pin->gpio, pin->pin);
+}
 
 void output_set(controller_output_pin_t *pin, bool state)
 {

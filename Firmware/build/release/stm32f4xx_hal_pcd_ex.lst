@@ -1,0 +1,116 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccurj55v.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_hal_pcd_ex.c"
+  16              		.text
+  17              		.section	.text.HAL_PCDEx_SetTxFiFo,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_PCDEx_SetTxFiFo
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_PCDEx_SetTxFiFo:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 10B4     		push	{r4}
+  29 0002 0468     		ldr	r4, [r0]
+  30 0004 606A     		ldr	r0, [r4, #36]
+  31 0006 31B9     		cbnz	r1, .L2
+  32 0008 40EA0240 		orr	r0, r0, r2, lsl #16
+  33 000c A062     		str	r0, [r4, #40]
+  34              	.L3:
+  35 000e 0020     		movs	r0, #0
+  36 0010 5DF8044B 		ldr	r4, [sp], #4
+  37 0014 7047     		bx	lr
+  38              	.L2:
+  39 0016 8C46     		mov	ip, r1
+  40 0018 A36A     		ldr	r3, [r4, #40]
+  41 001a 00EB1340 		add	r0, r0, r3, lsr #16
+  42 001e 0023     		movs	r3, #0
+  43 0020 08E0     		b	.L4
+  44              	.L5:
+  45 0022 03F14001 		add	r1, r3, #64
+  46 0026 04EB8101 		add	r1, r4, r1, lsl #2
+  47 002a 4968     		ldr	r1, [r1, #4]
+  48 002c 00EB1140 		add	r0, r0, r1, lsr #16
+  49 0030 0133     		adds	r3, r3, #1
+  50 0032 DBB2     		uxtb	r3, r3
+  51              	.L4:
+  52 0034 0CF1FF31 		add	r1, ip, #-1
+  53 0038 8B42     		cmp	r3, r1
+  54 003a F2D3     		bcc	.L5
+  55 003c 40EA0240 		orr	r0, r0, r2, lsl #16
+  56 0040 0CF13F01 		add	r1, ip, #63
+  57 0044 04EB8104 		add	r4, r4, r1, lsl #2
+  58 0048 6060     		str	r0, [r4, #4]
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccurj55v.s 			page 2
+
+
+  59 004a E0E7     		b	.L3
+  61              		.section	.text.HAL_PCDEx_SetRxFiFo,"ax",%progbits
+  62              		.align	1
+  63              		.global	HAL_PCDEx_SetRxFiFo
+  64              		.syntax unified
+  65              		.thumb
+  66              		.thumb_func
+  68              	HAL_PCDEx_SetRxFiFo:
+  69              		@ args = 0, pretend = 0, frame = 0
+  70              		@ frame_needed = 0, uses_anonymous_args = 0
+  71              		@ link register save eliminated.
+  72 0000 0368     		ldr	r3, [r0]
+  73 0002 5962     		str	r1, [r3, #36]
+  74 0004 0020     		movs	r0, #0
+  75 0006 7047     		bx	lr
+  77              		.section	.text.HAL_PCDEx_LPM_Callback,"ax",%progbits
+  78              		.align	1
+  79              		.weak	HAL_PCDEx_LPM_Callback
+  80              		.syntax unified
+  81              		.thumb
+  82              		.thumb_func
+  84              	HAL_PCDEx_LPM_Callback:
+  85              		@ args = 0, pretend = 0, frame = 0
+  86              		@ frame_needed = 0, uses_anonymous_args = 0
+  87              		@ link register save eliminated.
+  88 0000 7047     		bx	lr
+  90              		.section	.text.HAL_PCDEx_BCD_Callback,"ax",%progbits
+  91              		.align	1
+  92              		.weak	HAL_PCDEx_BCD_Callback
+  93              		.syntax unified
+  94              		.thumb
+  95              		.thumb_func
+  97              	HAL_PCDEx_BCD_Callback:
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100              		@ link register save eliminated.
+ 101 0000 7047     		bx	lr
+ 103              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccurj55v.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_hal_pcd_ex.c
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:18     .text.HAL_PCDEx_SetTxFiFo:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:24     .text.HAL_PCDEx_SetTxFiFo:00000000 HAL_PCDEx_SetTxFiFo
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:62     .text.HAL_PCDEx_SetRxFiFo:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:68     .text.HAL_PCDEx_SetRxFiFo:00000000 HAL_PCDEx_SetRxFiFo
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:78     .text.HAL_PCDEx_LPM_Callback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:84     .text.HAL_PCDEx_LPM_Callback:00000000 HAL_PCDEx_LPM_Callback
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:91     .text.HAL_PCDEx_BCD_Callback:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccurj55v.s:97     .text.HAL_PCDEx_BCD_Callback:00000000 HAL_PCDEx_BCD_Callback
+
+NO UNDEFINED SYMBOLS

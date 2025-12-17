@@ -1,0 +1,786 @@
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"comms.c"
+  16              		.text
+  17              		.section	.text.transmit_crc_packet,"ax",%progbits
+  18              		.align	1
+  19              		.global	transmit_crc_packet
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	transmit_crc_packet:
+  25              		@ args = 0, pretend = 0, frame = 8
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+  28 0004 83B0     		sub	sp, sp, #12
+  29 0006 0F46     		mov	r7, r1
+  30 0008 1546     		mov	r5, r2
+  31 000a 8DF80700 		strb	r0, [sp, #7]
+  32 000e 96B2     		uxth	r6, r2
+  33 0010 06F10708 		add	r8, r6, #7
+  34 0014 1FFA88F8 		uxth	r8, r8
+  35 0018 0136     		adds	r6, r6, #1
+  36 001a 76BA     		rev16	r6, r6
+  37 001c 0122     		movs	r2, #1
+  38 001e 0DF10701 		add	r1, sp, #7
+  39 0022 0020     		movs	r0, #0
+  40 0024 FFF7FEFF 		bl	crc32_inc
+  41 0028 2A46     		mov	r2, r5
+  42 002a 3946     		mov	r1, r7
+  43 002c FFF7FEFF 		bl	crc32_inc
+  44 0030 0402     		lsls	r4, r0, #8
+  45 0032 04F47F04 		and	r4, r4, #16711680
+  46 0036 44EA1064 		orr	r4, r4, r0, lsr #24
+  47 003a 030A     		lsrs	r3, r0, #8
+  48 003c 03F47F43 		and	r3, r3, #65280
+  49 0040 1C43     		orrs	r4, r4, r3
+  50 0042 44EA0064 		orr	r4, r4, r0, lsl #24
+  51 0046 DFF83090 		ldr	r9, .L3
+  52 004a A9F80060 		strh	r6, [r9]	@ movhi
+  53 004e 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+  54 0052 89F80230 		strb	r3, [r9, #2]
+  55 0056 2A46     		mov	r2, r5
+  56 0058 3946     		mov	r1, r7
+  57 005a 09F10300 		add	r0, r9, #3
+  58 005e FFF7FEFF 		bl	memcpy
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 2
+
+
+  59 0062 0335     		adds	r5, r5, #3
+  60 0064 49F80540 		str	r4, [r9, r5]	@ unaligned
+  61 0068 4146     		mov	r1, r8
+  62 006a 4846     		mov	r0, r9
+  63 006c FFF7FEFF 		bl	CDC_Transmit_FS
+  64 0070 03B0     		add	sp, sp, #12
+  65              		@ sp needed
+  66 0072 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+  67              	.L4:
+  68 0076 00BF     		.align	2
+  69              	.L3:
+  70 0078 00000000 		.word	tx_buffer
+  72              		.section	.text.send_response,"ax",%progbits
+  73              		.align	1
+  74              		.global	send_response
+  75              		.syntax unified
+  76              		.thumb
+  77              		.thumb_func
+  79              	send_response:
+  80              		@ args = 0, pretend = 0, frame = 0
+  81              		@ frame_needed = 0, uses_anonymous_args = 0
+  82 0000 38B5     		push	{r3, r4, r5, lr}
+  83 0002 1446     		mov	r4, r2
+  84 0004 012B     		cmp	r3, #1
+  85 0006 07D0     		beq	.L9
+  86 0008 4AB9     		cbnz	r2, .L10
+  87              	.L7:
+  88 000a 0122     		movs	r2, #1
+  89 000c 4FF40051 		mov	r1, #8192
+  90 0010 0748     		ldr	r0, .L11
+  91 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  92 0016 38BD     		pop	{r3, r4, r5, pc}
+  93              	.L9:
+  94 0018 FFF7FEFF 		bl	transmit_crc_packet
+  95 001c F5E7     		b	.L7
+  96              	.L10:
+  97 001e 054D     		ldr	r5, .L11+4
+  98 0020 2846     		mov	r0, r5
+  99 0022 FFF7FEFF 		bl	memcpy
+ 100 0026 A1B2     		uxth	r1, r4
+ 101 0028 2846     		mov	r0, r5
+ 102 002a FFF7FEFF 		bl	CDC_Transmit_FS
+ 103 002e ECE7     		b	.L7
+ 104              	.L12:
+ 105              		.align	2
+ 106              	.L11:
+ 107 0030 00080240 		.word	1073874944
+ 108 0034 00000000 		.word	tx_buffer
+ 110              		.section	.text.comms_init,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	comms_init
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 117              	comms_init:
+ 118              		@ args = 0, pretend = 0, frame = 0
+ 119              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 3
+
+
+ 120 0000 08B5     		push	{r3, lr}
+ 121 0002 0022     		movs	r2, #0
+ 122 0004 0821     		movs	r1, #8
+ 123 0006 0A20     		movs	r0, #10
+ 124 0008 FFF7FEFF 		bl	osMessageQueueNew
+ 125 000c 084B     		ldr	r3, .L15
+ 126 000e 1860     		str	r0, [r3]
+ 127 0010 084A     		ldr	r2, .L15+4
+ 128 0012 0021     		movs	r1, #0
+ 129 0014 0848     		ldr	r0, .L15+8
+ 130 0016 FFF7FEFF 		bl	osThreadNew
+ 131 001a 0020     		movs	r0, #0
+ 132 001c FFF7FEFF 		bl	osEventFlagsNew
+ 133 0020 064B     		ldr	r3, .L15+12
+ 134 0022 1860     		str	r0, [r3]
+ 135 0024 064A     		ldr	r2, .L15+16
+ 136 0026 0021     		movs	r1, #0
+ 137 0028 0648     		ldr	r0, .L15+20
+ 138 002a FFF7FEFF 		bl	osThreadNew
+ 139 002e 08BD     		pop	{r3, pc}
+ 140              	.L16:
+ 141              		.align	2
+ 142              	.L15:
+ 143 0030 00000000 		.word	usb_rx_queue
+ 144 0034 00000000 		.word	task_comms_attrs
+ 145 0038 00000000 		.word	task_comms
+ 146 003c 00000000 		.word	controller_command_flag
+ 147 0040 00000000 		.word	task_controller_cmds_attr
+ 148 0044 00000000 		.word	task_controller_cmds
+ 150              		.section	.rodata.process_plain_command.str1.4,"aMS",%progbits,1
+ 151              		.align	2
+ 152              	.LC0:
+ 153 0000 30303200 		.ascii	"002\000"
+ 154              		.align	2
+ 155              	.LC1:
+ 156 0004 4A696D53 		.ascii	"JimStim 2025.12\000"
+ 156      74696D20 
+ 156      32303235 
+ 156      2E313200 
+ 157              		.section	.text.process_plain_command,"ax",%progbits
+ 158              		.align	1
+ 159              		.global	process_plain_command
+ 160              		.syntax unified
+ 161              		.thumb
+ 162              		.thumb_func
+ 164              	process_plain_command:
+ 165              		@ args = 0, pretend = 0, frame = 0
+ 166              		@ frame_needed = 0, uses_anonymous_args = 0
+ 167 0000 08B5     		push	{r3, lr}
+ 168 0002 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 169 0004 433B     		subs	r3, r3, #67
+ 170 0006 102B     		cmp	r3, #16
+ 171 0008 32D8     		bhi	.L25
+ 172 000a DFE803F0 		tbb	[pc, r3]
+ 173              	.L20:
+ 174 000e 21       		.byte	(.L24-.L20)/2
+ 175 000f 31       		.byte	(.L25-.L20)/2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 4
+
+
+ 176 0010 31       		.byte	(.L25-.L20)/2
+ 177 0011 09       		.byte	(.L23-.L20)/2
+ 178 0012 31       		.byte	(.L25-.L20)/2
+ 179 0013 31       		.byte	(.L25-.L20)/2
+ 180 0014 29       		.byte	(.L22-.L20)/2
+ 181 0015 31       		.byte	(.L25-.L20)/2
+ 182 0016 31       		.byte	(.L25-.L20)/2
+ 183 0017 31       		.byte	(.L25-.L20)/2
+ 184 0018 31       		.byte	(.L25-.L20)/2
+ 185 0019 31       		.byte	(.L25-.L20)/2
+ 186 001a 31       		.byte	(.L25-.L20)/2
+ 187 001b 31       		.byte	(.L25-.L20)/2
+ 188 001c 19       		.byte	(.L21-.L20)/2
+ 189 001d 31       		.byte	(.L25-.L20)/2
+ 190 001e 11       		.byte	(.L19-.L20)/2
+ 191 001f 00       		.p2align 1
+ 192              	.L23:
+ 193 0020 0023     		movs	r3, #0
+ 194 0022 0322     		movs	r2, #3
+ 195 0024 1349     		ldr	r1, .L27
+ 196 0026 1846     		mov	r0, r3
+ 197 0028 FFF7FEFF 		bl	send_response
+ 198 002c 0120     		movs	r0, #1
+ 199 002e 20E0     		b	.L18
+ 200              	.L19:
+ 201 0030 0023     		movs	r3, #0
+ 202 0032 0F22     		movs	r2, #15
+ 203 0034 1049     		ldr	r1, .L27+4
+ 204 0036 1846     		mov	r0, r3
+ 205 0038 FFF7FEFF 		bl	send_response
+ 206 003c 0120     		movs	r0, #1
+ 207 003e 18E0     		b	.L18
+ 208              	.L21:
+ 209 0040 0023     		movs	r3, #0
+ 210 0042 0F22     		movs	r2, #15
+ 211 0044 0C49     		ldr	r1, .L27+4
+ 212 0046 1846     		mov	r0, r3
+ 213 0048 FFF7FEFF 		bl	send_response
+ 214 004c 0120     		movs	r0, #1
+ 215 004e 10E0     		b	.L18
+ 216              	.L24:
+ 217 0050 0023     		movs	r3, #0
+ 218 0052 0122     		movs	r2, #1
+ 219 0054 FF21     		movs	r1, #255
+ 220 0056 1846     		mov	r0, r3
+ 221 0058 FFF7FEFF 		bl	send_response
+ 222 005c 0120     		movs	r0, #1
+ 223 005e 08E0     		b	.L18
+ 224              	.L22:
+ 225 0060 0023     		movs	r3, #0
+ 226 0062 1A46     		mov	r2, r3
+ 227 0064 1946     		mov	r1, r3
+ 228 0066 1846     		mov	r0, r3
+ 229 0068 FFF7FEFF 		bl	send_response
+ 230 006c 0120     		movs	r0, #1
+ 231 006e 00E0     		b	.L18
+ 232              	.L25:
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 5
+
+
+ 233 0070 0020     		movs	r0, #0
+ 234              	.L18:
+ 235 0072 08BD     		pop	{r3, pc}
+ 236              	.L28:
+ 237              		.align	2
+ 238              	.L27:
+ 239 0074 00000000 		.word	.LC0
+ 240 0078 04000000 		.word	.LC1
+ 242              		.section	.text.handle_page_read_command,"ax",%progbits
+ 243              		.align	1
+ 244              		.global	handle_page_read_command
+ 245              		.syntax unified
+ 246              		.thumb
+ 247              		.thumb_func
+ 249              	handle_page_read_command:
+ 250              		@ args = 0, pretend = 0, frame = 0
+ 251              		@ frame_needed = 0, uses_anonymous_args = 0
+ 252 0000 0128     		cmp	r0, #1
+ 253 0002 0DD8     		bhi	.L32
+ 254 0004 08B5     		push	{r3, lr}
+ 255 0006 8818     		adds	r0, r1, r2
+ 256 0008 41F6ED23 		movw	r3, #6893
+ 257 000c 9842     		cmp	r0, r3
+ 258 000e 00D9     		bls	.L35
+ 259              	.L29:
+ 260 0010 08BD     		pop	{r3, pc}
+ 261              	.L35:
+ 262 0012 0123     		movs	r3, #1
+ 263 0014 0348     		ldr	r0, .L36
+ 264 0016 0144     		add	r1, r1, r0
+ 265 0018 0020     		movs	r0, #0
+ 266 001a FFF7FEFF 		bl	send_response
+ 267 001e F7E7     		b	.L29
+ 268              	.L32:
+ 269 0020 7047     		bx	lr
+ 270              	.L37:
+ 271 0022 00BF     		.align	2
+ 272              	.L36:
+ 273 0024 00000000 		.word	config
+ 275              		.section	.text.process_command,"ax",%progbits
+ 276              		.align	1
+ 277              		.global	process_command
+ 278              		.syntax unified
+ 279              		.thumb
+ 280              		.thumb_func
+ 282              	process_command:
+ 283              		@ args = 0, pretend = 0, frame = 8
+ 284              		@ frame_needed = 0, uses_anonymous_args = 0
+ 285 0000 30B5     		push	{r4, r5, lr}
+ 286 0002 83B0     		sub	sp, sp, #12
+ 287 0004 0446     		mov	r4, r0
+ 288 0006 0D46     		mov	r5, r1
+ 289 0008 FFF7FEFF 		bl	process_plain_command
+ 290 000c 0028     		cmp	r0, #0
+ 291 000e 40F0C380 		bne	.L38
+ 292 0012 052D     		cmp	r5, #5
+ 293 0014 21D8     		bhi	.L63
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 6
+
+
+ 294              	.L40:
+ 295 0016 A378     		ldrb	r3, [r4, #2]	@ zero_extendqisi2
+ 296 0018 423B     		subs	r3, r3, #66
+ 297 001a 352B     		cmp	r3, #53
+ 298 001c 00F2B780 		bhi	.L41
+ 299 0020 DFE803F0 		tbb	[pc, r3]
+ 300              	.L43:
+ 301 0024 9B       		.byte	(.L56-.L43)/2
+ 302 0025 20       		.byte	(.L55-.L43)/2
+ 303 0026 B5       		.byte	(.L41-.L43)/2
+ 304 0027 AD       		.byte	(.L54-.L43)/2
+ 305 0028 27       		.byte	(.L53-.L43)/2
+ 306 0029 B5       		.byte	(.L41-.L43)/2
+ 307 002a B5       		.byte	(.L41-.L43)/2
+ 308 002b 2E       		.byte	(.L52-.L43)/2
+ 309 002c B5       		.byte	(.L41-.L43)/2
+ 310 002d B5       		.byte	(.L41-.L43)/2
+ 311 002e B5       		.byte	(.L41-.L43)/2
+ 312 002f B5       		.byte	(.L41-.L43)/2
+ 313 0030 B5       		.byte	(.L41-.L43)/2
+ 314 0031 52       		.byte	(.L51-.L43)/2
+ 315 0032 B5       		.byte	(.L41-.L43)/2
+ 316 0033 35       		.byte	(.L50-.L43)/2
+ 317 0034 B5       		.byte	(.L41-.L43)/2
+ 318 0035 3C       		.byte	(.L49-.L43)/2
+ 319 0036 B5       		.byte	(.L41-.L43)/2
+ 320 0037 B5       		.byte	(.L41-.L43)/2
+ 321 0038 B5       		.byte	(.L41-.L43)/2
+ 322 0039 7B       		.byte	(.L48-.L43)/2
+ 323 003a B5       		.byte	(.L41-.L43)/2
+ 324 003b B5       		.byte	(.L41-.L43)/2
+ 325 003c B5       		.byte	(.L41-.L43)/2
+ 326 003d B5       		.byte	(.L41-.L43)/2
+ 327 003e B5       		.byte	(.L41-.L43)/2
+ 328 003f B5       		.byte	(.L41-.L43)/2
+ 329 0040 B5       		.byte	(.L41-.L43)/2
+ 330 0041 B5       		.byte	(.L41-.L43)/2
+ 331 0042 B5       		.byte	(.L41-.L43)/2
+ 332 0043 B5       		.byte	(.L41-.L43)/2
+ 333 0044 B5       		.byte	(.L41-.L43)/2
+ 334 0045 B5       		.byte	(.L41-.L43)/2
+ 335 0046 B5       		.byte	(.L41-.L43)/2
+ 336 0047 B5       		.byte	(.L41-.L43)/2
+ 337 0048 43       		.byte	(.L47-.L43)/2
+ 338 0049 B5       		.byte	(.L41-.L43)/2
+ 339 004a B5       		.byte	(.L41-.L43)/2
+ 340 004b B5       		.byte	(.L41-.L43)/2
+ 341 004c B5       		.byte	(.L41-.L43)/2
+ 342 004d 61       		.byte	(.L46-.L43)/2
+ 343 004e A4       		.byte	(.L45-.L43)/2
+ 344 004f B5       		.byte	(.L41-.L43)/2
+ 345 0050 B5       		.byte	(.L41-.L43)/2
+ 346 0051 B5       		.byte	(.L41-.L43)/2
+ 347 0052 B5       		.byte	(.L41-.L43)/2
+ 348 0053 B5       		.byte	(.L41-.L43)/2
+ 349 0054 59       		.byte	(.L44-.L43)/2
+ 350 0055 B5       		.byte	(.L41-.L43)/2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 7
+
+
+ 351 0056 B5       		.byte	(.L41-.L43)/2
+ 352 0057 B5       		.byte	(.L41-.L43)/2
+ 353 0058 B5       		.byte	(.L41-.L43)/2
+ 354 0059 8B       		.byte	(.L42-.L43)/2
+ 355              		.p2align 1
+ 356              	.L63:
+ 357 005a AA1F     		subs	r2, r5, #6
+ 358 005c A11C     		adds	r1, r4, #2
+ 359 005e FFF7FEFF 		bl	crc32_inc
+ 360 0062 D8E7     		b	.L40
+ 361              	.L55:
+ 362 0064 0123     		movs	r3, #1
+ 363 0066 1A46     		mov	r2, r3
+ 364 0068 FF21     		movs	r1, #255
+ 365 006a 0020     		movs	r0, #0
+ 366 006c FFF7FEFF 		bl	send_response
+ 367 0070 92E0     		b	.L38
+ 368              	.L53:
+ 369 0072 0123     		movs	r3, #1
+ 370 0074 0322     		movs	r2, #3
+ 371 0076 5249     		ldr	r1, .L64
+ 372 0078 0020     		movs	r0, #0
+ 373 007a FFF7FEFF 		bl	send_response
+ 374 007e 8BE0     		b	.L38
+ 375              	.L52:
+ 376 0080 0123     		movs	r3, #1
+ 377 0082 1A46     		mov	r2, r3
+ 378 0084 0021     		movs	r1, #0
+ 379 0086 0846     		mov	r0, r1
+ 380 0088 FFF7FEFF 		bl	send_response
+ 381 008c 84E0     		b	.L38
+ 382              	.L50:
+ 383 008e 0123     		movs	r3, #1
+ 384 0090 0F22     		movs	r2, #15
+ 385 0092 4C49     		ldr	r1, .L64+4
+ 386 0094 0020     		movs	r0, #0
+ 387 0096 FFF7FEFF 		bl	send_response
+ 388 009a 7DE0     		b	.L38
+ 389              	.L49:
+ 390 009c 0123     		movs	r3, #1
+ 391 009e 1022     		movs	r2, #16
+ 392 00a0 4849     		ldr	r1, .L64+4
+ 393 00a2 0020     		movs	r0, #0
+ 394 00a4 FFF7FEFF 		bl	send_response
+ 395 00a8 76E0     		b	.L38
+ 396              	.L47:
+ 397 00aa 0223     		movs	r3, #2
+ 398 00ac 8DF80030 		strb	r3, [sp]
+ 399 00b0 0423     		movs	r3, #4
+ 400 00b2 ADF80130 		strh	r3, [sp, #1]	@ unaligned
+ 401 00b6 ADF80330 		strh	r3, [sp, #3]	@ unaligned
+ 402 00ba 0123     		movs	r3, #1
+ 403 00bc 0522     		movs	r2, #5
+ 404 00be 6946     		mov	r1, sp
+ 405 00c0 0020     		movs	r0, #0
+ 406 00c2 FFF7FEFF 		bl	send_response
+ 407 00c6 67E0     		b	.L38
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 8
+
+
+ 408              	.L51:
+ 409 00c8 0123     		movs	r3, #1
+ 410 00ca 7C22     		movs	r2, #124
+ 411 00cc 3E49     		ldr	r1, .L64+8
+ 412 00ce 0020     		movs	r0, #0
+ 413 00d0 FFF7FEFF 		bl	send_response
+ 414 00d4 60E0     		b	.L38
+ 415              	.L44:
+ 416 00d6 B4F80520 		ldrh	r2, [r4, #5]
+ 417 00da B4F80310 		ldrh	r1, [r4, #3]
+ 418 00de 0020     		movs	r0, #0
+ 419 00e0 FFF7FEFF 		bl	handle_page_read_command
+ 420 00e4 58E0     		b	.L38
+ 421              	.L46:
+ 422 00e6 41F6ED22 		movw	r2, #6893
+ 423 00ea 3849     		ldr	r1, .L64+12
+ 424 00ec 0020     		movs	r0, #0
+ 425 00ee FFF7FEFF 		bl	crc32_inc
+ 426 00f2 0090     		str	r0, [sp]
+ 427 00f4 0302     		lsls	r3, r0, #8
+ 428 00f6 03F47F03 		and	r3, r3, #16711680
+ 429 00fa 43EA1063 		orr	r3, r3, r0, lsr #24
+ 430 00fe 020A     		lsrs	r2, r0, #8
+ 431 0100 02F47F42 		and	r2, r2, #65280
+ 432 0104 1343     		orrs	r3, r3, r2
+ 433 0106 43EA0063 		orr	r3, r3, r0, lsl #24
+ 434 010a 0093     		str	r3, [sp]
+ 435 010c 0123     		movs	r3, #1
+ 436 010e 0422     		movs	r2, #4
+ 437 0110 6946     		mov	r1, sp
+ 438 0112 0020     		movs	r0, #0
+ 439 0114 FFF7FEFF 		bl	send_response
+ 440 0118 3EE0     		b	.L38
+ 441              	.L48:
+ 442 011a B4F80330 		ldrh	r3, [r4, #3]
+ 443 011e B4F80520 		ldrh	r2, [r4, #5]
+ 444 0122 E11D     		adds	r1, r4, #7
+ 445 0124 2948     		ldr	r0, .L64+12
+ 446 0126 1844     		add	r0, r0, r3
+ 447 0128 FFF7FEFF 		bl	memcpy
+ 448 012c 0123     		movs	r3, #1
+ 449 012e 0022     		movs	r2, #0
+ 450 0130 1146     		mov	r1, r2
+ 451 0132 1046     		mov	r0, r2
+ 452 0134 FFF7FEFF 		bl	send_response
+ 453 0138 2EE0     		b	.L38
+ 454              	.L42:
+ 455 013a B4F80330 		ldrh	r3, [r4, #3]
+ 456 013e B4F80520 		ldrh	r2, [r4, #5]
+ 457 0142 E11D     		adds	r1, r4, #7
+ 458 0144 2148     		ldr	r0, .L64+12
+ 459 0146 1844     		add	r0, r0, r3
+ 460 0148 FFF7FEFF 		bl	memcpy
+ 461 014c 0123     		movs	r3, #1
+ 462 014e 0022     		movs	r2, #0
+ 463 0150 1146     		mov	r1, r2
+ 464 0152 1046     		mov	r0, r2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 9
+
+
+ 465 0154 FFF7FEFF 		bl	send_response
+ 466 0158 1EE0     		b	.L38
+ 467              	.L56:
+ 468 015a FFF7FEFF 		bl	controller_save_configuration
+ 469 015e 0123     		movs	r3, #1
+ 470 0160 0022     		movs	r2, #0
+ 471 0162 1146     		mov	r1, r2
+ 472 0164 0420     		movs	r0, #4
+ 473 0166 FFF7FEFF 		bl	send_response
+ 474 016a 15E0     		b	.L38
+ 475              	.L45:
+ 476 016c E378     		ldrb	r3, [r4, #3]	@ zero_extendqisi2
+ 477 016e 022B     		cmp	r3, #2
+ 478 0170 14D0     		beq	.L58
+ 479 0172 032B     		cmp	r3, #3
+ 480 0174 15D0     		beq	.L59
+ 481 0176 012B     		cmp	r3, #1
+ 482 0178 01D1     		bne	.L54
+ 483 017a FFF7FEFF 		bl	trigger_logger_composite_start
+ 484              	.L54:
+ 485 017e B4F80310 		ldrh	r1, [r4, #3]
+ 486 0182 49BA     		rev16	r1, r1
+ 487 0184 89B2     		uxth	r1, r1
+ 488 0186 124B     		ldr	r3, .L64+16
+ 489 0188 1868     		ldr	r0, [r3]
+ 490 018a FFF7FEFF 		bl	osEventFlagsSet
+ 491              	.L41:
+ 492 018e 4FF40051 		mov	r1, #8192
+ 493 0192 1048     		ldr	r0, .L64+20
+ 494 0194 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 495              	.L38:
+ 496 0198 03B0     		add	sp, sp, #12
+ 497              		@ sp needed
+ 498 019a 30BD     		pop	{r4, r5, pc}
+ 499              	.L58:
+ 500 019c FFF7FEFF 		bl	trigger_logger_composite_stop
+ 501 01a0 EDE7     		b	.L54
+ 502              	.L59:
+ 503 01a2 FFF7FEFF 		bl	trigger_logger_get_buffer_status
+ 504 01a6 FFF7FEFF 		bl	trigger_logger_get_composite_data
+ 505 01aa 0546     		mov	r5, r0
+ 506 01ac FFF7FEFF 		bl	trigger_logger_get_composite_data_size
+ 507 01b0 0246     		mov	r2, r0
+ 508 01b2 0123     		movs	r3, #1
+ 509 01b4 2946     		mov	r1, r5
+ 510 01b6 0020     		movs	r0, #0
+ 511 01b8 FFF7FEFF 		bl	send_response
+ 512 01bc DFE7     		b	.L54
+ 513              	.L65:
+ 514 01be 00BF     		.align	2
+ 515              	.L64:
+ 516 01c0 00000000 		.word	.LC0
+ 517 01c4 04000000 		.word	.LC1
+ 518 01c8 00000000 		.word	runtime
+ 519 01cc 00000000 		.word	config
+ 520 01d0 00000000 		.word	controller_command_flag
+ 521 01d4 00080240 		.word	1073874944
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 10
+
+
+ 523              		.section	.text.task_comms,"ax",%progbits
+ 524              		.align	1
+ 525              		.global	task_comms
+ 526              		.syntax unified
+ 527              		.thumb
+ 528              		.thumb_func
+ 530              	task_comms:
+ 531              		@ Volatile: function does not return.
+ 532              		@ args = 0, pretend = 0, frame = 8
+ 533              		@ frame_needed = 0, uses_anonymous_args = 0
+ 534 0000 00B5     		push	{lr}
+ 535 0002 83B0     		sub	sp, sp, #12
+ 536              	.L67:
+ 537 0004 4FF0FF33 		mov	r3, #-1
+ 538 0008 0022     		movs	r2, #0
+ 539 000a 6946     		mov	r1, sp
+ 540 000c 0548     		ldr	r0, .L70
+ 541 000e 0068     		ldr	r0, [r0]
+ 542 0010 FFF7FEFF 		bl	osMessageQueueGet
+ 543 0014 0028     		cmp	r0, #0
+ 544 0016 F5D1     		bne	.L67
+ 545 0018 BDF80410 		ldrh	r1, [sp, #4]
+ 546 001c 0098     		ldr	r0, [sp]
+ 547 001e FFF7FEFF 		bl	process_command
+ 548 0022 EFE7     		b	.L67
+ 549              	.L71:
+ 550              		.align	2
+ 551              	.L70:
+ 552 0024 00000000 		.word	usb_rx_queue
+ 554              		.section	.text.handle_page_write_command,"ax",%progbits
+ 555              		.align	1
+ 556              		.global	handle_page_write_command
+ 557              		.syntax unified
+ 558              		.thumb
+ 559              		.thumb_func
+ 561              	handle_page_write_command:
+ 562              		@ args = 0, pretend = 0, frame = 0
+ 563              		@ frame_needed = 0, uses_anonymous_args = 0
+ 564              		@ link register save eliminated.
+ 565 0000 7047     		bx	lr
+ 567              		.global	task_controller_cmds_attr
+ 568              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 569              		.align	2
+ 570              	.LC2:
+ 571 0000 636F6E74 		.ascii	"controller_cmds\000"
+ 571      726F6C6C 
+ 571      65725F63 
+ 571      6D647300 
+ 572              		.section	.rodata.task_controller_cmds_attr,"a"
+ 573              		.align	2
+ 576              	task_controller_cmds_attr:
+ 577 0000 00000000 		.word	.LC2
+ 578 0004 00000000 		.space	4
+ 579 0008 00000000 		.word	task_controller_cmds_cb
+ 580 000c 5C000000 		.word	92
+ 581 0010 00000000 		.word	task_controller_cmds_mem
+ 582 0014 00020000 		.word	512
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 11
+
+
+ 583 0018 18000000 		.word	24
+ 584 001c 00000000 		.space	8
+ 584      00000000 
+ 585              		.section	.bss.task_controller_cmds_mem,"aw",%nobits
+ 586              		.align	2
+ 589              	task_controller_cmds_mem:
+ 590 0000 00000000 		.space	512
+ 590      00000000 
+ 590      00000000 
+ 590      00000000 
+ 590      00000000 
+ 591              		.section	.bss.task_controller_cmds_cb,"aw",%nobits
+ 592              		.align	2
+ 595              	task_controller_cmds_cb:
+ 596 0000 00000000 		.space	92
+ 596      00000000 
+ 596      00000000 
+ 596      00000000 
+ 596      00000000 
+ 597              		.global	task_comms_attrs
+ 598              		.section	.rodata.str1.4
+ 599              		.align	2
+ 600              	.LC3:
+ 601 0010 7461736B 		.ascii	"task_comms\000"
+ 601      5F636F6D 
+ 601      6D7300
+ 602              		.section	.rodata.task_comms_attrs,"a"
+ 603              		.align	2
+ 606              	task_comms_attrs:
+ 607 0000 10000000 		.word	.LC3
+ 608 0004 00000000 		.space	4
+ 609 0008 00000000 		.word	task_comms_cb
+ 610 000c 5C000000 		.word	92
+ 611 0010 00000000 		.word	task_comms_mem
+ 612 0014 00080000 		.word	2048
+ 613 0018 18000000 		.word	24
+ 614 001c 00000000 		.space	8
+ 614      00000000 
+ 615              		.section	.bss.task_comms_mem,"aw",%nobits
+ 616              		.align	2
+ 619              	task_comms_mem:
+ 620 0000 00000000 		.space	2048
+ 620      00000000 
+ 620      00000000 
+ 620      00000000 
+ 620      00000000 
+ 621              		.section	.bss.task_comms_cb,"aw",%nobits
+ 622              		.align	2
+ 625              	task_comms_cb:
+ 626 0000 00000000 		.space	92
+ 626      00000000 
+ 626      00000000 
+ 626      00000000 
+ 626      00000000 
+ 627              		.global	comms_os_flags
+ 628              		.section	.bss.comms_os_flags,"aw",%nobits
+ 629              		.align	2
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 12
+
+
+ 632              	comms_os_flags:
+ 633 0000 00000000 		.space	4
+ 634              		.global	controller_command_flag
+ 635              		.section	.bss.controller_command_flag,"aw",%nobits
+ 636              		.align	2
+ 639              	controller_command_flag:
+ 640 0000 00000000 		.space	4
+ 641              		.global	rx_buffer
+ 642              		.section	.bss.rx_buffer,"aw",%nobits
+ 643              		.align	2
+ 646              	rx_buffer:
+ 647 0000 00000000 		.space	1054
+ 647      00000000 
+ 647      00000000 
+ 647      00000000 
+ 647      00000000 
+ 648              		.global	tx_buffer
+ 649              		.section	.bss.tx_buffer,"aw",%nobits
+ 650              		.align	2
+ 653              	tx_buffer:
+ 654 0000 00000000 		.space	1054
+ 654      00000000 
+ 654      00000000 
+ 654      00000000 
+ 654      00000000 
+ 655              		.global	rx_packet
+ 656              		.section	.bss.rx_packet,"aw",%nobits
+ 657              		.align	2
+ 660              	rx_packet:
+ 661 0000 00000000 		.space	66
+ 661      00000000 
+ 661      00000000 
+ 661      00000000 
+ 661      00000000 
+ 662              		.global	usb_rx_queue
+ 663              		.section	.bss.usb_rx_queue,"aw",%nobits
+ 664              		.align	2
+ 667              	usb_rx_queue:
+ 668 0000 00000000 		.space	4
+ 669              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 comms.c
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:18     .text.transmit_crc_packet:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:24     .text.transmit_crc_packet:00000000 transmit_crc_packet
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:70     .text.transmit_crc_packet:00000078 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:653    .bss.tx_buffer:00000000 tx_buffer
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:73     .text.send_response:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:79     .text.send_response:00000000 send_response
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:107    .text.send_response:00000030 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:111    .text.comms_init:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:117    .text.comms_init:00000000 comms_init
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:143    .text.comms_init:00000030 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:667    .bss.usb_rx_queue:00000000 usb_rx_queue
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:606    .rodata.task_comms_attrs:00000000 task_comms_attrs
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:530    .text.task_comms:00000000 task_comms
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:639    .bss.controller_command_flag:00000000 controller_command_flag
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:576    .rodata.task_controller_cmds_attr:00000000 task_controller_cmds_attr
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:151    .rodata.process_plain_command.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:158    .text.process_plain_command:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:164    .text.process_plain_command:00000000 process_plain_command
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:174    .text.process_plain_command:0000000e $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:239    .text.process_plain_command:00000074 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:243    .text.handle_page_read_command:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:249    .text.handle_page_read_command:00000000 handle_page_read_command
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:273    .text.handle_page_read_command:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:276    .text.process_command:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:282    .text.process_command:00000000 process_command
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:301    .text.process_command:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:355    .text.process_command:0000005a $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:516    .text.process_command:000001c0 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:524    .text.task_comms:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:552    .text.task_comms:00000024 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:555    .text.handle_page_write_command:00000000 $t
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:561    .text.handle_page_write_command:00000000 handle_page_write_command
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:569    .rodata.str1.4:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:573    .rodata.task_controller_cmds_attr:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:595    .bss.task_controller_cmds_cb:00000000 task_controller_cmds_cb
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:589    .bss.task_controller_cmds_mem:00000000 task_controller_cmds_mem
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:586    .bss.task_controller_cmds_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:592    .bss.task_controller_cmds_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:603    .rodata.task_comms_attrs:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:625    .bss.task_comms_cb:00000000 task_comms_cb
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:619    .bss.task_comms_mem:00000000 task_comms_mem
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:616    .bss.task_comms_mem:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:622    .bss.task_comms_cb:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:632    .bss.comms_os_flags:00000000 comms_os_flags
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:629    .bss.comms_os_flags:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:636    .bss.controller_command_flag:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:646    .bss.rx_buffer:00000000 rx_buffer
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:643    .bss.rx_buffer:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:650    .bss.tx_buffer:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:660    .bss.rx_packet:00000000 rx_packet
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:657    .bss.rx_packet:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:664    .bss.usb_rx_queue:00000000 $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:191    .text.process_plain_command:0000001f $d
+C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s:191    .text.process_plain_command:00000020 $t
+
+ARM GAS  C:\Users\alireza\AppData\Local\Temp\ccssq9Lz.s 			page 14
+
+
+UNDEFINED SYMBOLS
+crc32_inc
+memcpy
+CDC_Transmit_FS
+HAL_GPIO_WritePin
+osMessageQueueNew
+osThreadNew
+osEventFlagsNew
+task_controller_cmds
+config
+controller_save_configuration
+trigger_logger_composite_start
+osEventFlagsSet
+HAL_GPIO_TogglePin
+trigger_logger_composite_stop
+trigger_logger_get_buffer_status
+trigger_logger_get_composite_data
+trigger_logger_get_composite_data_size
+runtime
+osMessageQueueGet

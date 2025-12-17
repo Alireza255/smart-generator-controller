@@ -238,6 +238,13 @@ void ignition_switch_to_coil_on_plug_wasted_spark()
     }
 }
 
+float_time_ms_t ignition_dwell_get()
+{
+    float dwell_correction = FIRMWARE_NOMINAL_VBAT / vbat_get();
+    runtime.dwell_actual = CLAMP(config.ignition_dwell * dwell_correction, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_TIME_MS);
+
+    return runtime.dwell_actual;
+}
 /**
  * @brief Handles an ignition trigger event based on the crankshaft angle, RPM, and current time.
  *
@@ -258,6 +265,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
     {
         return;
     }
+
     if (!IS_IN_RANGE(config.ignition_dwell, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_TIME_MS))
     {
         config.ignition_dwell = CLAMP(config.ignition_dwell, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_TIME_MS);
@@ -265,8 +273,6 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
          * @todo throw an error
          */
         change_bit(&runtime.status, STATUS_IGNITION_ERROR, true);
-        log_error("ignition dwell out of bounds.");
-        return;
     }
 
     /* Wether or not cam phase is known */
@@ -282,9 +288,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
 
     spark_advance = CLAMP(spark_advance, IGNITION_MIN_ADVANCE, IGNITION_MAX_ADVANCE);
     runtime.ignition_advance_deg = spark_advance;
-
-    float dwell_correction = FIRMWARE_NOMINAL_VBAT / vbat_get();
-    runtime.dwell_actual = CLAMP(config.ignition_dwell * dwell_correction, IGNITION_MIN_DWELL_TIME_MS, IGNITION_MAX_DWELL_TIME_MS);
+    float_time_ms_t dwell = ignition_dwell_get();
 
     bool has_cam_phase = get_bit(runtime.status, STATUS_TRIGGER_CAMSHAFT_SYNCED);
     bool cam_phase = false;
@@ -333,7 +337,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
             // // we must use the 720deg math
             // angle_t crank_angle_at_next_trigger = crankshaft_get_next_trigger_angle();
             // angle_t spark_angle = wrap_angle_720(event->crank_angle_at_tdc - spark_advance);
-            // angle_t dwell_angle = wrap_angle_720(spark_angle - degrees_per_millisecond(rpm) * runtime.dwell_actual);
+            // angle_t dwell_angle = wrap_angle_720(spark_angle - degrees_per_millisecond(rpm) * dwell);
 
             // if (is_phase_in_range(crank_angle_at_next_trigger, crankshaft_angle, dwell_angle))
             // {
@@ -348,7 +352,7 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
             // we must use the 360deg math
             angle_t crank_angle_at_next_trigger = crankshaft_get_next_trigger_angle();
             angle_t spark_angle = wrap_angle_360(event->crank_angle_at_tdc - spark_advance);
-            angle_t dwell_angle = wrap_angle_360(spark_angle - degrees_per_millisecond(rpm) * runtime.dwell_actual);
+            angle_t dwell_angle = wrap_angle_360(spark_angle - degrees_per_millisecond(rpm) * dwell);
 
             if (is_phase_in_range(crank_angle_at_next_trigger, crankshaft_angle, dwell_angle))
             {
@@ -367,13 +371,13 @@ void ignition_trigger_event_handle(angle_t crankshaft_angle, rpm_t rpm, time_us_
             uint8_t total_number_of_sparks = 1;
             for (; remaining_sparks > 0; remaining_sparks--)
             {
-                degrees_taken_by_additional_sparks += degrees_per_millisecond(rpm) * (config.multi_spark_rest_time_ms + runtime.dwell_actual);
+                degrees_taken_by_additional_sparks += degrees_per_millisecond(rpm) * (config.multi_spark_rest_time_ms + dwell);
                 if (degrees_taken_by_additional_sparks > config.multi_spark_max_trailing_angle)
                 {
                     break;
                 }
                 event->dwell_start_time = event->fire_spark_time + (time_us_t)MILLISECONDS_TO_MICROSECONDS(config.multi_spark_rest_time_ms);
-                event->fire_spark_time = event->dwell_start_time + (time_us_t)MILLISECONDS_TO_MICROSECONDS(runtime.dwell_actual);
+                event->fire_spark_time = event->dwell_start_time + (time_us_t)MILLISECONDS_TO_MICROSECONDS(dwell);
                 total_number_of_sparks++;
                 schedule_ignition_event(event);
             }
@@ -392,12 +396,12 @@ void ignition_coil_begin_charge(void *arg)
 
     if (event->primary_output)
     {
-        HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_SET);
+        output_set(event->primary_output, true);
         event->status = IGNITION_EVENT_DWELL;
     }
     if (event->secondary_output)
     {
-        HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_SET);
+        output_set(event->secondary_output, true);
         event->status = IGNITION_EVENT_DWELL;
     }
 
@@ -413,14 +417,19 @@ void ignition_coil_fire_spark(void *arg)
 
     if (event->primary_output)
     {
-        HAL_GPIO_WritePin(event->primary_output->gpio, event->primary_output->pin, GPIO_PIN_RESET);
+        output_set(event->primary_output, false);
         event->status = IGNITION_EVENT_FIRED;
     }
     if (event->secondary_output)
     {
-        HAL_GPIO_WritePin(event->secondary_output->gpio, event->secondary_output->pin, GPIO_PIN_RESET);
+        output_set(event->secondary_output, false);
         event->status = IGNITION_EVENT_FIRED;
     }
+    if (diagnostics_config.timing_light_enabled && event->primary_output == &ignition_output[0])
+    {
+        timing_light_pulse_a_pin(&injector_output[3]);
+    }
+    
 }
 
 void schedule_ignition_event(ignition_event_t *event)
