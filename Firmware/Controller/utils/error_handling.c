@@ -47,6 +47,8 @@ void log_debug(const char* format, ...)
 
     CDC_Transmit_FS(buffer, strlen((char*)buffer));
 }
+
+
 #else
 void log_error(const char* message)
 {
@@ -62,4 +64,6 @@ void log_debug(const char* format, ...)
 {
     
 }
+
+
 #endif
